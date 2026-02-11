@@ -1,0 +1,140 @@
+import os
+import json
+import httpx
+import logging
+from datetime import datetime, timedelta
+from dataclasses import dataclass
+
+
+def setup_logging(config_dir: str):
+    log_file = os.path.join(config_dir, "kis_api.log")
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        handlers=[
+            logging.FileHandler(log_file, encoding="utf-8"),
+            logging.StreamHandler(),
+        ],
+    )
+
+
+@dataclass
+class KISConfig:
+    app_key: str
+    app_secret: str
+    base_url: str
+    account_number: str
+    polling_interval: int
+    stock_minute_tr_id: str
+    deriv_minute_tr_id: str
+    option_chain_tr_id: str
+    deriv_order_tr_id: str
+    deriv_order_rvsecncl_tr_id: str
+    deriv_balance_tr_id: str
+    deriv_order_list_tr_id: str
+    tr_id: dict
+    config_dir: str
+
+    def __init__(self, config_path: str):
+        with open(config_path, "r", encoding="utf-8") as f:
+            config = json.load(f)
+
+        self.base_url = config.get("base_url")
+        account_no = config.get("account_no", "")
+        account_no_sub = config.get("account_no_sub", "")
+        self.account_number = f"{account_no}-{account_no_sub}"
+        self.polling_interval = config.get("polling_interval", 2)
+        self.stock_minute_tr_id = config.get("tr_id", {}).get("stock_minute", "FHKST03010200")
+        self.deriv_minute_tr_id = config.get("tr_id", {}).get("deriv_minute", "FHKIF03020200")
+        self.option_chain_tr_id = config.get("tr_id", {}).get("option_chain", "FHlkPIF05030100")
+        self.deriv_order_tr_id = config.get("tr_id", {}).get("deriv_order", "TTTO1101U")
+        self.deriv_order_rvsecncl_tr_id = config.get("tr_id", {}).get("deriv_order_rvsecncl", "TTTO1103U")
+        self.deriv_balance_tr_id = config.get("tr_id", {}).get("deriv_balance", "CTFO6118R")
+        self.deriv_order_list_tr_id = config.get("tr_id", {}).get("deriv_order_list", "TTTO5201R")
+
+        self.app_key = config.get("app_key")
+        self.app_secret = config.get("app_secret")
+        self.config_dir = os.path.dirname(config_path)
+        self.tr_id = config.get("tr_id", {})
+
+
+class KISAuth:
+    def __init__(self, config: KISConfig, client: httpx.Client):
+        self._config = config
+        self._client = client
+        self._token_file = os.path.join(config.config_dir, "access_token.json")
+        self._access_token: str | None = None
+        self._token_expires_at: datetime | None = None
+        self._load_token()
+
+    def _load_token(self):
+        try:
+            if os.path.exists(self._token_file):
+                with open(self._token_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    self._access_token = data.get("access_token")
+                    expires_str = data.get("expires_at")
+                    if expires_str:
+                        self._token_expires_at = datetime.fromisoformat(expires_str)
+
+                        if self._should_refresh_token():
+                            self._clear_token()
+                            logging.info("Access token will expire within 12 hours; deleted for refresh")
+        except Exception as exc:
+            logging.warning(f"Failed to load saved token: {exc}")
+
+    def _should_refresh_token(self) -> bool:
+        if not self._token_expires_at:
+            return True
+
+        now = datetime.now()
+        time_until_expiry = self._token_expires_at - now
+        return time_until_expiry <= timedelta(hours=12)
+
+    def _clear_token(self):
+        try:
+            if os.path.exists(self._token_file):
+                os.remove(self._token_file)
+                logging.info("Deleted existing access_token.json")
+        except Exception as exc:
+            logging.warning(f"Failed to delete access_token.json: {exc}")
+
+        self._access_token = None
+        self._token_expires_at = None
+
+    def _save_token(self):
+        try:
+            data = {
+                "access_token": self._access_token,
+                "expires_at": self._token_expires_at.isoformat() if self._token_expires_at else None,
+            }
+            with open(self._token_file, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except Exception as exc:
+            logging.error(f"Failed to save token: {exc}")
+
+    def get_access_token(self) -> str:
+        if self._should_refresh_token():
+            self._clear_token()
+
+        if self._access_token and self._token_expires_at and datetime.now() < self._token_expires_at:
+            return self._access_token
+
+        logging.info("Requesting new Access Token.")
+        url = f"{self._config.base_url}/oauth2/tokenP"
+        body = {
+            "grant_type": "client_credentials",
+            "appkey": self._config.app_key,
+            "appsecret": self._config.app_secret,
+        }
+        response = self._client.post(url, json=body)
+        response.raise_for_status()
+        data = response.json()
+
+        self._access_token = data.get("access_token")
+        expires_in = data.get("expires_in", 0)
+        self._token_expires_at = datetime.now() + timedelta(seconds=expires_in - 600)
+        self._save_token()
+        logging.info("Access Token has been successfully renewed.")
+        return self._access_token
