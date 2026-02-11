@@ -2,23 +2,32 @@ import json
 
 from .bid_ask_list import BidAskList
 from .protocol import TRName
-from .register import TRClient
+from .register import TRBatchClient
+from tools import DataTools
 
 if __package__ in (None, ""):
     raise SystemExit("Run from repo root: python -m tr_id.call")
 
 
 def main() -> None:
-    symbol = "005930"
+    symbols = ["005930", "000660", "373220"]
 
-    with TRClient() as client:
-        response = client.call(TRName.BID_ASK_LIST, symbol)
+    with TRBatchClient() as client:
+        results, errors = client.call_batch(
+            TRName.BID_ASK_LIST,
+            symbols,
+            concurrency=5,
+            batch_size=50,
+            retry=1,
+            delay_sec=0.0,
+        )
 
-    if response.rt_cd != "0":
-        print(f"error: {response.msg_cd} {response.msg1}")
-        return
+    if errors:
+        print(json.dumps(errors, ensure_ascii=False, indent=2))
 
-    print(json.dumps(BidAskList.summary(response), ensure_ascii=False, indent=2))
+    summaries = {symbol: BidAskList.summary(resp) for symbol, resp in results.items()}
+    df = DataTools.to_frame(summaries)
+    print(df)
 
 
 if __name__ == "__main__":

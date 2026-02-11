@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import Dict
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Dict, Iterable
+import time
 
 import httpx
 
@@ -76,7 +78,13 @@ class TRClient:
     def __exit__(self, exc_type, exc, tb) -> None:
         self.close()
 
-    def _request(self, spec: TRSpec, symbol: str) -> TRResponse:
+    def _request(
+        self,
+        spec: TRSpec,
+        symbol: str,
+        access_token: str | None = None,
+    ) -> TRResponse:
+        access_token = access_token or self._auth.get_access_token()
         tr_id = self.config.tr_id.get(spec.name.value)
         if not tr_id:
             raise KeyError(f"Missing tr_id['{spec.name.value}'] in config.json")
@@ -87,7 +95,6 @@ class TRClient:
         if not path.startswith("/"):
             path = f"/{path}"
 
-        access_token = self._auth.get_access_token()
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {access_token}",
@@ -101,3 +108,87 @@ class TRClient:
         response = self._client.get(url, headers=headers, params=params)
         response.raise_for_status()
         return spec.parse(response)
+
+
+class TRBatchClient(TRClient):
+    def call_batch(
+        self,
+        name: TRName | str,
+        symbols: Iterable[str],
+        *,
+        concurrency: int = 5,
+        batch_size: int = 50,
+        retry: int = 1,
+        delay_sec: float = 0.0,
+    ) -> tuple[dict[str, TRResponse], dict[str, str]]:
+        spec = self.registry.get(name)
+        pending = list(symbols)
+        results: dict[str, TRResponse] = {}
+        errors: dict[str, str] = {}
+
+        for attempt in range(retry + 1):
+            if not pending:
+                break
+
+            access_token = self._auth.get_access_token()
+            batch_errors: dict[str, str] = {}
+
+            for batch in self._chunked(pending, batch_size):
+                batch_results, batch_failures = self._call_batch(
+                    spec, batch, access_token, concurrency
+                )
+                results.update(batch_results)
+                batch_errors.update(batch_failures)
+
+                if delay_sec > 0:
+                    time.sleep(delay_sec)
+
+            if not batch_errors or attempt == retry:
+                errors.update(batch_errors)
+                break
+
+            pending = list(batch_errors.keys())
+
+        return results, errors
+
+    @staticmethod
+    def _chunked(items: list[str], size: int) -> Iterable[list[str]]:
+        if size <= 0:
+            raise ValueError("batch_size must be positive")
+        for idx in range(0, len(items), size):
+            yield items[idx : idx + size]
+
+    def _call_batch(
+        self,
+        spec: TRSpec,
+        symbols: list[str],
+        access_token: str,
+        concurrency: int,
+    ) -> tuple[dict[str, TRResponse], dict[str, str]]:
+        if concurrency <= 0:
+            raise ValueError("concurrency must be positive")
+
+        results: dict[str, TRResponse] = {}
+        errors: dict[str, str] = {}
+
+        with ThreadPoolExecutor(max_workers=concurrency) as executor:
+            future_map = {
+                executor.submit(
+                    self._request, spec, symbol, access_token
+                ): symbol
+                for symbol in symbols
+            }
+            for future in as_completed(future_map):
+                symbol = future_map[future]
+                try:
+                    response = future.result()
+                except Exception as exc:
+                    errors[symbol] = str(exc)
+                    continue
+
+                if response.rt_cd == "0":
+                    results[symbol] = response
+                else:
+                    errors[symbol] = f"{response.msg_cd} {response.msg1}"
+
+        return results, errors
