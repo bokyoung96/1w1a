@@ -10,6 +10,8 @@ from config import KISAuth, KISConfig, setup_logging
 from root import ROOT
 from tr_id.protocol import TRName, TRResponse, TRSpec
 from tr_id.bid_ask_list import BidAskListSpec
+from tr_id.deriv_minute import DerivMinuteSpec
+from tools import RateLimiter
 
 
 class TRRegistry:
@@ -47,6 +49,7 @@ class TRRegistry:
 
 TR_REGISTRY = TRRegistry()
 TR_REGISTRY.register(BidAskListSpec())
+TR_REGISTRY.register(DerivMinuteSpec())
 
 
 class TRClient:
@@ -120,11 +123,13 @@ class TRBatchClient(TRClient):
         batch_size: int = 50,
         retry: int = 1,
         delay_sec: float = 0.0,
+        rate_limit_per_sec: float | None = None,
     ) -> tuple[dict[str, TRResponse], dict[str, str]]:
         spec = self.registry.get(name)
         pending = list(symbols)
         results: dict[str, TRResponse] = {}
         errors: dict[str, str] = {}
+        limiter = RateLimiter(rate_limit_per_sec) if rate_limit_per_sec else None
 
         for attempt in range(retry + 1):
             if not pending:
@@ -135,7 +140,7 @@ class TRBatchClient(TRClient):
 
             for batch in self._chunked(pending, batch_size):
                 batch_results, batch_failures = self._call_batch(
-                    spec, batch, access_token, concurrency
+                    spec, batch, access_token, concurrency, limiter
                 )
                 results.update(batch_results)
                 batch_errors.update(batch_failures)
@@ -164,6 +169,7 @@ class TRBatchClient(TRClient):
         symbols: list[str],
         access_token: str,
         concurrency: int,
+        limiter: RateLimiter | None,
     ) -> tuple[dict[str, TRResponse], dict[str, str]]:
         if concurrency <= 0:
             raise ValueError("concurrency must be positive")
@@ -172,10 +178,13 @@ class TRBatchClient(TRClient):
         errors: dict[str, str] = {}
 
         with ThreadPoolExecutor(max_workers=concurrency) as executor:
+            def task(symbol: str) -> TRResponse:
+                if limiter:
+                    limiter.wait()
+                return self._request(spec, symbol, access_token)
+
             future_map = {
-                executor.submit(
-                    self._request, spec, symbol, access_token
-                ): symbol
+                executor.submit(task, symbol): symbol
                 for symbol in symbols
             }
             for future in as_completed(future_map):
