@@ -116,3 +116,60 @@ def test_engine_rounds_target_quantity_when_fractional_disabled() -> None:
     )
 
     assert result.qty.loc["2024-01-02", "A"] == 2.0
+
+
+def test_engine_scales_buy_quantity_to_keep_costs_from_overspending() -> None:
+    index = pd.to_datetime(["2024-01-02", "2024-01-03"])
+    close = pd.DataFrame({"A": [100.0, 100.0]}, index=index)
+    weights = pd.DataFrame({"A": [1.0, 1.0]}, index=index)
+
+    engine = BacktestEngine(cost=CostModel(fee=0.01))
+    result = engine.run(
+        close=close,
+        weights=weights,
+        capital=100.0,
+        fill_mode="close",
+    )
+
+    assert result.qty.loc["2024-01-02", "A"] == pytest.approx(100.0 / 101.0)
+    assert result.equity.loc["2024-01-02"] == pytest.approx(10000.0 / 101.0)
+
+
+def test_engine_rebalances_only_on_scheduled_close_bars() -> None:
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+    close = pd.DataFrame({"A": [100.0, 100.0, 100.0]}, index=index)
+    weights = pd.DataFrame({"A": [1.0, 0.0, 0.0]}, index=index)
+    schedule = pd.Series([True, False, True], index=index, dtype=bool)
+
+    engine = BacktestEngine(cost=CostModel())
+    result = engine.run(
+        close=close,
+        weights=weights,
+        capital=100.0,
+        fill_mode="close",
+        schedule=schedule,
+    )
+
+    assert result.qty["A"].tolist() == [1.0, 1.0, 0.0]
+    assert result.turnover.tolist() == [1.0, 0.0, 1.0]
+
+
+def test_engine_uses_prior_schedule_flag_for_next_open_rebalances() -> None:
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"])
+    close = pd.DataFrame({"A": [10.0, 10.0, 10.0, 10.0]}, index=index)
+    open_ = pd.DataFrame({"A": [10.0, 10.0, 10.0, 10.0]}, index=index)
+    weights = pd.DataFrame({"A": [1.0, 1.0, 0.0, 0.0]}, index=index)
+    schedule = pd.Series([False, True, False, False], index=index, dtype=bool)
+
+    engine = BacktestEngine(cost=CostModel())
+    result = engine.run(
+        close=close,
+        open=open_,
+        weights=weights,
+        capital=100.0,
+        fill_mode="next_open",
+        schedule=schedule,
+    )
+
+    assert result.qty["A"].tolist() == [0.0, 0.0, 10.0, 10.0]
+    assert result.turnover.tolist() == [0.0, 0.0, 1.0, 0.0]
