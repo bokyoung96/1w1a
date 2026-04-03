@@ -6,7 +6,8 @@ from typing import Any, Mapping
 import httpx
 
 from kis.tools import TimeTools
-from tr_id.protocol import TRName, TRResponse
+
+from .protocol import TRName, TRResponse
 
 
 @dataclass(frozen=True)

@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from backtesting.catalog import DataCatalog, DatasetId, DatasetSpec
+from backtesting.catalog import DataCatalog, DatasetGroup, DatasetId, DatasetSpec
 from backtesting.data.loader import DataLoader, LoadRequest
 from backtesting.data.store import ParquetStore
 
@@ -77,6 +77,7 @@ def test_loader_expands_month_only_data_without_crossing_missing_months(
             DatasetId.QW_ADJ_C: DatasetSpec(
                 id=DatasetId.QW_ADJ_C,
                 stem="qw_adj_c",
+                group=DatasetGroup.PRICE,
                 freq="M",
                 kind="price",
                 fill="none",
@@ -125,3 +126,28 @@ def test_loader_rejects_unsupported_price_mode(tmp_path: Path) -> None:
                 price_mode="raw",
             )
         )
+
+
+def test_loader_uses_semantic_key_for_op_fwd_data(tmp_path: Path) -> None:
+    parquet_dir = tmp_path / "parquet"
+    parquet_dir.mkdir()
+    store = ParquetStore(parquet_dir)
+    store.write(
+        "qw_op_nfy1",
+        pd.DataFrame(
+            {"005930": [10.0]},
+            index=pd.to_datetime(["2024-01-31"]),
+        ),
+    )
+
+    loader = DataLoader(DataCatalog.default(), store)
+    data = loader.load(
+        LoadRequest(
+            datasets=[DatasetId.QW_OP_NFY1],
+            start="2024-01-01",
+            end="2024-01-31",
+        )
+    )
+
+    assert "op_fwd" in data.frames
+    assert "qw_op_nfy1" not in data.frames

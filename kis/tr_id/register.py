@@ -8,10 +8,11 @@ import httpx
 
 from kis.config import KISAuth, KISConfig, setup_logging
 from root import ROOT
-from tr_id.protocol import TRName, TRResponse, TRSpec
-from tr_id.bid_ask_list import BidAskListSpec
-from tr_id.deriv_minute import DerivMinuteSpec
 from kis.tools import RateLimiter
+
+from .bid_ask_list import BidAskListSpec
+from .deriv_minute import DerivMinuteSpec
+from .protocol import TRName, TRResponse, TRSpec
 
 
 class TRRegistry:

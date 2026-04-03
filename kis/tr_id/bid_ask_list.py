@@ -5,7 +5,7 @@ from typing import Any, Mapping
 
 import httpx
 
-from tr_id.protocol import TRName, TRResponse
+from .protocol import TRName, TRResponse
 
 
 @dataclass(frozen=True)

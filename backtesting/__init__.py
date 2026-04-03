@@ -1,5 +1,5 @@
 from .analytics import quantile_returns, rank_ic, summarize_perf
-from .catalog import DataCatalog, DatasetId, DatasetSpec
+from .catalog import DataCatalog, DatasetGroup, DatasetGroups, DatasetId, DatasetSpec
 from .data import DataLoader, LoadRequest, MarketData, ParquetStore, expand_monthly_frame
 from .engine import BacktestEngine, BacktestResult
 from .execution import (
@@ -12,6 +12,7 @@ from .execution import (
     WeeklySchedule,
     fill_prices,
 )
+from .reporting import RunWriter
 from .strategy import (
     BaseStrategy,
     CrossSectionalStrategy,
@@ -20,18 +21,30 @@ from .strategy import (
     ThresholdTrend,
     TimeSeriesStrategy,
 )
+from .strategies import (
+    MomentumTopN,
+    OpFwdYieldTopN,
+    RegisteredStrategy,
+    build_strategy,
+    list_strategies,
+    register_strategy,
+)
 from .validation import SplitConfig, SplitResult, ValidationSession, split_frame
 
 __all__ = (
     "BacktestEngine",
     "BacktestResult",
     "BaseStrategy",
+    "MomentumTopN",
+    "OpFwdYieldTopN",
     "CostModel",
     "CrossSectionalStrategy",
     "CustomSchedule",
     "DataCatalog",
     "DataLoader",
     "DailySchedule",
+    "DatasetGroup",
+    "DatasetGroups",
     "DatasetId",
     "DatasetSpec",
     "LoadRequest",
@@ -41,6 +54,8 @@ __all__ = (
     "RankLongOnly",
     "RankLongShort",
     "RebalanceSchedule",
+    "RegisteredStrategy",
+    "RunWriter",
     "SplitConfig",
     "SplitResult",
     "ThresholdTrend",
@@ -48,10 +63,13 @@ __all__ = (
     "TradeCost",
     "ValidationSession",
     "WeeklySchedule",
+    "build_strategy",
     "expand_monthly_frame",
     "fill_prices",
+    "list_strategies",
     "quantile_returns",
     "rank_ic",
+    "register_strategy",
     "split_frame",
     "summarize_perf",
 )

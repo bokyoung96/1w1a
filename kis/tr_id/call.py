@@ -5,11 +5,11 @@ from .bid_ask_list import BidAskList
 from .deriv_minute import DerivMinute
 from .protocol import TRName
 from .register import TRBatchClient
-from symbols import SymbolType, Symbols
 from kis.tools import DataTools
+from kis.symbols import SymbolType, Symbols
 
 if __package__ in (None, ""):
-    raise SystemExit("Run from repo root: python -m tr_id.call")
+    raise SystemExit("Run from repo root: python -m kis.tr_id.call")
 
 
 def main() -> None:

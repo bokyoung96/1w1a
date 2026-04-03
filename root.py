@@ -25,6 +25,10 @@ class RootPaths:
         return self.root / "parquet"
 
     @property
+    def results_path(self) -> Path:
+        return self.root / "results"
+
+    @property
     def config_path_str(self) -> str:
         return str(self.config_path)
 

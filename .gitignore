@@ -1,5 +1,7 @@
 # Ignore data
 raw
+parquet/
+results/
 .worktrees/
 
 # Ignore config

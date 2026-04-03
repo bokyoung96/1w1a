@@ -4,6 +4,7 @@
 
 - `raw/`: source market files
 - `kis/`: broker and config code
+- `backtesting/strategies/`: registered backtest strategies
 
 ## Quick Start
 
@@ -14,6 +15,7 @@ from backtesting import DataCatalog, DataLoader, LoadRequest, ParquetStore
 from backtesting.catalog import DatasetId
 
 catalog = DataCatalog.default()
+groups = catalog.groups()
 store = ParquetStore(Path("parquet"))
 loader = DataLoader(catalog, store)
 
@@ -29,6 +31,7 @@ market = loader.load(
 
 close = market.frames["close"]
 volume = market.frames["volume"]
+estimate_ids = groups.estimate
 ```
 
 ## Manual Validation
@@ -46,3 +49,34 @@ python -c "import pandas as pd; from backtesting.engine.core import BacktestEngi
 ```powershell
 python -c "import pandas as pd; from backtesting.validation.session import ValidationSession; signal = pd.DataFrame({'A':[1.0,2.0]}, index=pd.date_range('2024-01-01', periods=2)); print(ValidationSession().run(signal=signal, lag_sensitive_datasets=['qw_eps_nfy1'], lag_map={}))"
 ```
+
+## Run Backtests
+
+Registered strategies live under `backtesting/strategies/` and execute via the repo-root `run.py`.
+
+`DataCatalog.default()` now registers every stock-side file under `raw/` and exposes grouped lookups via `catalog.groups()`.
+
+```powershell
+python run.py --strategy momentum --start 2020-01-01 --end 2020-12-31 --top-n 20 --lookback 20 --schedule monthly --fill-mode next_open
+```
+
+```powershell
+python run.py --strategy op_fwd_yield --start 2020-01-01 --end 2020-12-31 --top-n 20 --schedule monthly --fill-mode next_open
+```
+
+Each run writes an output bundle under `results/backtests/` by default.
+
+- `config.json`
+- `summary.json`
+- `series/equity.csv`
+- `series/returns.csv`
+- `series/turnover.csv`
+- `series/monthly_returns.csv`
+- `positions/weights.parquet`
+- `positions/qty.parquet`
+- `positions/latest_qty.csv`
+- `positions/latest_weights.csv`
+- `plots/equity.png`
+- `plots/drawdown.png`
+
+You can override the root output folder with `--out-root` and the run folder name with `--name`.

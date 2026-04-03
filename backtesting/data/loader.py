@@ -30,9 +30,33 @@ class DataLoader:
         DatasetId.QW_ADJ_O: "open",
         DatasetId.QW_ADJ_H: "high",
         DatasetId.QW_ADJ_L: "low",
-        DatasetId.QW_V: "volume",
+        DatasetId.QW_ASSET_LFQ0: "asset",
+        DatasetId.QW_BM: "benchmark",
+        DatasetId.QW_C: "close_raw",
+        DatasetId.QW_EPS_NFQ1: "eps_fwd_q1",
+        DatasetId.QW_EPS_NFQ2: "eps_fwd_q2",
+        DatasetId.QW_EPS_NFY1: "eps_fwd",
+        DatasetId.QW_EQUITY_LFQ0: "equity",
+        DatasetId.QW_FOREIGN: "foreign_flow",
+        DatasetId.QW_FOREIGN_RATIO: "foreign_ratio",
+        DatasetId.QW_GP_LFQ0: "gross_profit",
+        DatasetId.QW_INSTITUTION: "inst_flow",
         DatasetId.QW_MKTCAP: "market_cap",
         DatasetId.QW_K200_YN: "k200_yn",
+        DatasetId.QW_LIABILITY_LFQ0: "liability",
+        DatasetId.QW_MKTCAP_FLT: "float_market_cap",
+        DatasetId.QW_MKT_TYP: "market_type",
+        DatasetId.QW_NI_LFQ0: "net_income",
+        DatasetId.QW_OCF_LFQ0: "oper_cash_flow",
+        DatasetId.QW_OP_LFQ0: "op",
+        DatasetId.QW_OP_NFQ1: "op_fwd_q1",
+        DatasetId.QW_OP_NFQ2: "op_fwd_q2",
+        DatasetId.QW_OP_NFY1: "op_fwd",
+        DatasetId.QW_RETAIL: "retail_flow",
+        DatasetId.QW_SHA_OUT: "shares_out",
+        DatasetId.QW_TRS_BAN: "trade_ban",
+        DatasetId.QW_V: "volume",
+        DatasetId.QW_WICS_SEC_BIG: "sector_big",
     }
 
     def __init__(self, catalog: DataCatalog, store: ParquetStore) -> None:
@@ -60,6 +84,9 @@ class DataLoader:
         if spec.validity == "daily":
             return frame.loc[request.start : request.end]
         if spec.validity == "month_only":
+            start = pd.Timestamp(request.start).to_period("M").start_time
+            end = pd.Timestamp(request.end).to_period("M").end_time.normalize()
+            frame = frame.loc[start:end]
             calendar = pd.date_range(request.start, request.end, freq="D")
             return expand_monthly_frame(frame=frame, calendar=calendar, validity=spec.validity)
         raise ValueError(f"unsupported validity: {spec.validity}")

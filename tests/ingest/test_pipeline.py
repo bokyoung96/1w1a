@@ -191,3 +191,30 @@ def test_ingest_prefers_csv_when_csv_and_xlsx_exist(tmp_path: Path) -> None:
 
     stored = pd.read_parquet(parquet_dir / "qw_adj_c.parquet", engine="pyarrow")
     assert stored.iloc[0, 0] == 100.0
+
+
+def test_ingest_accepts_unnamed_date_column(tmp_path: Path) -> None:
+    raw_dir = tmp_path / "raw"
+    parquet_dir = tmp_path / "parquet"
+    raw_dir.mkdir()
+    parquet_dir.mkdir()
+
+    frame = pd.DataFrame(
+        {
+            "Unnamed: 0": ["2024-01-02", "2024-01-03"],
+            "005930": [100.0, 101.0],
+        }
+    )
+    frame.to_csv(raw_dir / "qw_adj_c.csv", index=False)
+
+    job = IngestJob(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+    )
+
+    result = job.run(DatasetId.QW_ADJ_C)
+
+    assert result.rows == 2
+    stored = pd.read_parquet(parquet_dir / "qw_adj_c.parquet", engine="pyarrow")
+    assert stored.index.tolist() == list(pd.to_datetime(["2024-01-02", "2024-01-03"]))

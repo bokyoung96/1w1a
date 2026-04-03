@@ -9,7 +9,7 @@ import pandas as pd
 from root import ROOT
 
 
-DEFAULT_PATH = ROOT.root / "symbols" / "symbols.xlsx"
+DEFAULT_PATH = ROOT.kis_path / "symbols" / "symbols.xlsx"
 
 
 @unique
