@@ -49,8 +49,11 @@ class ValidationSession:
 
     @staticmethod
     def _has_sparse_row(frame: pd.DataFrame, sparse_threshold: float) -> bool:
-        if frame.empty:
+        if frame.shape[0] == 0:
             return False
+
+        if frame.shape[1] == 0:
+            return True
 
         coverage = frame.notna().mean(axis=1)
         return bool((coverage < sparse_threshold).any())

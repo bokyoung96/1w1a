@@ -76,3 +76,19 @@ def test_split_frame_rejects_invalid_oos_window() -> None:
 
     with pytest.raises(ValueError, match="oos_start must be <= oos_end"):
         split_frame(frame, config)
+
+
+def test_split_frame_rejects_unsorted_index() -> None:
+    frame = pd.DataFrame(
+        {"signal": [1, 2]},
+        index=pd.to_datetime(["2024-01-02", "2024-01-01"]),
+    )
+    config = SplitConfig(
+        is_start=pd.Timestamp("2024-01-01"),
+        is_end=pd.Timestamp("2024-01-01"),
+        oos_start=pd.Timestamp("2024-01-02"),
+        oos_end=pd.Timestamp("2024-01-02"),
+    )
+
+    with pytest.raises(ValueError, match="frame.index must be monotonic increasing"):
+        split_frame(frame, config)

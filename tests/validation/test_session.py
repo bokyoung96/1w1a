@@ -65,3 +65,12 @@ def test_validation_session_returns_stable_unique_warnings() -> None:
         "stale_gap:alpha",
         "stale_gap:gamma",
     ]
+
+
+def test_validation_session_marks_zero_column_frames_sparse() -> None:
+    signal = pd.DataFrame(index=pd.to_datetime(["2024-01-01", "2024-01-02"]))
+
+    session = ValidationSession()
+    warnings = session.run(signal, sparse_threshold=1.0)
+
+    assert warnings == ["sparse_signal"]

@@ -20,6 +20,8 @@ class SplitResult:
 
 
 def split_frame(frame: pd.DataFrame, config: SplitConfig) -> SplitResult:
+    if not frame.index.is_monotonic_increasing:
+        raise ValueError("frame.index must be monotonic increasing")
     if config.is_start > config.is_end:
         raise ValueError("is_start must be <= is_end")
     if config.oos_start > config.oos_end:
