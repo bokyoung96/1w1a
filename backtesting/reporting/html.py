@@ -9,6 +9,7 @@ import pandas as pd
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from .models import ReportBundle, SavedRun
+from .tables import build_latest_qty_table, build_latest_weights_table
 
 __all__ = ("HtmlRenderer",)
 
@@ -63,20 +64,21 @@ class HtmlRenderer:
         return {
             "run_id": run.run_id,
             "strategy": str(run.config.get("strategy", "")),
-            "latest_weights": HtmlRenderer._table(run.latest_weights if run.latest_weights is not None else _latest_frame(run.weights, "target_weight")),
-            "latest_qty": HtmlRenderer._table(run.latest_qty if run.latest_qty is not None else _latest_frame(run.qty, "qty")),
+            "latest_weights": HtmlRenderer._table(build_latest_weights_table(run)),
+            "latest_qty": HtmlRenderer._table(build_latest_qty_table(run)),
         }
 
     @staticmethod
-    def _plot_context(plots: dict[str, Path], out_dir: Path) -> dict[str, str]:
-        return {name: os.path.relpath(path, out_dir).replace(os.sep, "/") for name, path in plots.items()}
-
-
-def _latest_frame(frame: pd.DataFrame, value_column: str) -> pd.DataFrame:
-    if frame.empty:
-        return pd.DataFrame(columns=["symbol", value_column])
-    latest_date = frame.index.max()
-    latest = frame.loc[frame.index == latest_date].iloc[-1]
-    table = pd.DataFrame({"symbol": latest.index, value_column: latest.values})
-    table = table.loc[table[value_column].ne(0.0)].copy()
-    return table.reset_index(drop=True)
+    def _plot_context(plots: dict[str, Path], out_dir: Path) -> list[dict[str, str]]:
+        items: list[dict[str, str]] = []
+        for name, path in plots.items():
+            kind = path.suffix.lower().lstrip(".") or "file"
+            items.append(
+                {
+                    "name": name,
+                    "title": name.replace("_", " "),
+                    "path": os.path.relpath(path, out_dir).replace(os.sep, "/"),
+                    "kind": kind,
+                }
+            )
+        return items

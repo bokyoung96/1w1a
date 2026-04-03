@@ -28,9 +28,10 @@ body {
 }
 
 .page {
-  max-width: 1120px;
+  width: 1200px;
+  max-width: calc(100% - 96px);
   margin: 0 auto;
-  padding: 40px 32px 56px;
+  padding: 48px;
 }
 
 .cover {
@@ -53,7 +54,7 @@ body {
 }
 
 .section {
-  margin-top: 28px;
+  margin-top: 32px;
   padding: 22px 24px;
   background: var(--panel);
   border: 1px solid var(--line);
@@ -120,6 +121,24 @@ img.plot {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.plot-frame {
+  display: block;
+  width: 100%;
+  min-height: 420px;
+  border: 0;
+  background: #fff;
+}
+
+.plot-link {
+  margin: 10px 0 0;
+  font-size: 0.9rem;
+}
+
+.plot-link a {
+  color: var(--accent);
+  text-decoration: none;
 }
 
 .notes {

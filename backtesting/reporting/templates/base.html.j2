@@ -23,10 +23,15 @@
           <h2>Performance Section</h2>
         </header>
         <div class="plot-grid">
-          {% for name, path in plots.items() %}
+          {% for plot in plots %}
             <figure class="plot-card">
-              <figcaption>{{ name.replace('_', ' ') }}</figcaption>
-              <img class="plot" src="{{ path }}" alt="{{ name.replace('_', ' ') }}">
+              <figcaption>{{ plot.title }}</figcaption>
+              {% if plot.kind == "html" %}
+                <iframe class="plot-frame" src="{{ plot.path }}" title="{{ plot.title }}"></iframe>
+                <p class="plot-link"><a href="{{ plot.path }}">Open interactive chart</a></p>
+              {% else %}
+                <img class="plot" src="{{ plot.path }}" alt="{{ plot.title }}">
+              {% endif %}
             </figure>
           {% endfor %}
         </div>
