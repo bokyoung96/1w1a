@@ -67,8 +67,19 @@ def test_performance_snapshot_factory_uses_fixed_252_day_rolling_window() -> Non
 
     snapshot = factory.build(run, BenchmarkConfig.default_kospi200())
 
-    expected_sharpe = annualized_sharpe(run.returns)
-    assert snapshot.rolling.series["rolling_sharpe"].iloc[-1] == expected_sharpe
+    rolling_sharpe = snapshot.rolling.series["rolling_sharpe"]
+    rolling_beta = snapshot.rolling.series["rolling_beta"]
+    expected_sharpe = annualized_sharpe(run.returns.iloc[-252:])
+
+    assert_series_equal(rolling_sharpe.index.to_series(), run.returns.index.to_series())
+    assert_series_equal(rolling_beta.index.to_series(), run.returns.index.to_series())
+    assert rolling_sharpe.iloc[:251].isna().all()
+    assert rolling_beta.iloc[:251].isna().all()
+    assert pd.notna(rolling_sharpe.iloc[251])
+    assert pd.notna(rolling_beta.iloc[251])
+    assert pd.notna(rolling_sharpe.iloc[-1])
+    assert pd.notna(rolling_beta.iloc[-1])
+    assert rolling_sharpe.iloc[-1] == expected_sharpe
 
 
 def _toy_run(latest_weights: pd.DataFrame | None | object = _DEFAULT) -> SavedRun:
@@ -137,8 +148,9 @@ def _sector_map() -> pd.DataFrame:
 
 
 def _long_run() -> SavedRun:
-    index = pd.date_range("2024-01-02", periods=30, freq="D")
-    returns = pd.Series([0.0] + [0.01] * 15 + [-0.02] * 14, index=index, name="returns")
+    index = pd.date_range("2024-01-02", periods=260, freq="D")
+    cycle = ([0.0, 0.01, -0.02, 0.015, -0.005] * 52)[:260]
+    returns = pd.Series(cycle, index=index, name="returns")
     equity = (1.0 + returns).cumprod().mul(100.0).rename("equity")
     turnover = pd.Series(0.05, index=index, name="turnover")
     weights = pd.DataFrame({"A": 0.6, "B": 0.4, "C": 0.0}, index=index)
