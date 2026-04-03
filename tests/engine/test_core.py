@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 
 from backtesting.engine.core import BacktestEngine
 from backtesting.execution.costs import CostModel
@@ -21,10 +22,42 @@ def test_engine_tracks_equity_from_weights() -> None:
     )
 
     engine = BacktestEngine(cost=CostModel())
-    result = engine.run(close=close, weights=weights, capital=1000.0)
+    result = engine.run(close=close, weights=weights, capital=1000.0, fill_mode="close")
 
     assert result.equity.iloc[0] == 1000.0
     assert round(result.equity.iloc[-1], 2) == 1000.0
+
+
+def test_engine_requires_open_for_next_open_mode() -> None:
+    close = pd.DataFrame(
+        {"A": [100.0, 101.0]},
+        index=pd.to_datetime(["2024-01-02", "2024-01-03"]),
+    )
+    weights = pd.DataFrame(
+        {"A": [1.0, 1.0]},
+        index=close.index,
+    )
+
+    engine = BacktestEngine(cost=CostModel())
+
+    with pytest.raises(ValueError, match="open prices required for next_open"):
+        engine.run(close=close, weights=weights, capital=1000.0, fill_mode="next_open")
+
+
+def test_engine_close_mode_works_without_open() -> None:
+    close = pd.DataFrame(
+        {"A": [100.0, 110.0]},
+        index=pd.to_datetime(["2024-01-02", "2024-01-03"]),
+    )
+    weights = pd.DataFrame(
+        {"A": [1.0, 1.0]},
+        index=close.index,
+    )
+
+    engine = BacktestEngine(cost=CostModel())
+    result = engine.run(close=close, weights=weights, capital=1000.0, fill_mode="close")
+
+    assert result.equity.tolist() == [1000.0, 1100.0]
 
 
 def test_engine_uses_next_open_fill_prices() -> None:

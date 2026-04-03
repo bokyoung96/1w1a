@@ -35,13 +35,9 @@ class BacktestEngine:
         current_qty = pd.Series(0.0, index=close.columns, dtype=float)
         dates = close.index
 
-        use_next_open = fill_mode == "next_open" and open is not None
-        if fill_mode not in {"close", "next_open"}:
-            fill_prices(close=close, open_=open, fill_mode=fill_mode)
-
-        if use_next_open:
-            open = open.reindex_like(close).astype(float)
-            exec_prices = fill_prices(close=close, open_=open, fill_mode="next_open")
+        if fill_mode == "next_open":
+            open_ = None if open is None else open.reindex_like(close).astype(float)
+            exec_prices = fill_prices(close=close, open_=open_, fill_mode="next_open")
             equity.iloc[0] = capital
             qty.iloc[0] = current_qty
 
@@ -58,7 +54,7 @@ class BacktestEngine:
                 equity.loc[ts] = cash + current_qty.mul(close.loc[ts]).sum()
                 qty.loc[ts] = current_qty
                 turnover.loc[ts] = turn
-        else:
+        elif fill_mode == "close":
             first_ts = dates[0]
             cash, current_qty, turn = self._rebalance(
                 cash=cash,
@@ -84,6 +80,8 @@ class BacktestEngine:
                 equity.loc[ts] = cash + current_qty.mul(close.loc[ts]).sum()
                 qty.loc[ts] = current_qty
                 turnover.loc[ts] = turn
+        else:
+            fill_prices(close=close, open_=open, fill_mode=fill_mode)
 
         returns = equity.pct_change().fillna(0.0)
         return BacktestResult(
