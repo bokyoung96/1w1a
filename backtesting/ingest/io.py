@@ -4,6 +4,7 @@ import pandas as pd
 
 
 def find_raw_path(raw_dir: Path, stem: str) -> Path:
+    # Prefer CSV when both raw exports exist for the same dataset stem.
     for suffix in (".csv", ".xlsx"):
         path = raw_dir / f"{stem}{suffix}"
         if path.exists():

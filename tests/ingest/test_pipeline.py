@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 
 import pandas as pd
 import pytest
@@ -56,6 +57,9 @@ def test_ingest_writes_parquet_and_report(tmp_path: Path) -> None:
         "dtypes": {"005930": "float64", "000660": "float64"},
     }
 
+    report_path = parquet_dir / "qw_adj_c.json"
+    assert json.loads(report_path.read_text(encoding="utf-8")) == report
+
 
 def test_ingest_reads_xlsx_sources(tmp_path: Path) -> None:
     raw_dir = tmp_path / "raw"
@@ -106,3 +110,84 @@ def test_ingest_rejects_duplicate_dates(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="duplicate date"):
         job.run(DatasetId.QW_ADJ_C)
+
+
+def test_ingest_rejects_duplicate_days_with_different_times(tmp_path: Path) -> None:
+    raw_dir = tmp_path / "raw"
+    parquet_dir = tmp_path / "parquet"
+    raw_dir.mkdir()
+    parquet_dir.mkdir()
+
+    frame = pd.DataFrame(
+        {
+            "date": ["2024-01-02 09:00:00", "2024-01-02 15:30:00"],
+            "005930": [100.0, 101.0],
+        }
+    )
+    frame.to_csv(raw_dir / "qw_adj_c.csv", index=False)
+
+    job = IngestJob(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+    )
+
+    with pytest.raises(ValueError, match="duplicate date"):
+        job.run(DatasetId.QW_ADJ_C)
+
+
+def test_ingest_creates_missing_parquet_directory(tmp_path: Path) -> None:
+    raw_dir = tmp_path / "raw"
+    parquet_dir = tmp_path / "parquet"
+    raw_dir.mkdir()
+
+    frame = pd.DataFrame(
+        {
+            "date": ["2024-01-02"],
+            "005930": [100.0],
+        }
+    )
+    frame.to_csv(raw_dir / "qw_adj_c.csv", index=False)
+
+    job = IngestJob(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+    )
+
+    result = job.run(DatasetId.QW_ADJ_C)
+
+    assert result.rows == 1
+    assert parquet_dir.is_dir()
+    assert (parquet_dir / "qw_adj_c.parquet").exists()
+
+
+def test_ingest_prefers_csv_when_csv_and_xlsx_exist(tmp_path: Path) -> None:
+    raw_dir = tmp_path / "raw"
+    parquet_dir = tmp_path / "parquet"
+    raw_dir.mkdir()
+    parquet_dir.mkdir()
+
+    pd.DataFrame(
+        {
+            "date": ["2024-01-02"],
+            "005930": [100.0],
+        }
+    ).to_csv(raw_dir / "qw_adj_c.csv", index=False)
+    pd.DataFrame(
+        {
+            "date": ["2024-01-02"],
+            "005930": [999.0],
+        }
+    ).to_excel(raw_dir / "qw_adj_c.xlsx", index=False)
+
+    job = IngestJob(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+    )
+
+    job.run(DatasetId.QW_ADJ_C)
+
+    stored = pd.read_parquet(parquet_dir / "qw_adj_c.parquet", engine="pyarrow")
+    assert stored.iloc[0, 0] == 100.0

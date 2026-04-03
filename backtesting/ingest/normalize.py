@@ -3,7 +3,7 @@ import pandas as pd
 
 def normalize_frame(frame: pd.DataFrame) -> pd.DataFrame:
     normalized = frame.copy()
-    normalized["date"] = pd.to_datetime(normalized["date"])
+    normalized["date"] = pd.to_datetime(normalized["date"]).dt.normalize()
     normalized = normalized.sort_values("date")
 
     if normalized["date"].duplicated().any():

@@ -8,6 +8,7 @@ class ParquetStore:
         self.root = root
 
     def write(self, stem: str, frame: pd.DataFrame) -> Path:
+        self.root.mkdir(parents=True, exist_ok=True)
         path = self.root / f"{stem}.parquet"
         frame.to_parquet(path, engine="pyarrow")
         return path
