@@ -21,7 +21,7 @@ class BenchmarkSeries:
 
 class BenchmarkRepository:
     def __init__(self, prices: pd.DataFrame) -> None:
-        self.prices = prices
+        self.prices = prices.sort_index()
 
     @classmethod
     def from_frame(cls, frame: pd.DataFrame) -> "BenchmarkRepository":
@@ -42,7 +42,7 @@ class BenchmarkRepository:
 
 class SectorRepository:
     def __init__(self, sector: pd.DataFrame) -> None:
-        self.sector = sector
+        self.sector = sector.sort_index()
 
     @classmethod
     def from_frame(cls, frame: pd.DataFrame) -> "SectorRepository":
@@ -54,14 +54,13 @@ class SectorRepository:
 
     def latest_sector_weights(self, weights: pd.DataFrame) -> pd.Series:
         latest_date = weights.index.max()
-        latest_weight_row = weights.loc[latest_date]
-        if isinstance(latest_weight_row, pd.DataFrame):
-            latest_weight_row = latest_weight_row.iloc[-1]
-        latest_weight_row = latest_weight_row.astype(float)
+        latest_weight_row = weights.loc[:latest_date].iloc[-1].astype(float)
 
-        latest_sector_row = self.sector.loc[latest_date]
-        if isinstance(latest_sector_row, pd.DataFrame):
-            latest_sector_row = latest_sector_row.iloc[-1]
+        sector_history = self.sector.loc[:latest_date]
+        if sector_history.empty:
+            raise KeyError(f"no sector mapping available on or before {latest_date.date()}")
+
+        latest_sector_row = sector_history.iloc[-1]
         aligned = pd.DataFrame(
             {
                 "sector": latest_sector_row.reindex(latest_weight_row.index),
