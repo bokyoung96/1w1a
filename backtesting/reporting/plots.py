@@ -71,7 +71,14 @@ class PlotLibrary:
         return self._write_png(fig, "top_weights.png", require_png=require_png)
 
     def monthly_heatmap(self, runs: list[SavedRun], *, require_png: bool = False) -> Path:
-        fig = make_subplots(rows=max(len(runs), 1), cols=1, shared_xaxes=True, vertical_spacing=0.08, subplot_titles=[run.run_id for run in runs] or ["Monthly Returns"])
+        rows = max(len(runs), 1)
+        fig = make_subplots(
+            rows=rows,
+            cols=1,
+            shared_xaxes=True,
+            vertical_spacing=self._vertical_spacing(rows),
+            subplot_titles=[run.run_id for run in runs] or ["Monthly Returns"],
+        )
         for row, run in enumerate(runs, start=1):
             monthly = self._monthly_returns(run)
             heatmap = self._monthly_heatmap_trace(monthly)
@@ -102,6 +109,12 @@ class PlotLibrary:
         matrix = frame.pivot(index="year", columns="month", values="return").sort_index()
         matrix = matrix.reindex(columns=range(1, 13))
         return go.Heatmap(z=matrix.values, x=[_MONTH_LABELS[m - 1] for m in matrix.columns], y=matrix.index.astype(str), colorscale="RdYlGn", coloraxis="coloraxis")
+
+    @staticmethod
+    def _vertical_spacing(rows: int) -> float:
+        if rows <= 1:
+            return 0.08
+        return min(0.08, 1.0 / (rows - 1) - 1e-6)
 
     def _write_png(self, fig: go.Figure, filename: str, *, require_png: bool = False) -> Path:
         png_path = self.out_dir / filename
