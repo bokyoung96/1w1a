@@ -17,6 +17,12 @@ def test_report_spec_defaults_to_comparison_for_multiple_runs() -> None:
     assert spec.kind is ReportKind.COMPARISON
 
 
+def test_report_spec_normalizes_string_kind_to_enum() -> None:
+    spec = ReportSpec(name="single", run_ids=("run-a",), kind="tearsheet")
+
+    assert spec.kind is ReportKind.TEARSHEET
+
+
 def test_report_spec_positional_arguments_remain_backward_compatible() -> None:
     spec = ReportSpec("legacy", ("run-a",), "Legacy Title", False, False, True, ("pdf",), None, None)
 
@@ -55,6 +61,16 @@ def test_report_spec_rejects_tearsheet_with_multiple_runs() -> None:
         assert "TEARSHEET" in str(exc)
     else:
         raise AssertionError("expected ValueError")
+
+
+def test_report_spec_rejects_invalid_kind_values() -> None:
+    for invalid_kind in ("not-a-kind", 123):
+        try:
+            ReportSpec(name="single", run_ids=("run-a",), kind=invalid_kind)
+        except ValueError as exc:
+            assert "invalid report kind" in str(exc)
+        else:
+            raise AssertionError("expected ValueError")
 
 
 def test_bundles_expose_display_metadata(tmp_path: Path) -> None:

@@ -57,11 +57,20 @@ class ReportSpec:
     def __post_init__(self) -> None:
         if not self.run_ids:
             raise ValueError("run_ids must not be empty")
-        if self.kind is None:
-            object.__setattr__(self, "kind", ReportKind.TEARSHEET if len(self.run_ids) == 1 else ReportKind.COMPARISON)
-        elif self.kind is ReportKind.TEARSHEET and len(self.run_ids) != 1:
+        kind = self.kind
+        if kind is None:
+            kind = ReportKind.TEARSHEET if len(self.run_ids) == 1 else ReportKind.COMPARISON
+        else:
+            try:
+                kind = ReportKind(kind)
+            except (TypeError, ValueError) as exc:
+                raise ValueError(f"invalid report kind: {kind!r}") from exc
+
+        object.__setattr__(self, "kind", kind)
+
+        if kind is ReportKind.TEARSHEET and len(self.run_ids) != 1:
             raise ValueError("TEARSHEET reports require exactly one run_id")
-        elif self.kind is ReportKind.COMPARISON and len(self.run_ids) < 2:
+        if kind is ReportKind.COMPARISON and len(self.run_ids) < 2:
             raise ValueError("COMPARISON reports require at least two run_ids")
 
 
