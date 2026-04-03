@@ -7,6 +7,7 @@ from tqdm.auto import tqdm
 from backtesting.engine.result import BacktestResult
 from backtesting.execution.costs import CostModel
 from backtesting.execution.fill import fill_prices
+from backtesting.execution.schedule import RebalanceSchedule
 
 
 @dataclass(slots=True)
@@ -20,7 +21,7 @@ class BacktestEngine:
         capital: float,
         open: pd.DataFrame | None = None,
         tradable: pd.DataFrame | None = None,
-        schedule: pd.Series | None = None,
+        schedule: pd.Series | RebalanceSchedule | None = None,
         fill_mode: str = "next_open",
         allow_fractional: bool = True,
         show_progress: bool = False,
@@ -165,9 +166,14 @@ class BacktestEngine:
         return tradable.reindex_like(close).fillna(False).astype(bool)
 
     @staticmethod
-    def _schedule(schedule: pd.Series | None, close: pd.DataFrame) -> pd.Series:
+    def _schedule(
+        schedule: pd.Series | RebalanceSchedule | None,
+        close: pd.DataFrame,
+    ) -> pd.Series:
         if schedule is None:
             return pd.Series(True, index=close.index, dtype=bool)
+        if isinstance(schedule, RebalanceSchedule):
+            return schedule.flags(close.index).reindex(close.index).fillna(False).astype(bool)
         return schedule.reindex(close.index).fillna(False).astype(bool)
 
     @staticmethod
