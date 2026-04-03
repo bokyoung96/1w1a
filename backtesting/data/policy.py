@@ -9,7 +9,7 @@ def expand_monthly_frame(
     if validity != "month_only":
         raise ValueError(f"unsupported validity: {validity}")
 
-    out = pd.DataFrame(index=calendar, columns=frame.columns)
+    out = frame.reindex(calendar).copy()
     for ts, row in frame.iterrows():
         month_mask = (calendar.year == ts.year) & (calendar.month == ts.month)
         out.loc[month_mask, :] = row.values

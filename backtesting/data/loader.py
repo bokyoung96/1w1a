@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from backtesting.catalog import DataCatalog, DatasetId
+from backtesting.catalog import DataCatalog, DatasetId, DatasetSpec
 from backtesting.data.policy import expand_monthly_frame
 from backtesting.data.store import ParquetStore
 
@@ -55,7 +55,7 @@ class DataLoader:
             benchmark=request.benchmark,
         )
 
-    def _load_frame(self, spec, request: LoadRequest) -> pd.DataFrame:
+    def _load_frame(self, spec: DatasetSpec, request: LoadRequest) -> pd.DataFrame:
         frame = self.store.read(spec.stem)
         if spec.validity == "daily":
             return frame.loc[request.start : request.end]
