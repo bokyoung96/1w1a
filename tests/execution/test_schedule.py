@@ -19,6 +19,26 @@ def test_weekly_schedule_marks_rebalance_dates() -> None:
     assert flags.index.equals(index)
 
 
+def test_weekly_schedule_marks_last_available_date_when_cutoff_weekday_missing() -> None:
+    index = pd.to_datetime(
+        [
+            "2024-01-01",
+            "2024-01-02",
+            "2024-01-03",
+            "2024-01-04",
+            "2024-01-08",
+            "2024-01-09",
+            "2024-01-10",
+            "2024-01-11",
+            "2024-01-12",
+        ]
+    )
+
+    flags = WeeklySchedule(weekday=4).flags(index)
+
+    assert flags.tolist() == [False, False, False, True, False, False, False, False, True]
+
+
 def test_daily_schedule_marks_every_date() -> None:
     index = pd.date_range("2024-01-01", periods=3, freq="D")
 
@@ -63,7 +83,19 @@ def test_fill_prices_uses_next_open_for_next_open_mode() -> None:
 
     result = fill_prices(close=close, open_=open_, fill_mode="next_open")
 
-    assert result.equals(open_.shift(-1))
+    expected = open_.shift(-1).iloc[:-1]
+    assert result.equals(expected)
+
+
+def test_fill_prices_drops_terminal_row_for_next_open_mode() -> None:
+    index = pd.date_range("2024-01-01", periods=3, freq="D")
+    close = pd.DataFrame({"005930": [100.0, 101.0, 102.0]}, index=index)
+    open_ = pd.DataFrame({"005930": [99.0, 100.5, 101.5]}, index=index)
+
+    result = fill_prices(close=close, open_=open_, fill_mode="next_open")
+
+    assert result.index.equals(index[:-1])
+    assert result.loc["2024-01-02", "005930"] == 101.5
 
 
 def test_fill_prices_requires_open_for_next_open_mode() -> None:
@@ -71,3 +103,10 @@ def test_fill_prices_requires_open_for_next_open_mode() -> None:
 
     with pytest.raises(ValueError, match="open prices required for next_open"):
         fill_prices(close=close, open_=None, fill_mode="next_open")
+
+
+def test_fill_prices_rejects_unsupported_fill_mode() -> None:
+    close = pd.DataFrame({"005930": [100.0]})
+
+    with pytest.raises(ValueError, match="unsupported fill_mode: vwap"):
+        fill_prices(close=close, open_=None, fill_mode="vwap")

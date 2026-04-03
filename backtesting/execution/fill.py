@@ -11,5 +11,5 @@ def fill_prices(
     if fill_mode == "next_open":
         if open_ is None:
             raise ValueError("open prices required for next_open")
-        return open_.shift(-1)
+        return open_.shift(-1).iloc[:-1]
     raise ValueError(f"unsupported fill_mode: {fill_mode}")
