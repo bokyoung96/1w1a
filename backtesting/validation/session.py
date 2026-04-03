@@ -50,7 +50,7 @@ class ValidationSession:
     @staticmethod
     def _has_sparse_row(frame: pd.DataFrame, sparse_threshold: float) -> bool:
         if frame.shape[0] == 0:
-            return False
+            return True
 
         if frame.shape[1] == 0:
             return True

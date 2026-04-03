@@ -74,3 +74,12 @@ def test_validation_session_marks_zero_column_frames_sparse() -> None:
     warnings = session.run(signal, sparse_threshold=1.0)
 
     assert warnings == ["sparse_signal"]
+
+
+def test_validation_session_marks_empty_signal_sparse() -> None:
+    signal = pd.DataFrame(index=pd.DatetimeIndex([], name="date"))
+
+    session = ValidationSession()
+    warnings = session.run(signal, sparse_threshold=1.0)
+
+    assert "sparse_signal" in warnings
