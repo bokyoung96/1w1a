@@ -10,6 +10,7 @@ import httpx
 @unique
 class TRName(str, Enum):
     BID_ASK_LIST = "bid_ask_list"
+    DERIV_MINUTE = "deriv_minute"
 
 
 @dataclass(frozen=True)
