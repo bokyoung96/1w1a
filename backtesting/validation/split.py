@@ -1,0 +1,26 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+import pandas as pd
+
+
+@dataclass(frozen=True, slots=True)
+class SplitConfig:
+    is_start: pd.Timestamp
+    is_end: pd.Timestamp
+    oos_start: pd.Timestamp
+    oos_end: pd.Timestamp
+
+
+@dataclass(slots=True)
+class SplitResult:
+    is_frame: pd.DataFrame
+    oos_frame: pd.DataFrame
+
+
+def split_frame(frame: pd.DataFrame, config: SplitConfig) -> SplitResult:
+    return SplitResult(
+        is_frame=frame.loc[config.is_start : config.is_end].copy(),
+        oos_frame=frame.loc[config.oos_start : config.oos_end].copy(),
+    )
