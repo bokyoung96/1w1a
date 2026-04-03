@@ -52,23 +52,39 @@ class SectorRepository:
     def default(cls) -> "SectorRepository":
         return cls(sector=_load_default_frame(DatasetId.QW_WICS_SEC_BIG))
 
+    def latest_sector_row(self, as_of: pd.Timestamp) -> pd.Series:
+        sector_history = self.sector.loc[:as_of]
+        if sector_history.empty:
+            raise KeyError(f"no sector mapping available on or before {as_of.date()}")
+        return sector_history.iloc[-1]
+
+    def latest_sector_counts(self, weights: pd.DataFrame) -> pd.Series:
+        aligned = self._latest_aligned_weights(weights)
+        counts = (
+            aligned.loc[aligned["weight"].ne(0.0)]
+            .groupby("sector", sort=False)
+            .size()
+            .astype(float)
+            .rename("count")
+        )
+        counts.index.name = "sector"
+        return counts
+
     def latest_sector_weights(self, weights: pd.DataFrame) -> pd.Series:
+        aligned = self._latest_aligned_weights(weights)
+        exposure = aligned.groupby("sector", sort=False)["weight"].sum()
+        return exposure.sort_values(ascending=False).rename_axis(None).rename(None)
+
+    def _latest_aligned_weights(self, weights: pd.DataFrame) -> pd.DataFrame:
         latest_date = weights.index.max()
         latest_weight_row = weights.loc[:latest_date].iloc[-1].astype(float)
-
-        sector_history = self.sector.loc[:latest_date]
-        if sector_history.empty:
-            raise KeyError(f"no sector mapping available on or before {latest_date.date()}")
-
-        latest_sector_row = sector_history.iloc[-1]
-        aligned = pd.DataFrame(
+        latest_sector_row = self.latest_sector_row(latest_date)
+        return pd.DataFrame(
             {
                 "sector": latest_sector_row.reindex(latest_weight_row.index),
                 "weight": latest_weight_row,
             }
         ).dropna(subset=["sector"])
-        exposure = aligned.groupby("sector", sort=False)["weight"].sum()
-        return exposure.sort_values(ascending=False).rename_axis(None).rename(None)
 
 
 def _load_default_frame(dataset_id: DatasetId) -> pd.DataFrame:

@@ -60,3 +60,33 @@ def test_sector_repository_latest_sector_weights_maps_latest_date() -> None:
     expected.index.name = None
 
     assert_series_equal(exposure, expected)
+
+
+def test_sector_repository_exposes_latest_row_and_counts_without_internal_access() -> None:
+    sector_frame = pd.DataFrame(
+        {
+            "A": ["Tech", "Energy"],
+            "B": ["Utilities", "Utilities"],
+            "C": ["Health Care", "Energy"],
+        },
+        index=pd.to_datetime(["2024-01-31", "2024-02-29"]),
+    )
+    weights = pd.DataFrame(
+        {
+            "A": [0.6],
+            "B": [0.4],
+            "C": [0.0],
+        },
+        index=pd.to_datetime(["2024-02-15"]),
+    )
+    repo = SectorRepository.from_frame(sector_frame)
+
+    latest_row = repo.latest_sector_row(pd.Timestamp("2024-02-15"))
+    latest_count = repo.latest_sector_counts(weights)
+
+    expected_row = pd.Series({"A": "Tech", "B": "Utilities", "C": "Health Care"}, name=pd.Timestamp("2024-01-31"))
+    expected_count = pd.Series({"Tech": 1.0, "Utilities": 1.0}, name="count")
+    expected_count.index.name = "sector"
+
+    assert_series_equal(latest_row, expected_row)
+    assert_series_equal(latest_count.sort_index(), expected_count.sort_index())

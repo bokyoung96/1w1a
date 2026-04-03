@@ -81,8 +81,8 @@ class PerformanceSnapshotFactory:
         beta = 0.0 if abs(benchmark_variance) < 1e-12 else covariance / benchmark_variance
         alpha = float((strategy_returns.mean() - beta * benchmark_returns.mean()) * 252.0)
         annual_volatility = float(strategy_returns.std(ddof=0) * (252.0**0.5)) if len(strategy_returns) > 1 else 0.0
-        downside = strategy_returns.loc[strategy_returns.lt(0.0)]
-        downside_volatility = float(downside.std(ddof=0) * (252.0**0.5)) if len(downside) > 0 else 0.0
+        downside_returns = strategy_returns.clip(upper=0.0)
+        downside_volatility = float((downside_returns.pow(2).mean() ** 0.5) * (252.0**0.5))
         tracking_error = float(active_returns.std(ddof=0) * (252.0**0.5)) if len(active_returns) > 1 else 0.0
         information_ratio = 0.0 if abs(tracking_error) < 1e-12 else float(active_returns.mean() * 252.0 / tracking_error)
         cumulative_return = float(strategy_equity.iloc[-1] / strategy_equity.iloc[0] - 1.0)
@@ -108,7 +108,7 @@ class PerformanceSnapshotFactory:
         )
 
     def _build_rolling_metrics(self, strategy_returns: pd.Series, benchmark_returns: pd.Series) -> RollingMetrics:
-        window = max(3, min(20, len(strategy_returns)))
+        window = 252
         rolling_sharpe = strategy_returns.rolling(window=window, min_periods=2).apply(
             lambda values: annualized_sharpe(pd.Series(values)),
             raw=False,
@@ -168,32 +168,28 @@ class PerformanceSnapshotFactory:
 
     def _build_exposure(self, run: SavedRun) -> ExposureSnapshot:
         holdings_count = run.weights.fillna(0.0).ne(0.0).sum(axis=1).rename("holdings_count")
-        latest_holdings = run.latest_weights.copy() if run.latest_weights is not None else pd.DataFrame()
+        latest_holdings = run.latest_weights.copy() if run.latest_weights is not None else self._latest_holdings(run.weights)
         return ExposureSnapshot(holdings_count=holdings_count.astype(float), latest_holdings=latest_holdings)
 
     def _build_sectors(self, weights: pd.DataFrame) -> SectorSnapshot:
         latest_weighted = self.sector_repo.latest_sector_weights(weights)
         latest_weighted = latest_weighted.loc[latest_weighted.ne(0.0)]
-        latest_date = weights.index.max()
-        latest_weight_row = weights.loc[:latest_date].iloc[-1].astype(float)
-        latest_sector_row = self.sector_repo.sector.loc[:latest_date].iloc[-1]
-
-        counts = (
-            pd.DataFrame(
-                {
-                    "sector": latest_sector_row.reindex(latest_weight_row.index),
-                    "weight": latest_weight_row,
-                }
-            )
-            .loc[lambda frame: frame["weight"].ne(0.0)]
-            .dropna(subset=["sector"])
-            .groupby("sector", sort=False)
-            .size()
-            .astype(float)
-            .rename("count")
-        )
+        counts = self.sector_repo.latest_sector_counts(weights)
         concentration = latest_weighted.abs().sort_values(ascending=False).rename("concentration")
         return SectorSnapshot(latest_weighted=latest_weighted, latest_count=counts, concentration=concentration)
+
+    @staticmethod
+    def _latest_holdings(weights: pd.DataFrame) -> pd.DataFrame:
+        latest_weight = weights.iloc[-1].astype(float)
+        frame = pd.DataFrame(
+            {
+                "symbol": latest_weight.index,
+                "target_weight": latest_weight.values,
+            }
+        )
+        frame = frame.loc[frame["target_weight"].ne(0.0)].copy()
+        frame["abs_weight"] = frame["target_weight"].abs()
+        return frame.sort_values(["abs_weight", "symbol"], ascending=[False, True]).reset_index(drop=True)
 
     @staticmethod
     def _equity_from_returns(returns: pd.Series, starting_value: float) -> pd.Series:
