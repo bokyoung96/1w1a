@@ -106,7 +106,7 @@ def test_split_frame_rejects_is_window_without_overlap() -> None:
         oos_end=pd.Timestamp("2024-01-13"),
     )
 
-    with pytest.raises(ValueError, match="IS window must overlap frame"):
+    with pytest.raises(ValueError, match="IS window must be within frame bounds"):
         split_frame(frame, config)
 
 
@@ -122,5 +122,37 @@ def test_split_frame_rejects_oos_window_without_overlap() -> None:
         oos_end=pd.Timestamp("2024-01-11"),
     )
 
-    with pytest.raises(ValueError, match="OOS window must overlap frame"):
+    with pytest.raises(ValueError, match="OOS window must be within frame bounds"):
+        split_frame(frame, config)
+
+
+def test_split_frame_rejects_partial_is_window_overlap() -> None:
+    frame = pd.DataFrame(
+        {"signal": [1, 2, 3]},
+        index=pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"]),
+    )
+    config = SplitConfig(
+        is_start=pd.Timestamp("2024-01-01"),
+        is_end=pd.Timestamp("2024-01-03"),
+        oos_start=pd.Timestamp("2024-01-04"),
+        oos_end=pd.Timestamp("2024-01-04"),
+    )
+
+    with pytest.raises(ValueError, match="IS window must be within frame bounds"):
+        split_frame(frame, config)
+
+
+def test_split_frame_rejects_partial_oos_window_overlap() -> None:
+    frame = pd.DataFrame(
+        {"signal": [1, 2, 3]},
+        index=pd.to_datetime(["2024-01-01", "2024-01-02", "2024-01-03"]),
+    )
+    config = SplitConfig(
+        is_start=pd.Timestamp("2024-01-01"),
+        is_end=pd.Timestamp("2024-01-01"),
+        oos_start=pd.Timestamp("2024-01-02"),
+        oos_end=pd.Timestamp("2024-01-05"),
+    )
+
+    with pytest.raises(ValueError, match="OOS window must be within frame bounds"):
         split_frame(frame, config)
