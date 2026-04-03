@@ -12,7 +12,7 @@ from .execution import (
     WeeklySchedule,
     fill_prices,
 )
-from .reporting import RunWriter
+from .reporting import ReportBuilder, ReportBundle, ReportSpec, RunReader, RunWriter
 from .strategy import (
     BaseStrategy,
     CrossSectionalStrategy,
@@ -55,6 +55,10 @@ __all__ = (
     "RankLongShort",
     "RebalanceSchedule",
     "RegisteredStrategy",
+    "ReportBuilder",
+    "ReportBundle",
+    "ReportSpec",
+    "RunReader",
     "RunWriter",
     "SplitConfig",
     "SplitResult",
