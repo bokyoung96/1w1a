@@ -44,3 +44,35 @@ def test_split_frame_rejects_touching_boundaries() -> None:
 
     with pytest.raises(ValueError, match="is_end must be < oos_start"):
         split_frame(frame, config)
+
+
+def test_split_frame_rejects_invalid_is_window() -> None:
+    frame = pd.DataFrame(
+        {"signal": [1, 2]},
+        index=pd.to_datetime(["2024-01-01", "2024-01-02"]),
+    )
+    config = SplitConfig(
+        is_start=pd.Timestamp("2024-01-02"),
+        is_end=pd.Timestamp("2024-01-01"),
+        oos_start=pd.Timestamp("2024-01-03"),
+        oos_end=pd.Timestamp("2024-01-04"),
+    )
+
+    with pytest.raises(ValueError, match="is_start must be <= is_end"):
+        split_frame(frame, config)
+
+
+def test_split_frame_rejects_invalid_oos_window() -> None:
+    frame = pd.DataFrame(
+        {"signal": [1, 2]},
+        index=pd.to_datetime(["2024-01-01", "2024-01-02"]),
+    )
+    config = SplitConfig(
+        is_start=pd.Timestamp("2024-01-01"),
+        is_end=pd.Timestamp("2024-01-01"),
+        oos_start=pd.Timestamp("2024-01-04"),
+        oos_end=pd.Timestamp("2024-01-03"),
+    )
+
+    with pytest.raises(ValueError, match="oos_start must be <= oos_end"):
+        split_frame(frame, config)

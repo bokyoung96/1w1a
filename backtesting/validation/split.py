@@ -20,6 +20,10 @@ class SplitResult:
 
 
 def split_frame(frame: pd.DataFrame, config: SplitConfig) -> SplitResult:
+    if config.is_start > config.is_end:
+        raise ValueError("is_start must be <= is_end")
+    if config.oos_start > config.oos_end:
+        raise ValueError("oos_start must be <= oos_end")
     if config.is_end >= config.oos_start:
         raise ValueError("is_end must be < oos_start")
 
