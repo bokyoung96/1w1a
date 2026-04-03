@@ -17,7 +17,6 @@ class CostModel:
     fee: float = 0.0
     sell_tax: float = 0.0
     slippage: float = 0.0
-    borrow: float = 0.0
 
     def calc(self, price: float, qty: float, side: str) -> TradeCost:
         gross = abs(price * qty)
