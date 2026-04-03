@@ -47,17 +47,22 @@ class ReportSpec:
     name: str
     run_ids: tuple[str, ...]
     title: str | None = None
-    kind: ReportKind | None = None
-    benchmark: BenchmarkConfig = field(default_factory=BenchmarkConfig.default_kospi200)
     include_factor: bool = True
     include_validation: bool = True
     include_is_oos: bool = True
     formats: tuple[str, ...] = ("html", "pdf")
+    kind: ReportKind | None = None
+    benchmark: BenchmarkConfig = field(default_factory=BenchmarkConfig.default_kospi200)
 
     def __post_init__(self) -> None:
+        if not self.run_ids:
+            raise ValueError("run_ids must not be empty")
         if self.kind is None:
-            inferred_kind = ReportKind.TEARSHEET if len(self.run_ids) == 1 else ReportKind.COMPARISON
-            object.__setattr__(self, "kind", inferred_kind)
+            object.__setattr__(self, "kind", ReportKind.TEARSHEET if len(self.run_ids) == 1 else ReportKind.COMPARISON)
+        elif self.kind is ReportKind.TEARSHEET and len(self.run_ids) != 1:
+            raise ValueError("TEARSHEET reports require exactly one run_id")
+        elif self.kind is ReportKind.COMPARISON and len(self.run_ids) < 2:
+            raise ValueError("COMPARISON reports require at least two run_ids")
 
 
 @dataclass(frozen=True, slots=True)
@@ -68,7 +73,7 @@ class TearsheetBundle:
     display_name: str
     pages: dict[str, Path]
     tables: dict[str, pd.DataFrame]
-    notes: tuple[str, ...]
+    notes: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -78,7 +83,7 @@ class ComparisonBundle:
     display_names: tuple[str, ...]
     pages: dict[str, Path]
     tables: dict[str, pd.DataFrame]
-    notes: tuple[str, ...]
+    notes: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
