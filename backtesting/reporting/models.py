@@ -20,6 +20,7 @@ class SavedRun:
     latest_weights: pd.DataFrame | None = None
     validation: dict[str, object] | None = None
     split: dict[str, object] | None = None
+    factor: dict[str, object] | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -31,3 +32,14 @@ class ReportSpec:
     include_validation: bool = True
     include_is_oos: bool = True
     formats: tuple[str, ...] = ("html", "pdf")
+
+
+@dataclass(frozen=True, slots=True)
+class ReportBundle:
+    spec: ReportSpec
+    out_dir: Path
+    runs: tuple[SavedRun, ...]
+    summary: pd.DataFrame
+    appendix: pd.DataFrame
+    plots: dict[str, Path]
+    notes: tuple[str, ...] = ()
