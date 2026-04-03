@@ -1,0 +1,161 @@
+@page {
+  size: A4;
+  margin: 18mm;
+}
+
+:root {
+  color-scheme: light;
+  --ink: #172033;
+  --muted: #5f6b7a;
+  --line: #d9e0e8;
+  --paper: #fbfcfe;
+  --panel: #ffffff;
+  --accent: #244062;
+}
+
+html {
+  background: var(--paper);
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.page {
+  width: 1200px;
+  max-width: calc(100% - 96px);
+  margin: 0 auto;
+  padding: 48px;
+}
+
+.cover {
+  padding: 16px 0 28px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.section {
+  margin-top: 32px;
+  padding: 22px 24px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.section-header h2,
+.cover h1 {
+  margin: 0;
+  line-height: 1.15;
+}
+
+.section-header {
+  margin-bottom: 16px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.metric-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.metric-table th,
+.metric-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.metric-table th {
+  color: var(--accent);
+  font-weight: 700;
+  background: #f6f8fb;
+}
+
+.plot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.plot-card {
+  margin: 0;
+  padding: 14px;
+  background: #f9fbfd;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.plot-card figcaption {
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+img.plot {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.plot-frame {
+  display: block;
+  width: 100%;
+  min-height: 420px;
+  border: 0;
+  background: #fff;
+}
+
+.plot-link {
+  margin: 10px 0 0;
+  font-size: 0.9rem;
+}
+
+.plot-link a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.notes {
+  margin: 16px 0 0;
+  padding-left: 20px;
+  color: var(--muted);
+}
+
+@media print {
+  .page {
+    width: auto;
+    max-width: none;
+    padding: 0;
+  }
+
+  .section,
+  .plot-card {
+    box-shadow: none;
+  }
+}

@@ -15,3 +15,13 @@ def test_public_package_exports_import_cleanly() -> None:
 
     for name in export_names:
         assert name in namespace
+
+
+def test_reporting_exports_import_cleanly() -> None:
+    export_names = set(bt.__all__)
+
+    assert "RunReader" in export_names
+    assert "RunWriter" in export_names
+    assert "ReportSpec" in export_names
+    assert "ReportBundle" in export_names
+    assert "ReportBuilder" in export_names

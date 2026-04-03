@@ -34,6 +34,9 @@ class RunWriter:
 
         self._write_json(run_dir / "config.json", asdict(report.config))
         self._write_json(run_dir / "summary.json", report.summary)
+        self._write_json(run_dir / "validation.json", getattr(report, "validation", None) or {"warnings": []})
+        self._write_json(run_dir / "split.json", getattr(report, "split", None) or {"is": None, "oos": None})
+        self._write_json(run_dir / "factor.json", getattr(report, "factor", None) or {"metrics": {}})
 
         report.result.equity.rename("equity").to_csv(series_dir / "equity.csv", index_label="date")
         report.result.returns.rename("returns").to_csv(series_dir / "returns.csv", index_label="date")
