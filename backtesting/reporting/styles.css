@@ -149,6 +149,7 @@ img.plot {
 
 @media print {
   .page {
+    width: auto;
     max-width: none;
     padding: 0;
   }
