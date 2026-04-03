@@ -109,15 +109,15 @@ class PerformanceSnapshotFactory:
 
     def _build_rolling_metrics(self, strategy_returns: pd.Series, benchmark_returns: pd.Series) -> RollingMetrics:
         window = 252
-        rolling_sharpe = strategy_returns.rolling(window=window, min_periods=2).apply(
+        rolling_sharpe = strategy_returns.rolling(window=window, min_periods=252).apply(
             lambda values: annualized_sharpe(pd.Series(values)),
             raw=False,
         )
-        benchmark_variance = benchmark_returns.rolling(window=window, min_periods=2).var(ddof=0)
-        rolling_beta = strategy_returns.rolling(window=window, min_periods=2).cov(benchmark_returns, ddof=0).div(
+        benchmark_variance = benchmark_returns.rolling(window=window, min_periods=252).var(ddof=0)
+        rolling_beta = strategy_returns.rolling(window=window, min_periods=252).cov(benchmark_returns, ddof=0).div(
             benchmark_variance
         )
-        rolling_beta = rolling_beta.replace([float("inf"), float("-inf")], 0.0).fillna(0.0)
+        rolling_beta = rolling_beta.replace([float("inf"), float("-inf")], pd.NA)
         return RollingMetrics(
             series={
                 "rolling_sharpe": rolling_sharpe.rename("rolling_sharpe"),
