@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pandas as pd
 from pandas.testing import assert_series_equal
 
@@ -37,17 +35,22 @@ def test_benchmark_repository_load_returns_uses_kospi200_price_path() -> None:
 
 
 def test_sector_repository_latest_sector_weights_maps_latest_date() -> None:
-    sector_index = pd.to_datetime(["2024-01-01", "2024-01-02"])
+    sector_index = pd.to_datetime(["2024-01-01", "2024-01-02", "2024-01-03"])
     sector_frame = pd.DataFrame(
         {
-            "A": ["G99", "G10"],
-            "B": ["G88", "G15"],
+            "A": ["G99", "G10", "G77"],
+            "B": ["G88", "G10", "G66"],
+            "C": ["G55", "G15", "G44"],
         },
         index=sector_index,
     )
     weights = pd.DataFrame(
-        {"A": [0.6], "B": [0.4]},
-        index=pd.to_datetime(["2024-01-02"]),
+        {
+            "A": [0.1, 0.25],
+            "B": [0.2, 0.35],
+            "C": [0.7, 0.4],
+        },
+        index=pd.to_datetime(["2024-01-01", "2024-01-02"]),
     )
 
     exposure = SectorRepository.from_frame(sector_frame).latest_sector_weights(weights)
@@ -56,4 +59,3 @@ def test_sector_repository_latest_sector_weights_maps_latest_date() -> None:
     expected.index.name = None
 
     assert_series_equal(exposure, expected)
-

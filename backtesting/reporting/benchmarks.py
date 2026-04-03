@@ -53,8 +53,15 @@ class SectorRepository:
         return cls(sector=_load_default_frame(DatasetId.QW_WICS_SEC_BIG))
 
     def latest_sector_weights(self, weights: pd.DataFrame) -> pd.Series:
-        latest_weight_row = weights.sort_index().iloc[-1].astype(float)
-        latest_sector_row = self.sector.sort_index().iloc[-1]
+        latest_date = weights.index.max()
+        latest_weight_row = weights.loc[latest_date]
+        if isinstance(latest_weight_row, pd.DataFrame):
+            latest_weight_row = latest_weight_row.iloc[-1]
+        latest_weight_row = latest_weight_row.astype(float)
+
+        latest_sector_row = self.sector.loc[latest_date]
+        if isinstance(latest_sector_row, pd.DataFrame):
+            latest_sector_row = latest_sector_row.iloc[-1]
         aligned = pd.DataFrame(
             {
                 "sector": latest_sector_row.reindex(latest_weight_row.index),
