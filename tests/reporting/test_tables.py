@@ -44,8 +44,36 @@ def test_build_summary_table_compares_runs() -> None:
     assert table.loc[1, "strategy"] == "op_fwd_yield"
 
 
-def test_build_latest_weights_table_uses_latest_non_zero_row() -> None:
-    index = pd.to_datetime(["2024-01-02", "2024-01-03"])
+def test_build_summary_table_coerces_none_metrics_to_nan() -> None:
+    index = pd.to_datetime(["2024-01-02"])
+    run = SavedRun(
+        run_id="a",
+        path=Path("a"),
+        config={"strategy": "momentum"},
+        summary={"cagr": None, "mdd": -0.1, "sharpe": None, "final_equity": 120.0, "avg_turnover": None},
+        equity=pd.Series([120.0], index=index),
+        returns=pd.Series([0.0], index=index),
+        turnover=pd.Series([0.05], index=index),
+        weights=pd.DataFrame({"A": [1.0]}, index=index),
+        qty=pd.DataFrame({"A": [10.0]}, index=index),
+    )
+
+    table = build_summary_table([run])
+
+    assert pd.isna(table.loc[0, "cagr"])
+    assert pd.isna(table.loc[0, "sharpe"])
+    assert pd.isna(table.loc[0, "avg_turnover"])
+
+
+def test_build_summary_table_with_no_runs_has_stable_schema() -> None:
+    table = build_summary_table([])
+
+    expected = pd.DataFrame(columns=["run_id", "strategy", "cagr", "mdd", "sharpe", "final_equity", "avg_turnover"])
+    assert_frame_equal(table, expected)
+
+
+def test_build_latest_weights_table_uses_latest_dated_row() -> None:
+    index = pd.to_datetime(["2024-01-03", "2024-01-02"])
     run = SavedRun(
         run_id="a",
         path=Path("a"),
@@ -62,16 +90,16 @@ def test_build_latest_weights_table_uses_latest_non_zero_row() -> None:
 
     expected = pd.DataFrame(
         {
-            "symbol": ["B", "A"],
-            "target_weight": [0.75, -0.25],
-            "abs_weight": [0.75, 0.25],
+            "symbol": ["B"],
+            "target_weight": [0.5],
+            "abs_weight": [0.5],
         }
     )
     assert_frame_equal(table, expected)
 
 
-def test_build_latest_qty_table_uses_latest_non_zero_row() -> None:
-    index = pd.to_datetime(["2024-01-02", "2024-01-03"])
+def test_build_latest_qty_table_uses_latest_dated_row() -> None:
+    index = pd.to_datetime(["2024-01-03", "2024-01-02"])
     run = SavedRun(
         run_id="a",
         path=Path("a"),
@@ -88,9 +116,9 @@ def test_build_latest_qty_table_uses_latest_non_zero_row() -> None:
 
     expected = pd.DataFrame(
         {
-            "symbol": ["B", "A"],
-            "qty": [-5.0, 2.0],
-            "abs_qty": [5.0, 2.0],
+            "symbol": pd.Series(dtype=object),
+            "qty": pd.Series(dtype=float),
+            "abs_qty": pd.Series(dtype=float),
         }
     )
     assert_frame_equal(table, expected)
@@ -123,4 +151,11 @@ def test_build_appendix_table_lists_run_metadata() -> None:
             }
         ]
     )
+    assert_frame_equal(table, expected)
+
+
+def test_build_appendix_table_with_no_runs_has_stable_schema() -> None:
+    table = build_appendix_table([])
+
+    expected = pd.DataFrame(columns=["run_id", "path", "strategy", "start", "end"])
     assert_frame_equal(table, expected)
