@@ -36,17 +36,13 @@ volume = market.frames["volume"]
 The smoke checks below use the current implementation and a small real subset of `raw/qw_adj_c.csv` from the repo root.
 
 ```powershell
-$py = "$env:USERPROFILE\anaconda3\envs\myenv\python.exe"
+python -c "from pathlib import Path; import tempfile; import pandas as pd; from root import ROOT; from backtesting.catalog import DataCatalog, DatasetId; from backtesting.ingest.pipeline import IngestJob; raw_path = ROOT.raw_path if ROOT.raw_path.exists() else ROOT.root.parents[1] / 'raw'; frame = pd.read_csv(raw_path / 'qw_adj_c.csv', nrows=5); frame = frame.rename(columns={frame.columns[0]: 'date'}); tmp = Path(tempfile.mkdtemp()); raw_dir = tmp / 'raw'; parquet_dir = tmp / 'parquet'; raw_dir.mkdir(); parquet_dir.mkdir(); frame.to_csv(raw_dir / 'qw_adj_c.csv', index=False); print(IngestJob(DataCatalog.default(), raw_dir, parquet_dir).run(DatasetId.QW_ADJ_C).to_dict())"
 ```
 
 ```powershell
-& $py -c "from pathlib import Path; import tempfile; import pandas as pd; from root import ROOT; from backtesting.catalog import DataCatalog, DatasetId; from backtesting.ingest.pipeline import IngestJob; source = ROOT.root.parents[1] / 'raw' / 'qw_adj_c.csv'; frame = pd.read_csv(source, nrows=5); frame = frame.rename(columns={frame.columns[0]: 'date'}); tmp = Path(tempfile.mkdtemp()); raw_dir = tmp / 'raw'; parquet_dir = tmp / 'parquet'; raw_dir.mkdir(); parquet_dir.mkdir(); frame.to_csv(raw_dir / 'qw_adj_c.csv', index=False); job = IngestJob(DataCatalog.default(), raw_dir, parquet_dir); print(job.run(DatasetId.QW_ADJ_C).to_dict())"
+python -c "import pandas as pd; from backtesting.engine.core import BacktestEngine; from backtesting.execution.costs import CostModel; close = pd.DataFrame({'A':[100,101,102],'B':[100,99,98]}, index=pd.date_range('2024-01-01', periods=3)); weights = pd.DataFrame({'A':[0.5,0.5,0.5],'B':[0.5,0.5,0.5]}, index=close.index); result = BacktestEngine(CostModel()).run(close=close, weights=weights, capital=1000.0, fill_mode='close'); print(result.equity.tail(1))"
 ```
 
 ```powershell
-& $py -c "import pandas as pd; from backtesting.engine.core import BacktestEngine; from backtesting.execution.costs import CostModel; close = pd.DataFrame({'A':[100,101,102],'B':[100,99,98]}, index=pd.date_range('2024-01-01', periods=3)); weights = pd.DataFrame({'A':[0.5,0.5,0.5],'B':[0.5,0.5,0.5]}, index=close.index); result = BacktestEngine(CostModel()).run(close=close, weights=weights, capital=1000.0, fill_mode='close'); print(result.equity.tail(1))"
-```
-
-```powershell
-& $py -c "import pandas as pd; from backtesting.validation.session import ValidationSession; signal = pd.DataFrame({'A':[1.0,2.0]}, index=pd.date_range('2024-01-01', periods=2)); print(ValidationSession().run(signal=signal, lag_sensitive_datasets=['qw_eps_nfy1'], lag_map={}))"
+python -c "import pandas as pd; from backtesting.validation.session import ValidationSession; signal = pd.DataFrame({'A':[1.0,2.0]}, index=pd.date_range('2024-01-01', periods=2)); print(ValidationSession().run(signal=signal, lag_sensitive_datasets=['qw_eps_nfy1'], lag_map={}))"
 ```
