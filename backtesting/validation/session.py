@@ -21,7 +21,7 @@ class ValidationSession:
         warnings: list[str] = []
         lag_map = dict(lag_map or {})
 
-        for dataset in lag_sensitive_datasets:
+        for dataset in self._unique_sorted(lag_sensitive_datasets):
             if dataset not in lag_map:
                 warnings.append(f"missing_lag:{dataset}")
 
@@ -34,7 +34,7 @@ class ValidationSession:
         if self._has_sparse_row(signal, sparse_threshold):
             warnings.append("sparse_signal")
 
-        for dataset in stale_gap_datasets:
+        for dataset in self._unique_sorted(stale_gap_datasets):
             warnings.append(f"stale_gap:{dataset}")
 
         return warnings
@@ -54,3 +54,7 @@ class ValidationSession:
 
         coverage = frame.notna().mean(axis=1)
         return bool((coverage < sparse_threshold).any())
+
+    @staticmethod
+    def _unique_sorted(values: Iterable[str]) -> list[str]:
+        return sorted(set(values))

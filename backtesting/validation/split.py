@@ -20,6 +20,9 @@ class SplitResult:
 
 
 def split_frame(frame: pd.DataFrame, config: SplitConfig) -> SplitResult:
+    if config.is_end >= config.oos_start:
+        raise ValueError("is_end must be < oos_start")
+
     return SplitResult(
         is_frame=frame.loc[config.is_start : config.is_end].copy(),
         oos_frame=frame.loc[config.oos_start : config.oos_end].copy(),

@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 
 from backtesting.validation import SplitConfig, split_frame
 
@@ -27,3 +28,19 @@ def test_split_frame_returns_is_and_oos_slices() -> None:
 
     assert list(result.is_frame.index) == list(pd.to_datetime(["2024-01-02", "2024-01-03"]))
     assert list(result.oos_frame.index) == list(pd.to_datetime(["2024-01-04", "2024-01-05"]))
+
+
+def test_split_frame_rejects_touching_boundaries() -> None:
+    frame = pd.DataFrame(
+        {"signal": [1, 2]},
+        index=pd.to_datetime(["2024-01-01", "2024-01-02"]),
+    )
+    config = SplitConfig(
+        is_start=pd.Timestamp("2024-01-01"),
+        is_end=pd.Timestamp("2024-01-02"),
+        oos_start=pd.Timestamp("2024-01-02"),
+        oos_end=pd.Timestamp("2024-01-02"),
+    )
+
+    with pytest.raises(ValueError, match="is_end must be < oos_start"):
+        split_frame(frame, config)
