@@ -6,7 +6,7 @@ from .deriv_minute import DerivMinute
 from .protocol import TRName
 from .register import TRBatchClient
 from symbols import SymbolType, Symbols
-from tools import DataTools
+from kis.tools import DataTools
 
 if __package__ in (None, ""):
     raise SystemExit("Run from repo root: python -m tr_id.call")

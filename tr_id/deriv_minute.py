@@ -5,7 +5,7 @@ from typing import Any, Mapping
 
 import httpx
 
-from tools import TimeTools
+from kis.tools import TimeTools
 from tr_id.protocol import TRName, TRResponse
 
 

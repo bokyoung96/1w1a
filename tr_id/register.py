@@ -6,12 +6,12 @@ import time
 
 import httpx
 
-from config import KISAuth, KISConfig, setup_logging
+from kis.config import KISAuth, KISConfig, setup_logging
 from root import ROOT
 from tr_id.protocol import TRName, TRResponse, TRSpec
 from tr_id.bid_ask_list import BidAskListSpec
 from tr_id.deriv_minute import DerivMinuteSpec
-from tools import RateLimiter
+from kis.tools import RateLimiter
 
 
 class TRRegistry:
