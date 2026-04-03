@@ -92,3 +92,35 @@ def test_split_frame_rejects_unsorted_index() -> None:
 
     with pytest.raises(ValueError, match="frame.index must be monotonic increasing"):
         split_frame(frame, config)
+
+
+def test_split_frame_rejects_is_window_without_overlap() -> None:
+    frame = pd.DataFrame(
+        {"signal": [1, 2]},
+        index=pd.to_datetime(["2024-01-01", "2024-01-02"]),
+    )
+    config = SplitConfig(
+        is_start=pd.Timestamp("2024-01-10"),
+        is_end=pd.Timestamp("2024-01-11"),
+        oos_start=pd.Timestamp("2024-01-12"),
+        oos_end=pd.Timestamp("2024-01-13"),
+    )
+
+    with pytest.raises(ValueError, match="IS window must overlap frame"):
+        split_frame(frame, config)
+
+
+def test_split_frame_rejects_oos_window_without_overlap() -> None:
+    frame = pd.DataFrame(
+        {"signal": [1, 2]},
+        index=pd.to_datetime(["2024-01-01", "2024-01-02"]),
+    )
+    config = SplitConfig(
+        is_start=pd.Timestamp("2024-01-01"),
+        is_end=pd.Timestamp("2024-01-01"),
+        oos_start=pd.Timestamp("2024-01-10"),
+        oos_end=pd.Timestamp("2024-01-11"),
+    )
+
+    with pytest.raises(ValueError, match="OOS window must overlap frame"):
+        split_frame(frame, config)

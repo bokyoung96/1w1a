@@ -29,7 +29,15 @@ def split_frame(frame: pd.DataFrame, config: SplitConfig) -> SplitResult:
     if config.is_end >= config.oos_start:
         raise ValueError("is_end must be < oos_start")
 
+    is_frame = frame.loc[config.is_start : config.is_end].copy()
+    if is_frame.empty:
+        raise ValueError("IS window must overlap frame")
+
+    oos_frame = frame.loc[config.oos_start : config.oos_end].copy()
+    if oos_frame.empty:
+        raise ValueError("OOS window must overlap frame")
+
     return SplitResult(
-        is_frame=frame.loc[config.is_start : config.is_end].copy(),
-        oos_frame=frame.loc[config.oos_start : config.oos_end].copy(),
+        is_frame=is_frame,
+        oos_frame=oos_frame,
     )
