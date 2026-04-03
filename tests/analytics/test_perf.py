@@ -24,3 +24,13 @@ def test_summarize_perf_handles_constant_returns() -> None:
 
     assert perf["sharpe"] == 0.0
     assert perf["cagr"] == pytest.approx((1.01 ** 252) - 1.0)
+
+
+def test_summarize_perf_marks_short_samples_undefined() -> None:
+    returns = pd.Series([0.05], index=pd.RangeIndex(1))
+
+    perf = summarize_perf(returns)
+
+    assert pd.isna(perf["cagr"])
+    assert perf["mdd"] == pytest.approx(0.0)
+    assert pd.isna(perf["sharpe"])

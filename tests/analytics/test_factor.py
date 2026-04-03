@@ -52,6 +52,17 @@ def test_quantile_returns_returns_empty_frame_without_overlap() -> None:
     assert out.columns.tolist() == ["q1", "q2", "q3"]
 
 
+def test_quantile_returns_returns_empty_frame_without_shared_columns() -> None:
+    idx = pd.to_datetime(["2024-01-02", "2024-01-03"])
+    signal = pd.DataFrame({"A": [1.0, 2.0]}, index=idx)
+    fwd = pd.DataFrame({"B": [0.01, 0.02]}, index=idx)
+
+    out = quantile_returns(signal, fwd, q=3)
+
+    assert out.empty
+    assert out.columns.tolist() == ["q1", "q2", "q3"]
+
+
 def test_rank_ic_uses_common_overlap_and_returns_nan_when_empty() -> None:
     idx = pd.to_datetime(["2024-01-02", "2024-01-03"])
     signal = pd.DataFrame({"A": [1.0, 2.0], "B": [2.0, 2.0]}, index=idx)
@@ -66,6 +77,16 @@ def test_rank_ic_uses_common_overlap_and_returns_nan_when_empty() -> None:
 def test_rank_ic_returns_empty_series_without_overlap() -> None:
     signal = pd.DataFrame({"A": [1.0]}, index=pd.to_datetime(["2024-01-02"]))
     fwd = pd.DataFrame({"A": [0.01]}, index=pd.to_datetime(["2024-01-03"]))
+
+    ic = rank_ic(signal, fwd)
+
+    assert ic.empty
+
+
+def test_rank_ic_returns_empty_series_without_shared_columns() -> None:
+    idx = pd.to_datetime(["2024-01-02", "2024-01-03"])
+    signal = pd.DataFrame({"A": [1.0, 2.0]}, index=idx)
+    fwd = pd.DataFrame({"B": [0.01, 0.02]}, index=idx)
 
     ic = rank_ic(signal, fwd)
 

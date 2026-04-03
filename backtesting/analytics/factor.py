@@ -15,6 +15,9 @@ def quantile_returns(
     common_idx = [ts for ts in signal.index if ts in fwd_returns.index]
     common_cols = [col for col in signal.columns if col in fwd_returns.columns]
 
+    if not common_cols:
+        return pd.DataFrame(columns=cols, dtype=float)
+
     for ts in common_idx:
         sig = signal.loc[ts, common_cols]
         fut = fwd_returns.loc[ts, common_cols]
@@ -60,6 +63,9 @@ def rank_ic(signal: pd.DataFrame, fwd_returns: pd.DataFrame) -> pd.Series:
     common_idx = [ts for ts in signal.index if ts in fwd_returns.index]
     common_cols = [col for col in signal.columns if col in fwd_returns.columns]
 
+    if not common_cols:
+        return pd.Series(dtype=float)
+
     for ts in common_idx:
         sig = signal.loc[ts, common_cols]
         fut = fwd_returns.loc[ts, common_cols]
@@ -75,4 +81,3 @@ def rank_ic(signal: pd.DataFrame, fwd_returns: pd.DataFrame) -> pd.Series:
         idx.append(ts)
 
     return pd.Series(vals, index=idx, dtype=float)
-
