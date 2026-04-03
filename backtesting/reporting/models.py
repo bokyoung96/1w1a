@@ -1,4 +1,7 @@
-from dataclasses import dataclass
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from enum import Enum
 from pathlib import Path
 
 import pandas as pd
@@ -23,15 +26,59 @@ class SavedRun:
     factor: dict[str, object] | None = None
 
 
+class ReportKind(str, Enum):
+    TEARSHEET = "tearsheet"
+    COMPARISON = "comparison"
+
+
+@dataclass(frozen=True, slots=True)
+class BenchmarkConfig:
+    code: str
+    name: str
+    dataset: str = "qw_BM"
+
+    @classmethod
+    def default_kospi200(cls) -> BenchmarkConfig:
+        return cls(code="IKS200", name="KOSPI200")
+
+
 @dataclass(frozen=True, slots=True)
 class ReportSpec:
     name: str
     run_ids: tuple[str, ...]
     title: str | None = None
+    kind: ReportKind | None = None
+    benchmark: BenchmarkConfig = field(default_factory=BenchmarkConfig.default_kospi200)
     include_factor: bool = True
     include_validation: bool = True
     include_is_oos: bool = True
     formats: tuple[str, ...] = ("html", "pdf")
+
+    def __post_init__(self) -> None:
+        if self.kind is None:
+            inferred_kind = ReportKind.TEARSHEET if len(self.run_ids) == 1 else ReportKind.COMPARISON
+            object.__setattr__(self, "kind", inferred_kind)
+
+
+@dataclass(frozen=True, slots=True)
+class TearsheetBundle:
+    spec: ReportSpec
+    out_dir: Path
+    run_id: str
+    display_name: str
+    pages: dict[str, Path]
+    tables: dict[str, pd.DataFrame]
+    notes: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class ComparisonBundle:
+    spec: ReportSpec
+    out_dir: Path
+    display_names: tuple[str, ...]
+    pages: dict[str, Path]
+    tables: dict[str, pd.DataFrame]
+    notes: tuple[str, ...]
 
 
 @dataclass(frozen=True, slots=True)
