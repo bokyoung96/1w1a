@@ -4,4 +4,3 @@
 
 - `raw/`: source market files
 - `kis/`: broker and config code
-- `backtesting/`: research, simulation, analytics, validation

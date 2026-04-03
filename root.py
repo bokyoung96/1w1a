@@ -29,4 +29,4 @@ class RootPaths:
         return str(self.config_path)
 
 
-ROOT = RootPaths(Path(__file__).resolve().parents[2])
+ROOT = RootPaths(Path(__file__).resolve().parent)
