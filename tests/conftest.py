@@ -1,3 +1,5 @@
+"""Ensure direct pytest runs from the worktree can import the repo root."""
+
 from pathlib import Path
 import sys
 

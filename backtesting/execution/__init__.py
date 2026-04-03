@@ -1,3 +1,5 @@
+"""Public execution exports."""
+
 from .costs import CostModel, TradeCost
 from .fill import fill_prices
 from .schedule import (
@@ -8,7 +10,7 @@ from .schedule import (
     WeeklySchedule,
 )
 
-__all__ = [
+__all__ = (
     "CostModel",
     "CustomSchedule",
     "DailySchedule",
@@ -17,4 +19,4 @@ __all__ = [
     "TradeCost",
     "WeeklySchedule",
     "fill_prices",
-]
+)
