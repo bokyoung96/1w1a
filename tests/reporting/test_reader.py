@@ -20,6 +20,7 @@ def test_run_reader_returns_none_for_missing_optional_artifacts(tmp_path: Path) 
     assert run.latest_weights is None
     assert run.validation is None
     assert run.split is None
+    assert run.factor is None
 
 
 def test_run_reader_loads_optional_artifacts_when_present(tmp_path: Path) -> None:
@@ -49,12 +50,17 @@ def test_run_reader_loads_optional_artifacts_when_present(tmp_path: Path) -> Non
 
     validation = {"warnings": ["low_liquidity"], "status": "pass"}
     split = {"is": {"start": "2024-01-01", "end": "2024-01-15"}, "oos": None}
+    factor = {"metrics": {"ic": 0.12}}
     (run_dir / "validation.json").write_text(
         '{"warnings":["low_liquidity"],"status":"pass"}',
         encoding="utf-8",
     )
     (run_dir / "split.json").write_text(
         '{"is":{"start":"2024-01-01","end":"2024-01-15"},"oos":null}',
+        encoding="utf-8",
+    )
+    (run_dir / "factor.json").write_text(
+        '{"metrics":{"ic":0.12}}',
         encoding="utf-8",
     )
 
@@ -65,6 +71,7 @@ def test_run_reader_loads_optional_artifacts_when_present(tmp_path: Path) -> Non
     assert_frame_equal(run.latest_weights, latest_weights)
     assert run.validation == validation
     assert run.split == split
+    assert run.factor == factor
 
 
 def test_run_reader_round_trips_writer_bundle_layout(tmp_path: Path) -> None:
@@ -106,6 +113,9 @@ def test_run_reader_round_trips_writer_bundle_layout(tmp_path: Path) -> None:
             }
         ).sort_values(["abs_weight", "symbol"], ascending=[False, True]).reset_index(drop=True),
     )
+    assert run.validation == {"warnings": []}
+    assert run.split == {"is": None, "oos": None}
+    assert run.factor == {"metrics": {}}
 
 
 def _write_required_bundle(run_dir: Path) -> None:

@@ -48,6 +48,9 @@ def test_runner_executes_momentum_strategy(tmp_path: Path) -> None:
     assert (report.output_dir / "positions" / "latest_qty.csv").exists()
     assert (report.output_dir / "plots" / "equity.png").exists()
     assert (report.output_dir / "plots" / "drawdown.png").exists()
+    assert (report.output_dir / "validation.json").exists()
+    assert (report.output_dir / "split.json").exists()
+    assert (report.output_dir / "factor.json").exists()
 
 
 def test_runner_executes_op_fwd_strategy(tmp_path: Path) -> None:

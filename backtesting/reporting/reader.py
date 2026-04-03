@@ -26,6 +26,7 @@ class RunReader:
             latest_weights=self._read_optional_frame(positions_dir / "latest_weights.csv"),
             validation=self._read_optional_json(run_dir / "validation.json"),
             split=self._read_optional_json(run_dir / "split.json"),
+            factor=self._read_optional_json(run_dir / "factor.json"),
         )
 
     @staticmethod
