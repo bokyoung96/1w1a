@@ -17,6 +17,8 @@ catalog = DataCatalog.default()
 store = ParquetStore(Path("parquet"))
 loader = DataLoader(catalog, store)
 
+# The parquet directory must already be populated by the ingest step
+# before calling `loader.load(...)`.
 market = loader.load(
     LoadRequest(
         datasets=[DatasetId.QW_ADJ_C, DatasetId.QW_V],

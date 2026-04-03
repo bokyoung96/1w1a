@@ -22,7 +22,7 @@ from .strategy import (
 )
 from .validation import SplitConfig, SplitResult, ValidationSession, split_frame
 
-__all__ = [
+__all__ = (
     "BacktestEngine",
     "BacktestResult",
     "BaseStrategy",
@@ -54,4 +54,4 @@ __all__ = [
     "rank_ic",
     "split_frame",
     "summarize_perf",
-]
+)
