@@ -2,11 +2,11 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from .base import BaseStrategy
+from .base import TimeSeriesStrategy
 
 
 @dataclass(slots=True)
-class ThresholdTrend(BaseStrategy):
+class ThresholdTrend(TimeSeriesStrategy):
     threshold: float = 0.0
 
     def target_weights(self, signal: pd.Series) -> pd.Series:
