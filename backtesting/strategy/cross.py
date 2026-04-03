@@ -14,7 +14,7 @@ class RankLongOnly(CrossSectionalStrategy):
 
     def target_weights(self, signal: pd.Series) -> pd.Series:
         weights = self.zeros_like(signal)
-        winners = signal.sort_values(ascending=False).head(self.top_n)
+        winners = signal.dropna().sort_values(ascending=False).head(self.top_n)
         if winners.empty:
             return weights
 
@@ -33,8 +33,9 @@ class RankLongShort(CrossSectionalStrategy):
 
     def target_weights(self, signal: pd.Series) -> pd.Series:
         weights = self.zeros_like(signal)
-        long_leg = signal.sort_values(ascending=False).head(self.top_n)
-        short_pool = signal.drop(index=long_leg.index, errors="ignore")
+        valid_signal = signal.dropna()
+        long_leg = valid_signal.sort_values(ascending=False).head(self.top_n)
+        short_pool = valid_signal.drop(index=long_leg.index, errors="ignore")
         short_leg = short_pool.sort_values(ascending=True).head(self.bottom_n)
 
         if not long_leg.empty:

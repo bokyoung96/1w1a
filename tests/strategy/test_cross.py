@@ -41,6 +41,29 @@ def test_rank_long_short_avoids_overlap_in_small_universe() -> None:
     assert weights.sum() == 0.0
 
 
+def test_rank_long_only_ignores_nan_names_when_selection_exceeds_valid_count() -> None:
+    factor = pd.Series({"A": 3.0, "B": 2.0, "C": float("nan")})
+    strategy = RankLongOnly(top_n=2)
+
+    weights = strategy.target_weights(factor)
+
+    assert weights["A"] == 0.5
+    assert weights["B"] == 0.5
+    assert weights["C"] == 0.0
+
+
+def test_rank_long_short_ignores_nan_names_when_selection_exceeds_valid_count() -> None:
+    factor = pd.Series({"A": 4.0, "B": 2.0, "C": 1.0, "D": float("nan")})
+    strategy = RankLongShort(top_n=3, bottom_n=2)
+
+    weights = strategy.target_weights(factor)
+
+    assert weights["A"] == 1 / 3
+    assert weights["B"] == 1 / 3
+    assert weights["C"] == 1 / 3
+    assert weights["D"] == 0.0
+
+
 @pytest.mark.parametrize(
     ("kwargs", "message"),
     [
