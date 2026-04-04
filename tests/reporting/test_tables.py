@@ -1,161 +1,119 @@
 from pathlib import Path
 
 import pandas as pd
-from pandas.testing import assert_frame_equal
 
-from backtesting.reporting.models import SavedRun
-from backtesting.reporting.tables import (
-    build_appendix_table,
-    build_latest_qty_table,
-    build_latest_weights_table,
-    build_summary_table,
+from backtesting.reporting.analytics import (
+    DrawdownStats,
+    ExposureSnapshot,
+    PerformanceMetrics,
+    RollingMetrics,
+    SectorSnapshot,
 )
+from backtesting.reporting.snapshots import PerformanceSnapshot
+from backtesting.reporting.tables_comparison import ComparisonTableBuilder
+from backtesting.reporting.tables_single import TearsheetTableBuilder
 
 
-def test_build_summary_table_compares_runs() -> None:
-    index = pd.to_datetime(["2024-01-02"])
-    run_a = SavedRun(
-        run_id="a",
-        path=Path("a"),
-        config={"strategy": "momentum"},
-        summary={"cagr": 0.2, "mdd": -0.1, "sharpe": 1.1, "final_equity": 120.0, "avg_turnover": 0.05},
-        equity=pd.Series([120.0], index=index),
-        returns=pd.Series([0.0], index=index),
-        turnover=pd.Series([0.05], index=index),
-        weights=pd.DataFrame({"A": [1.0]}, index=index),
-        qty=pd.DataFrame({"A": [10.0]}, index=index),
-    )
-    run_b = SavedRun(
-        run_id="b",
-        path=Path("b"),
-        config={"strategy": "op_fwd_yield"},
-        summary={"cagr": 0.1, "mdd": -0.2, "sharpe": 0.9, "final_equity": 110.0, "avg_turnover": 0.02},
-        equity=pd.Series([110.0], index=index),
-        returns=pd.Series([0.0], index=index),
-        turnover=pd.Series([0.02], index=index),
-        weights=pd.DataFrame({"A": [1.0]}, index=index),
-        qty=pd.DataFrame({"A": [10.0]}, index=index),
-    )
-
-    table = build_summary_table([run_a, run_b])
-
-    assert list(table["run_id"]) == ["a", "b"]
-    assert "cagr" in table.columns
-    assert table.loc[1, "strategy"] == "op_fwd_yield"
-
-
-def test_build_summary_table_coerces_none_metrics_to_nan() -> None:
-    index = pd.to_datetime(["2024-01-02"])
-    run = SavedRun(
-        run_id="a",
-        path=Path("a"),
-        config={"strategy": "momentum"},
-        summary={"cagr": None, "mdd": -0.1, "sharpe": None, "final_equity": 120.0, "avg_turnover": None},
-        equity=pd.Series([120.0], index=index),
-        returns=pd.Series([0.0], index=index),
-        turnover=pd.Series([0.05], index=index),
-        weights=pd.DataFrame({"A": [1.0]}, index=index),
-        qty=pd.DataFrame({"A": [10.0]}, index=index),
-    )
-
-    table = build_summary_table([run])
-
-    assert pd.isna(table.loc[0, "cagr"])
-    assert pd.isna(table.loc[0, "sharpe"])
-    assert pd.isna(table.loc[0, "avg_turnover"])
-
-
-def test_build_summary_table_with_no_runs_has_stable_schema() -> None:
-    table = build_summary_table([])
-
-    expected = pd.DataFrame(columns=["run_id", "strategy", "cagr", "mdd", "sharpe", "final_equity", "avg_turnover"])
-    assert_frame_equal(table, expected)
-
-
-def test_build_latest_weights_table_uses_latest_dated_row() -> None:
-    index = pd.to_datetime(["2024-01-03", "2024-01-02"])
-    run = SavedRun(
-        run_id="a",
-        path=Path("a"),
-        config={"strategy": "momentum"},
-        summary={},
-        equity=pd.Series([100.0, 110.0], index=index),
-        returns=pd.Series([0.0, 0.1], index=index),
-        turnover=pd.Series([0.0, 0.05], index=index),
-        weights=pd.DataFrame({"A": [0.0, -0.25], "B": [0.5, 0.75]}, index=index),
-        qty=pd.DataFrame({"A": [0.0, 2.0], "B": [0.0, -5.0]}, index=index),
-    )
-
-    table = build_latest_weights_table(run)
-
-    expected = pd.DataFrame(
-        {
-            "symbol": ["B"],
-            "target_weight": [0.5],
-            "abs_weight": [0.5],
-        }
-    )
-    assert_frame_equal(table, expected)
-
-
-def test_build_latest_qty_table_uses_latest_dated_row() -> None:
-    index = pd.to_datetime(["2024-01-03", "2024-01-02"])
-    run = SavedRun(
-        run_id="a",
-        path=Path("a"),
-        config={"strategy": "momentum"},
-        summary={},
-        equity=pd.Series([100.0, 110.0], index=index),
-        returns=pd.Series([0.0, 0.1], index=index),
-        turnover=pd.Series([0.0, 0.05], index=index),
-        weights=pd.DataFrame({"A": [0.0, -0.25], "B": [0.5, 0.75]}, index=index),
-        qty=pd.DataFrame({"A": [0.0, 2.0], "B": [0.0, -5.0]}, index=index),
-    )
-
-    table = build_latest_qty_table(run)
-
-    expected = pd.DataFrame(
-        {
-            "symbol": pd.Series(dtype=object),
-            "qty": pd.Series(dtype=float),
-            "abs_qty": pd.Series(dtype=float),
-        }
-    )
-    assert_frame_equal(table, expected)
-
-
-def test_build_appendix_table_lists_run_metadata() -> None:
-    index = pd.to_datetime(["2024-01-02"])
-    run = SavedRun(
-        run_id="a",
-        path=Path("runs/a"),
-        config={"strategy": "momentum", "start": "2024-01-01", "end": "2024-01-31"},
-        summary={},
-        equity=pd.Series([100.0], index=index),
-        returns=pd.Series([0.0], index=index),
-        turnover=pd.Series([0.0], index=index),
-        weights=pd.DataFrame({"A": [1.0]}, index=index),
-        qty=pd.DataFrame({"A": [10.0]}, index=index),
-    )
-
-    table = build_appendix_table([run])
-
-    expected = pd.DataFrame(
+def _sample_snapshot(run_id: str, scale: float = 1.0) -> PerformanceSnapshot:
+    index = pd.to_datetime(
         [
-            {
-                "run_id": "a",
-                "path": str(Path("runs/a")),
-                "strategy": "momentum",
-                "start": "2024-01-01",
-                "end": "2024-01-31",
-            }
+            "2024-01-31",
+            "2024-02-29",
+            "2024-03-31",
+            "2024-04-30",
+            "2024-05-31",
+            "2024-06-30",
         ]
     )
-    assert_frame_equal(table, expected)
+    strategy_returns = pd.Series([0.02, -0.01, 0.03, 0.01, -0.02, 0.015], index=index, name="strategy_returns")
+    benchmark_returns = pd.Series([0.01, -0.005, 0.02, 0.008, -0.01, 0.01], index=index, name="benchmark_returns")
+    strategy_equity = pd.Series([100.0, 99.0, 101.97, 102.9897, 100.93, 102.444], index=index).mul(scale)
+    benchmark_equity = pd.Series([100.0, 99.5, 101.49, 102.30192, 101.2789008, 102.291689808], index=index).mul(scale)
+    underwater = strategy_equity.div(strategy_equity.cummax()).sub(1.0).rename("underwater")
+    latest_holdings = pd.DataFrame(
+        {
+            "symbol": ["AAA", "BBB", "CCC"],
+            "target_weight": [0.5 * scale, -0.2 * scale, 0.1 * scale],
+            "abs_weight": [0.5 * scale, 0.2 * scale, 0.1 * scale],
+        }
+    )
+    rolling_sharpe = pd.Series([0.6, 0.4, 0.8, 0.9, 0.3, 0.7], index=index, name="rolling_sharpe")
+    rolling_beta = pd.Series([1.0, 0.95, 1.05, 1.02, 0.98, 1.01], index=index, name="rolling_beta")
+    holdings_count = pd.Series([3.0, 4.0, 4.0, 5.0, 4.0, 3.0], index=index, name="holdings_count")
+
+    return PerformanceSnapshot(
+        run_id=run_id,
+        display_name=f"Strategy {run_id}",
+        metrics=PerformanceMetrics(
+            cumulative_return=float(strategy_equity.iloc[-1] / strategy_equity.iloc[0] - 1.0),
+            cagr=0.11 * scale,
+            annual_volatility=0.18,
+            sharpe=1.1 * scale,
+            sortino=1.4,
+            calmar=0.8,
+            max_drawdown=float(underwater.min()),
+            final_equity=float(strategy_equity.iloc[-1]),
+            avg_turnover=0.12,
+            alpha=0.03,
+            beta=1.01,
+            tracking_error=0.09,
+            information_ratio=0.5,
+        ),
+        rolling=RollingMetrics(series={"rolling_sharpe": rolling_sharpe, "rolling_beta": rolling_beta}),
+        drawdowns=DrawdownStats(
+            underwater=underwater,
+            episodes=pd.DataFrame(
+                {
+                    "start": [index[1]],
+                    "trough": [index[1]],
+                    "end": [index[2]],
+                    "drawdown": [float(underwater.iloc[1])],
+                }
+            ),
+        ),
+        exposure=ExposureSnapshot(holdings_count=holdings_count, latest_holdings=latest_holdings),
+        sectors=SectorSnapshot(
+            latest_weighted=pd.Series({"Tech": 0.5 * scale, "Utilities": 0.3 * scale, "Energy": -0.2 * scale}),
+            latest_count=pd.Series({"Tech": 2.0, "Utilities": 1.0, "Energy": 1.0}),
+            concentration=pd.Series({"Tech": 0.5 * scale, "Utilities": 0.3 * scale, "Energy": 0.2 * scale}),
+        ),
+        strategy_equity=strategy_equity.rename("strategy_equity"),
+        strategy_returns=strategy_returns,
+        benchmark_returns=benchmark_returns,
+        benchmark_equity=benchmark_equity.rename("benchmark_equity"),
+    )
 
 
-def test_build_appendix_table_with_no_runs_has_stable_schema() -> None:
-    table = build_appendix_table([])
+def test_tearsheet_table_builder_builds_named_tables() -> None:
+    snapshot = _sample_snapshot("alpha")
 
-    expected = pd.DataFrame(columns=["run_id", "path", "strategy", "start", "end"])
-    assert_frame_equal(table, expected)
+    tables = TearsheetTableBuilder().build(snapshot, notes=("missing_validation:alpha",))
+
+    assert set(tables) == {
+        "performance_summary",
+        "drawdown_episodes",
+        "top_holdings",
+        "sector_weights",
+        "validation_appendix",
+    }
+    assert list(tables["performance_summary"].columns) == ["metric", "value"]
+    assert "CAGR" in tables["performance_summary"]["metric"].tolist()
+    assert tables["top_holdings"].iloc[0]["symbol"] == "AAA"
+    assert "Tech" in tables["sector_weights"]["sector"].tolist()
+    assert tables["validation_appendix"].iloc[0]["note"] == "missing_validation:alpha"
+
+
+def test_comparison_table_builder_builds_ranked_comparison_tables() -> None:
+    tables = ComparisonTableBuilder().build([_sample_snapshot("alpha", 1.0), _sample_snapshot("beta", 1.2)])
+
+    assert set(tables) == {
+        "ranked_summary",
+        "benchmark_relative",
+        "exposure_summary",
+        "sector_summary",
+    }
+    assert list(tables["ranked_summary"].columns) == ["display_name", "cagr", "sharpe", "max_drawdown", "final_equity"]
+    assert tables["ranked_summary"].iloc[0]["display_name"] == "Strategy beta"
+    assert "information_ratio" in tables["benchmark_relative"].columns
+    assert "holdings_count" in tables["exposure_summary"].columns
+    assert "top_sector" in tables["sector_summary"].columns

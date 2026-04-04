@@ -8,7 +8,8 @@ from typing import Any
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from .models import ReportBundle, SavedRun
+from .composers import ComparisonComposer, TearsheetComposer
+from .models import ComparisonBundle, ReportBundle, SavedRun, TearsheetBundle
 from .tables import build_latest_qty_table, build_latest_weights_table
 
 __all__ = ("HtmlRenderer",)
@@ -25,7 +26,32 @@ class HtmlRenderer:
             lstrip_blocks=True,
         )
 
-    def render(self, bundle: ReportBundle) -> Path:
+    def render(self, bundle: ReportBundle | TearsheetBundle | ComparisonBundle) -> Path:
+        if isinstance(bundle, TearsheetBundle):
+            return self._render_tearsheet(bundle)
+        if isinstance(bundle, ComparisonBundle):
+            return self._render_comparison(bundle)
+        return self._render_legacy(bundle)
+
+    def _render_tearsheet(self, bundle: TearsheetBundle) -> Path:
+        bundle.out_dir.mkdir(parents=True, exist_ok=True)
+        self._write_stylesheet(bundle.out_dir)
+        template = self.env.get_template("tearsheet.html.j2")
+        html = template.render(report=TearsheetComposer().compose(bundle), stylesheet="styles.css")
+        path = bundle.out_dir / "report.html"
+        path.write_text(html, encoding="utf-8")
+        return path
+
+    def _render_comparison(self, bundle: ComparisonBundle) -> Path:
+        bundle.out_dir.mkdir(parents=True, exist_ok=True)
+        self._write_stylesheet(bundle.out_dir)
+        template = self.env.get_template("comparison.html.j2")
+        html = template.render(report=ComparisonComposer().compose(bundle), stylesheet="styles.css")
+        path = bundle.out_dir / "report.html"
+        path.write_text(html, encoding="utf-8")
+        return path
+
+    def _render_legacy(self, bundle: ReportBundle) -> Path:
         bundle.out_dir.mkdir(parents=True, exist_ok=True)
         self._write_stylesheet(bundle.out_dir)
         template = self.env.get_template("base.html.j2")

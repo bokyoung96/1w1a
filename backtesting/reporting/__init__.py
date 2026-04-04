@@ -2,6 +2,7 @@
 
 from .cli import ReportCli, main
 from .builder import ReportBuilder
+from .composers import ComparisonComposer, TearsheetComposer
 from .html import HtmlRenderer
 from .models import (
     BenchmarkConfig,
@@ -14,11 +15,15 @@ from .models import (
 )
 from .pdf import PdfRenderer
 from .reader import RunReader
+from .tables_comparison import ComparisonTableBuilder
+from .tables_single import TearsheetTableBuilder
 from .writer import RunWriter
 
 __all__ = (
     "BenchmarkConfig",
+    "ComparisonComposer",
     "ComparisonBundle",
+    "ComparisonTableBuilder",
     "HtmlRenderer",
     "PdfRenderer",
     "ReportBuilder",
@@ -29,6 +34,8 @@ __all__ = (
     "RunReader",
     "RunWriter",
     "SavedRun",
+    "TearsheetComposer",
     "TearsheetBundle",
+    "TearsheetTableBuilder",
     "main",
 )

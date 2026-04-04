@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ report.title }}</title>
+    <link rel="stylesheet" href="{{ stylesheet }}">
+  </head>
+  <body>
+    <main class="report-shell">
+      <section class="hero">
+        <div class="hero-main">
+          <p class="hero-kicker">Single-Run Tearsheet</p>
+          <h1>{{ report.title }}</h1>
+          <p class="hero-subtitle">{{ report.display_name }}</p>
+          <p class="hero-meta"><strong>Benchmark:</strong> {{ report.benchmark_name }}</p>
+          <p class="hero-meta"><strong>Report Name:</strong> {{ report.report_name }}</p>
+          <p class="hero-pill">PDF-First Layout</p>
+        </div>
+        <aside class="hero-side">
+          <p class="hero-kicker">Document Scope</p>
+          <p><strong>Strategy:</strong> {{ report.display_name }}</p>
+          <p><strong>Benchmark:</strong> {{ report.benchmark_name }}</p>
+          <p><strong>Sections:</strong> {{ report.pages | length }} figures / {{ report.tables | length }} tables</p>
+        </aside>
+      </section>
+
+      <section class="report-section metric-section">
+        <header class="section-header">
+          <p class="eyebrow">Executive Metrics</p>
+          <h2>Metric Cards</h2>
+        </header>
+        <div class="metric-cards">
+          {% for card in report.metric_cards %}
+            <article class="metric-card">
+              <p class="metric-card-label">{{ card.label }}</p>
+              <p class="metric-card-value">{{ card.value }}</p>
+            </article>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="report-section">
+        <header class="section-header">
+          <p class="eyebrow">Figures</p>
+          <h2>Performance Pages</h2>
+        </header>
+        <div class="figure-grid">
+          {% for page in report.pages %}
+            <figure class="page-figure">
+              <figcaption>{{ page.title }}</figcaption>
+              <img src="{{ page.path }}" alt="{{ page.title }}">
+            </figure>
+          {% endfor %}
+        </div>
+      </section>
+
+      {% for table in report.tables %}
+        <section class="report-section">
+          <header class="section-header">
+            <p class="eyebrow">Table</p>
+            <h2>{{ table.title }}</h2>
+          </header>
+          <div class="table-wrap">
+            <table class="metric-table">
+              <thead>
+                <tr>
+                  {% for column in table.columns %}
+                    <th>{{ column.replace("_", " ").title() }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in table.rows %}
+                  <tr>
+                    {% for column in table.columns %}
+                      <td>{{ row[column] }}</td>
+                    {% endfor %}
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      {% endfor %}
+
+      {% if report.notes %}
+        <section class="notes-banner">
+          <h3>Notes</h3>
+          <ul>
+            {% for note in report.notes %}
+              <li>{{ note }}</li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+    </main>
+  </body>
+</html>
