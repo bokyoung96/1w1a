@@ -207,6 +207,9 @@ def test_comparison_composer_builds_pdf_first_context(tmp_path: Path) -> None:
     assert report.cover.benchmark_name == "KOSPI200"
     assert report.cover.report_name == "compare-report"
     assert report.cover.descriptor
+    assert [item.label for item in report.executive_metrics] == ["Top CAGR", "Top Sharpe"]
+    assert report.executive_metrics[0].value == "Momentum · 17.2%"
+    assert report.executive_metrics[1].value == "OP Fwd Yield · 1.35"
     assert [page.key for page in report.executive_pages] == ["executive", "performance"]
     assert [table.key for table in report.executive_tables] == ["ranked_summary", "benchmark_relative"]
     assert [section.title for section in report.sections] == [
