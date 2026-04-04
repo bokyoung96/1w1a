@@ -53,15 +53,21 @@ def test_html_renderer_uses_tearsheet_template(tmp_path: Path) -> None:
     html = path.read_text(encoding="utf-8")
     assert path.exists()
     assert path.parent.joinpath("styles.css").exists()
+    assert html.index('class="report-cover"') < html.index('class="executive-spread"')
     assert "Momentum Tearsheet" in html
     assert "KOSPI200" in html
+    assert "Executive Summary" in html
+    assert "Appendix" in html
     assert "executive.png" in html
-    assert "Metric Cards" in html
     assert "Top Holdings" in html
     assert "17.2%" in html
     assert "1.10" in html
     assert "1.01" in html
     assert "1,234,567" in html
+    assert "Document Scope" not in html
+    assert "PDF-First Layout" not in html
+    assert "Metric Cards" not in html
+    assert "Open interactive chart" not in html
     assert "110.0%" not in html
     assert "101.0%" not in html
 
