@@ -51,11 +51,24 @@ def test_pdf_renderer_writes_pdf_when_export_succeeds(monkeypatch, tmp_path: Pat
 
 def test_pdf_renderer_writes_pdf_from_composed_report(monkeypatch, tmp_path: Path) -> None:
     html_path = tmp_path / "report.html"
+    styles_path = tmp_path / "styles.css"
     asset_path = tmp_path / "page.png"
     asset_path.write_bytes(b"png")
+    styles_path.write_text(
+        """
+        .report-cover { page-break-after: avoid; }
+        .executive-spread { display: grid; }
+        .metric-strip { display: grid; }
+        .compact-table-block { break-inside: avoid; }
+        """.strip(),
+        encoding="utf-8",
+    )
     html_path.write_text(
         f"""
         <html>
+          <head>
+            <link rel="stylesheet" href="styles.css">
+          </head>
           <body>
             <main class="report-shell">
               <section class="report-cover cover">
@@ -89,6 +102,15 @@ def test_pdf_renderer_writes_pdf_from_composed_report(monkeypatch, tmp_path: Pat
     class _FakeHtml:
         def __init__(self, *, filename: str) -> None:
             self.filename = filename
+            html = Path(filename).read_text(encoding="utf-8")
+            assert '<link rel="stylesheet" href="styles.css">' in html
+            assert 'class="report-cover cover"' in html
+            assert 'class="report-section executive-spread"' in html
+            assert 'class="metric-strip"' in html
+            assert 'class="compact-table-block"' in html
+            styles = Path(filename).with_name("styles.css")
+            assert styles.exists()
+            assert ".report-cover" in styles.read_text(encoding="utf-8")
 
         def write_pdf(self, path: str) -> None:
             Path(path).write_bytes(b"%PDF-1.4")
