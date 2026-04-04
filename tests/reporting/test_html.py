@@ -77,7 +77,12 @@ def test_html_renderer_uses_comparison_template(tmp_path: Path) -> None:
             "performance": _write_asset(tmp_path / "compare-report" / "pages" / "performance.png"),
         },
         tables={
-            "ranked_summary": pd.DataFrame([{"display_name": "Momentum", "cagr": "17.2%"}]),
+            "ranked_summary": pd.DataFrame(
+                [
+                    {"display_name": "Momentum", "cagr": 0.172, "sharpe": 1.10},
+                    {"display_name": "OP Fwd Yield", "cagr": 0.150, "sharpe": 1.35},
+                ]
+            ),
             "benchmark_relative": pd.DataFrame([{"display_name": "Momentum", "alpha": "3.2%"}]),
             "exposure_summary": pd.DataFrame([{"display_name": "Momentum", "holdings_count": "20"}]),
             "sector_summary": pd.DataFrame([{"display_name": "Momentum", "top_sector": "Tech"}]),
@@ -95,6 +100,10 @@ def test_html_renderer_uses_comparison_template(tmp_path: Path) -> None:
     assert "OP Fwd Yield" in html
     assert "performance.png" in html
     assert "Ranked Summary" in html
+    assert "Top CAGR" in html
+    assert "Momentum · 17.2%" in html
+    assert "Top Sharpe" in html
+    assert "OP Fwd Yield · 1.35" in html
 
 
 def test_html_renderer_keeps_legacy_reportbundle_path_styled(tmp_path: Path) -> None:

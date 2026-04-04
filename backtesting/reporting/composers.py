@@ -137,13 +137,17 @@ class ComparisonComposer:
 def _comparison_metric_cards(frame: pd.DataFrame) -> tuple[dict[str, str], ...]:
     if frame.empty:
         return ()
-    leader = frame.iloc[0]
+    cagr_leader = frame.sort_values(["cagr", "display_name"], ascending=[False, True]).iloc[0]
     cards = [
-        {"label": "Top CAGR", "value": f'{leader["display_name"]} · {_format_value("cagr", leader.get("cagr"))}'}
+        {"label": "Top CAGR", "value": f'{cagr_leader["display_name"]} · {_format_value("cagr", cagr_leader.get("cagr"))}'}
     ]
-    if "sharpe" in leader.index:
+    if "sharpe" in frame.columns:
+        sharpe_leader = frame.sort_values(["sharpe", "display_name"], ascending=[False, True]).iloc[0]
         cards.append(
-            {"label": "Top Sharpe", "value": f'{leader["display_name"]} · {_format_value("sharpe", leader.get("sharpe"))}'}
+            {
+                "label": "Top Sharpe",
+                "value": f'{sharpe_leader["display_name"]} · {_format_value("sharpe", sharpe_leader.get("sharpe"))}',
+            }
         )
     return tuple(cards)
 
