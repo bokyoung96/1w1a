@@ -1,7 +1,7 @@
 import pandas as pd
-from pandas.testing import assert_series_equal
+from pandas.testing import assert_frame_equal, assert_series_equal
 
-from backtesting.reporting.benchmarks import BenchmarkRepository, SectorRepository
+from backtesting.reporting.benchmarks import BenchmarkRepository, SectorRepository, _read_quantwise_benchmark_frame
 from backtesting.reporting.models import BenchmarkConfig
 
 
@@ -90,3 +90,33 @@ def test_sector_repository_exposes_latest_row_and_counts_without_internal_access
 
     assert_series_equal(latest_row, expected_row)
     assert_series_equal(latest_count.sort_index(), expected_count.sort_index())
+
+
+def test_read_quantwise_benchmark_frame_extracts_codes_and_dates(tmp_path) -> None:
+    raw = pd.DataFrame(
+        [
+            ["Refresh", "Last Update", None],
+            ["Code", "IKS200", "IKS001"],
+            ["Name", "KOSPI200", "KOSPI"],
+            ["Item Code", "I100100", "I100100"],
+            ["Unit", "P", "P"],
+            ["D A T E", "종가지수", "종가지수"],
+            [pd.Timestamp("2024-01-02"), 100.0, 200.0],
+            [pd.Timestamp("2024-01-03"), 101.0, 201.0],
+        ]
+    )
+    path = tmp_path / "qw_BM.xlsx"
+    raw.to_excel(path, index=False, header=False)
+
+    frame = _read_quantwise_benchmark_frame(path)
+
+    expected = pd.DataFrame(
+        {
+            "IKS200": [100.0, 101.0],
+            "IKS001": [200.0, 201.0],
+        },
+        index=pd.to_datetime(["2024-01-02", "2024-01-03"]),
+    )
+    expected.index.name = "date"
+
+    assert_frame_equal(frame, expected, check_dtype=False)

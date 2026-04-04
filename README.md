@@ -85,15 +85,22 @@ You can override the root output folder with `--out-root` and the run folder nam
 
 Use `report.py` to build a single-run or comparison report from saved run bundles. Reports are written under `results/reports/`.
 
-```powershell
-python run.py --strategy momentum --start 2020-01-02 --end 2020-12-31 --name momentum-run
-python report.py --runs momentum-run_YYYYMMDD_HHMMSS --name momentum-report
-```
+Single-run tear sheet:
 
 ```powershell
-python run.py --strategy momentum --start 2020-01-02 --end 2020-12-31 --name momentum-run
-python run.py --strategy op_fwd_yield --start 2020-01-02 --end 2020-12-31 --name op-fwd-run
+python report.py --runs momentum-run_YYYYMMDD_HHMMSS --name momentum-tearsheet
+```
+
+Multi-run comparison report:
+
+```powershell
 python report.py --runs momentum-run_YYYYMMDD_HHMMSS op-fwd-run_YYYYMMDD_HHMMSS --name compare-report --title "Momentum vs OP Fwd"
 ```
+
+Optional report controls:
+
+- `--kind auto|tearsheet|comparison`
+- `--benchmark-code IKS200`
+- `--benchmark-name KOSPI200`
 
 Run bundles live under `results/backtests/`. Report bundles live under `results/reports/`. HTML is always written. PDF is written when the export dependency is available.

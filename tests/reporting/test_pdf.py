@@ -47,3 +47,29 @@ def test_pdf_renderer_writes_pdf_when_export_succeeds(monkeypatch, tmp_path: Pat
     assert pdf_path == html_path.with_suffix(".pdf")
     assert pdf_path.exists()
     assert status == {"pdf_ok": True, "pdf_path": str(pdf_path)}
+
+
+def test_pdf_renderer_writes_pdf_from_composed_report(monkeypatch, tmp_path: Path) -> None:
+    html_path = tmp_path / "report.html"
+    asset_path = tmp_path / "page.png"
+    asset_path.write_bytes(b"png")
+    html_path.write_text(f"<html><body><img src='{asset_path.name}'></body></html>", encoding="utf-8")
+
+    class _FakeHtml:
+        def __init__(self, *, filename: str) -> None:
+            self.filename = filename
+
+        def write_pdf(self, path: str) -> None:
+            Path(path).write_bytes(b"%PDF-1.4")
+
+    class _FakeWeasyPrint:
+        HTML = _FakeHtml
+
+    monkeypatch.setattr(importlib, "import_module", lambda name: _FakeWeasyPrint())
+
+    pdf_path, status = PdfRenderer().render_with_status(html_path)
+
+    assert pdf_path == html_path.with_suffix(".pdf")
+    assert pdf_path is not None
+    assert pdf_path.exists()
+    assert status["pdf_ok"] is True
