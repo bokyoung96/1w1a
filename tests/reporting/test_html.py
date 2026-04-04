@@ -115,8 +115,10 @@ def test_html_renderer_uses_comparison_template(tmp_path: Path) -> None:
     assert '<section class="report-section executive-spread">' in html
     assert '<div class="executive-spread">' not in html
     assert html.index('<section class="report-cover cover">') < html.index('<section class="report-section executive-spread">')
+    assert "Comparison Report" in html
     assert "Strategy Comparison" in html
     assert "KOSPI200" in html
+    assert "Cross-strategy comparison optimized for PDF review" in html
     assert "Momentum" in html
     assert "OP Fwd Yield" in html
     assert "pages/performance.html" in html
@@ -127,7 +129,10 @@ def test_html_renderer_uses_comparison_template(tmp_path: Path) -> None:
     assert "Participants" not in html
     assert "Research-Style Comparison" not in html
     assert "Metric Cards" not in html
-    assert "Top CAGR" not in html
+    assert "Top CAGR" in html
+    assert "Momentum · 17.2%" in html
+    assert "Top Sharpe" in html
+    assert "OP Fwd Yield · 1.35" in html
     assert "missing_split:run-b" in html
 
 
