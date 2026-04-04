@@ -1,4 +1,7 @@
+import json
 from pathlib import Path
+
+import pytest
 
 from backtesting.reporting.cli import ReportCli
 from backtesting.reporting.models import ReportKind
@@ -64,3 +67,17 @@ def test_cli_builds_report_spec_with_auto_kind_and_benchmark(tmp_path: Path, mon
     assert captured["spec"].benchmark.name == "KOSPI200"
     assert captured["runs"] == ["run:a", "run:b"]
     assert payload["report_name"] == "compare"
+    assert payload["kind"] == "comparison"
+    assert payload["benchmark_code"] == "IKS200"
+    assert payload["benchmark_name"] == "KOSPI200"
+    report_json = json.loads((tmp_path / "reports" / "compare" / "report.json").read_text(encoding="utf-8"))
+    assert report_json["kind"] == "comparison"
+    assert report_json["benchmark_code"] == "IKS200"
+    assert report_json["benchmark_name"] == "KOSPI200"
+
+
+def test_cli_rejects_invalid_kind_and_run_count_combination(tmp_path: Path) -> None:
+    cli = ReportCli(runs_root=tmp_path, reports_root=tmp_path / "reports")
+
+    with pytest.raises(SystemExit):
+        cli.parser().parse_args(["--runs", "a", "b", "--name", "bad", "--kind", "tearsheet"])

@@ -15,6 +15,13 @@ from .reader import RunReader
 __all__ = ("ReportCli", "main")
 
 
+class ReportArgumentParser(argparse.ArgumentParser):
+    def parse_args(self, args: list[str] | None = None, namespace: argparse.Namespace | None = None) -> argparse.Namespace:
+        parsed = super().parse_args(args, namespace)
+        _validate_report_args(self, parsed)
+        return parsed
+
+
 class ReportCli:
     def __init__(self, *, runs_root: Path | None = None, reports_root: Path | None = None) -> None:
         self.runs_root = Path(runs_root) if runs_root is not None else ROOT.results_path / "backtests"
@@ -25,7 +32,7 @@ class ReportCli:
         self.pdf = PdfRenderer()
 
     def parser(self) -> argparse.ArgumentParser:
-        parser = argparse.ArgumentParser(description="Build backtest reports from saved runs.")
+        parser = ReportArgumentParser(description="Build backtest reports from saved runs.")
         parser.add_argument("--runs", nargs="+", required=True)
         parser.add_argument("--name", required=True)
         parser.add_argument("--title")
@@ -51,6 +58,9 @@ class ReportCli:
         payload: dict[str, object] = {
             "report_name": spec.name,
             "run_ids": list(spec.run_ids),
+            "kind": spec.kind.value,
+            "benchmark_code": spec.benchmark.code,
+            "benchmark_name": spec.benchmark.name,
             "output_dir": str(bundle.out_dir),
             "html_path": str(html_path),
             "pdf_path": None if pdf_path is None else str(pdf_path),
@@ -65,3 +75,10 @@ class ReportCli:
 def main(argv: list[str] | None = None) -> None:
     payload = ReportCli().run(argv)
     print(json.dumps(payload, ensure_ascii=False, indent=2))
+
+
+def _validate_report_args(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:
+    if args.kind == "tearsheet" and len(args.runs) != 1:
+        parser.error("--kind tearsheet requires exactly one run id")
+    if args.kind == "comparison" and len(args.runs) < 2:
+        parser.error("--kind comparison requires at least two run ids")

@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import pandas as pd
 
 from backtesting.reporting.builder import ReportBuilder
-from backtesting.reporting.models import ComparisonBundle, ReportKind, ReportSpec, SavedRun, TearsheetBundle
+from backtesting.reporting.models import ComparisonBundle, ReportBundle, ReportKind, ReportSpec, SavedRun, TearsheetBundle
 
 
 def _sample_run(tmp_path: Path, run_id: str, strategy: str = "momentum") -> SavedRun:
@@ -95,3 +95,37 @@ def test_report_builder_creates_comparison_bundle_for_multiple_runs(tmp_path: Pa
     assert set(bundle.pages) == {"performance"}
     assert set(bundle.tables) == {"ranked_summary"}
     assert (bundle.out_dir / "tables" / "ranked_summary.csv").exists()
+
+
+def test_report_builder_legacy_path_remains_available(tmp_path: Path, monkeypatch) -> None:
+    run = _sample_run(tmp_path, "sample")
+
+    plot_dir = tmp_path / "legacy-report" / "plots"
+    plot_paths = {
+        "equity": plot_dir / "equity.png",
+        "drawdown": plot_dir / "drawdown.png",
+        "turnover": plot_dir / "turnover.png",
+        "top_weights": plot_dir / "top_weights.png",
+        "monthly_heatmap": plot_dir / "monthly_heatmap.png",
+    }
+
+    def _make_plotter(method_name: str):
+        def _plot(self, runs, *, require_png=False):  # type: ignore[no-untyped-def]
+            path = plot_paths[method_name]
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(method_name, encoding="utf-8")
+            return path
+
+        return _plot
+
+    for method_name in plot_paths:
+        monkeypatch.setattr(
+            "backtesting.reporting.plots.PlotLibrary." + method_name,
+            _make_plotter(method_name),
+        )
+
+    bundle = ReportBuilder(tmp_path).build_legacy(ReportSpec(name="legacy-report", run_ids=("sample",)), [run])
+
+    assert isinstance(bundle, ReportBundle)
+    assert bundle.plots == plot_paths
+    assert bundle.summary.iloc[0]["run_id"] == "sample"

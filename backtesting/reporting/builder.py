@@ -6,9 +6,11 @@ import pandas as pd
 
 from .benchmarks import BenchmarkRepository, SectorRepository
 from .comparison_figures import ComparisonFigureBuilder
-from .models import ComparisonBundle, ReportKind, ReportSpec, SavedRun, TearsheetBundle
+from .models import ComparisonBundle, ReportBundle, ReportKind, ReportSpec, SavedRun, TearsheetBundle
 from .figures import TearsheetFigureBuilder
+from .plots import PlotLibrary
 from .snapshots import PerformanceSnapshotFactory
+from .tables import build_appendix_table, build_latest_qty_table, build_latest_weights_table, build_summary_table
 from .tables_comparison import ComparisonTableBuilder
 from .tables_single import TearsheetTableBuilder
 
@@ -31,6 +33,40 @@ class ReportBuilder:
         if spec.kind is ReportKind.TEARSHEET:
             return self._build_tearsheet_bundle(spec, out_dir, pages_dir, tables_dir, snapshots[0], notes)
         return self._build_comparison_bundle(spec, out_dir, pages_dir, tables_dir, snapshots, notes)
+
+    def build_legacy(self, spec: ReportSpec, runs: list[SavedRun]) -> ReportBundle:
+        out_dir = self.root_dir / spec.name
+        plots_dir = out_dir / "plots"
+        tables_dir = out_dir / "tables"
+        for path in (out_dir, plots_dir, tables_dir):
+            path.mkdir(parents=True, exist_ok=True)
+
+        plotter = PlotLibrary(plots_dir)
+        plots = {
+            "equity": plotter.equity(runs),
+            "drawdown": plotter.drawdown(runs),
+            "turnover": plotter.turnover(runs),
+            "top_weights": plotter.top_weights(runs),
+            "monthly_heatmap": plotter.monthly_heatmap(runs),
+        }
+
+        summary = build_summary_table(runs)
+        appendix = build_appendix_table(runs)
+        self._write_legacy_table(tables_dir / "summary.csv", summary)
+        self._write_legacy_table(tables_dir / "appendix.csv", appendix)
+        for run in runs:
+            self._write_legacy_table(tables_dir / f"{run.run_id}_latest_weights.csv", build_latest_weights_table(run))
+            self._write_legacy_table(tables_dir / f"{run.run_id}_latest_qty.csv", build_latest_qty_table(run))
+
+        return ReportBundle(
+            spec=spec,
+            out_dir=out_dir,
+            runs=tuple(runs),
+            summary=summary,
+            appendix=appendix,
+            plots=plots,
+            notes=self._build_notes(spec, runs),
+        )
 
     def _build_snapshots(self, runs: list[SavedRun], spec: ReportSpec) -> list[object]:
         factory = PerformanceSnapshotFactory(
@@ -86,6 +122,10 @@ class ReportBuilder:
     def _write_tables(tables_dir: Path, tables: dict[str, pd.DataFrame]) -> None:
         for name, table in tables.items():
             table.to_csv(tables_dir / f"{name}.csv", index=False)
+
+    @staticmethod
+    def _write_legacy_table(path: Path, table: pd.DataFrame) -> None:
+        table.to_csv(path, index=False)
 
     @staticmethod
     def _build_notes(spec: ReportSpec, runs: list[SavedRun]) -> tuple[str, ...]:
