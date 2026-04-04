@@ -153,19 +153,23 @@ def test_tearsheet_composer_builds_pdf_first_context(tmp_path: Path) -> None:
     assert report.cover.benchmark_name == "KOSPI200"
     assert report.cover.report_name == "single-report"
     assert report.cover.descriptor
-    assert [page.key for page in report.executive_pages] == ["executive"]
-    assert [table.key for table in report.executive_tables] == ["performance_summary", "drawdown_episodes"]
-    assert [section.title for section in report.sections] == [
+    assert [(item.label, item.value) for item in report.executive_metrics][:1] == [("CAGR", "17.2%")]
+    assert tuple(page.key for page in report.executive_pages) == ("executive",)
+    assert tuple(table.key for table in report.executive_tables) == ("performance_summary", "drawdown_episodes")
+    assert tuple(section.title for section in report.sections) == (
         "Rolling Diagnostics",
         "Return Shape",
         "Holdings And Sectors",
         "Appendix",
-    ]
-    assert report.sections[0].pages and report.sections[0].pages[0].key == "rolling"
-    assert report.sections[1].pages and report.sections[1].pages[0].key == "calendar"
-    assert report.sections[2].pages and report.sections[2].pages[0].key == "exposure"
-    assert [table.key for table in report.sections[2].tables] == ["top_holdings", "sector_weights"]
-    assert [table.key for table in report.sections[3].tables] == ["validation_appendix"]
+    )
+    assert tuple(page.key for page in report.sections[0].pages) == ("rolling",)
+    assert tuple(table.key for table in report.sections[0].tables) == ()
+    assert tuple(page.key for page in report.sections[1].pages) == ("calendar",)
+    assert tuple(table.key for table in report.sections[1].tables) == ()
+    assert tuple(page.key for page in report.sections[2].pages) == ("exposure",)
+    assert tuple(table.key for table in report.sections[2].tables) == ("top_holdings", "sector_weights")
+    assert tuple(page.key for page in report.sections[3].pages) == ()
+    assert tuple(table.key for table in report.sections[3].tables) == ("validation_appendix",)
     assert report.notes == ("missing_factor:run-a",)
     assert len(report.executive_metrics) == 5
 
@@ -210,15 +214,16 @@ def test_comparison_composer_builds_pdf_first_context(tmp_path: Path) -> None:
     assert [item.label for item in report.executive_metrics] == ["Top CAGR", "Top Sharpe"]
     assert report.executive_metrics[0].value == "Momentum · 17.2%"
     assert report.executive_metrics[1].value == "OP Fwd Yield · 1.35"
-    assert [page.key for page in report.executive_pages] == ["executive", "performance"]
-    assert [table.key for table in report.executive_tables] == ["ranked_summary", "benchmark_relative"]
-    assert [section.title for section in report.sections] == [
+    assert tuple(page.key for page in report.executive_pages) == ("executive", "performance")
+    assert tuple(table.key for table in report.executive_tables) == ("ranked_summary", "benchmark_relative")
+    assert tuple(section.title for section in report.sections) == (
         "Rolling And Relative Diagnostics",
         "Holdings And Sector Comparison",
-    ]
-    assert report.sections[0].pages and report.sections[0].pages[0].key == "rolling"
-    assert report.sections[1].pages and report.sections[1].pages[0].key == "exposure"
-    assert [table.key for table in report.sections[1].tables] == ["exposure_summary", "sector_summary"]
+    )
+    assert tuple(page.key for page in report.sections[0].pages) == ("rolling",)
+    assert tuple(table.key for table in report.sections[0].tables) == ()
+    assert tuple(page.key for page in report.sections[1].pages) == ("exposure",)
+    assert tuple(table.key for table in report.sections[1].tables) == ("exposure_summary", "sector_summary")
     assert report.notes == ("missing_split:run-b",)
     assert report.participants == ("Momentum", "OP Fwd Yield")
 
