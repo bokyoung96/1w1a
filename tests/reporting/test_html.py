@@ -118,6 +118,7 @@ def test_html_renderer_uses_comparison_template(tmp_path: Path) -> None:
     assert "Comparison Report" in html
     assert "Strategy Comparison" in html
     assert "KOSPI200" in html
+    assert "compare-report" in html
     assert "Cross-strategy comparison optimized for PDF review" in html
     assert "Momentum" in html
     assert "OP Fwd Yield" in html
