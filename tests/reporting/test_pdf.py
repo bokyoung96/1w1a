@@ -53,7 +53,38 @@ def test_pdf_renderer_writes_pdf_from_composed_report(monkeypatch, tmp_path: Pat
     html_path = tmp_path / "report.html"
     asset_path = tmp_path / "page.png"
     asset_path.write_bytes(b"png")
-    html_path.write_text(f"<html><body><img src='{asset_path.name}'></body></html>", encoding="utf-8")
+    html_path.write_text(
+        f"""
+        <html>
+          <body>
+            <main class="report-shell">
+              <section class="report-cover cover">
+                <div class="hero-main">
+                  <h1>Momentum Tearsheet</h1>
+                </div>
+              </section>
+              <section class="report-section executive-spread">
+                <div class="metric-strip">
+                  <article class="metric-card">
+                    <p class="metric-card-label">CAGR</p>
+                    <p class="metric-card-value">17.2%</p>
+                  </article>
+                </div>
+                <section class="compact-table-block">
+                  <div class="table-wrap">
+                    <table>
+                      <tr><td>1</td></tr>
+                    </table>
+                  </div>
+                </section>
+                <img src="{asset_path.name}" alt="equity">
+              </section>
+            </main>
+          </body>
+        </html>
+        """,
+        encoding="utf-8",
+    )
 
     class _FakeHtml:
         def __init__(self, *, filename: str) -> None:

@@ -283,6 +283,10 @@ def test_html_renderer_keeps_legacy_reportbundle_path_styled(tmp_path: Path) -> 
     html = path.read_text(encoding="utf-8")
     css = path.parent.joinpath("styles.css").read_text(encoding="utf-8")
     assert '<div class="plot-grid">' in html
+    assert ".report-cover" in css
+    assert ".executive-spread" in css
+    assert ".metric-strip" in css
+    assert ".compact-table-block" in css
     assert ".plot-grid" in css
 
 
