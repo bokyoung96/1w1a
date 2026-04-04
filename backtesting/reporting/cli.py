@@ -8,7 +8,7 @@ from root import ROOT
 
 from .builder import ReportBuilder
 from .html import HtmlRenderer
-from .models import ReportSpec
+from .models import BenchmarkConfig, ReportKind, ReportSpec
 from .pdf import PdfRenderer
 from .reader import RunReader
 
@@ -29,12 +29,21 @@ class ReportCli:
         parser.add_argument("--runs", nargs="+", required=True)
         parser.add_argument("--name", required=True)
         parser.add_argument("--title")
+        parser.add_argument("--kind", choices=("auto", "tearsheet", "comparison"), default="auto")
+        parser.add_argument("--benchmark-code", default="IKS200")
+        parser.add_argument("--benchmark-name", default="KOSPI200")
         return parser
 
     def run(self, argv: list[str] | None = None) -> dict[str, object]:
         args = self.parser().parse_args(argv)
         runs = [self.reader.read(self.runs_root / run_id) for run_id in args.runs]
-        spec = ReportSpec(name=args.name, run_ids=tuple(args.runs), title=args.title)
+        spec = ReportSpec(
+            name=args.name,
+            run_ids=tuple(args.runs),
+            title=args.title,
+            kind=None if args.kind == "auto" else ReportKind(args.kind),
+            benchmark=BenchmarkConfig(code=args.benchmark_code, name=args.benchmark_name),
+        )
         bundle = self.builder.build(spec, runs)
         html_path = self.html.render(bundle)
         pdf_path, pdf_status = self.pdf.render_with_status(html_path)
@@ -47,6 +56,7 @@ class ReportCli:
             "pdf_path": None if pdf_path is None else str(pdf_path),
         }
         payload.update(pdf_status)
+        bundle.out_dir.mkdir(parents=True, exist_ok=True)
         report_json = bundle.out_dir / "report.json"
         report_json.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
         return payload

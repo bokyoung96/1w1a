@@ -1,19 +1,18 @@
 from pathlib import Path
+from types import SimpleNamespace
 
 import pandas as pd
-from pandas.testing import assert_frame_equal
 
 from backtesting.reporting.builder import ReportBuilder
-from backtesting.reporting.models import ReportSpec, SavedRun
-from backtesting.reporting.tables import build_appendix_table, build_summary_table
+from backtesting.reporting.models import ComparisonBundle, ReportKind, ReportSpec, SavedRun, TearsheetBundle
 
 
-def test_report_builder_assembles_bundle_and_persists_tables(tmp_path: Path, monkeypatch) -> None:
+def _sample_run(tmp_path: Path, run_id: str, strategy: str = "momentum") -> SavedRun:
     index = pd.to_datetime(["2024-01-02", "2024-01-03"])
-    run = SavedRun(
-        run_id="sample",
-        path=tmp_path / "sample",
-        config={"strategy": "momentum", "start": "2024-01-02", "end": "2024-01-03"},
+    return SavedRun(
+        run_id=run_id,
+        path=tmp_path / run_id,
+        config={"strategy": strategy, "name": strategy.title()},
         summary={"cagr": 0.1, "mdd": -0.2, "sharpe": 1.0, "final_equity": 110.0, "avg_turnover": 0.05},
         equity=pd.Series([100.0, 110.0], index=index),
         returns=pd.Series([0.0, 0.1], index=index),
@@ -22,47 +21,77 @@ def test_report_builder_assembles_bundle_and_persists_tables(tmp_path: Path, mon
         qty=pd.DataFrame({"A": [10.0, 10.0]}, index=index),
     )
 
-    plot_dir = tmp_path / "sample-report" / "plots"
-    plot_paths = {
-        "equity": plot_dir / "equity.png",
-        "drawdown": plot_dir / "drawdown.png",
-        "turnover": plot_dir / "turnover.png",
-        "top_weights": plot_dir / "top_weights.png",
-        "monthly_heatmap": plot_dir / "monthly_heatmap.png",
-    }
 
-    def _make_plotter(method_name: str):
-        def _plot(self, runs, *, require_png=False):  # type: ignore[no-untyped-def]
-            path = plot_paths[method_name]
+def test_report_builder_creates_tearsheet_bundle_and_persists_tables(tmp_path: Path, monkeypatch) -> None:
+    run = _sample_run(tmp_path, "sample")
+
+    class _FakeFactory:
+        def build(self, run_obj, benchmark):  # type: ignore[no-untyped-def]
+            return SimpleNamespace(run_id=run_obj.run_id, display_name="Momentum")
+
+    class _FakeTearsheetFigureBuilder:
+        def __init__(self, out_dir: Path) -> None:
+            self.out_dir = out_dir
+
+        def build(self, snapshot, *, require_png=False):  # type: ignore[no-untyped-def]
+            path = self.out_dir / "executive.png"
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(method_name, encoding="utf-8")
-            return path
+            path.write_bytes(b"png")
+            return {"executive": path}
 
-        return _plot
+    class _FakeTearsheetTableBuilder:
+        def build(self, snapshot, *, notes=()):  # type: ignore[no-untyped-def]
+            return {"performance_summary": pd.DataFrame([{"metric_key": "cagr", "metric": "CAGR", "value": 0.1}])}
 
-    for method_name in plot_paths:
-        monkeypatch.setattr(
-            "backtesting.reporting.plots.PlotLibrary." + method_name,
-            _make_plotter(method_name),
-        )
+    monkeypatch.setattr("backtesting.reporting.builder.BenchmarkRepository.default", lambda: object())
+    monkeypatch.setattr("backtesting.reporting.builder.SectorRepository.default", lambda: object())
+    monkeypatch.setattr("backtesting.reporting.builder.PerformanceSnapshotFactory", lambda *args, **kwargs: _FakeFactory())
+    monkeypatch.setattr("backtesting.reporting.builder.TearsheetFigureBuilder", _FakeTearsheetFigureBuilder)
+    monkeypatch.setattr("backtesting.reporting.builder.TearsheetTableBuilder", _FakeTearsheetTableBuilder)
 
     bundle = ReportBuilder(tmp_path).build(ReportSpec(name="sample-report", run_ids=("sample",)), [run])
 
-    assert bundle.spec.name == "sample-report"
-    assert bundle.out_dir == tmp_path / "sample-report"
-    assert bundle.runs == (run,)
-    assert_frame_equal(bundle.summary, build_summary_table([run]))
-    assert_frame_equal(bundle.appendix, build_appendix_table([run]))
-    assert bundle.plots == plot_paths
-    assert bundle.notes == (
-        "missing_validation:sample",
-        "missing_split:sample",
-        "missing_factor:sample",
-    )
+    assert isinstance(bundle, TearsheetBundle)
+    assert bundle.spec.kind is ReportKind.TEARSHEET
+    assert bundle.run_id == "sample"
+    assert bundle.display_name == "Momentum"
+    assert set(bundle.pages) == {"executive"}
+    assert set(bundle.tables) == {"performance_summary"}
+    assert (bundle.out_dir / "tables" / "performance_summary.csv").exists()
 
-    tables_dir = bundle.out_dir / "tables"
-    assert (tables_dir / "summary.csv").exists()
-    assert (tables_dir / "appendix.csv").exists()
-    assert (tables_dir / "sample_latest_weights.csv").exists()
-    assert (tables_dir / "sample_latest_qty.csv").exists()
 
+def test_report_builder_creates_comparison_bundle_for_multiple_runs(tmp_path: Path, monkeypatch) -> None:
+    runs = [_sample_run(tmp_path, "run-a", "momentum"), _sample_run(tmp_path, "run-b", "op_fwd_yield")]
+
+    class _FakeFactory:
+        def build(self, run_obj, benchmark):  # type: ignore[no-untyped-def]
+            return SimpleNamespace(run_id=run_obj.run_id, display_name=str(run_obj.config["name"]))
+
+    class _FakeComparisonFigureBuilder:
+        def __init__(self, out_dir: Path) -> None:
+            self.out_dir = out_dir
+
+        def build(self, snapshots, *, require_png=False):  # type: ignore[no-untyped-def]
+            path = self.out_dir / "performance.png"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b"png")
+            return {"performance": path}
+
+    class _FakeComparisonTableBuilder:
+        def build(self, snapshots):  # type: ignore[no-untyped-def]
+            return {"ranked_summary": pd.DataFrame([{"display_name": "Momentum", "cagr": 0.1}])}
+
+    monkeypatch.setattr("backtesting.reporting.builder.BenchmarkRepository.default", lambda: object())
+    monkeypatch.setattr("backtesting.reporting.builder.SectorRepository.default", lambda: object())
+    monkeypatch.setattr("backtesting.reporting.builder.PerformanceSnapshotFactory", lambda *args, **kwargs: _FakeFactory())
+    monkeypatch.setattr("backtesting.reporting.builder.ComparisonFigureBuilder", _FakeComparisonFigureBuilder)
+    monkeypatch.setattr("backtesting.reporting.builder.ComparisonTableBuilder", _FakeComparisonTableBuilder)
+
+    bundle = ReportBuilder(tmp_path).build(ReportSpec(name="compare-report", run_ids=("run-a", "run-b")), runs)
+
+    assert isinstance(bundle, ComparisonBundle)
+    assert bundle.spec.kind is ReportKind.COMPARISON
+    assert bundle.display_names == ("Momentum", "Op_Fwd_Yield")
+    assert set(bundle.pages) == {"performance"}
+    assert set(bundle.tables) == {"ranked_summary"}
+    assert (bundle.out_dir / "tables" / "ranked_summary.csv").exists()
