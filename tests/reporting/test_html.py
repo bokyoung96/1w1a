@@ -28,7 +28,14 @@ def test_html_renderer_uses_tearsheet_template(tmp_path: Path) -> None:
             "rolling": _write_asset(tmp_path / "single-report" / "pages" / "rolling.png"),
         },
         tables={
-            "performance_summary": pd.DataFrame([{"metric": "CAGR", "value": "17.2%"}]),
+            "performance_summary": pd.DataFrame(
+                [
+                    {"metric": "CAGR", "value": 0.172},
+                    {"metric": "Sharpe", "value": 1.1},
+                    {"metric": "Beta", "value": 1.01},
+                    {"metric": "Final Equity", "value": 1234567.0},
+                ]
+            ),
             "drawdown_episodes": pd.DataFrame([{"start": "2022-01-01", "drawdown": "-12.3%"}]),
             "top_holdings": pd.DataFrame([{"symbol": "AAA", "weight": "25.0%"}]),
             "sector_weights": pd.DataFrame([{"sector": "Tech", "weight": "40.0%"}]),
@@ -47,6 +54,12 @@ def test_html_renderer_uses_tearsheet_template(tmp_path: Path) -> None:
     assert "executive.png" in html
     assert "Metric Cards" in html
     assert "Top Holdings" in html
+    assert "17.2%" in html
+    assert "1.10" in html
+    assert "1.01" in html
+    assert "1,234,567" in html
+    assert "110.0%" not in html
+    assert "101.0%" not in html
 
 
 def test_html_renderer_uses_comparison_template(tmp_path: Path) -> None:

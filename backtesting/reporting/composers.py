@@ -36,7 +36,6 @@ _PAGE_TITLES = {
     "performance": "Performance Comparison",
 }
 _PERCENT_COLUMNS = {
-    "value",
     "cagr",
     "cumulative_return",
     "annual_volatility",
@@ -53,6 +52,17 @@ _PERCENT_COLUMNS = {
 _NUMBER_COLUMNS = {"beta", "sharpe", "sortino", "calmar", "information_ratio"}
 _INTEGER_COLUMNS = {"count", "holdings_count", "duration_days", "recovery_days"}
 _MONEY_COLUMNS = {"final_equity"}
+_PERCENT_METRICS = {
+    "Cumulative Return",
+    "CAGR",
+    "Volatility",
+    "Max Drawdown",
+    "Avg Turnover",
+    "Alpha",
+    "Tracking Error",
+}
+_NUMBER_METRICS = {"Sharpe", "Sortino", "Calmar", "Beta", "Information Ratio"}
+_MONEY_METRICS = {"Final Equity"}
 
 
 @dataclass(frozen=True, slots=True)
@@ -143,7 +153,8 @@ def _metric_cards(frame: pd.DataFrame) -> tuple[dict[str, str], ...]:
         return ()
     cards: list[dict[str, str]] = []
     for row in frame.head(8).to_dict(orient="records"):
-        cards.append({"label": str(row.get("metric", "")), "value": _format_value("value", row.get("value"))})
+        label = str(row.get("metric", ""))
+        cards.append({"label": label, "value": _format_metric_value(label, row.get("value"))})
     return tuple(cards)
 
 
@@ -165,7 +176,7 @@ def _table_contexts(tables: dict[str, pd.DataFrame]) -> tuple[TableContext, ...]
     for key, frame in tables.items():
         rows = tuple(
             {
-                str(column): _format_value(str(column), value)
+                str(column): _format_table_cell(key, row, str(column), value)
                 for column, value in row.items()
             }
             for row in frame.to_dict(orient="records")
@@ -179,6 +190,23 @@ def _table_contexts(tables: dict[str, pd.DataFrame]) -> tuple[TableContext, ...]
             )
         )
     return tuple(items)
+
+
+def _format_table_cell(table_key: str, row: dict[str, object], column: str, value: object) -> str:
+    if table_key == "performance_summary" and column == "value":
+        return _format_metric_value(str(row.get("metric", "")), value)
+    return _format_value(column, value)
+
+
+def _format_metric_value(metric: str, value: object) -> str:
+    label = metric.strip()
+    if label in _PERCENT_METRICS:
+        return _format_value("cagr", value)
+    if label in _NUMBER_METRICS:
+        return _format_value("sharpe", value)
+    if label in _MONEY_METRICS:
+        return _format_value("final_equity", value)
+    return _format_value("value", value)
 
 
 def _format_value(column: str, value: object) -> str:
