@@ -3,92 +3,82 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ report.title }}</title>
+    <title>{{ report.cover.title }}</title>
     <link rel="stylesheet" href="{{ stylesheet }}">
   </head>
   <body>
+    {% set executive_metric_count = report.executive_metrics | length %}
     <main class="report-shell">
-      <section class="hero">
-        <div class="hero-main">
-          <p class="hero-kicker">Comparison Report</p>
-          <h1>{{ report.title }}</h1>
-          <p class="hero-subtitle">Benchmark: {{ report.benchmark_name }}</p>
-          <p class="hero-meta"><strong>Runs Compared:</strong> {{ report.participants | length }}</p>
-          <p class="hero-pill">Research-Style Comparison</p>
+      <section class="report-cover cover">
+        <div class="report-cover-copy hero-main">
+          <p class="hero-kicker eyebrow">{{ report.cover.report_type }}</p>
+          <h1>{{ report.cover.title }}</h1>
+          <p class="hero-subtitle subtitle">{{ report.cover.subtitle }}</p>
+          <p class="hero-meta"><strong>Benchmark:</strong> {{ report.cover.benchmark_name }}</p>
+          <p class="hero-meta"><strong>Report Name:</strong> {{ report.cover.report_name }}</p>
+          <p class="hero-pill cover-descriptor">{{ report.cover.descriptor }}</p>
         </div>
-        <aside class="hero-side">
-          <p class="hero-kicker">Participants</p>
-          <ul class="participant-list">
-            {% for name in report.participants %}
-              <li>{{ name }}</li>
-            {% endfor %}
-          </ul>
-        </aside>
       </section>
 
-      {% if report.metric_cards %}
-        <section class="report-section metric-section">
-          <header class="section-header">
-            <p class="eyebrow">Leadership</p>
-            <h2>Metric Cards</h2>
-          </header>
-          <div class="metric-cards">
-            {% for card in report.metric_cards %}
-              <article class="metric-card">
-                <p class="metric-card-label">{{ card.label }}</p>
-                <p class="metric-card-value">{{ card.value }}</p>
-              </article>
+      <section class="report-section executive-spread">
+        <header class="section-header">
+          <p class="eyebrow">Executive Summary</p>
+          <h2>Executive Summary</h2>
+        </header>
+
+        {% if report.executive_pages %}
+          <div class="figure-grid">
+            {% for page in report.executive_pages %}
+              <figure class="page-figure">
+                <figcaption>{{ page.title }}</figcaption>
+                {% if page.kind == "html" %}
+                  <iframe class="plot-frame" src="{{ page.path }}" title="{{ page.title }}"></iframe>
+                {% else %}
+                  <img src="{{ page.path }}" alt="{{ page.title }}">
+                {% endif %}
+              </figure>
             {% endfor %}
           </div>
-        </section>
-      {% endif %}
+        {% endif %}
 
-      <section class="report-section">
-        <header class="section-header">
-          <p class="eyebrow">Figures</p>
-          <h2>Comparison Pages</h2>
-        </header>
-        <div class="figure-grid">
-          {% for page in report.pages %}
-            <figure class="page-figure">
-              <figcaption>{{ page.title }}</figcaption>
-              {% if page.kind == "html" %}
-                <iframe class="plot-frame" src="{{ page.path }}" title="{{ page.title }}"></iframe>
-                <p class="plot-link"><a href="{{ page.path }}">Open interactive chart</a></p>
-              {% else %}
-                <img src="{{ page.path }}" alt="{{ page.title }}">
-              {% endif %}
-            </figure>
-          {% endfor %}
-        </div>
+        {% if report.executive_tables %}
+          <div class="section-stack">
+            {% for table in report.executive_tables %}
+              {% include "partials/compact-table.html.j2" %}
+            {% endfor %}
+          </div>
+        {% endif %}
       </section>
 
-      {% for table in report.tables %}
+      {% for section in report.sections %}
         <section class="report-section">
           <header class="section-header">
-            <p class="eyebrow">Table</p>
-            <h2>{{ table.title }}</h2>
+            <p class="eyebrow">{{ section.title }}</p>
+            <h2>{{ section.title }}</h2>
           </header>
-          <div class="table-wrap">
-            <table class="metric-table">
-              <thead>
-                <tr>
-                  {% for column in table.columns %}
-                    <th>{{ column.replace("_", " ").title() }}</th>
-                  {% endfor %}
-                </tr>
-              </thead>
-              <tbody>
-                {% for row in table.rows %}
-                  <tr>
-                    {% for column in table.columns %}
-                      <td>{{ row[column] }}</td>
-                    {% endfor %}
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
+
+          {% if section.pages %}
+            <div class="figure-grid">
+              {% for page in section.pages %}
+                <figure class="page-figure">
+                  <figcaption>{{ page.title }}</figcaption>
+                  {% if page.kind == "html" %}
+                    <iframe class="plot-frame" src="{{ page.path }}" title="{{ page.title }}"></iframe>
+                  {% else %}
+                    <img src="{{ page.path }}" alt="{{ page.title }}">
+                  {% endif %}
+                </figure>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% if section.tables %}
+            <div class="section-stack">
+              {% for table in section.tables %}
+                {% include "partials/compact-table.html.j2" %}
+              {% endfor %}
+            </div>
+          {% endif %}
         </section>
       {% endfor %}
 

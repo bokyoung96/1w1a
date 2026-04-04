@@ -91,7 +91,7 @@ def test_html_renderer_uses_comparison_template(tmp_path: Path) -> None:
         display_names=("Momentum", "OP Fwd Yield"),
         pages={
             "executive": _write_asset(tmp_path / "compare-report" / "pages" / "executive.png"),
-            "performance": _write_asset(tmp_path / "compare-report" / "pages" / "performance.png"),
+            "performance": _write_asset(tmp_path / "compare-report" / "pages" / "performance.html"),
         },
         tables={
             "ranked_summary": pd.DataFrame(
@@ -111,16 +111,23 @@ def test_html_renderer_uses_comparison_template(tmp_path: Path) -> None:
 
     html = path.read_text(encoding="utf-8")
     assert path.exists()
+    assert '<section class="report-cover cover">' in html
+    assert '<section class="report-section executive-spread">' in html
+    assert '<div class="executive-spread">' not in html
+    assert html.index('<section class="report-cover cover">') < html.index('<section class="report-section executive-spread">')
     assert "Strategy Comparison" in html
     assert "KOSPI200" in html
     assert "Momentum" in html
     assert "OP Fwd Yield" in html
-    assert "performance.png" in html
+    assert "pages/performance.html" in html
+    assert '<iframe class="plot-frame"' in html
     assert "Ranked Summary" in html
-    assert "Top CAGR" in html
-    assert "Momentum · 17.2%" in html
-    assert "Top Sharpe" in html
-    assert "OP Fwd Yield · 1.35" in html
+    assert "Benchmark Relative Metrics" in html
+    assert "Holdings And Sector Comparison" in html
+    assert "Participants" not in html
+    assert "Research-Style Comparison" not in html
+    assert "Metric Cards" not in html
+    assert "Top CAGR" not in html
     assert "missing_split:run-b" in html
 
 
