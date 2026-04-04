@@ -96,7 +96,8 @@ def test_tearsheet_table_builder_builds_named_tables() -> None:
         "sector_weights",
         "validation_appendix",
     }
-    assert list(tables["performance_summary"].columns) == ["metric", "value"]
+    assert list(tables["performance_summary"].columns) == ["metric_key", "metric", "value"]
+    assert tables["performance_summary"].iloc[0]["metric_key"] == "cumulative_return"
     assert "CAGR" in tables["performance_summary"]["metric"].tolist()
     assert tables["top_holdings"].iloc[0]["symbol"] == "AAA"
     assert "Tech" in tables["sector_weights"]["sector"].tolist()

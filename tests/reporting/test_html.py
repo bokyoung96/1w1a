@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 
 from backtesting.reporting.html import HtmlRenderer
-from backtesting.reporting.models import BenchmarkConfig, ComparisonBundle, ReportSpec, TearsheetBundle
+from backtesting.reporting.models import BenchmarkConfig, ComparisonBundle, ReportBundle, ReportSpec, SavedRun, TearsheetBundle
 
 
 def _write_asset(path: Path) -> Path:
@@ -30,10 +30,10 @@ def test_html_renderer_uses_tearsheet_template(tmp_path: Path) -> None:
         tables={
             "performance_summary": pd.DataFrame(
                 [
-                    {"metric": "CAGR", "value": 0.172},
-                    {"metric": "Sharpe", "value": 1.1},
-                    {"metric": "Beta", "value": 1.01},
-                    {"metric": "Final Equity", "value": 1234567.0},
+                    {"metric_key": "cagr", "metric": "CAGR", "value": 0.172},
+                    {"metric_key": "sharpe", "metric": "Sharpe", "value": 1.1},
+                    {"metric_key": "beta", "metric": "Beta", "value": 1.01},
+                    {"metric_key": "final_equity", "metric": "Final Equity", "value": 1234567.0},
                 ]
             ),
             "drawdown_episodes": pd.DataFrame([{"start": "2022-01-01", "drawdown": "-12.3%"}]),
@@ -95,3 +95,35 @@ def test_html_renderer_uses_comparison_template(tmp_path: Path) -> None:
     assert "OP Fwd Yield" in html
     assert "performance.png" in html
     assert "Ranked Summary" in html
+
+
+def test_html_renderer_keeps_legacy_reportbundle_path_styled(tmp_path: Path) -> None:
+    index = pd.to_datetime(["2024-01-02", "2024-01-03"])
+    run = SavedRun(
+        run_id="legacy-run",
+        path=tmp_path / "legacy-run",
+        config={"strategy": "momentum"},
+        summary={"cagr": 0.1},
+        equity=pd.Series([100.0, 110.0], index=index),
+        returns=pd.Series([0.0, 0.1], index=index),
+        turnover=pd.Series([0.0, 0.05], index=index),
+        weights=pd.DataFrame({"A": [1.0, 1.0]}, index=index),
+        qty=pd.DataFrame({"A": [10.0, 10.0]}, index=index),
+    )
+    plot_path = _write_asset(tmp_path / "legacy-report" / "plots" / "equity.png")
+    bundle = ReportBundle(
+        spec=ReportSpec(name="legacy-report", run_ids=("legacy-run",)),
+        out_dir=tmp_path / "legacy-report",
+        runs=(run,),
+        summary=pd.DataFrame([{"run_id": "legacy-run", "cagr": 0.1}]),
+        appendix=pd.DataFrame([{"run_id": "legacy-run"}]),
+        plots={"equity": plot_path},
+        notes=(),
+    )
+
+    path = HtmlRenderer().render(bundle)
+
+    html = path.read_text(encoding="utf-8")
+    css = path.parent.joinpath("styles.css").read_text(encoding="utf-8")
+    assert '<div class="plot-grid">' in html
+    assert ".plot-grid" in css

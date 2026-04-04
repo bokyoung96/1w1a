@@ -55,7 +55,7 @@ _VALIDATION_COLUMNS = ("note",)
 class TearsheetTableBuilder:
     def build(self, snapshot: PerformanceSnapshot, *, notes: tuple[str, ...] = ()) -> dict[str, pd.DataFrame]:
         performance_rows = [
-            {"metric": metric, "value": value}
+            {"metric_key": metric, "metric": _metric_label(metric), "value": value}
             for metric, value in asdict(snapshot.metrics).items()
         ]
 
@@ -87,14 +87,15 @@ class TearsheetTableBuilder:
 
 def build_performance_summary_table(frame: pd.DataFrame) -> pd.DataFrame:
     if frame.empty:
-        return pd.DataFrame(columns=("metric", "value"))
+        return pd.DataFrame(columns=("metric_key", "metric", "value"))
 
     table = frame.copy()
-    table["metric"] = table["metric"].map(_metric_label)
-    table["_order"] = frame["metric"].map(_metric_order)
+    if "metric" not in table.columns:
+        table["metric"] = table["metric_key"].map(_metric_label)
+    table["_order"] = table["metric_key"].map(_metric_order)
     table["_label"] = table["metric"]
     table = table.sort_values(["_order", "_label"], ascending=[True, True]).drop(columns=["_order", "_label"])
-    return table.loc[:, ("metric", "value")].reset_index(drop=True)
+    return table.loc[:, ("metric_key", "metric", "value")].reset_index(drop=True)
 
 
 def build_drawdown_episodes_table(frame: pd.DataFrame) -> pd.DataFrame:

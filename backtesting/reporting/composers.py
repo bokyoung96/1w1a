@@ -154,7 +154,12 @@ def _metric_cards(frame: pd.DataFrame) -> tuple[dict[str, str], ...]:
     cards: list[dict[str, str]] = []
     for row in frame.head(8).to_dict(orient="records"):
         label = str(row.get("metric", ""))
-        cards.append({"label": label, "value": _format_metric_value(label, row.get("value"))})
+        cards.append(
+            {
+                "label": label,
+                "value": _format_metric_value(str(row.get("metric_key", "")), label, row.get("value")),
+            }
+        )
     return tuple(cards)
 
 
@@ -174,10 +179,12 @@ def _page_contexts(pages: dict[str, Path], out_dir: Path) -> tuple[PageContext, 
 def _table_contexts(tables: dict[str, pd.DataFrame]) -> tuple[TableContext, ...]:
     items: list[TableContext] = []
     for key, frame in tables.items():
+        display_columns = tuple(str(column) for column in frame.columns if not _is_internal_column(key, str(column)))
         rows = tuple(
             {
                 str(column): _format_table_cell(key, row, str(column), value)
                 for column, value in row.items()
+                if not _is_internal_column(key, str(column))
             }
             for row in frame.to_dict(orient="records")
         )
@@ -185,7 +192,7 @@ def _table_contexts(tables: dict[str, pd.DataFrame]) -> tuple[TableContext, ...]
             TableContext(
                 key=key,
                 title=_TABLE_TITLES.get(key, key.replace("_", " ").title()),
-                columns=tuple(str(column) for column in frame.columns),
+                columns=display_columns,
                 rows=rows,
             )
         )
@@ -194,12 +201,20 @@ def _table_contexts(tables: dict[str, pd.DataFrame]) -> tuple[TableContext, ...]
 
 def _format_table_cell(table_key: str, row: dict[str, object], column: str, value: object) -> str:
     if table_key == "performance_summary" and column == "value":
-        return _format_metric_value(str(row.get("metric", "")), value)
+        return _format_metric_value(str(row.get("metric_key", "")), str(row.get("metric", "")), value)
     return _format_value(column, value)
 
 
-def _format_metric_value(metric: str, value: object) -> str:
-    label = metric.strip()
+def _format_metric_value(metric_key: str, metric_label: str, value: object) -> str:
+    key = metric_key.strip().lower()
+    if key in _PERCENT_COLUMNS:
+        return _format_value(key, value)
+    if key in _NUMBER_COLUMNS:
+        return _format_value(key, value)
+    if key in _MONEY_COLUMNS:
+        return _format_value(key, value)
+
+    label = metric_label.strip()
     if label in _PERCENT_METRICS:
         return _format_value("cagr", value)
     if label in _NUMBER_METRICS:
@@ -233,3 +248,7 @@ def _format_value(column: str, value: object) -> str:
     if name in _MONEY_COLUMNS:
         return f"{numeric:,.0f}"
     return f"{numeric:,.2f}"
+
+
+def _is_internal_column(table_key: str, column: str) -> bool:
+    return table_key == "performance_summary" and column == "metric_key"
