@@ -137,6 +137,43 @@ def test_html_renderer_uses_comparison_template(tmp_path: Path) -> None:
     assert "missing_split:run-b" in html
 
 
+def test_html_renderer_keeps_composed_report_asset_paths_relative(tmp_path: Path) -> None:
+    out_dir = tmp_path / "nested" / "comparison-report"
+    bundle = ComparisonBundle(
+        spec=ReportSpec(
+            name="comparison-report",
+            run_ids=("run-a", "run-b"),
+            title="Nested Comparison",
+            benchmark=BenchmarkConfig.default_kospi200(),
+        ),
+        out_dir=out_dir,
+        display_names=("Momentum", "OP Fwd Yield"),
+        pages={
+            "executive": _write_asset(out_dir / "pages" / "executive.png"),
+            "performance": _write_asset(out_dir / "pages" / "performance.html"),
+        },
+        tables={
+            "ranked_summary": pd.DataFrame(
+                [
+                    {"display_name": "Momentum", "cagr": 0.172, "sharpe": 1.10},
+                    {"display_name": "OP Fwd Yield", "cagr": 0.150, "sharpe": 1.35},
+                ]
+            ),
+            "benchmark_relative": pd.DataFrame(),
+            "exposure_summary": pd.DataFrame(),
+            "sector_summary": pd.DataFrame(),
+        },
+        notes=(),
+    )
+
+    path = HtmlRenderer().render(bundle)
+
+    html = path.read_text(encoding="utf-8")
+    assert "pages/executive.png" in html
+    assert "pages/performance.html" in html
+    assert str(out_dir) not in html
+
+
 def test_tearsheet_composer_builds_pdf_first_context(tmp_path: Path) -> None:
     bundle = TearsheetBundle(
         spec=ReportSpec(

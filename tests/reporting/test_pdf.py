@@ -30,9 +30,11 @@ def test_pdf_renderer_writes_pdf_when_export_succeeds(monkeypatch, tmp_path: Pat
     html_path = tmp_path / "report.html"
     html_path.write_text("<html><body>hello</body></html>", encoding="utf-8")
 
+    seen: dict[str, str] = {}
+
     class _FakeHtml:
-        def __init__(self, *, filename: str) -> None:
-            self.filename = filename
+        def __init__(self, **kwargs) -> None:
+            seen.update({key: str(value) for key, value in kwargs.items()})
 
         def write_pdf(self, path: str) -> None:
             Path(path).write_bytes(b"%PDF-1.4")
@@ -47,6 +49,8 @@ def test_pdf_renderer_writes_pdf_when_export_succeeds(monkeypatch, tmp_path: Pat
     assert pdf_path == html_path.with_suffix(".pdf")
     assert pdf_path.exists()
     assert status == {"pdf_ok": True, "pdf_path": str(pdf_path)}
+    assert seen["base_url"] == str(tmp_path)
+    assert "hello" in seen["string"]
 
 
 def test_pdf_renderer_writes_pdf_from_composed_report(monkeypatch, tmp_path: Path) -> None:
@@ -100,17 +104,17 @@ def test_pdf_renderer_writes_pdf_from_composed_report(monkeypatch, tmp_path: Pat
     )
 
     class _FakeHtml:
-        def __init__(self, *, filename: str) -> None:
-            self.filename = filename
-            html = Path(filename).read_text(encoding="utf-8")
+        def __init__(self, **kwargs) -> None:
+            html = kwargs["string"]
+            assert kwargs["base_url"] == str(tmp_path)
             assert '<link rel="stylesheet" href="styles.css">' in html
             assert 'class="report-cover cover"' in html
             assert 'class="report-section executive-spread"' in html
             assert 'class="metric-strip"' in html
             assert 'class="compact-table-block"' in html
-            styles = Path(filename).with_name("styles.css")
-            assert styles.exists()
-            assert ".report-cover" in styles.read_text(encoding="utf-8")
+            assert "@media print" in html
+            assert ".report-section,.compact-table-block,.notes-banner" in html
+            assert 'src="page.png"' in html
 
         def write_pdf(self, path: str) -> None:
             Path(path).write_bytes(b"%PDF-1.4")
@@ -126,3 +130,54 @@ def test_pdf_renderer_writes_pdf_from_composed_report(monkeypatch, tmp_path: Pat
     assert pdf_path is not None
     assert pdf_path.exists()
     assert status["pdf_ok"] is True
+
+
+def test_pdf_renderer_injects_print_layout_override_for_composed_reports(monkeypatch, tmp_path: Path) -> None:
+    html_path = tmp_path / "report.html"
+    html_path.write_text(
+        """
+        <html>
+          <head>
+            <link rel="stylesheet" href="styles.css">
+          </head>
+          <body>
+            <main class="report-shell">
+              <section class="report-section">
+                <div class="section-stack">
+                  <section class="compact-table-block">
+                    <div class="table-wrap">
+                      <table><tr><td>row</td></tr></table>
+                    </div>
+                  </section>
+                </div>
+              </section>
+            </main>
+          </body>
+        </html>
+        """,
+        encoding="utf-8",
+    )
+
+    seen: dict[str, str] = {}
+
+    class _FakeHtml:
+        def __init__(self, **kwargs) -> None:
+            seen.update({key: str(value) for key, value in kwargs.items()})
+
+        def write_pdf(self, path: str) -> None:
+            Path(path).write_bytes(b"%PDF-1.4")
+
+    class _FakeWeasyPrint:
+        HTML = _FakeHtml
+
+    monkeypatch.setattr(importlib, "import_module", lambda name: _FakeWeasyPrint())
+
+    pdf_path, status = PdfRenderer().render_with_status(html_path)
+
+    assert pdf_path == html_path.with_suffix(".pdf")
+    assert pdf_path.exists()
+    assert status == {"pdf_ok": True, "pdf_path": str(pdf_path)}
+    assert seen["base_url"] == str(tmp_path)
+    assert "@media print" in seen["string"]
+    assert ".report-section,.compact-table-block,.notes-banner" in seen["string"]
+    assert 'href="styles.css"' in seen["string"]
