@@ -8,58 +8,56 @@
   </head>
   <body>
     <main class="report-shell">
-      <section class="report-cover">
-        <div class="report-cover-copy">
-          <p class="eyebrow">{{ report.cover.report_type }}</p>
+      <section class="report-cover cover">
+        <div class="report-cover-copy hero-main">
+          <p class="hero-kicker eyebrow">{{ report.cover.report_type }}</p>
           <h1>{{ report.cover.title }}</h1>
-          <p class="cover-subtitle">{{ report.cover.subtitle }}</p>
-          <p class="cover-meta"><strong>Benchmark:</strong> {{ report.cover.benchmark_name }}</p>
-          <p class="cover-meta"><strong>Report Name:</strong> {{ report.cover.report_name }}</p>
-          <p class="cover-descriptor">{{ report.cover.descriptor }}</p>
+          <p class="hero-subtitle subtitle">{{ report.cover.subtitle }}</p>
+          <p class="hero-meta"><strong>Benchmark:</strong> {{ report.cover.benchmark_name }}</p>
+          <p class="hero-meta"><strong>Report Name:</strong> {{ report.cover.report_name }}</p>
+          <p class="hero-pill cover-descriptor">{{ report.cover.descriptor }}</p>
         </div>
       </section>
 
       <section class="report-section executive-spread">
-        <div class="executive-spread">
-          <header class="section-header">
-            <p class="eyebrow">Executive Summary</p>
-            <h2>Executive Summary</h2>
-          </header>
+        <header class="section-header">
+          <p class="eyebrow">Executive Summary</p>
+          <h2>Executive Summary</h2>
+        </header>
 
-          {% if report.executive_metrics %}
-            <div class="metric-cards">
-              {% for item in report.executive_metrics %}
-                <article class="metric-card">
-                  <p class="metric-card-label">{{ item.label }}</p>
-                  <p class="metric-card-value">{{ item.value }}</p>
-                </article>
-              {% endfor %}
-            </div>
-          {% endif %}
+        {% if report.executive_metrics %}
+          <div class="metric-cards">
+            {% for item in report.executive_metrics %}
+              <article class="metric-card">
+                <p class="metric-card-label">{{ item.label }}</p>
+                <p class="metric-card-value">{{ item.value }}</p>
+              </article>
+            {% endfor %}
+          </div>
+        {% endif %}
 
-          {% if report.executive_pages %}
-            <div class="figure-grid">
-              {% for page in report.executive_pages %}
-                <figure class="page-figure">
-                  <figcaption>{{ page.title }}</figcaption>
-                  {% if page.kind == "html" %}
-                    <iframe class="plot-frame" src="{{ page.path }}" title="{{ page.title }}"></iframe>
-                  {% else %}
-                    <img src="{{ page.path }}" alt="{{ page.title }}">
-                  {% endif %}
-                </figure>
-              {% endfor %}
-            </div>
-          {% endif %}
+        {% if report.executive_pages %}
+          <div class="figure-grid">
+            {% for page in report.executive_pages %}
+              <figure class="page-figure">
+                <figcaption>{{ page.title }}</figcaption>
+                {% if page.kind == "html" %}
+                  <iframe class="plot-frame" src="{{ page.path }}" title="{{ page.title }}"></iframe>
+                {% else %}
+                  <img src="{{ page.path }}" alt="{{ page.title }}">
+                {% endif %}
+              </figure>
+            {% endfor %}
+          </div>
+        {% endif %}
 
-          {% if report.executive_tables %}
-            <div class="section-stack">
-              {% for table in report.executive_tables %}
-                {% include "partials/compact-table.html.j2" %}
-              {% endfor %}
-            </div>
-          {% endif %}
-        </div>
+        {% if report.executive_tables %}
+          <div class="section-stack">
+            {% for table in report.executive_tables %}
+              {% include "partials/compact-table.html.j2" %}
+            {% endfor %}
+          </div>
+        {% endif %}
       </section>
 
       {% for section in report.sections %}
