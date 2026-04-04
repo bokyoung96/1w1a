@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from backtesting.reporting.composers import ComparisonComposer, TearsheetComposer
 from backtesting.reporting.html import HtmlRenderer
 from backtesting.reporting.models import BenchmarkConfig, ComparisonBundle, ReportBundle, ReportSpec, SavedRun, TearsheetBundle
 
@@ -108,6 +109,115 @@ def test_html_renderer_uses_comparison_template(tmp_path: Path) -> None:
     assert "Top Sharpe" in html
     assert "OP Fwd Yield · 1.35" in html
     assert "missing_split:run-b" in html
+
+
+def test_tearsheet_composer_builds_pdf_first_context(tmp_path: Path) -> None:
+    bundle = TearsheetBundle(
+        spec=ReportSpec(
+            name="single-report",
+            run_ids=("run-a",),
+            title="Momentum Tearsheet",
+            benchmark=BenchmarkConfig.default_kospi200(),
+        ),
+        out_dir=tmp_path / "single-report",
+        run_id="run-a",
+        display_name="Momentum",
+        pages={
+            "executive": _write_asset(tmp_path / "single-report" / "pages" / "executive.png"),
+            "rolling": _write_asset(tmp_path / "single-report" / "pages" / "rolling.png"),
+            "calendar": _write_asset(tmp_path / "single-report" / "pages" / "calendar.png"),
+            "exposure": _write_asset(tmp_path / "single-report" / "pages" / "exposure.png"),
+        },
+        tables={
+            "performance_summary": pd.DataFrame(
+                [
+                    {"metric_key": "cagr", "metric": "CAGR", "value": 0.172},
+                    {"metric_key": "sharpe", "metric": "Sharpe", "value": 1.1},
+                    {"metric_key": "max_drawdown", "metric": "Max Drawdown", "value": -0.221},
+                    {"metric_key": "tracking_error", "metric": "Tracking Error", "value": 0.081},
+                    {"metric_key": "final_equity", "metric": "Final Equity", "value": 1234567.0},
+                ]
+            ),
+            "drawdown_episodes": pd.DataFrame([{"start": "2022-01-01", "drawdown": -0.123}]),
+            "top_holdings": pd.DataFrame([{"symbol": "AAA", "weight": 0.25}]),
+            "sector_weights": pd.DataFrame([{"sector": "Tech", "weight": 0.40}]),
+            "validation_appendix": pd.DataFrame([{"note": "missing_factor:run-a"}]),
+        },
+        notes=("missing_factor:run-a",),
+    )
+
+    report = TearsheetComposer().compose(bundle)
+
+    assert report.cover.report_type == "Single-Run Tearsheet"
+    assert report.cover.title == "Momentum Tearsheet"
+    assert report.cover.benchmark_name == "KOSPI200"
+    assert report.cover.report_name == "single-report"
+    assert report.cover.descriptor
+    assert [page.key for page in report.executive_pages] == ["executive"]
+    assert [table.key for table in report.executive_tables] == ["performance_summary", "drawdown_episodes"]
+    assert [section.title for section in report.sections] == [
+        "Rolling Diagnostics",
+        "Return Shape",
+        "Holdings And Sectors",
+        "Appendix",
+    ]
+    assert report.sections[0].pages and report.sections[0].pages[0].key == "rolling"
+    assert report.sections[1].pages and report.sections[1].pages[0].key == "calendar"
+    assert report.sections[2].pages and report.sections[2].pages[0].key == "exposure"
+    assert [table.key for table in report.sections[2].tables] == ["top_holdings", "sector_weights"]
+    assert [table.key for table in report.sections[3].tables] == ["validation_appendix"]
+    assert report.notes == ("missing_factor:run-a",)
+    assert len(report.executive_metrics) == 5
+
+
+def test_comparison_composer_builds_pdf_first_context(tmp_path: Path) -> None:
+    bundle = ComparisonBundle(
+        spec=ReportSpec(
+            name="compare-report",
+            run_ids=("run-a", "run-b"),
+            title="Strategy Comparison",
+            benchmark=BenchmarkConfig.default_kospi200(),
+        ),
+        out_dir=tmp_path / "compare-report",
+        display_names=("Momentum", "OP Fwd Yield"),
+        pages={
+            "executive": _write_asset(tmp_path / "compare-report" / "pages" / "executive.png"),
+            "performance": _write_asset(tmp_path / "compare-report" / "pages" / "performance.png"),
+            "rolling": _write_asset(tmp_path / "compare-report" / "pages" / "rolling.png"),
+            "exposure": _write_asset(tmp_path / "compare-report" / "pages" / "exposure.png"),
+        },
+        tables={
+            "ranked_summary": pd.DataFrame(
+                [
+                    {"display_name": "Momentum", "cagr": 0.172, "sharpe": 1.10},
+                    {"display_name": "OP Fwd Yield", "cagr": 0.150, "sharpe": 1.35},
+                ]
+            ),
+            "benchmark_relative": pd.DataFrame([{"display_name": "Momentum", "alpha": 0.032, "beta": 0.88}]),
+            "exposure_summary": pd.DataFrame([{"display_name": "Momentum", "holdings_count": 20}]),
+            "sector_summary": pd.DataFrame([{"display_name": "Momentum", "top_sector": "Tech"}]),
+        },
+        notes=("missing_split:run-b",),
+    )
+
+    report = ComparisonComposer().compose(bundle)
+
+    assert report.cover.report_type == "Comparison Report"
+    assert report.cover.title == "Strategy Comparison"
+    assert report.cover.benchmark_name == "KOSPI200"
+    assert report.cover.report_name == "compare-report"
+    assert report.cover.descriptor
+    assert [page.key for page in report.executive_pages] == ["executive", "performance"]
+    assert [table.key for table in report.executive_tables] == ["ranked_summary", "benchmark_relative"]
+    assert [section.title for section in report.sections] == [
+        "Rolling And Relative Diagnostics",
+        "Holdings And Sector Comparison",
+    ]
+    assert report.sections[0].pages and report.sections[0].pages[0].key == "rolling"
+    assert report.sections[1].pages and report.sections[1].pages[0].key == "exposure"
+    assert [table.key for table in report.sections[1].tables] == ["exposure_summary", "sector_summary"]
+    assert report.notes == ("missing_split:run-b",)
+    assert report.participants == ("Momentum", "OP Fwd Yield")
 
 
 def test_html_renderer_keeps_legacy_reportbundle_path_styled(tmp_path: Path) -> None:

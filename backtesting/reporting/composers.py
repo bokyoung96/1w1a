@@ -11,7 +11,10 @@ from .models import ComparisonBundle, TearsheetBundle
 __all__ = (
     "ComparisonComposer",
     "ComparisonRenderContext",
+    "CoverContext",
+    "MetricStripItem",
     "PageContext",
+    "SectionContext",
     "TableContext",
     "TearsheetComposer",
     "TearsheetRenderContext",
@@ -82,90 +85,213 @@ class TableContext:
 
 
 @dataclass(frozen=True, slots=True)
+class CoverContext:
+    report_type: str
+    title: str
+    subtitle: str
+    benchmark_name: str
+    report_name: str
+    descriptor: str
+
+
+@dataclass(frozen=True, slots=True)
+class MetricStripItem:
+    label: str
+    value: str
+
+
+@dataclass(frozen=True, slots=True)
+class SectionContext:
+    title: str
+    pages: tuple[PageContext, ...]
+    tables: tuple[TableContext, ...]
+
+
+@dataclass(frozen=True, slots=True)
 class TearsheetRenderContext:
+    cover: CoverContext
+    executive_metrics: tuple[MetricStripItem, ...]
+    executive_pages: tuple[PageContext, ...]
+    executive_tables: tuple[TableContext, ...]
+    sections: tuple[SectionContext, ...]
+    notes: tuple[str, ...]
+    metric_cards: tuple[dict[str, str], ...]
+    pages: tuple[PageContext, ...]
+    tables: tuple[TableContext, ...]
     title: str
     report_name: str
     display_name: str
     benchmark_name: str
-    metric_cards: tuple[dict[str, str], ...]
-    pages: tuple[PageContext, ...]
-    tables: tuple[TableContext, ...]
-    notes: tuple[str, ...]
 
 
 @dataclass(frozen=True, slots=True)
 class ComparisonRenderContext:
+    cover: CoverContext
+    executive_metrics: tuple[MetricStripItem, ...]
+    executive_pages: tuple[PageContext, ...]
+    executive_tables: tuple[TableContext, ...]
+    sections: tuple[SectionContext, ...]
+    notes: tuple[str, ...]
+    metric_cards: tuple[dict[str, str], ...]
+    pages: tuple[PageContext, ...]
+    tables: tuple[TableContext, ...]
     title: str
     report_name: str
     benchmark_name: str
     participants: tuple[str, ...]
-    metric_cards: tuple[dict[str, str], ...]
-    pages: tuple[PageContext, ...]
-    tables: tuple[TableContext, ...]
-    notes: tuple[str, ...]
 
 
 class TearsheetComposer:
     def compose(self, bundle: TearsheetBundle) -> TearsheetRenderContext:
-        summary = bundle.tables.get("performance_summary", pd.DataFrame())
+        pages = _page_contexts(bundle.pages, bundle.out_dir)
+        tables = _table_contexts(bundle.tables)
+        executive_pages, executive_tables, sections = _split_tearsheet_sections(pages, tables)
+        executive_metrics = _metric_strip(bundle.tables.get("performance_summary", pd.DataFrame()))
         return TearsheetRenderContext(
+            cover=CoverContext(
+                report_type="Single-Run Tearsheet",
+                title=bundle.spec.title or bundle.display_name,
+                subtitle=bundle.display_name,
+                benchmark_name=bundle.spec.benchmark.name,
+                report_name=bundle.spec.name,
+                descriptor="PDF-first single-run performance summary",
+            ),
+            executive_metrics=executive_metrics,
+            executive_pages=executive_pages,
+            executive_tables=executive_tables,
+            sections=sections,
+            notes=bundle.notes,
+            metric_cards=_metric_cards_from_strip(executive_metrics),
+            pages=pages,
+            tables=tables,
             title=bundle.spec.title or bundle.display_name,
             report_name=bundle.spec.name,
             display_name=bundle.display_name,
             benchmark_name=bundle.spec.benchmark.name,
-            metric_cards=_metric_cards(summary),
-            pages=_page_contexts(bundle.pages, bundle.out_dir),
-            tables=_table_contexts(bundle.tables),
-            notes=bundle.notes,
         )
 
 
 class ComparisonComposer:
     def compose(self, bundle: ComparisonBundle) -> ComparisonRenderContext:
+        pages = _page_contexts(bundle.pages, bundle.out_dir)
+        tables = _table_contexts(bundle.tables)
+        executive_pages, executive_tables, sections = _split_comparison_sections(pages, tables)
         ranked = bundle.tables.get("ranked_summary", pd.DataFrame())
+        executive_metrics = _comparison_metric_strip(ranked)
         return ComparisonRenderContext(
+            cover=CoverContext(
+                report_type="Comparison Report",
+                title=bundle.spec.title or bundle.spec.name,
+                subtitle=", ".join(bundle.display_names),
+                benchmark_name=bundle.spec.benchmark.name,
+                report_name=bundle.spec.name,
+                descriptor="Cross-strategy comparison optimized for PDF review",
+            ),
+            executive_metrics=executive_metrics,
+            executive_pages=executive_pages,
+            executive_tables=executive_tables,
+            sections=sections,
+            notes=bundle.notes,
+            metric_cards=_metric_cards_from_strip(executive_metrics),
+            pages=pages,
+            tables=tables,
             title=bundle.spec.title or bundle.spec.name,
             report_name=bundle.spec.name,
             benchmark_name=bundle.spec.benchmark.name,
             participants=bundle.display_names,
-            metric_cards=_comparison_metric_cards(ranked),
-            pages=_page_contexts(bundle.pages, bundle.out_dir),
-            tables=_table_contexts(bundle.tables),
-            notes=bundle.notes,
         )
 
 
-def _comparison_metric_cards(frame: pd.DataFrame) -> tuple[dict[str, str], ...]:
+def _comparison_metric_strip(frame: pd.DataFrame) -> tuple[MetricStripItem, ...]:
     if frame.empty:
         return ()
     cagr_leader = frame.sort_values(["cagr", "display_name"], ascending=[False, True]).iloc[0]
     cards = [
-        {"label": "Top CAGR", "value": f'{cagr_leader["display_name"]} · {_format_value("cagr", cagr_leader.get("cagr"))}'}
+        MetricStripItem(
+            label="Top CAGR",
+            value=f'{cagr_leader["display_name"]} · {_format_value("cagr", cagr_leader.get("cagr"))}',
+        )
     ]
     if "sharpe" in frame.columns:
         sharpe_leader = frame.sort_values(["sharpe", "display_name"], ascending=[False, True]).iloc[0]
         cards.append(
-            {
-                "label": "Top Sharpe",
-                "value": f'{sharpe_leader["display_name"]} · {_format_value("sharpe", sharpe_leader.get("sharpe"))}',
-            }
+            MetricStripItem(
+                label="Top Sharpe",
+                value=f'{sharpe_leader["display_name"]} · {_format_value("sharpe", sharpe_leader.get("sharpe"))}',
+            )
         )
     return tuple(cards)
 
 
-def _metric_cards(frame: pd.DataFrame) -> tuple[dict[str, str], ...]:
+def _metric_strip(frame: pd.DataFrame) -> tuple[MetricStripItem, ...]:
     if frame.empty:
         return ()
-    cards: list[dict[str, str]] = []
+    cards: list[MetricStripItem] = []
     for row in frame.head(8).to_dict(orient="records"):
         label = str(row.get("metric", ""))
         cards.append(
-            {
-                "label": label,
-                "value": _format_metric_value(str(row.get("metric_key", "")), label, row.get("value")),
-            }
+            MetricStripItem(
+                label=label,
+                value=_format_metric_value(str(row.get("metric_key", "")), label, row.get("value")),
+            )
         )
     return tuple(cards)
+
+
+def _metric_cards_from_strip(items: tuple[MetricStripItem, ...]) -> tuple[dict[str, str], ...]:
+    return tuple({"label": item.label, "value": item.value} for item in items)
+
+
+def _split_tearsheet_sections(
+    pages: tuple[PageContext, ...],
+    tables: tuple[TableContext, ...],
+) -> tuple[tuple[PageContext, ...], tuple[TableContext, ...], tuple[SectionContext, ...]]:
+    executive_pages = tuple(page for page in pages if page.key == "executive")
+    executive_tables = tuple(table for table in tables if table.key in {"performance_summary", "drawdown_episodes"})
+    sections = (
+        SectionContext(
+            title="Rolling Diagnostics",
+            pages=tuple(page for page in pages if page.key == "rolling"),
+            tables=(),
+        ),
+        SectionContext(
+            title="Return Shape",
+            pages=tuple(page for page in pages if page.key == "calendar"),
+            tables=(),
+        ),
+        SectionContext(
+            title="Holdings And Sectors",
+            pages=tuple(page for page in pages if page.key == "exposure"),
+            tables=tuple(table for table in tables if table.key in {"top_holdings", "sector_weights"}),
+        ),
+        SectionContext(
+            title="Appendix",
+            pages=(),
+            tables=tuple(table for table in tables if table.key == "validation_appendix"),
+        ),
+    )
+    return executive_pages, executive_tables, tuple(section for section in sections if section.pages or section.tables)
+
+
+def _split_comparison_sections(
+    pages: tuple[PageContext, ...],
+    tables: tuple[TableContext, ...],
+) -> tuple[tuple[PageContext, ...], tuple[TableContext, ...], tuple[SectionContext, ...]]:
+    executive_pages = tuple(page for page in pages if page.key in {"executive", "performance"})
+    executive_tables = tuple(table for table in tables if table.key in {"ranked_summary", "benchmark_relative"})
+    sections = (
+        SectionContext(
+            title="Rolling And Relative Diagnostics",
+            pages=tuple(page for page in pages if page.key == "rolling"),
+            tables=(),
+        ),
+        SectionContext(
+            title="Holdings And Sector Comparison",
+            pages=tuple(page for page in pages if page.key == "exposure"),
+            tables=tuple(table for table in tables if table.key in {"exposure_summary", "sector_summary"}),
+        ),
+    )
+    return executive_pages, executive_tables, tuple(section for section in sections if section.pages or section.tables)
 
 
 def _page_contexts(pages: dict[str, Path], out_dir: Path) -> tuple[PageContext, ...]:
