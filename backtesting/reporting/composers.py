@@ -70,6 +70,7 @@ class PageContext:
     key: str
     title: str
     path: str
+    kind: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -175,6 +176,7 @@ def _page_contexts(pages: dict[str, Path], out_dir: Path) -> tuple[PageContext, 
                 key=key,
                 title=_PAGE_TITLES.get(key, key.replace("_", " ").title()),
                 path=os.path.relpath(path, out_dir).replace(os.sep, "/"),
+                kind=path.suffix.lower().lstrip(".") or "file",
             )
         )
     return tuple(items)

@@ -8,7 +8,10 @@ from backtesting.reporting.models import BenchmarkConfig, ComparisonBundle, Repo
 
 def _write_asset(path: Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(b"png")
+    if path.suffix == ".html":
+        path.write_text("<html><body>plot</body></html>", encoding="utf-8")
+    else:
+        path.write_bytes(b"png")
     return path
 
 
@@ -137,3 +140,34 @@ def test_html_renderer_keeps_legacy_reportbundle_path_styled(tmp_path: Path) -> 
     css = path.parent.joinpath("styles.css").read_text(encoding="utf-8")
     assert '<div class="plot-grid">' in html
     assert ".plot-grid" in css
+
+
+def test_html_renderer_supports_html_page_asset_fallback_for_new_templates(tmp_path: Path) -> None:
+    bundle = TearsheetBundle(
+        spec=ReportSpec(
+            name="fallback-report",
+            run_ids=("run-a",),
+            title="Fallback Tearsheet",
+            benchmark=BenchmarkConfig.default_kospi200(),
+        ),
+        out_dir=tmp_path / "fallback-report",
+        run_id="run-a",
+        display_name="Momentum",
+        pages={
+            "executive": _write_asset(tmp_path / "fallback-report" / "pages" / "executive.html"),
+        },
+        tables={
+            "performance_summary": pd.DataFrame([{"metric_key": "cagr", "metric": "CAGR", "value": 0.172}]),
+            "drawdown_episodes": pd.DataFrame(),
+            "top_holdings": pd.DataFrame(),
+            "sector_weights": pd.DataFrame(),
+            "validation_appendix": pd.DataFrame(),
+        },
+        notes=(),
+    )
+
+    path = HtmlRenderer().render(bundle)
+
+    html = path.read_text(encoding="utf-8")
+    assert '<iframe class="plot-frame"' in html
+    assert "pages/executive.html" in html

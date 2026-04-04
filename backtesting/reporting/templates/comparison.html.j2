@@ -52,7 +52,12 @@
           {% for page in report.pages %}
             <figure class="page-figure">
               <figcaption>{{ page.title }}</figcaption>
-              <img src="{{ page.path }}" alt="{{ page.title }}">
+              {% if page.kind == "html" %}
+                <iframe class="plot-frame" src="{{ page.path }}" title="{{ page.title }}"></iframe>
+                <p class="plot-link"><a href="{{ page.path }}">Open interactive chart</a></p>
+              {% else %}
+                <img src="{{ page.path }}" alt="{{ page.title }}">
+              {% endif %}
             </figure>
           {% endfor %}
         </div>
