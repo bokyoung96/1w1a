@@ -86,6 +86,17 @@
           </div>
         </section>
       {% endfor %}
+
+      {% if report.notes %}
+        <section class="notes-banner">
+          <h3>Notes</h3>
+          <ul>
+            {% for note in report.notes %}
+              <li>{{ note }}</li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
     </main>
   </body>
 </html>

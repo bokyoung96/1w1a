@@ -87,7 +87,7 @@ def test_html_renderer_uses_comparison_template(tmp_path: Path) -> None:
             "exposure_summary": pd.DataFrame([{"display_name": "Momentum", "holdings_count": "20"}]),
             "sector_summary": pd.DataFrame([{"display_name": "Momentum", "top_sector": "Tech"}]),
         },
-        notes=(),
+        notes=("missing_split:run-b",),
     )
 
     path = HtmlRenderer().render(bundle)
@@ -104,6 +104,7 @@ def test_html_renderer_uses_comparison_template(tmp_path: Path) -> None:
     assert "Momentum · 17.2%" in html
     assert "Top Sharpe" in html
     assert "OP Fwd Yield · 1.35" in html
+    assert "missing_split:run-b" in html
 
 
 def test_html_renderer_keeps_legacy_reportbundle_path_styled(tmp_path: Path) -> None:
