@@ -75,6 +75,23 @@ def test_plot_library_writes_all_expected_plots(tmp_path: Path, monkeypatch) -> 
         assert path.suffix == ".png"
 
 
+def test_plot_library_preserves_flat_plot_contract(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(go.Figure, "write_image", _write_image_success)
+
+    run = _sample_run_named(tmp_path, "sample")
+    plotter = PlotLibrary(tmp_path)
+
+    assets = {
+        "equity": plotter.equity([run]),
+        "drawdown": plotter.drawdown([run]),
+        "turnover": plotter.turnover([run]),
+        "top_weights": plotter.top_weights([run]),
+        "monthly_heatmap": plotter.monthly_heatmap([run]),
+    }
+
+    assert assets.keys() == {"equity", "drawdown", "turnover", "top_weights", "monthly_heatmap"}
+
+
 def test_plot_library_supports_multi_run_equity_chart(tmp_path: Path, monkeypatch) -> None:
     captured = {}
 
