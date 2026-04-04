@@ -3,6 +3,7 @@ raw
 parquet/
 results/
 .worktrees/
+.superpowers/
 
 # Ignore config
 config.json
