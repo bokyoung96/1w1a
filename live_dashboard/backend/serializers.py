@@ -4,24 +4,35 @@ import math
 
 import pandas as pd
 
-from live_dashboard.backend.schemas import CategoryPointModel, HoldingModel, SeriesPointModel
+from live_dashboard.backend.schemas import (
+    CategoryPointModel,
+    HoldingModel,
+    NamedSeriesModel,
+    ValuePointModel,
+)
 
 
-def serialize_series(series: pd.Series, *, run_id: str, label: str) -> list[SeriesPointModel]:
-    points: list[SeriesPointModel] = []
+def serialize_value_points(series: pd.Series) -> list[ValuePointModel]:
+    points: list[ValuePointModel] = []
     for date, value in series.items():
         numeric = float(value)
         if math.isnan(numeric):
             continue
         points.append(
-            SeriesPointModel(
+            ValuePointModel(
                 date=pd.Timestamp(date).date().isoformat(),
                 value=numeric,
-                run_id=run_id,
-                label=label,
             )
         )
     return points
+
+
+def serialize_named_series(series: pd.Series, *, run_id: str, label: str) -> NamedSeriesModel:
+    return NamedSeriesModel(
+        run_id=run_id,
+        label=label,
+        points=serialize_value_points(series),
+    )
 
 
 def serialize_latest_holdings(frame: pd.DataFrame | None) -> list[HoldingModel]:

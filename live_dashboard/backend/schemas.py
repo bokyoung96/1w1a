@@ -31,11 +31,15 @@ class BenchmarkModel(DashboardBaseModel):
     name: str
 
 
-class SeriesPointModel(DashboardBaseModel):
+class ValuePointModel(DashboardBaseModel):
     date: str
     value: float
+
+
+class NamedSeriesModel(DashboardBaseModel):
     run_id: str
     label: str
+    points: list[ValuePointModel]
 
 
 class HoldingModel(DashboardBaseModel):
@@ -50,7 +54,6 @@ class CategoryPointModel(DashboardBaseModel):
 
 
 class DashboardMetricModel(DashboardBaseModel):
-    run_id: str
     label: str
     cumulative_return: float
     cagr: float
@@ -68,6 +71,8 @@ class DashboardMetricModel(DashboardBaseModel):
 
 
 class DashboardContextModel(DashboardBaseModel):
+    label: str
+    strategy: str
     benchmark: BenchmarkModel
     start_date: str
     end_date: str
@@ -75,29 +80,28 @@ class DashboardContextModel(DashboardBaseModel):
 
 
 class DashboardPerformanceModel(DashboardBaseModel):
-    strategy_equity: list[SeriesPointModel]
-    benchmark_equity: list[SeriesPointModel]
-    strategy_returns: list[SeriesPointModel]
+    series: list[NamedSeriesModel]
+    benchmark: list[ValuePointModel] | None
+    drawdowns: list[NamedSeriesModel]
 
 
 class DashboardRollingModel(DashboardBaseModel):
-    rolling_sharpe: list[SeriesPointModel]
-    rolling_beta: list[SeriesPointModel]
+    rolling_sharpe: list[NamedSeriesModel]
+    rolling_beta: list[NamedSeriesModel]
 
 
 class DashboardExposureModel(DashboardBaseModel):
-    holdings_count: list[SeriesPointModel]
+    holdings_count: list[NamedSeriesModel]
     latest_holdings: dict[str, list[HoldingModel]]
     sector_weights: dict[str, list[CategoryPointModel]]
-    sector_counts: dict[str, list[CategoryPointModel]]
 
 
 class DashboardPayloadModel(DashboardBaseModel):
     mode: str
     selected_run_ids: list[str]
     available_runs: list[RunOptionModel]
-    metrics: list[DashboardMetricModel]
-    context: DashboardContextModel
+    metrics: dict[str, DashboardMetricModel]
+    context: dict[str, DashboardContextModel]
     performance: DashboardPerformanceModel
     rolling: DashboardRollingModel
     exposure: DashboardExposureModel

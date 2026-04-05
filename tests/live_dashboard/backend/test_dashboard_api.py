@@ -47,9 +47,8 @@ def test_dashboard_returns_single_mode_payload(tmp_path: Path) -> None:
         "omega_20260405_110000",
         "alpha_20260405_100000",
     ]
-    assert payload["metrics"] == [
-        {
-            "runId": "alpha_20260405_100000",
+    assert payload["metrics"] == {
+        "alpha_20260405_100000": {
             "label": "Alpha Strategy",
             "cumulativeReturn": pytest.approx(0.1),
             "cagr": pytest.approx(164_238.77066398552),
@@ -65,25 +64,51 @@ def test_dashboard_returns_single_mode_payload(tmp_path: Path) -> None:
             "trackingError": pytest.approx(0.7540391236534092),
             "informationRatio": pytest.approx(15.874507866387544),
         }
-    ]
-    assert payload["context"] == {
-        "benchmark": {"code": "IKS200", "name": "KOSPI200"},
-        "startDate": "2024-01-02",
-        "endDate": "2024-01-03",
-        "asOfDate": "2024-01-03",
     }
-    assert payload["performance"]["strategyEquity"] == [
-        {"date": "2024-01-02", "value": 100.0, "runId": "alpha_20260405_100000", "label": "Alpha Strategy"},
-        {"date": "2024-01-03", "value": 110.0, "runId": "alpha_20260405_100000", "label": "Alpha Strategy"},
+    assert payload["context"] == {
+        "alpha_20260405_100000": {
+            "label": "Alpha Strategy",
+            "strategy": "momentum",
+            "startDate": "2024-01-02",
+            "endDate": "2024-01-03",
+            "asOfDate": "2024-01-03",
+            "benchmark": {"code": "IKS200", "name": "KOSPI200"},
+        }
+    }
+    assert payload["performance"]["series"] == [
+        {
+            "runId": "alpha_20260405_100000",
+            "label": "Alpha Strategy",
+            "points": [
+                {"date": "2024-01-02", "value": 100.0},
+                {"date": "2024-01-03", "value": 110.0},
+            ],
+        }
     ]
-    assert payload["performance"]["benchmarkEquity"] == [
-        {"date": "2024-01-02", "value": 100.0, "runId": "alpha_20260405_100000", "label": "Alpha Strategy"},
-        {"date": "2024-01-03", "value": 100.49999999999999, "runId": "alpha_20260405_100000", "label": "Alpha Strategy"},
+    assert payload["performance"]["benchmark"] == [
+        {"date": "2024-01-02", "value": 100.0},
+        {"date": "2024-01-03", "value": 100.49999999999999},
+    ]
+    assert payload["performance"]["drawdowns"] == [
+        {
+            "runId": "alpha_20260405_100000",
+            "label": "Alpha Strategy",
+            "points": [
+                {"date": "2024-01-02", "value": 0.0},
+                {"date": "2024-01-03", "value": 0.0},
+            ],
+        }
     ]
     assert payload["rolling"] == {"rollingSharpe": [], "rollingBeta": []}
     assert payload["exposure"]["holdingsCount"] == [
-        {"date": "2024-01-02", "value": 2.0, "runId": "alpha_20260405_100000", "label": "Alpha Strategy"},
-        {"date": "2024-01-03", "value": 2.0, "runId": "alpha_20260405_100000", "label": "Alpha Strategy"},
+        {
+            "runId": "alpha_20260405_100000",
+            "label": "Alpha Strategy",
+            "points": [
+                {"date": "2024-01-02", "value": 2.0},
+                {"date": "2024-01-03", "value": 2.0},
+            ],
+        }
     ]
     assert payload["exposure"]["latestHoldings"] == {
         "alpha_20260405_100000": [
@@ -95,12 +120,6 @@ def test_dashboard_returns_single_mode_payload(tmp_path: Path) -> None:
         "alpha_20260405_100000": [
             {"name": "Tech", "value": 0.55},
             {"name": "Utilities", "value": 0.45},
-        ]
-    }
-    assert payload["exposure"]["sectorCounts"] == {
-        "alpha_20260405_100000": [
-            {"name": "Tech", "value": 1.0},
-            {"name": "Utilities", "value": 1.0},
         ]
     }
 
@@ -136,15 +155,33 @@ def test_dashboard_returns_multi_mode_payload_for_repeated_run_ids(tmp_path: Pat
     payload = response.json()
     assert payload["mode"] == "multi"
     assert payload["selectedRunIds"] == ["omega_20260405_110000", "alpha_20260405_100000"]
-    assert [metric["runId"] for metric in payload["metrics"]] == [
+    assert set(payload["metrics"]) == {
         "omega_20260405_110000",
         "alpha_20260405_100000",
-    ]
-    assert {point["runId"] for point in payload["performance"]["strategyEquity"]} == {
+    }
+    assert set(payload["context"]) == {
+        "omega_20260405_110000",
+        "alpha_20260405_100000",
+    }
+    assert payload["performance"]["benchmark"] is None
+    assert {entry["runId"] for entry in payload["performance"]["series"]} == {
+        "omega_20260405_110000",
+        "alpha_20260405_100000",
+    }
+    assert {entry["runId"] for entry in payload["performance"]["drawdowns"]} == {
+        "omega_20260405_110000",
+        "alpha_20260405_100000",
+    }
+    assert {entry["runId"] for entry in payload["rolling"]["rollingSharpe"]} == set()
+    assert {entry["runId"] for entry in payload["exposure"]["holdingsCount"]} == {
         "omega_20260405_110000",
         "alpha_20260405_100000",
     }
     assert set(payload["exposure"]["latestHoldings"]) == {
+        "omega_20260405_110000",
+        "alpha_20260405_100000",
+    }
+    assert set(payload["exposure"]["sectorWeights"]) == {
         "omega_20260405_110000",
         "alpha_20260405_100000",
     }

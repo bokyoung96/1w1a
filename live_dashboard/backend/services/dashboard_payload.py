@@ -17,7 +17,12 @@ from live_dashboard.backend.schemas import (
     DashboardPerformanceModel,
     DashboardRollingModel,
 )
-from live_dashboard.backend.serializers import serialize_latest_holdings, serialize_named_values, serialize_series
+from live_dashboard.backend.serializers import (
+    serialize_latest_holdings,
+    serialize_named_series,
+    serialize_named_values,
+    serialize_value_points,
+)
 from live_dashboard.backend.services.run_index import RunIndexService
 from root import ROOT
 
@@ -48,27 +53,24 @@ class DashboardPayloadService:
             mode="single" if len(run_ids) == 1 else "multi",
             selected_run_ids=run_ids,
             available_runs=self.run_index_service.list_runs(),
-            metrics=[self._serialize_metrics(snapshot) for snapshot in snapshots],
-            context=self._serialize_context(snapshots),
+            metrics={snapshot.run_id: self._serialize_metrics(snapshot) for snapshot in snapshots},
+            context={snapshot.run_id: self._serialize_context(snapshot) for snapshot in snapshots},
             performance=DashboardPerformanceModel(
-                strategy_equity=self._flatten_series(snapshots, "strategy_equity"),
-                benchmark_equity=self._flatten_series(snapshots, "benchmark_equity"),
-                strategy_returns=self._flatten_series(snapshots, "strategy_returns"),
+                series=[self._serialize_series(snapshot, snapshot.strategy_equity) for snapshot in snapshots],
+                benchmark=serialize_value_points(snapshots[0].benchmark_equity) if len(snapshots) == 1 else None,
+                drawdowns=[self._serialize_series(snapshot, snapshot.drawdowns.underwater) for snapshot in snapshots],
             ),
             rolling=DashboardRollingModel(
-                rolling_sharpe=self._flatten_rolling_series(snapshots, "rolling_sharpe"),
-                rolling_beta=self._flatten_rolling_series(snapshots, "rolling_beta"),
+                rolling_sharpe=self._serialize_rolling_series(snapshots, "rolling_sharpe"),
+                rolling_beta=self._serialize_rolling_series(snapshots, "rolling_beta"),
             ),
             exposure=DashboardExposureModel(
-                holdings_count=self._flatten_holdings_count(snapshots),
+                holdings_count=[self._serialize_series(snapshot, snapshot.exposure.holdings_count) for snapshot in snapshots],
                 latest_holdings={
                     snapshot.run_id: serialize_latest_holdings(snapshot.exposure.latest_holdings) for snapshot in snapshots
                 },
                 sector_weights={
                     snapshot.run_id: serialize_named_values(snapshot.sectors.latest_weighted) for snapshot in snapshots
-                },
-                sector_counts={
-                    snapshot.run_id: serialize_named_values(snapshot.sectors.latest_count) for snapshot in snapshots
                 },
             ),
         )
@@ -79,21 +81,21 @@ class DashboardPayloadService:
             raise HTTPException(status_code=404, detail=f"unknown run_id: {run_id}")
         return self.run_reader.read(run_dir)
 
-    def _serialize_context(self, snapshots: list[PerformanceSnapshot]) -> DashboardContextModel:
-        start_date = min(snapshot.strategy_equity.index.min() for snapshot in snapshots)
-        end_date = max(snapshot.strategy_equity.index.max() for snapshot in snapshots)
+    def _serialize_context(self, snapshot: PerformanceSnapshot) -> DashboardContextModel:
+        run = self._read_run(snapshot.run_id)
         return DashboardContextModel(
+            label=snapshot.display_name,
+            strategy=str(run.config.get("strategy") or "unknown"),
             benchmark=BenchmarkModel(code=self.benchmark.code, name=self.benchmark.name),
-            start_date=start_date.date().isoformat(),
-            end_date=end_date.date().isoformat(),
-            as_of_date=end_date.date().isoformat(),
+            start_date=snapshot.strategy_equity.index.min().date().isoformat(),
+            end_date=snapshot.strategy_equity.index.max().date().isoformat(),
+            as_of_date=snapshot.strategy_equity.index.max().date().isoformat(),
         )
 
     @staticmethod
     def _serialize_metrics(snapshot: PerformanceSnapshot) -> DashboardMetricModel:
         metrics = snapshot.metrics
         return DashboardMetricModel(
-            run_id=snapshot.run_id,
             label=snapshot.display_name,
             cumulative_return=metrics.cumulative_return,
             cagr=metrics.cagr,
@@ -111,34 +113,21 @@ class DashboardPayloadService:
         )
 
     @staticmethod
-    def _flatten_series(snapshots: list[PerformanceSnapshot], attribute: str) -> list[object]:
-        points: list[object] = []
-        for snapshot in snapshots:
-            points.extend(
-                serialize_series(
-                    getattr(snapshot, attribute),
-                    run_id=snapshot.run_id,
-                    label=snapshot.display_name,
-                )
-            )
-        return points
+    def _serialize_series(snapshot: PerformanceSnapshot, series: object) -> object:
+        return serialize_named_series(
+            series,
+            run_id=snapshot.run_id,
+            label=snapshot.display_name,
+        )
 
     @staticmethod
-    def _flatten_rolling_series(snapshots: list[PerformanceSnapshot], name: str) -> list[object]:
-        points: list[object] = []
-        for snapshot in snapshots:
-            points.extend(serialize_series(snapshot.rolling.series[name], run_id=snapshot.run_id, label=snapshot.display_name))
-        return points
-
-    @staticmethod
-    def _flatten_holdings_count(snapshots: list[PerformanceSnapshot]) -> list[object]:
-        points: list[object] = []
-        for snapshot in snapshots:
-            points.extend(
-                serialize_series(
-                    snapshot.exposure.holdings_count,
-                    run_id=snapshot.run_id,
-                    label=snapshot.display_name,
-                )
+    def _serialize_rolling_series(snapshots: list[PerformanceSnapshot], name: str) -> list[object]:
+        return [
+            serialize_named_series(
+                snapshot.rolling.series[name],
+                run_id=snapshot.run_id,
+                label=snapshot.display_name,
             )
-        return points
+            for snapshot in snapshots
+            if not snapshot.rolling.series[name].dropna().empty
+        ]
