@@ -84,7 +84,7 @@ def test_build_frontend_installs_dependencies_when_node_modules_are_missing(tmp_
     build_frontend(frontend_dir)
 
     assert observed_commands == [
-        (["npm", "install"], frontend_dir, True),
+        (["npm", "ci"], frontend_dir, True),
         (["npm", "run", "build"], frontend_dir, True),
     ]
 
@@ -110,9 +110,41 @@ def test_build_frontend_reinstalls_when_lockfile_is_newer_than_install_marker(tm
     build_frontend(frontend_dir)
 
     assert observed_commands == [
-        (["npm", "install"], frontend_dir, True),
+        (["npm", "ci"], frontend_dir, True),
         (["npm", "run", "build"], frontend_dir, True),
     ]
+
+
+def test_build_frontend_retries_after_clearing_corrupt_node_modules(tmp_path: Path, monkeypatch) -> None:
+    observed_commands = []
+    removed_paths = []
+    frontend_dir = tmp_path / "frontend"
+    frontend_dir.mkdir()
+    node_modules = frontend_dir / "node_modules"
+    node_modules.mkdir()
+    (frontend_dir / "package-lock.json").write_text('{"lockfileVersion":3}', encoding="utf-8")
+
+    install_error = subprocess.CalledProcessError(returncode=190, cmd=["npm", "ci"])
+
+    def fake_run(command: list[str], *, cwd: Path, check: bool) -> None:
+        observed_commands.append((command, cwd, check))
+        if len(observed_commands) == 1:
+            raise install_error
+
+    def fake_rmtree(path: Path, ignore_errors: bool = False) -> None:
+        removed_paths.append((path, ignore_errors))
+
+    monkeypatch.setattr("dashboard.run.subprocess.run", fake_run)
+    monkeypatch.setattr("dashboard.run.shutil.rmtree", fake_rmtree)
+
+    build_frontend(frontend_dir)
+
+    assert observed_commands == [
+        (["npm", "ci"], frontend_dir, True),
+        (["npm", "ci"], frontend_dir, True),
+        (["npm", "run", "build"], frontend_dir, True),
+    ]
+    assert removed_paths == [(node_modules, True)]
 
 
 def test_build_parser_prints_dashboard_help(capsys) -> None:

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -28,7 +29,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def build_frontend(frontend_dir: Path) -> None:
     if _needs_npm_install(frontend_dir):
-        subprocess.run(["npm", "install"], cwd=frontend_dir, check=True)
+        _install_frontend_dependencies(frontend_dir)
     subprocess.run(["npm", "run", "build"], cwd=frontend_dir, check=True)
 
 
@@ -92,6 +93,20 @@ def _needs_npm_install(frontend_dir: Path) -> bool:
         return install_marker.stat().st_mtime < package_lock.stat().st_mtime
 
     return False
+
+
+def _install_frontend_dependencies(frontend_dir: Path) -> None:
+    install_command = ["npm", "ci"] if (frontend_dir / "package-lock.json").is_file() else ["npm", "install"]
+
+    try:
+        subprocess.run(install_command, cwd=frontend_dir, check=True)
+    except subprocess.CalledProcessError:
+        node_modules = frontend_dir / "node_modules"
+        if not node_modules.exists():
+            raise
+
+        shutil.rmtree(node_modules, ignore_errors=True)
+        subprocess.run(install_command, cwd=frontend_dir, check=True)
 
 
 def main(argv: list[str] | None = None) -> int:
