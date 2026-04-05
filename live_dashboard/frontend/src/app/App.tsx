@@ -11,10 +11,14 @@ export function App() {
   const [runs, setRuns] = useState<RunOption[]>([]);
   const [selectedRunIds, setSelectedRunIds] = useState<string[]>([]);
   const [dashboard, setDashboard] = useState<DashboardPayload | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [runsLoading, setRunsLoading] = useState(true);
+  const [runsError, setRunsError] = useState<string | null>(null);
+  const [dashboardError, setDashboardError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
+
+    setRunsLoading(true);
 
     void fetchRuns()
       .then((nextRuns) => {
@@ -23,14 +27,21 @@ export function App() {
         }
 
         setRuns(nextRuns);
-        setError(null);
+        setRunsError(null);
       })
       .catch((nextError: unknown) => {
         if (!isMounted) {
           return;
         }
 
-        setError(nextError instanceof Error ? nextError.message : "Failed to load saved runs.");
+        setRunsError(nextError instanceof Error ? nextError.message : "Failed to load saved runs.");
+      })
+      .finally(() => {
+        if (!isMounted) {
+          return;
+        }
+
+        setRunsLoading(false);
       });
 
     return () => {
@@ -43,10 +54,14 @@ export function App() {
 
     if (selectedRunIds.length === 0) {
       setDashboard(null);
+      setDashboardError(null);
       return () => {
         isMounted = false;
       };
     }
+
+    setDashboard(null);
+    setDashboardError(null);
 
     void fetchDashboard(selectedRunIds)
       .then((nextDashboard) => {
@@ -55,14 +70,15 @@ export function App() {
         }
 
         setDashboard(nextDashboard);
-        setError(null);
+        setDashboardError(null);
       })
       .catch((nextError: unknown) => {
         if (!isMounted) {
           return;
         }
 
-        setError(nextError instanceof Error ? nextError.message : "Failed to load dashboard.");
+        setDashboard(null);
+        setDashboardError(nextError instanceof Error ? nextError.message : "Failed to load dashboard.");
       });
 
     return () => {
@@ -74,9 +90,10 @@ export function App() {
     <div className="dashboard-shell">
       <TopRail selectionCount={selectedRunIds.length} />
       <main className="dashboard-stage">
-        {error ? <ErrorState message={error} /> : null}
-        {!error && runs.length === 0 ? <EmptyState /> : null}
-        {runs.length > 0 ? (
+        {runsError ? <ErrorState message={runsError} /> : null}
+        {dashboardError ? <ErrorState message={dashboardError} /> : null}
+        {!runsLoading && !runsError && runs.length === 0 ? <EmptyState /> : null}
+        {!runsLoading && runs.length > 0 ? (
           <RunSelector runs={runs} selectedRunIds={selectedRunIds} onToggle={toggleRun} />
         ) : null}
         {dashboard ? <pre className="selector-panel debug-state">{dashboard.mode}</pre> : null}
