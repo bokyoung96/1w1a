@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
+import { DiagnosticStrip } from "../components/DiagnosticStrip";
+import { PerformanceStrip } from "../components/PerformanceStrip";
 import { RunSelector } from "../components/RunSelector";
 import { TopRail } from "../components/TopRail";
 import { fetchDashboard, fetchRuns } from "../lib/api";
@@ -95,7 +97,12 @@ export function App() {
         {!runsLoading && runs.length > 0 ? (
           <RunSelector runs={runs} selectedRunIds={selectedRunIds} onToggle={toggleRun} />
         ) : null}
-        {dashboard ? <pre className="selector-panel debug-state">{dashboard.mode}</pre> : null}
+        {dashboard ? (
+          <div className="cinema-workspace">
+            <PerformanceStrip dashboard={dashboard} />
+            <DiagnosticStrip dashboard={dashboard} />
+          </div>
+        ) : null}
       </main>
     </div>
   );

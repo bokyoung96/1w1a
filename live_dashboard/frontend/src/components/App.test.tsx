@@ -1,4 +1,4 @@
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -11,6 +11,40 @@ vi.mock("../lib/api", () => ({
   fetchRuns,
   fetchDashboard,
 }));
+
+vi.mock("echarts-for-react", () => ({
+  default: () => <div data-testid="chart" />,
+}));
+
+vi.mock("framer-motion", async () => {
+  const React = await import("react");
+
+  return {
+    motion: new Proxy(
+      {},
+      {
+        get: (_target, key: string) => {
+          return ({ children, ...props }: {
+            children?: React.ReactNode;
+            [value: string]: unknown;
+          }) => {
+            const elementProps = { ...props };
+
+            delete elementProps.initial;
+            delete elementProps.animate;
+            delete elementProps.transition;
+            delete elementProps.whileHover;
+            delete elementProps.whileTap;
+            delete elementProps.exit;
+            delete elementProps.layout;
+
+            return React.createElement(key, elementProps, children);
+          };
+        },
+      },
+    ),
+  };
+});
 
 import { App } from "../app/App";
 
@@ -28,6 +62,19 @@ const RUNS = [
     summary: { final_equity: 105000000, avg_turnover: 0.2 },
   },
 ];
+
+function createDashboard(mode: "single" | "multi", selectedRunIds: string[]) {
+  return {
+    mode,
+    selectedRunIds,
+    availableRuns: RUNS,
+    metrics: {},
+    context: {},
+    performance: { series: [], benchmark: null, drawdowns: [] },
+    rolling: { rollingSharpe: [], rollingBeta: [] },
+    exposure: { holdingsCount: [], latestHoldings: {}, sectorWeights: {} },
+  };
+}
 
 function createDeferredPromise<T>() {
   let resolve!: (value: T | PromiseLike<T>) => void;
@@ -53,16 +100,7 @@ describe("App", () => {
 
   it("renders the brand and selection heading", async () => {
     fetchRuns.mockResolvedValue([RUNS[0]]);
-    fetchDashboard.mockResolvedValue({
-      mode: "single",
-      selectedRunIds: ["momentum_run"],
-      availableRuns: RUNS,
-      metrics: {},
-      context: {},
-      performance: { series: [], benchmark: null, drawdowns: [] },
-      rolling: { rollingSharpe: [], rollingBeta: [] },
-      exposure: { holdingsCount: [], latestHoldings: {}, sectorWeights: {} },
-    });
+    fetchDashboard.mockResolvedValue(createDashboard("single", ["momentum_run"]));
 
     render(<App />);
 
@@ -70,6 +108,23 @@ describe("App", () => {
     expect(await screen.findByText("Live Performance")).toBeInTheDocument();
     expect(await screen.findByText("Select saved runs")).toBeInTheDocument();
     expect(await screen.findByText("Momentum")).toBeInTheDocument();
+  });
+
+  it("recomposes the workspace between single and multi strategy labels", async () => {
+    const user = userEvent.setup();
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard
+      .mockResolvedValueOnce(createDashboard("single", ["momentum_run"]))
+      .mockResolvedValueOnce(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    await user.click(await screen.findByRole("button", { name: /Momentum/i }));
+    expect(await screen.findByText("Single strategy view")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /OP Fwd Yield/i }));
+
+    expect(await screen.findByText("Multi strategy comparison")).toBeInTheDocument();
   });
 
   it("renders a failure message when saved runs fail to load", async () => {
@@ -124,12 +179,12 @@ describe("App", () => {
     render(<App />);
 
     await user.click(await screen.findByRole("button", { name: /Momentum/i }));
-    expect(await screen.findByText("single")).toBeInTheDocument();
+    expect(await screen.findByText("Single strategy view")).toBeInTheDocument();
 
     await user.click(await screen.findByRole("button", { name: /OP Fwd Yield/i }));
 
     expect(await screen.findByText("Failed to load dashboard.")).toBeInTheDocument();
-    expect(screen.queryByText("single")).not.toBeInTheDocument();
+    expect(screen.queryByText("Single strategy view")).not.toBeInTheDocument();
     expect(fetchDashboard).toHaveBeenNthCalledWith(1, ["momentum_run"]);
     expect(fetchDashboard).toHaveBeenNthCalledWith(2, ["momentum_run", "value_run"]);
   });
