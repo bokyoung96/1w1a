@@ -7,13 +7,19 @@ const { fetchRuns, fetchDashboard } = vi.hoisted(() => ({
   fetchDashboard: vi.fn(),
 }));
 
+const chartOptions: unknown[] = [];
+
 vi.mock("../lib/api", () => ({
   fetchRuns,
   fetchDashboard,
 }));
 
 vi.mock("echarts-for-react", () => ({
-  default: () => <div data-testid="chart" />,
+  default: (props: { option?: unknown }) => {
+    chartOptions.push(props.option);
+
+    return <div data-testid="chart" />;
+  },
 }));
 
 vi.mock("framer-motion", async () => {
@@ -68,11 +74,100 @@ function createDashboard(mode: "single" | "multi", selectedRunIds: string[]) {
     mode,
     selectedRunIds,
     availableRuns: RUNS,
-    metrics: {},
-    context: {},
-    performance: { series: [], benchmark: null, drawdowns: [] },
-    rolling: { rollingSharpe: [], rollingBeta: [] },
+    metrics:
+      mode === "single"
+        ? {
+            momentum_run: {
+              cagr: 0.16,
+              sharpe: 1.28,
+              max_drawdown: -0.08,
+              avg_turnover: 0.12,
+              final_equity: 112000000,
+            },
+          }
+    : {
+            momentum_run: {
+              cagr: 0.13,
+              sharpe: 1.05,
+              max_drawdown: -0.12,
+              avg_turnover: 0.12,
+              final_equity: 108000000,
+            },
+            value_run: {
+              cagr: 0.09,
+              sharpe: 0.82,
+              max_drawdown: -0.06,
+              avg_turnover: 0.2,
+              final_equity: 103000000,
+            },
+          },
+    context:
+      mode === "single"
+        ? {
+            momentum_run: { name: "Momentum", strategy: "momentum" },
+          }
+        : {
+            momentum_run: { name: "Momentum", strategy: "momentum" },
+            value_run: { name: "OP Fwd Yield", strategy: "op_fwd_yield" },
+          },
+    rolling:
+      mode === "single"
+        ? {
+            rollingSharpe: [
+              {
+                key: "momentum_run",
+                name: "Rolling Sharpe",
+                points: [
+                  { date: "2025-01-01", value: 0.12 },
+                  { date: "2025-01-02", value: 0.18 },
+                ],
+              },
+            ],
+            rollingBeta: [
+              {
+                key: "momentum_run",
+                name: "Rolling Beta",
+                points: [
+                  { date: "2025-01-01", value: 0.92 },
+                  { date: "2025-01-02", value: 0.96 },
+                ],
+              },
+            ],
+          }
+        : {
+            rollingSharpe: [],
+            rollingBeta: [],
+          },
     exposure: { holdingsCount: [], latestHoldings: {}, sectorWeights: {} },
+    performance:
+      mode === "single"
+        ? {
+            series: [],
+            benchmark: null,
+            drawdowns: [],
+          }
+        : {
+            series: [],
+            benchmark: null,
+            drawdowns: [
+              {
+                key: "momentum_run",
+                name: "Momentum drawdown",
+                points: [
+                  { date: "2025-01-01", value: -0.03 },
+                  { date: "2025-01-02", value: -0.08 },
+                ],
+              },
+              {
+                key: "value_run",
+                name: "OP Fwd Yield drawdown",
+                points: [
+                  { date: "2025-01-01", value: -0.02 },
+                  { date: "2025-01-02", value: -0.05 },
+                ],
+              },
+            ],
+          },
   };
 }
 
@@ -96,6 +191,7 @@ describe("App", () => {
   beforeEach(() => {
     fetchRuns.mockReset();
     fetchDashboard.mockReset();
+    chartOptions.length = 0;
   });
 
   it("renders the brand and selection heading", async () => {
@@ -121,10 +217,24 @@ describe("App", () => {
 
     await user.click(await screen.findByRole("button", { name: /Momentum/i }));
     expect(await screen.findByText("Single strategy view")).toBeInTheDocument();
+    expect(await screen.findByText("Rolling diagnostics")).toBeInTheDocument();
+    expect(chartOptions.at(-1)).toMatchObject({
+      series: [
+        expect.objectContaining({ name: "Rolling Sharpe" }),
+        expect.objectContaining({ name: "Rolling Beta" }),
+      ],
+    });
 
     await user.click(screen.getByRole("button", { name: /OP Fwd Yield/i }));
 
     expect(await screen.findByText("Multi strategy comparison")).toBeInTheDocument();
+    expect(await screen.findByText("Comparative pressure")).toBeInTheDocument();
+    expect(chartOptions.at(-1)).toMatchObject({
+      series: [
+        expect.objectContaining({ name: "Momentum drawdown" }),
+        expect.objectContaining({ name: "OP Fwd Yield drawdown" }),
+      ],
+    });
   });
 
   it("renders a failure message when saved runs fail to load", async () => {

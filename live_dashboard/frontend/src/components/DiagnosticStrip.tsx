@@ -1,7 +1,7 @@
 import EChartsReact from "echarts-for-react";
 import { motion } from "framer-motion";
 
-import { formatPercent } from "../lib/format";
+import { formatMoney, formatPercent } from "../lib/format";
 import type { DashboardPayload } from "../lib/types";
 
 type DiagnosticStripProps = {
@@ -9,6 +9,24 @@ type DiagnosticStripProps = {
 };
 
 export function DiagnosticStrip({ dashboard }: DiagnosticStripProps) {
+  const isSingleMode = dashboard.mode === "single";
+  const selectedRuns = dashboard.selectedRunIds
+    .map((runId) => {
+      const run = dashboard.availableRuns.find((entry) => entry.run_id === runId);
+      const metric = dashboard.metrics[runId];
+
+      if (!run || !metric) {
+        return null;
+      }
+
+      return {
+        runId,
+        label: dashboard.context[runId]?.name ?? run.label,
+        metric,
+      };
+    })
+    .filter((entry): entry is { runId: string; label: string; metric: DashboardPayload["metrics"][string] } => entry !== null);
+
   const rollingSharpeSeries = dashboard.rolling.rollingSharpe.map((series) => ({
     name: series.name,
     type: "line" as const,
@@ -30,9 +48,26 @@ export function DiagnosticStrip({ dashboard }: DiagnosticStripProps) {
     emphasis: { focus: "series" as const },
   }));
 
+  const drawdownSeries = dashboard.performance.drawdowns.map((series) => ({
+    name: series.name,
+    type: "line" as const,
+    data: series.points.map((point) => [point.date, point.value]),
+    showSymbol: false,
+    smooth: true,
+    areaStyle: { opacity: 0.12 },
+    lineStyle: { width: 2 },
+    emphasis: { focus: "series" as const },
+  }));
+
+  const chartSeries = isSingleMode
+    ? [...rollingSharpeSeries, ...rollingBetaSeries]
+    : drawdownSeries.length > 0
+      ? drawdownSeries
+      : [...rollingSharpeSeries, ...rollingBetaSeries];
+
   const chartOption = {
     backgroundColor: "transparent",
-    color: ["#f3c97f", "#8bc6ff", "#e3a7ff", "#79d6c0"],
+    color: isSingleMode ? ["#f3c97f", "#8bc6ff", "#e3a7ff", "#79d6c0"] : ["#d88d36", "#f08f70", "#f3c97f", "#8bc6ff"],
     grid: {
       left: 4,
       right: 14,
@@ -44,7 +79,7 @@ export function DiagnosticStrip({ dashboard }: DiagnosticStripProps) {
       trigger: "axis" as const,
     },
     legend: {
-      show: rollingSharpeSeries.length + rollingBetaSeries.length > 1,
+      show: chartSeries.length > 1,
       top: 0,
       textStyle: {
         color: "#b8aca0",
@@ -57,53 +92,73 @@ export function DiagnosticStrip({ dashboard }: DiagnosticStripProps) {
       axisLabel: { color: "#b8aca0" },
       splitLine: { show: false },
     },
-    yAxis: [
-      {
-        type: "value" as const,
-        axisLabel: {
-          color: "#b8aca0",
-          formatter: (value: number) => formatPercent(value),
+    yAxis: isSingleMode
+      ? [
+          {
+            type: "value" as const,
+            axisLabel: {
+              color: "#b8aca0",
+              formatter: (value: number) => formatPercent(value),
+            },
+            splitLine: { lineStyle: { color: "rgba(255, 248, 240, 0.08)" } },
+          },
+          {
+            type: "value" as const,
+            axisLabel: {
+              color: "#b8aca0",
+              formatter: (value: number) => value.toFixed(2),
+            },
+            splitLine: { show: false },
+          },
+        ]
+      : {
+          type: "value" as const,
+          axisLabel: {
+            color: "#b8aca0",
+            formatter: (value: number) => formatPercent(value),
+          },
+          splitLine: { lineStyle: { color: "rgba(255, 248, 240, 0.08)" } },
         },
-        splitLine: { lineStyle: { color: "rgba(255, 248, 240, 0.08)" } },
-      },
-      {
-        type: "value" as const,
-        axisLabel: {
-          color: "#b8aca0",
-          formatter: (value: number) => value.toFixed(2),
-        },
-        splitLine: { show: false },
-      },
-    ],
-    series: [...rollingSharpeSeries, ...rollingBetaSeries],
+    series: chartSeries,
   };
 
-  const holdingsLine = dashboard.selectedRunIds
-    .map((runId) => {
-      const holdings = dashboard.exposure.holdingsCount.find((series) => series.key === runId);
-      const latest = holdings?.points[holdings.points.length - 1];
+  const stripLabel = isSingleMode ? "Rolling diagnostics" : "Comparative pressure";
+  const heading = isSingleMode ? "Single-run stability under the lens" : "Drawdown pressure across selected runs";
+  const summary = isSingleMode
+    ? "Rolling Sharpe and beta stay centered on the active run."
+    : "Drawdown curves and max-drawdown readings show which strategy absorbs stress best.";
 
-      if (!latest) {
-        return null;
-      }
-
-      const label = dashboard.context[runId]?.name ?? dashboard.availableRuns.find((run) => run.run_id === runId)?.label ?? runId;
-
-      return { label, value: latest.value };
-    })
-    .filter((entry): entry is { label: string; value: number } => entry !== null);
+  const modeMetrics = isSingleMode
+    ? [
+        {
+          label: rollingSharpeSeries[0]?.name ?? "Rolling Sharpe",
+          value: latestSeriesValue(dashboard.rolling.rollingSharpe[0]),
+          detail: "latest Sharpe",
+        },
+        {
+          label: rollingBetaSeries[0]?.name ?? "Rolling Beta",
+          value: latestSeriesValue(dashboard.rolling.rollingBeta[0]),
+          detail: "latest beta",
+        },
+      ]
+    : selectedRuns.map((run) => ({
+        label: run.label,
+        value: formatPercent(run.metric.max_drawdown),
+        detail: formatMoney(run.metric.final_equity),
+      }));
 
   return (
     <motion.section
-      className="workspace-strip diagnostic-strip"
+      className={`workspace-strip diagnostic-strip ${isSingleMode ? "is-single" : "is-multi"}`}
+      data-mode={dashboard.mode}
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="workspace-strip-copy">
-        <p className="section-label">Diagnostics band</p>
-        <h2>Risk and execution signals</h2>
-        <p className="workspace-summary">Rolling Sharpe and beta stay in view while the selected strategies recombine.</p>
+        <p className="section-label">{stripLabel}</p>
+        <h2>{heading}</h2>
+        <p className="workspace-summary">{summary}</p>
       </div>
 
       <div className="workspace-strip-grid workspace-strip-grid--diagnostic">
@@ -112,14 +167,23 @@ export function DiagnosticStrip({ dashboard }: DiagnosticStripProps) {
         </motion.div>
 
         <div className="workspace-quiet-metrics">
-          {holdingsLine.map((entry) => (
+          {modeMetrics.map((entry) => (
             <div key={entry.label} className="workspace-quiet-line">
               <span>{entry.label}</span>
               <strong>{entry.value}</strong>
+              <em>{entry.detail}</em>
             </div>
           ))}
         </div>
       </div>
     </motion.section>
   );
+}
+
+function latestSeriesValue(series?: { points: { value: number }[] }) {
+  if (!series || series.points.length === 0) {
+    return "n/a";
+  }
+
+  return series.points[series.points.length - 1].value.toFixed(2);
 }

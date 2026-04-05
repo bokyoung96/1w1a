@@ -272,6 +272,36 @@ body {
   font-size: 0.82rem;
 }
 
+.workspace-quiet-line em {
+  flex-basis: 100%;
+  margin: 0;
+  font-style: normal;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.diagnostic-strip.is-single {
+  border-top-color: rgba(139, 198, 255, 0.24);
+}
+
+.diagnostic-strip.is-single .workspace-chart-plane--diagnostic {
+  background:
+    linear-gradient(180deg, rgba(139, 198, 255, 0.08), rgba(255, 248, 240, 0.02)),
+    rgba(255, 248, 240, 0.02);
+}
+
+.diagnostic-strip.is-multi {
+  border-top-color: rgba(216, 141, 54, 0.24);
+}
+
+.diagnostic-strip.is-multi .workspace-chart-plane--diagnostic {
+  background:
+    linear-gradient(180deg, rgba(216, 141, 54, 0.08), rgba(255, 248, 240, 0.02)),
+    rgba(255, 248, 240, 0.02);
+}
+
 .workspace-metric-row {
   align-items: center;
 }
