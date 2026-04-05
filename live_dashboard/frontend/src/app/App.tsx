@@ -5,9 +5,31 @@ import type { RunOption } from "../lib/types";
 
 export function App() {
   const [runs, setRuns] = useState<RunOption[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    void fetchRuns().then(setRuns);
+    let isMounted = true;
+
+    void fetchRuns()
+      .then((nextRuns) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setRuns(nextRuns);
+        setError(null);
+      })
+      .catch((nextError: unknown) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setError(nextError instanceof Error ? nextError.message : "Failed to load saved runs.");
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
@@ -21,9 +43,12 @@ export function App() {
       <main className="dashboard-stage">
         <section className="selector-panel">
           <p className="section-label">Select saved runs</p>
-          <ul>
+          {error ? <p className="status-message">{error}</p> : null}
+          <ul className="saved-runs-list">
             {runs.map((run) => (
-              <li key={run.run_id}>{run.label}</li>
+              <li key={run.run_id} className="saved-run-item">
+                {run.label}
+              </li>
             ))}
           </ul>
         </section>
