@@ -105,3 +105,7 @@ class DashboardPayloadModel(DashboardBaseModel):
     performance: DashboardPerformanceModel
     rolling: DashboardRollingModel
     exposure: DashboardExposureModel
+
+
+class SessionBootstrapModel(DashboardBaseModel):
+    default_selected_run_ids: list[str]

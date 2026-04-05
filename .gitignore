@@ -160,6 +160,12 @@ ENV/
 env.bak/
 venv.bak/
 
+# Frontend generated dependencies/build metadata
+dashboard/frontend/node_modules/
+dashboard/frontend/*.tsbuildinfo
+dashboard/frontend/vite.config.js
+dashboard/frontend/vite.config.d.ts
+
 # Spyder project settings
 .spyderproject
 .spyproject

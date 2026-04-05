@@ -2,19 +2,23 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { fetchRuns, fetchDashboard } = vi.hoisted(() => ({
+const { fetchRuns, fetchDashboard, fetchSession } = vi.hoisted(() => ({
   fetchRuns: vi.fn(),
   fetchDashboard: vi.fn(),
+  fetchSession: vi.fn(),
 }));
 
 vi.mock("../lib/api", () => ({
   fetchRuns,
   fetchDashboard,
+  fetchSession,
 }));
 
 beforeEach(() => {
   fetchRuns.mockReset();
   fetchDashboard.mockReset();
+  fetchSession.mockReset();
+  fetchSession.mockResolvedValue({ defaultSelectedRunIds: [] });
   fetchRuns.mockResolvedValue([
     {
       run_id: "momentum_run",
@@ -78,7 +82,7 @@ describe("Run selection", () => {
 
     render(<App />);
 
-    await user.click(await screen.findByRole("button", { name: /Momentum/i }));
+    expect(await screen.findByText("1 selected")).toBeInTheDocument();
     await user.click(await screen.findByRole("button", { name: /OP Fwd Yield/i }));
 
     expect(screen.getByText("2 selected")).toBeInTheDocument();

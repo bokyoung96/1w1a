@@ -117,6 +117,8 @@ python -m pip install -r dashboard/backend/requirements.txt
 python dashboard/run.py
 ```
 
+The launcher reuses the newest saved runs whose `global config + strategy name + strategy params` match the default dashboard launch config. If a default strategy is missing or stale, it reruns only that strategy before serving the dashboard.
+
 If you are already inside `dashboard/`:
 
 ```powershell

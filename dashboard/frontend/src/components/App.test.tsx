@@ -2,9 +2,10 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { fetchRuns, fetchDashboard } = vi.hoisted(() => ({
+const { fetchRuns, fetchDashboard, fetchSession } = vi.hoisted(() => ({
   fetchRuns: vi.fn(),
   fetchDashboard: vi.fn(),
+  fetchSession: vi.fn(),
 }));
 
 const chartOptions: unknown[] = [];
@@ -12,6 +13,7 @@ const chartOptions: unknown[] = [];
 vi.mock("../lib/api", () => ({
   fetchRuns,
   fetchDashboard,
+  fetchSession,
 }));
 
 vi.mock("echarts-for-react", () => ({
@@ -250,6 +252,8 @@ describe("App", () => {
   beforeEach(() => {
     fetchRuns.mockReset();
     fetchDashboard.mockReset();
+    fetchSession.mockReset();
+    fetchSession.mockResolvedValue({ defaultSelectedRunIds: [] });
     chartOptions.length = 0;
   });
 
@@ -262,7 +266,7 @@ describe("App", () => {
     expect(await screen.findByText("1W1A")).toBeInTheDocument();
     expect(await screen.findByText("Live Performance")).toBeInTheDocument();
     expect(await screen.findByText("Select saved runs")).toBeInTheDocument();
-    expect(await screen.findByText("Momentum")).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: /Momentum/i })).toBeInTheDocument();
   });
 
   it("recomposes the workspace between single and multi strategy labels", async () => {
@@ -274,7 +278,6 @@ describe("App", () => {
 
     render(<App />);
 
-    await user.click(await screen.findByRole("button", { name: /Momentum/i }));
     expect(await screen.findByText("Single strategy view")).toBeInTheDocument();
     expect(await screen.findByText("Rolling diagnostics")).toBeInTheDocument();
     expect(chartOptions.at(-2)).toMatchObject({
@@ -310,13 +313,10 @@ describe("App", () => {
   });
 
   it("renders the exposure band and context drawer for a selected run", async () => {
-    const user = userEvent.setup();
     fetchRuns.mockResolvedValue([RUNS[0]]);
     fetchDashboard.mockResolvedValue(createDashboard("single", ["momentum_run"]));
 
     render(<App />);
-
-    await user.click(await screen.findByRole("button", { name: /Momentum/i }));
 
     expect(await screen.findByRole("heading", { name: "Latest holdings" })).toBeInTheDocument();
     expect(screen.getByText("AAPL")).toBeInTheDocument();
@@ -350,7 +350,6 @@ describe("App", () => {
 
     render(<App />);
 
-    await user.click(await screen.findByRole("button", { name: /Momentum/i }));
     expect(await screen.findByRole("heading", { name: "Dashboard unavailable" })).toBeInTheDocument();
     expect(fetchDashboard).toHaveBeenCalledWith(["momentum_run"]);
 
@@ -394,7 +393,6 @@ describe("App", () => {
 
     render(<App />);
 
-    await user.click(await screen.findByRole("button", { name: /Momentum/i }));
     expect(await screen.findByText("Single strategy view")).toBeInTheDocument();
 
     await user.click(await screen.findByRole("button", { name: /OP Fwd Yield/i }));
@@ -406,17 +404,47 @@ describe("App", () => {
   });
 
   it("renders dashboard errors without clearing the saved-run selector", async () => {
-    const user = userEvent.setup();
     fetchRuns.mockResolvedValue(RUNS);
     fetchDashboard.mockRejectedValue(new Error("Failed to load dashboard."));
 
     render(<App />);
 
-    await user.click(await screen.findByRole("button", { name: /Momentum/i }));
-
     expect(await screen.findByText("Failed to load dashboard.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Momentum/i })).toBeInTheDocument();
     expect(screen.getByText("1 selected")).toBeInTheDocument();
+  });
+
+  it("hydrates the initial selection from the launcher session bootstrap", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchSession.mockResolvedValue({ defaultSelectedRunIds: ["value_run"] });
+    fetchDashboard.mockResolvedValue(createDashboard("single", ["momentum_run"]));
+
+    render(<App />);
+
+    expect(await screen.findByRole("button", { name: /OP Fwd Yield/i })).toHaveAttribute("aria-pressed", "true");
+    expect(fetchDashboard).toHaveBeenCalledWith(["value_run"]);
+  });
+
+  it("falls back to the newest available run when bootstrap ids are stale", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchSession.mockResolvedValue({ defaultSelectedRunIds: ["missing_run"] });
+    fetchDashboard.mockResolvedValue(createDashboard("single", ["momentum_run"]));
+
+    render(<App />);
+
+    expect(await screen.findByRole("button", { name: /Momentum/i })).toHaveAttribute("aria-pressed", "true");
+    expect(fetchDashboard).toHaveBeenCalledWith(["momentum_run"]);
+  });
+
+  it("falls back to the newest available run when the session bootstrap request fails", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchSession.mockRejectedValue(new Error("session unavailable"));
+    fetchDashboard.mockResolvedValue(createDashboard("single", ["momentum_run"]));
+
+    render(<App />);
+
+    expect(await screen.findByRole("button", { name: /Momentum/i })).toHaveAttribute("aria-pressed", "true");
+    expect(fetchDashboard).toHaveBeenCalledWith(["momentum_run"]);
   });
 
   it("does not show the empty state after runs load until the request resolves with zero items", async () => {

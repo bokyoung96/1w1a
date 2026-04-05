@@ -8,8 +8,21 @@ import { DiagnosticStrip } from "../components/DiagnosticStrip";
 import { PerformanceStrip } from "../components/PerformanceStrip";
 import { RunSelector } from "../components/RunSelector";
 import { TopRail } from "../components/TopRail";
-import { fetchDashboard, fetchRuns } from "../lib/api";
-import type { DashboardPayload, RunOption } from "../lib/types";
+import { fetchDashboard, fetchRuns, fetchSession } from "../lib/api";
+import type { DashboardPayload, RunOption, SessionBootstrap } from "../lib/types";
+
+function resolveInitialRunIds(runs: RunOption[], bootstrap: SessionBootstrap) {
+  const availableRunIds = new Set(runs.map((run) => run.run_id));
+  const validBootstrapIds = Array.from(
+    new Set(bootstrap.defaultSelectedRunIds.filter((runId) => availableRunIds.has(runId))),
+  );
+
+  if (validBootstrapIds.length > 0) {
+    return validBootstrapIds;
+  }
+
+  return runs[0] ? [runs[0].run_id] : [];
+}
 
 export function App() {
   const [runs, setRuns] = useState<RunOption[]>([]);
@@ -24,14 +37,15 @@ export function App() {
 
     setRunsLoading(true);
 
-    void fetchRuns()
-      .then((nextRuns) => {
+    void Promise.all([fetchRuns(), fetchSession().catch(() => ({ defaultSelectedRunIds: [] }))])
+      .then(([nextRuns, bootstrap]) => {
         if (!isMounted) {
           return;
         }
 
         setRuns(nextRuns);
         setRunsError(null);
+        setSelectedRunIds(resolveInitialRunIds(nextRuns, bootstrap));
       })
       .catch((nextError: unknown) => {
         if (!isMounted) {
@@ -114,8 +128,12 @@ export function App() {
   );
 
   function toggleRun(runId: string) {
-    setSelectedRunIds((current) =>
-      current.includes(runId) ? current.filter((value) => value !== runId) : [...current, runId],
-    );
+    setSelectedRunIds((current) => {
+      const nextSelection = current.includes(runId)
+        ? current.filter((value) => value !== runId)
+        : [...current, runId];
+      const nextSelectionSet = new Set(nextSelection);
+      return runs.filter((run) => nextSelectionSet.has(run.run_id)).map((run) => run.run_id);
+    });
   }
 }

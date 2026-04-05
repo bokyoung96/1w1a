@@ -12,6 +12,10 @@ export type RunOption = {
   summary: RunSummary;
 };
 
+export type SessionBootstrap = {
+  defaultSelectedRunIds: string[];
+};
+
 export type SeriesPoint = {
   date: string;
   value: number;
@@ -55,6 +59,7 @@ export type DashboardPayload = {
   metrics: Record<
     string,
     {
+      label: string;
       cagr: number;
       sharpe: number;
       max_drawdown: number;

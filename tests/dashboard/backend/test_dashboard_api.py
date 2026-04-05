@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 from backtesting.reporting.benchmarks import BenchmarkRepository, SectorRepository
 from backtesting.reporting.snapshots import PerformanceSnapshotFactory
 from dashboard.backend.api import get_dashboard_payload_service
-from dashboard.backend.main import app
+from dashboard.backend.main import app, create_app
 from dashboard.backend import main as dashboard_main
 from dashboard.backend.services.dashboard_payload import DashboardPayloadService
 from dashboard.backend.services.run_index import RunIndexService
@@ -28,6 +28,49 @@ def test_dashboard_app_serves_frontend_index_when_dist_exists(tmp_path: Path, mo
 
     assert response.status_code == 200
     assert "dashboard" in response.text
+
+
+def test_session_endpoint_returns_default_selected_run_ids() -> None:
+    client = TestClient(create_app(default_selected_run_ids=["momentum_20260405_100000"]))
+
+    response = client.get("/api/session")
+
+    assert response.status_code == 200
+    assert response.json() == {"defaultSelectedRunIds": ["momentum_20260405_100000"]}
+
+
+def test_create_app_rejects_requests_outside_frontend_dist(tmp_path: Path) -> None:
+    frontend_dist = tmp_path / "dist"
+    frontend_dist.mkdir(parents=True)
+    (frontend_dist / "index.html").write_text("<html><body>dashboard</body></html>", encoding="utf-8")
+    secret_path = tmp_path / "secret.txt"
+    secret_path.write_text("secret", encoding="utf-8")
+
+    client = TestClient(create_app(frontend_dist=frontend_dist))
+
+    response = client.get("/..%2Fsecret.txt")
+
+    assert response.status_code == 404
+
+
+def test_create_app_does_not_route_unknown_api_paths_to_spa(tmp_path: Path) -> None:
+    frontend_dist = tmp_path / "dist"
+    frontend_dist.mkdir(parents=True)
+    (frontend_dist / "index.html").write_text("<html><body>dashboard</body></html>", encoding="utf-8")
+
+    client = TestClient(create_app(frontend_dist=frontend_dist))
+
+    response = client.get("/api/unknown")
+
+    assert response.status_code == 404
+
+
+def test_create_app_fails_fast_when_index_html_is_missing(tmp_path: Path) -> None:
+    frontend_dist = tmp_path / "dist"
+    frontend_dist.mkdir(parents=True)
+
+    with pytest.raises(FileNotFoundError):
+        create_app(frontend_dist=frontend_dist)
 
 
 def test_dashboard_endpoint_includes_exposure_payload(tmp_path: Path) -> None:
