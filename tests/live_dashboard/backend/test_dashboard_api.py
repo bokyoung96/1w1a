@@ -203,6 +203,38 @@ def test_dashboard_skips_non_finite_latest_holdings_values(tmp_path: Path) -> No
     }
 
 
+def test_dashboard_skips_non_finite_sector_weights_values(tmp_path: Path) -> None:
+    _write_saved_run(
+        tmp_path,
+        "alpha_20260405_100000",
+        name="Alpha Strategy",
+        final_equity=110.0,
+        avg_turnover=0.03,
+        weights=[[0.6, 0.4, 0.0], [0.55, 0.45, 0.0]],
+    )
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(
+        tmp_path,
+        sector_frame=pd.DataFrame(
+            {"A": ["Tech"], "B": ["Utilities"], "C": [float("nan")]},
+            index=pd.to_datetime(["2024-01-03"]),
+        ),
+    )
+
+    response = client.get("/api/dashboard", params=[("run_ids", "alpha_20260405_100000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["exposure"]["sectorWeights"] == {
+        "alpha_20260405_100000": [
+            {"name": "Tech", "value": 0.55},
+            {"name": "Utilities", "value": 0.45},
+        ]
+    }
+
+
 def test_dashboard_returns_controlled_error_for_non_directory_run_entry(tmp_path: Path) -> None:
     (tmp_path / "broken_20260405_120000").write_text("not a directory", encoding="utf-8")
 
@@ -216,7 +248,25 @@ def test_dashboard_returns_controlled_error_for_non_directory_run_entry(tmp_path
     assert response.json() == {"detail": "unknown run_id: broken_20260405_120000"}
 
 
-def _build_payload_service(runs_root: Path) -> DashboardPayloadService:
+def test_dashboard_returns_controlled_error_for_unreadable_run_directory(tmp_path: Path) -> None:
+    _write_incomplete_run(tmp_path, "broken_20260405_130000")
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(tmp_path)
+
+    response = client.get("/api/dashboard", params=[("run_ids", "broken_20260405_130000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 404
+    assert response.json()["detail"].startswith("unable to read run_id: broken_20260405_130000")
+
+
+def _build_payload_service(runs_root: Path, sector_frame: pd.DataFrame | None = None) -> DashboardPayloadService:
+    if sector_frame is None:
+        sector_frame = pd.DataFrame(
+            {"A": ["Tech"], "B": ["Utilities"], "C": ["Health Care"]},
+            index=pd.to_datetime(["2024-01-03"]),
+        )
     return DashboardPayloadService(
         runs_root=runs_root,
         run_index_service=RunIndexService(runs_root),
@@ -227,12 +277,7 @@ def _build_payload_service(runs_root: Path) -> DashboardPayloadService:
                     index=pd.to_datetime(["2024-01-02", "2024-01-03"]),
                 )
             ),
-            sector_repo=SectorRepository.from_frame(
-                pd.DataFrame(
-                    {"A": ["Tech"], "B": ["Utilities"], "C": ["Health Care"]},
-                    index=pd.to_datetime(["2024-01-03"]),
-                )
-            ),
+            sector_repo=SectorRepository.from_frame(sector_frame),
         ),
     )
 
@@ -283,3 +328,27 @@ def _write_saved_run(
     qty_frame.to_parquet(positions_dir / "qty.parquet")
     if latest_weights_rows is not None:
         pd.DataFrame(latest_weights_rows).to_csv(positions_dir / "latest_weights.csv", index=False)
+
+
+def _write_incomplete_run(root: Path, run_id: str) -> None:
+    run_dir = root / run_id
+    series_dir = run_dir / "series"
+    positions_dir = run_dir / "positions"
+    series_dir.mkdir(parents=True)
+    positions_dir.mkdir()
+
+    (run_dir / "config.json").write_text(
+        json.dumps(
+            {
+                "name": "Broken Strategy",
+                "strategy": "momentum",
+                "start": "2024-01-02",
+                "end": "2024-01-03",
+            }
+        ),
+        encoding="utf-8",
+    )
+    (run_dir / "summary.json").write_text(
+        json.dumps({"final_equity": 100.0, "avg_turnover": 0.01}),
+        encoding="utf-8",
+    )
