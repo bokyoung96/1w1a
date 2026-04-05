@@ -112,13 +112,22 @@ The dashboard reads saved backtest bundles from `results/backtests/`, builds the
 Single-command launch:
 
 ```powershell
+# from the repo root
 python -m pip install -r dashboard/backend/requirements.txt
 python dashboard/run.py
+```
+
+If you are already inside `dashboard/`:
+
+```powershell
+python -m pip install -r backend/requirements.txt
+python run.py
 ```
 
 Optional host/port overrides:
 
 ```powershell
+# from the repo root
 python dashboard/run.py --host 0.0.0.0 --port 8000
 ```
 
