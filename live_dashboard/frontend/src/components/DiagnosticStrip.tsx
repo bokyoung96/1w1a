@@ -21,14 +21,14 @@ export function DiagnosticStrip({ dashboard }: DiagnosticStripProps) {
 
       return {
         runId,
-        label: dashboard.context[runId]?.name ?? run.label,
+        label: dashboard.context[runId]?.label ?? run.label,
         metric,
       };
     })
     .filter((entry): entry is { runId: string; label: string; metric: DashboardPayload["metrics"][string] } => entry !== null);
 
   const rollingSharpeSeries = dashboard.rolling.rollingSharpe.map((series) => ({
-    name: series.name,
+    name: series.label,
     type: "line" as const,
     data: series.points.map((point) => [point.date, point.value]),
     showSymbol: false,
@@ -38,7 +38,7 @@ export function DiagnosticStrip({ dashboard }: DiagnosticStripProps) {
   }));
 
   const rollingBetaSeries = dashboard.rolling.rollingBeta.map((series) => ({
-    name: series.name,
+    name: series.label,
     type: "line" as const,
     yAxisIndex: 1,
     data: series.points.map((point) => [point.date, point.value]),
@@ -49,7 +49,7 @@ export function DiagnosticStrip({ dashboard }: DiagnosticStripProps) {
   }));
 
   const drawdownSeries = dashboard.performance.drawdowns.map((series) => ({
-    name: series.name,
+    name: series.label,
     type: "line" as const,
     data: series.points.map((point) => [point.date, point.value]),
     showSymbol: false,
@@ -98,7 +98,7 @@ export function DiagnosticStrip({ dashboard }: DiagnosticStripProps) {
             type: "value" as const,
             axisLabel: {
               color: "#b8aca0",
-              formatter: (value: number) => formatPercent(value),
+              formatter: (value: number) => value.toFixed(2),
             },
             splitLine: { lineStyle: { color: "rgba(255, 248, 240, 0.08)" } },
           },

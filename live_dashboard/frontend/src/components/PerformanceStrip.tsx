@@ -17,14 +17,14 @@ export function PerformanceStrip({ dashboard }: PerformanceStripProps) {
 
     return {
       runId,
-      label: context?.name ?? run?.label ?? runId,
+      label: context?.label ?? run?.label ?? runId,
       strategy: context?.strategy ?? run?.strategy ?? runId,
       metric,
     };
   });
 
   const summarySeries: any[] = dashboard.performance.series.map((series) => ({
-    name: series.name,
+    name: series.label,
     type: "line" as const,
     data: series.points.map((point) => [point.date, point.value]),
     showSymbol: false,
@@ -34,10 +34,13 @@ export function PerformanceStrip({ dashboard }: PerformanceStripProps) {
   }));
 
   if (dashboard.performance.benchmark) {
+    const primaryRunId = selectedRuns[0]?.runId;
+    const benchmarkLabel = primaryRunId ? dashboard.context[primaryRunId]?.benchmark.name : "Benchmark";
+
     summarySeries.push({
-      name: dashboard.performance.benchmark.name,
+      name: benchmarkLabel,
       type: "line" as const,
-      data: dashboard.performance.benchmark.points.map((point) => [point.date, point.value]),
+      data: dashboard.performance.benchmark.map((point) => [point.date, point.value]),
       showSymbol: false,
       smooth: true,
       lineStyle: { width: 2, type: "dashed" as const },

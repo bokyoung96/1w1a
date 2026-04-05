@@ -22,36 +22,6 @@ vi.mock("echarts-for-react", () => ({
   },
 }));
 
-vi.mock("framer-motion", async () => {
-  const React = await import("react");
-
-  return {
-    motion: new Proxy(
-      {},
-      {
-        get: (_target, key: string) => {
-          return ({ children, ...props }: {
-            children?: React.ReactNode;
-            [value: string]: unknown;
-          }) => {
-            const elementProps = { ...props };
-
-            delete elementProps.initial;
-            delete elementProps.animate;
-            delete elementProps.transition;
-            delete elementProps.whileHover;
-            delete elementProps.whileTap;
-            delete elementProps.exit;
-            delete elementProps.layout;
-
-            return React.createElement(key, elementProps, children);
-          };
-        },
-      },
-    ),
-  };
-});
-
 import { App } from "../app/App";
 
 const RUNS = [
@@ -104,19 +74,40 @@ function createDashboard(mode: "single" | "multi", selectedRunIds: string[]) {
     context:
       mode === "single"
         ? {
-            momentum_run: { name: "Momentum", strategy: "momentum" },
+            momentum_run: {
+              label: "Momentum",
+              strategy: "momentum",
+              benchmark: { code: "KOSPI200", name: "KOSPI200 benchmark" },
+              startDate: "2020-01-01",
+              endDate: "2020-12-31",
+              asOfDate: "2020-12-31",
+            },
           }
         : {
-            momentum_run: { name: "Momentum", strategy: "momentum" },
-            value_run: { name: "OP Fwd Yield", strategy: "op_fwd_yield" },
+            momentum_run: {
+              label: "Momentum",
+              strategy: "momentum",
+              benchmark: { code: "KOSPI200", name: "KOSPI200 benchmark" },
+              startDate: "2020-01-01",
+              endDate: "2020-12-31",
+              asOfDate: "2020-12-31",
+            },
+            value_run: {
+              label: "OP Fwd Yield",
+              strategy: "op_fwd_yield",
+              benchmark: { code: "KOSPI200", name: "KOSPI200 benchmark" },
+              startDate: "2020-01-01",
+              endDate: "2020-12-31",
+              asOfDate: "2020-12-31",
+            },
           },
     rolling:
       mode === "single"
         ? {
             rollingSharpe: [
               {
-                key: "momentum_run",
-                name: "Rolling Sharpe",
+                runId: "momentum_run",
+                label: "Rolling Sharpe",
                 points: [
                   { date: "2025-01-01", value: 0.12 },
                   { date: "2025-01-02", value: 0.18 },
@@ -125,8 +116,8 @@ function createDashboard(mode: "single" | "multi", selectedRunIds: string[]) {
             ],
             rollingBeta: [
               {
-                key: "momentum_run",
-                name: "Rolling Beta",
+                runId: "momentum_run",
+                label: "Rolling Beta",
                 points: [
                   { date: "2025-01-01", value: 0.92 },
                   { date: "2025-01-02", value: 0.96 },
@@ -142,25 +133,57 @@ function createDashboard(mode: "single" | "multi", selectedRunIds: string[]) {
     performance:
       mode === "single"
         ? {
-            series: [],
-            benchmark: null,
+            series: [
+              {
+                runId: "momentum_run",
+                label: "Momentum equity",
+                points: [
+                  { date: "2025-01-01", value: 100000000 },
+                  { date: "2025-01-02", value: 100900000 },
+                ],
+              },
+            ],
+            benchmark: [
+              { date: "2025-01-01", value: 100000000 },
+              { date: "2025-01-02", value: 100500000 },
+            ],
             drawdowns: [],
           }
         : {
-            series: [],
-            benchmark: null,
+            series: [
+              {
+                runId: "momentum_run",
+                label: "Momentum equity",
+                points: [
+                  { date: "2025-01-01", value: 100000000 },
+                  { date: "2025-01-02", value: 100700000 },
+                ],
+              },
+              {
+                runId: "value_run",
+                label: "OP Fwd Yield equity",
+                points: [
+                  { date: "2025-01-01", value: 100000000 },
+                  { date: "2025-01-02", value: 100400000 },
+                ],
+              },
+            ],
+            benchmark: [
+              { date: "2025-01-01", value: 100000000 },
+              { date: "2025-01-02", value: 100400000 },
+            ],
             drawdowns: [
               {
-                key: "momentum_run",
-                name: "Momentum drawdown",
+                runId: "momentum_run",
+                label: "Momentum drawdown",
                 points: [
                   { date: "2025-01-01", value: -0.03 },
                   { date: "2025-01-02", value: -0.08 },
                 ],
               },
               {
-                key: "value_run",
-                name: "OP Fwd Yield drawdown",
+                runId: "value_run",
+                label: "OP Fwd Yield drawdown",
                 points: [
                   { date: "2025-01-01", value: -0.02 },
                   { date: "2025-01-02", value: -0.05 },
@@ -218,6 +241,12 @@ describe("App", () => {
     await user.click(await screen.findByRole("button", { name: /Momentum/i }));
     expect(await screen.findByText("Single strategy view")).toBeInTheDocument();
     expect(await screen.findByText("Rolling diagnostics")).toBeInTheDocument();
+    expect(chartOptions.at(-2)).toMatchObject({
+      series: [
+        expect.objectContaining({ name: "Momentum equity" }),
+        expect.objectContaining({ name: "KOSPI200 benchmark" }),
+      ],
+    });
     expect(chartOptions.at(-1)).toMatchObject({
       series: [
         expect.objectContaining({ name: "Rolling Sharpe" }),
@@ -229,6 +258,13 @@ describe("App", () => {
 
     expect(await screen.findByText("Multi strategy comparison")).toBeInTheDocument();
     expect(await screen.findByText("Comparative pressure")).toBeInTheDocument();
+    expect(chartOptions.at(-2)).toMatchObject({
+      series: [
+        expect.objectContaining({ name: "Momentum equity" }),
+        expect.objectContaining({ name: "OP Fwd Yield equity" }),
+        expect.objectContaining({ name: "KOSPI200 benchmark" }),
+      ],
+    });
     expect(chartOptions.at(-1)).toMatchObject({
       series: [
         expect.objectContaining({ name: "Momentum drawdown" }),
@@ -279,8 +315,24 @@ describe("App", () => {
         selectedRunIds: ["momentum_run"],
         availableRuns: RUNS,
         metrics: {},
-        context: {},
-        performance: { series: [], benchmark: null, drawdowns: [] },
+        context: {
+          momentum_run: {
+            label: "Momentum",
+            strategy: "momentum",
+            benchmark: { code: "KOSPI200", name: "KOSPI200 benchmark" },
+            startDate: "2020-01-01",
+            endDate: "2020-12-31",
+            asOfDate: "2020-12-31",
+          },
+        },
+        performance: {
+          series: [],
+          benchmark: [
+            { date: "2025-01-01", value: 100000000 },
+            { date: "2025-01-02", value: 100500000 },
+          ],
+          drawdowns: [],
+        },
         rolling: { rollingSharpe: [], rollingBeta: [] },
         exposure: { holdingsCount: [], latestHoldings: {}, sectorWeights: {} },
       })

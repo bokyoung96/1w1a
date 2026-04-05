@@ -32,18 +32,39 @@ beforeEach(() => {
   fetchDashboard.mockResolvedValue({
     mode: "single",
     selectedRunIds: ["momentum_run"],
-    availableRuns: [],
+    availableRuns: [
+      {
+        run_id: "momentum_run",
+        label: "Momentum",
+        strategy: "momentum",
+        summary: { final_equity: 100, avg_turnover: 0.1 },
+      },
+      {
+        run_id: "value_run",
+        label: "OP Fwd Yield",
+        strategy: "op_fwd_yield",
+        summary: { final_equity: 105, avg_turnover: 0.2 },
+      },
+    ],
     metrics: {},
     context: {
       momentum_run: {
-        name: "Momentum",
+        label: "Momentum",
         strategy: "momentum",
-        start: "2020-01-01",
-        end: "2020-12-31",
-        validation: null,
+        benchmark: { code: "KOSPI200", name: "KOSPI200 benchmark" },
+        startDate: "2020-01-01",
+        endDate: "2020-12-31",
+        asOfDate: "2020-12-31",
       },
     },
-    performance: { series: [], benchmark: null, drawdowns: [] },
+    performance: {
+      series: [],
+      benchmark: [
+        { date: "2025-01-01", value: 100 },
+        { date: "2025-01-02", value: 101 },
+      ],
+      drawdowns: [],
+    },
     rolling: { rollingSharpe: [], rollingBeta: [] },
     exposure: { holdingsCount: [], latestHoldings: {}, sectorWeights: {} },
   });

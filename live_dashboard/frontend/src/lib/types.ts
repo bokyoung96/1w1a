@@ -18,9 +18,23 @@ export type SeriesPoint = {
 };
 
 export type NamedSeries = {
-  key: string;
-  name: string;
+  runId: string;
+  label: string;
   points: SeriesPoint[];
+};
+
+export type BenchmarkOption = {
+  code: string;
+  name: string;
+};
+
+export type DashboardContext = {
+  label: string;
+  strategy: string;
+  benchmark: BenchmarkOption;
+  startDate: string;
+  endDate: string;
+  asOfDate: string;
 };
 
 export type DashboardPayload = {
@@ -39,17 +53,11 @@ export type DashboardPayload = {
   >;
   context: Record<
     string,
-    {
-      name?: string;
-      strategy?: string;
-      start?: string;
-      end?: string;
-      validation?: object | null;
-    }
+    DashboardContext
   >;
   performance: {
     series: NamedSeries[];
-    benchmark: NamedSeries | null;
+    benchmark: SeriesPoint[] | null;
     drawdowns: NamedSeries[];
   };
   rolling: {
@@ -58,7 +66,7 @@ export type DashboardPayload = {
   };
   exposure: {
     holdingsCount: NamedSeries[];
-    latestHoldings: Record<string, { symbol: string; target_weight: number }[]>;
-    sectorWeights: Record<string, Record<string, number>>;
+    latestHoldings: Record<string, { symbol: string; target_weight: number; abs_weight: number }[]>;
+    sectorWeights: Record<string, SeriesPoint[]>;
   };
 };
