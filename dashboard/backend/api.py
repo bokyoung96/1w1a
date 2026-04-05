@@ -4,9 +4,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
-from live_dashboard.backend.schemas import DashboardPayloadModel
-from live_dashboard.backend.services.dashboard_payload import DashboardPayloadService
-from live_dashboard.backend.services.run_index import RunIndexService
+from dashboard.backend.schemas import DashboardPayloadModel
+from dashboard.backend.services.dashboard_payload import DashboardPayloadService
+from dashboard.backend.services.run_index import RunIndexService
 
 router = APIRouter(prefix="/api")
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from live_dashboard.backend.services.run_index import RunIndexService
+from dashboard.backend.services.run_index import RunIndexService
 
 
 def _write_run(root: Path, run_id: str, *, name: str, strategy: str, final_equity: float) -> None:

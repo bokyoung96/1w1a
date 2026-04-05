@@ -4,7 +4,7 @@ import math
 
 import pandas as pd
 
-from live_dashboard.backend.schemas import (
+from dashboard.backend.schemas import (
     CategoryPointModel,
     HoldingModel,
     NamedSeriesModel,

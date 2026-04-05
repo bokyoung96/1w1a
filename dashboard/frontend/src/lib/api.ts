@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-const API_ROOT = import.meta.env.VITE_API_ROOT ?? "http://localhost:8000/api";
+const API_ROOT = import.meta.env.VITE_API_ROOT ?? "/api";
 
 export async function fetchRuns(): Promise<RunOption[]> {
   const response = await fetch(`${API_ROOT}/runs`);

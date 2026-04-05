@@ -105,23 +105,21 @@ Optional report controls:
 
 Run bundles live under `results/backtests/`. Report bundles live under `results/reports/`. HTML is always written. PDF is written when the export dependency is available.
 
-## Live Dashboard
+## Dashboard
 
-The live dashboard reads saved backtest bundles from `results/backtests/` and serves the API from FastAPI while the frontend polls it from Vite.
+The dashboard reads saved backtest bundles from `results/backtests/`, builds the frontend, and serves both the API and the SPA from one FastAPI process.
 
-Backend:
-
-```powershell
-python -m pip install -r live_dashboard/backend/requirements.txt
-uvicorn live_dashboard.backend.main:app --reload --port 8000
-```
-
-Frontend:
+Single-command launch:
 
 ```powershell
-cd live_dashboard/frontend
-npm install
-npm run dev
+python -m pip install -r dashboard/backend/requirements.txt
+python dashboard/run.py
 ```
 
-Open `http://localhost:5173` after both processes are running. If you want a production-style frontend smoke test, use `npm run build` followed by `npm run preview`.
+Optional host/port overrides:
+
+```powershell
+python dashboard/run.py --host 0.0.0.0 --port 8000
+```
+
+Open `http://127.0.0.1:8000`.

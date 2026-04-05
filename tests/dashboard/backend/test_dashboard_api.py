@@ -9,10 +9,25 @@ from fastapi.testclient import TestClient
 
 from backtesting.reporting.benchmarks import BenchmarkRepository, SectorRepository
 from backtesting.reporting.snapshots import PerformanceSnapshotFactory
-from live_dashboard.backend.api import get_dashboard_payload_service
-from live_dashboard.backend.main import app
-from live_dashboard.backend.services.dashboard_payload import DashboardPayloadService
-from live_dashboard.backend.services.run_index import RunIndexService
+from dashboard.backend.api import get_dashboard_payload_service
+from dashboard.backend.main import app
+from dashboard.backend import main as dashboard_main
+from dashboard.backend.services.dashboard_payload import DashboardPayloadService
+from dashboard.backend.services.run_index import RunIndexService
+
+
+def test_dashboard_app_serves_frontend_index_when_dist_exists(tmp_path: Path, monkeypatch) -> None:
+    dist_dir = tmp_path / "dist"
+    dist_dir.mkdir()
+    (dist_dir / "index.html").write_text("<html><body>dashboard</body></html>", encoding="utf-8")
+
+    monkeypatch.setattr(dashboard_main, "get_frontend_dist_dir", lambda: dist_dir)
+    client = TestClient(dashboard_main.create_app())
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert "dashboard" in response.text
 
 
 def test_dashboard_endpoint_includes_exposure_payload(tmp_path: Path) -> None:

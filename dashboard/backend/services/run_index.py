@@ -5,7 +5,7 @@ from datetime import datetime
 from json import JSONDecodeError
 from pathlib import Path
 
-from live_dashboard.backend.schemas import RunOptionModel, RunSummaryModel
+from dashboard.backend.schemas import RunOptionModel, RunSummaryModel
 from root import ROOT
 
 

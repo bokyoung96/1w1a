@@ -8,7 +8,7 @@ from backtesting.reporting.benchmarks import BenchmarkRepository, SectorReposito
 from backtesting.reporting.models import BenchmarkConfig, SavedRun
 from backtesting.reporting.reader import RunReader
 from backtesting.reporting.snapshots import PerformanceSnapshot, PerformanceSnapshotFactory
-from live_dashboard.backend.schemas import (
+from dashboard.backend.schemas import (
     BenchmarkModel,
     DashboardContextModel,
     DashboardExposureModel,
@@ -17,13 +17,13 @@ from live_dashboard.backend.schemas import (
     DashboardPerformanceModel,
     DashboardRollingModel,
 )
-from live_dashboard.backend.serializers import (
+from dashboard.backend.serializers import (
     serialize_latest_holdings,
     serialize_named_series,
     serialize_named_values,
     serialize_value_points,
 )
-from live_dashboard.backend.services.run_index import RunIndexService
+from dashboard.backend.services.run_index import RunIndexService
 from root import ROOT
 
 
