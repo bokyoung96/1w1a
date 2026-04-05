@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
+import { ExposureBand } from "../components/ExposureBand";
+import { ContextDrawer } from "../components/ContextDrawer";
 import { DiagnosticStrip } from "../components/DiagnosticStrip";
 import { PerformanceStrip } from "../components/PerformanceStrip";
 import { RunSelector } from "../components/RunSelector";
@@ -101,6 +103,10 @@ export function App() {
           <div className="cinema-workspace">
             <PerformanceStrip dashboard={dashboard} />
             <DiagnosticStrip dashboard={dashboard} />
+            <div className="detail-band">
+              <ExposureBand dashboard={dashboard} />
+              <ContextDrawer dashboard={dashboard} />
+            </div>
           </div>
         ) : null}
       </main>

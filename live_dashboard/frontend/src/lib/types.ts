@@ -23,6 +23,17 @@ export type NamedSeries = {
   points: SeriesPoint[];
 };
 
+export type ExposureHolding = {
+  symbol: string;
+  targetWeight: number;
+  absWeight: number;
+};
+
+export type CategoryPoint = {
+  name: string;
+  value: number;
+};
+
 export type BenchmarkOption = {
   code: string;
   name: string;
@@ -66,7 +77,7 @@ export type DashboardPayload = {
   };
   exposure: {
     holdingsCount: NamedSeries[];
-    latestHoldings: Record<string, { symbol: string; target_weight: number; abs_weight: number }[]>;
-    sectorWeights: Record<string, SeriesPoint[]>;
+    latestHoldings: Record<string, ExposureHolding[]>;
+    sectorWeights: Record<string, CategoryPoint[]>;
   };
 };

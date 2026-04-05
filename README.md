@@ -104,3 +104,23 @@ Optional report controls:
 - `--benchmark-name KOSPI200`
 
 Run bundles live under `results/backtests/`. Report bundles live under `results/reports/`. HTML is always written. PDF is written when the export dependency is available.
+
+## Live Dashboard
+
+The live dashboard reads saved backtest bundles from `results/backtests/` and serves the API from FastAPI while the frontend polls it from Vite.
+
+Backend:
+
+```powershell
+uvicorn live_dashboard.backend.main:app --reload --port 8000
+```
+
+Frontend:
+
+```powershell
+cd live_dashboard/frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173` after both processes are running. If you want a production-style frontend smoke test, use `npm run build` followed by `npm run preview`.

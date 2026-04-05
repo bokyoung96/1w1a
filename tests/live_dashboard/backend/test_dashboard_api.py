@@ -15,6 +15,49 @@ from live_dashboard.backend.services.dashboard_payload import DashboardPayloadSe
 from live_dashboard.backend.services.run_index import RunIndexService
 
 
+def test_dashboard_endpoint_includes_exposure_payload(tmp_path: Path) -> None:
+    _write_saved_run(
+        tmp_path,
+        "alpha_20260405_100000",
+        name="Alpha Strategy",
+        final_equity=110.0,
+        avg_turnover=0.03,
+        weights=[[0.6, 0.4, 0.0], [0.55, 0.45, 0.0]],
+    )
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(tmp_path)
+
+    response = client.get("/api/dashboard", params=[("run_ids", "alpha_20260405_100000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["exposure"]["holdingsCount"] == [
+        {
+            "runId": "alpha_20260405_100000",
+            "label": "Alpha Strategy",
+            "points": [
+                {"date": "2024-01-02", "value": 2.0},
+                {"date": "2024-01-03", "value": 2.0},
+            ],
+        }
+    ]
+    assert payload["exposure"]["latestHoldings"] == {
+        "alpha_20260405_100000": [
+            {"symbol": "A", "targetWeight": 0.55, "absWeight": 0.55},
+            {"symbol": "B", "targetWeight": 0.45, "absWeight": 0.45},
+        ]
+    }
+    assert payload["exposure"]["latestHoldings"]["alpha_20260405_100000"][0]["symbol"] == "A"
+    assert payload["exposure"]["sectorWeights"] == {
+        "alpha_20260405_100000": [
+            {"name": "Tech", "value": 0.55},
+            {"name": "Utilities", "value": 0.45},
+        ]
+    }
+
+
 def test_dashboard_returns_single_mode_payload(tmp_path: Path) -> None:
     _write_saved_run(
         tmp_path,

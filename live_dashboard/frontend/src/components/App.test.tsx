@@ -129,7 +129,37 @@ function createDashboard(mode: "single" | "multi", selectedRunIds: string[]) {
             rollingSharpe: [],
             rollingBeta: [],
           },
-    exposure: { holdingsCount: [], latestHoldings: {}, sectorWeights: {} },
+    exposure:
+      mode === "single"
+        ? {
+            holdingsCount: [
+              {
+                runId: "momentum_run",
+                label: "Momentum",
+                points: [
+                  { date: "2025-01-01", value: 2.0 },
+                  { date: "2025-01-02", value: 3.0 },
+                ],
+              },
+            ],
+            latestHoldings: {
+              momentum_run: [
+                { symbol: "AAPL", targetWeight: 0.6, absWeight: 0.6 },
+                { symbol: "MSFT", targetWeight: 0.4, absWeight: 0.4 },
+              ],
+            },
+            sectorWeights: {
+              momentum_run: [
+                { name: "Tech", value: 0.72 },
+                { name: "Financials", value: 0.28 },
+              ],
+            },
+          }
+        : {
+            holdingsCount: [],
+            latestHoldings: {},
+            sectorWeights: {},
+          },
     performance:
       mode === "single"
         ? {
@@ -271,6 +301,21 @@ describe("App", () => {
         expect.objectContaining({ name: "OP Fwd Yield drawdown" }),
       ],
     });
+  });
+
+  it("renders the exposure band and context drawer for a selected run", async () => {
+    const user = userEvent.setup();
+    fetchRuns.mockResolvedValue([RUNS[0]]);
+    fetchDashboard.mockResolvedValue(createDashboard("single", ["momentum_run"]));
+
+    render(<App />);
+
+    await user.click(await screen.findByRole("button", { name: /Momentum/i }));
+
+    expect(await screen.findByRole("heading", { name: "Latest holdings" })).toBeInTheDocument();
+    expect(screen.getByText("AAPL")).toBeInTheDocument();
+    expect(screen.getByText("Selected-run context")).toBeInTheDocument();
+    expect(screen.getByText("KOSPI200 benchmark", { selector: "dd" })).toBeInTheDocument();
   });
 
   it("renders a failure message when saved runs fail to load", async () => {
