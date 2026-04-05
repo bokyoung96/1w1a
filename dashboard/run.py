@@ -76,6 +76,10 @@ def _build_run_config(preset: StrategyPreset) -> RunConfig:
         slippage=config.slippage,
         use_k200=config.use_k200,
         allow_fractional=config.allow_fractional,
+        benchmark_code=preset.benchmark.code,
+        benchmark_name=preset.benchmark.name,
+        benchmark_dataset=preset.benchmark.dataset,
+        warmup_days=preset.warmup.extra_days,
         **dict(preset.params),
     )
 

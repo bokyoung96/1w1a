@@ -4,6 +4,7 @@ from pathlib import Path
 
 from fastapi import HTTPException
 
+from backtesting.reporting.analytics import SECTOR_CONTRIBUTION_METHOD_WEIGHTED_ASSET_RETURNS
 from backtesting.reporting.benchmarks import BenchmarkRepository, SectorRepository
 from backtesting.reporting.models import BenchmarkConfig, SavedRun
 from backtesting.reporting.reader import RunReader
@@ -15,9 +16,15 @@ from dashboard.backend.schemas import (
     DashboardMetricModel,
     DashboardPayloadModel,
     DashboardPerformanceModel,
+    DashboardResearchModel,
     DashboardRollingModel,
+    ResearchFocusModel,
 )
 from dashboard.backend.serializers import (
+    serialize_category_series,
+    serialize_distribution,
+    serialize_drawdown_episodes,
+    serialize_heatmap,
     serialize_latest_holdings,
     serialize_named_series,
     serialize_named_values,
@@ -47,7 +54,7 @@ class DashboardPayloadService:
 
     def build(self, run_ids: list[str]) -> DashboardPayloadModel:
         selected_runs = [self._read_run(run_id) for run_id in run_ids]
-        snapshots = [self.snapshot_factory.build(run, self.benchmark) for run in selected_runs]
+        snapshots = [self.snapshot_factory.build(run, self._resolve_benchmark(run)) for run in selected_runs]
 
         return DashboardPayloadModel(
             mode="single" if len(run_ids) == 1 else "multi",
@@ -58,6 +65,7 @@ class DashboardPayloadService:
             performance=DashboardPerformanceModel(
                 series=[self._serialize_series(snapshot, snapshot.strategy_equity) for snapshot in snapshots],
                 benchmark=serialize_value_points(snapshots[0].benchmark_equity) if len(snapshots) == 1 else None,
+                benchmarks=[self._serialize_benchmark(snapshot) for snapshot in snapshots],
                 drawdowns=[self._serialize_series(snapshot, snapshot.drawdowns.underwater) for snapshot in snapshots],
             ),
             rolling=DashboardRollingModel(
@@ -73,6 +81,7 @@ class DashboardPayloadService:
                     snapshot.run_id: serialize_named_values(snapshot.sectors.latest_weighted) for snapshot in snapshots
                 },
             ),
+            research=self._serialize_research(snapshots),
         )
 
     def _read_run(self, run_id: str) -> SavedRun:
@@ -85,11 +94,10 @@ class DashboardPayloadService:
             raise HTTPException(status_code=404, detail=f"unable to read run_id: {run_id}") from exc
 
     def _serialize_context(self, snapshot: PerformanceSnapshot) -> DashboardContextModel:
-        run = self._read_run(snapshot.run_id)
         return DashboardContextModel(
             label=snapshot.display_name,
-            strategy=str(run.config.get("strategy") or "unknown"),
-            benchmark=BenchmarkModel(code=self.benchmark.code, name=self.benchmark.name),
+            strategy=snapshot.strategy_name,
+            benchmark=BenchmarkModel(code=snapshot.benchmark.code, name=snapshot.benchmark.name),
             start_date=snapshot.strategy_equity.index.min().date().isoformat(),
             end_date=snapshot.strategy_equity.index.max().date().isoformat(),
             as_of_date=snapshot.strategy_equity.index.max().date().isoformat(),
@@ -124,6 +132,14 @@ class DashboardPayloadService:
         )
 
     @staticmethod
+    def _serialize_benchmark(snapshot: PerformanceSnapshot) -> object:
+        return serialize_named_series(
+            snapshot.benchmark_equity,
+            run_id=snapshot.run_id,
+            label=snapshot.benchmark.name,
+        )
+
+    @staticmethod
     def _serialize_rolling_series(snapshots: list[PerformanceSnapshot], name: str) -> list[object]:
         return [
             serialize_named_series(
@@ -134,3 +150,52 @@ class DashboardPayloadService:
             for snapshot in snapshots
             if not snapshot.rolling.series[name].dropna().empty
         ]
+
+    @staticmethod
+    def _serialize_research(snapshots: list[PerformanceSnapshot]) -> DashboardResearchModel:
+        return DashboardResearchModel(
+            focus=ResearchFocusModel(kind="all-selected", label="All Selected", value=None),
+            sector_contribution_method=SECTOR_CONTRIBUTION_METHOD_WEIGHTED_ASSET_RETURNS,
+            monthly_heatmap={
+                snapshot.run_id: serialize_heatmap(snapshot.research.monthly_heatmap) for snapshot in snapshots
+            },
+            return_distribution={
+                snapshot.run_id: serialize_distribution(snapshot.research.return_distribution) for snapshot in snapshots
+            },
+            yearly_excess_returns={
+                snapshot.run_id: serialize_named_series(
+                    snapshot.research.yearly_excess_returns,
+                    run_id=snapshot.run_id,
+                    label=snapshot.display_name,
+                ).points
+                for snapshot in snapshots
+            },
+            sector_contribution_series={
+                snapshot.run_id: serialize_category_series(snapshot.research.sector_contribution) for snapshot in snapshots
+            },
+            sector_weight_series={
+                snapshot.run_id: serialize_category_series(snapshot.research.sector_weights) for snapshot in snapshots
+            },
+            drawdown_episodes={
+                snapshot.run_id: serialize_drawdown_episodes(snapshot.research.drawdown_episodes) for snapshot in snapshots
+            },
+        )
+
+    def _resolve_benchmark(self, run: SavedRun) -> BenchmarkConfig:
+        raw = run.config.get("benchmark")
+        if isinstance(raw, dict):
+            code = str(raw.get("code") or self.benchmark.code)
+            name = str(raw.get("name") or code or self.benchmark.name)
+            dataset = str(raw.get("dataset") or self.benchmark.dataset)
+            return BenchmarkConfig(code=code, name=name, dataset=dataset)
+
+        code = run.config.get("benchmark_code")
+        name = run.config.get("benchmark_name")
+        dataset = run.config.get("benchmark_dataset")
+        if code is None and name is None and dataset is None:
+            return self.benchmark
+
+        resolved_code = str(code or self.benchmark.code)
+        resolved_name = str(name or resolved_code or self.benchmark.name)
+        resolved_dataset = str(dataset or self.benchmark.dataset)
+        return BenchmarkConfig(code=resolved_code, name=resolved_name, dataset=resolved_dataset)

@@ -7,10 +7,14 @@ from dashboard.strategies import DEFAULT_LAUNCH_CONFIG, StrategyPreset, enabled_
 
 def test_default_launch_config_enables_both_default_strategies() -> None:
     enabled = [preset.strategy_name for preset in DEFAULT_LAUNCH_CONFIG.strategies if preset.enabled]
+    momentum = DEFAULT_LAUNCH_CONFIG.strategies[0]
 
     assert enabled == ["momentum", "op_fwd_yield"]
     assert DEFAULT_LAUNCH_CONFIG.global_config.start == "2020-01-01"
     assert DEFAULT_LAUNCH_CONFIG.global_config.fill_mode == "next_open"
+    assert momentum.benchmark.code == "IKS200"
+    assert momentum.benchmark.name == "KOSPI200"
+    assert momentum.warmup.extra_days > 0
 
 
 def test_enabled_strategy_presets_filters_disabled_entries() -> None:

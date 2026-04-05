@@ -43,16 +43,20 @@ class BenchmarkRepository:
 
 
 class SectorRepository:
-    def __init__(self, sector: pd.DataFrame) -> None:
+    def __init__(self, sector: pd.DataFrame, prices: pd.DataFrame | None = None) -> None:
         self.sector = sector.sort_index()
+        self.prices = prices.sort_index() if prices is not None else None
 
     @classmethod
-    def from_frame(cls, frame: pd.DataFrame) -> "SectorRepository":
-        return cls(sector=frame)
+    def from_frame(cls, frame: pd.DataFrame, prices: pd.DataFrame | None = None) -> "SectorRepository":
+        return cls(sector=frame, prices=prices)
 
     @classmethod
     def default(cls) -> "SectorRepository":
-        return cls(sector=_load_default_frame(DatasetId.QW_WICS_SEC_BIG))
+        return cls(
+            sector=_load_default_frame(DatasetId.QW_WICS_SEC_BIG),
+            prices=_load_default_frame(DatasetId.QW_ADJ_C),
+        )
 
     def latest_sector_row(self, as_of: pd.Timestamp) -> pd.Series:
         sector_history = self.sector.loc[:as_of]
@@ -77,6 +81,41 @@ class SectorRepository:
         exposure = aligned.groupby("sector", sort=False)["weight"].sum()
         return exposure.sort_values(ascending=False).rename_axis(None).rename(None)
 
+    def sector_weight_timeseries(self, weights: pd.DataFrame) -> pd.DataFrame:
+        records: list[pd.Series] = []
+        for date, row in weights.fillna(0.0).sort_index().iterrows():
+            grouped = self._group_row_by_sector(pd.Timestamp(date), row.astype(float))
+            grouped.name = pd.Timestamp(date)
+            records.append(grouped)
+
+        if not records:
+            return pd.DataFrame()
+
+        frame = pd.DataFrame(records).fillna(0.0).sort_index()
+        frame.index.name = "date"
+        return frame
+
+    def sector_contribution_timeseries(self, weights: pd.DataFrame, returns: pd.Series) -> pd.DataFrame:
+        if self.prices is None:
+            return pd.DataFrame()
+
+        asset_returns = self.prices.reindex(columns=weights.columns).pct_change().replace([float("inf"), float("-inf")], 0.0)
+        asset_returns = asset_returns.reindex(weights.index).fillna(0.0).astype(float)
+        weighted_returns = weights.fillna(0.0).astype(float).mul(asset_returns, axis=0)
+
+        records: list[pd.Series] = []
+        for date, row in weighted_returns.sort_index().iterrows():
+            grouped = self._group_row_by_sector(pd.Timestamp(date), row.astype(float))
+            grouped.name = pd.Timestamp(date)
+            records.append(grouped)
+
+        if not records:
+            return pd.DataFrame()
+
+        contributions = pd.DataFrame(records).fillna(0.0).sort_index().cumsum()
+        contributions.index.name = "date"
+        return contributions
+
     def _latest_aligned_weights(self, weights: pd.DataFrame) -> pd.DataFrame:
         latest_date = weights.index.max()
         latest_weight_row = weights.loc[:latest_date].iloc[-1].astype(float)
@@ -87,6 +126,21 @@ class SectorRepository:
                 "weight": latest_weight_row,
             }
         ).dropna(subset=["sector"])
+
+    def _group_row_by_sector(self, as_of: pd.Timestamp, weights: pd.Series) -> pd.Series:
+        try:
+            sector_row = self.latest_sector_row(as_of)
+        except KeyError:
+            return pd.Series(dtype=float)
+        aligned = pd.DataFrame(
+            {
+                "sector": sector_row.reindex(weights.index),
+                "weight": weights,
+            }
+        ).dropna(subset=["sector"])
+        grouped = aligned.groupby("sector", sort=False)["weight"].sum()
+        grouped.index.name = None
+        return grouped
 
 
 def _load_default_frame(dataset_id: DatasetId) -> pd.DataFrame:

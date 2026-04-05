@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 import run as root_run
 from backtesting.catalog import DataCatalog
@@ -89,6 +90,79 @@ def test_runner_executes_op_fwd_strategy(tmp_path: Path) -> None:
     assert report.result.weights.iloc[-1]["A"] == 1.0
     assert report.output_dir is not None
     assert (report.output_dir / "positions" / "qty.parquet").exists()
+
+
+def test_runner_uses_warmup_history_but_trims_persisted_outputs(tmp_path: Path) -> None:
+    parquet_dir = tmp_path / "parquet"
+    raw_dir = tmp_path / "raw"
+    result_dir = tmp_path / "results"
+    parquet_dir.mkdir()
+    raw_dir.mkdir()
+    store = ParquetStore(parquet_dir)
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+    store.write("qw_adj_c", pd.DataFrame({"A": [10.0, 11.0, 12.0], "B": [10.0, 9.0, 8.0]}, index=index))
+    store.write("qw_adj_o", pd.DataFrame({"A": [10.0, 11.0, 12.0], "B": [10.0, 9.0, 8.0]}, index=index))
+    store.write("qw_k200_yn", pd.DataFrame({"A": [1, 1, 1], "B": [1, 1, 1]}, index=index))
+
+    runner = BacktestRunner(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+        result_dir=result_dir,
+    )
+    report = runner.run(
+        RunConfig(
+            strategy="momentum",
+            start="2024-01-03",
+            end="2024-01-04",
+            top_n=1,
+            lookback=1,
+            schedule="daily",
+            fill_mode="close",
+            warmup_days=1,
+        )
+    )
+
+    assert report.result.weights.index.min() == pd.Timestamp("2024-01-03")
+    assert report.result.weights.loc["2024-01-03", "A"] == 1.0
+    assert report.output_dir is not None
+
+    equity = pd.read_csv(report.output_dir / "series" / "equity.csv")
+    assert equity["date"].tolist() == ["2024-01-03", "2024-01-04"]
+
+
+def test_runner_raises_clear_error_when_trimmed_display_range_is_empty(tmp_path: Path) -> None:
+    parquet_dir = tmp_path / "parquet"
+    raw_dir = tmp_path / "raw"
+    result_dir = tmp_path / "results"
+    parquet_dir.mkdir()
+    raw_dir.mkdir()
+    store = ParquetStore(parquet_dir)
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+    store.write("qw_adj_c", pd.DataFrame({"A": [10.0, 11.0, 12.0], "B": [10.0, 9.0, 8.0]}, index=index))
+    store.write("qw_adj_o", pd.DataFrame({"A": [10.0, 11.0, 12.0], "B": [10.0, 9.0, 8.0]}, index=index))
+    store.write("qw_k200_yn", pd.DataFrame({"A": [1, 1, 1], "B": [1, 1, 1]}, index=index))
+
+    runner = BacktestRunner(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+        result_dir=result_dir,
+    )
+
+    with pytest.raises(ValueError, match="no backtest rows remain after trimming to display range"):
+        runner.run(
+            RunConfig(
+                strategy="momentum",
+                start="2024-01-05",
+                end="2024-01-06",
+                top_n=1,
+                lookback=1,
+                schedule="daily",
+                fill_mode="close",
+                warmup_days=3,
+            )
+        )
 
 
 def test_root_run_delegates_to_backtesting_main() -> None:

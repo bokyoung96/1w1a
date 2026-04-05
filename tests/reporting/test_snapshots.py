@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+import pytest
 from pandas.testing import assert_frame_equal, assert_series_equal
 
 from backtesting.reporting.analytics import annualized_sharpe
@@ -16,7 +17,7 @@ def test_performance_snapshot_factory_builds_analytics_snapshot() -> None:
     run = _toy_run()
     factory = PerformanceSnapshotFactory(
         benchmark_repo=BenchmarkRepository.from_frame(_benchmark_prices()),
-        sector_repo=SectorRepository.from_frame(_sector_map()),
+        sector_repo=SectorRepository.from_frame(_sector_map(), prices=_asset_prices()),
     )
 
     snapshot = factory.build(run, BenchmarkConfig.default_kospi200())
@@ -29,11 +30,27 @@ def test_performance_snapshot_factory_builds_analytics_snapshot() -> None:
     assert "rolling_beta" in snapshot.rolling.series
     assert_series_equal(snapshot.rolling.series["rolling_sharpe"].index.to_series(), run.returns.index.to_series())
     assert_series_equal(snapshot.rolling.series["rolling_beta"].index.to_series(), run.returns.index.to_series())
+    assert snapshot.strategy_name == "momentum"
+    assert snapshot.benchmark == BenchmarkConfig.default_kospi200()
     assert snapshot.exposure.holdings_count.iloc[-1] == 2
     assert len(snapshot.exposure.latest_holdings) == 2
     assert snapshot.sectors.latest_weighted.to_dict() == {"Tech": 0.6, "Utilities": 0.4}
     assert snapshot.sectors.latest_count.to_dict() == {"Tech": 1.0, "Utilities": 1.0}
     assert snapshot.drawdowns.episodes["drawdown"].lt(0.0).any()
+    assert {"peak", "duration_days", "recovery_days", "recovered"} <= set(snapshot.drawdowns.episodes.columns)
+    assert snapshot.drawdowns.episodes["recovered"].all()
+    assert not snapshot.research.monthly_heatmap.empty
+    assert snapshot.research.monthly_heatmap.loc[2024, 1] == pytest.approx(float((1.0 + run.returns).prod() - 1.0))
+    assert not snapshot.research.return_distribution.empty
+    assert int(snapshot.research.return_distribution["count"].sum()) == len(run.returns)
+    assert list(snapshot.research.yearly_excess_returns.index.year) == [2024]
+    assert snapshot.research.sector_contribution_method == "weighted-asset-return-attribution"
+    assert snapshot.research.sector_weights.loc[run.returns.index[-1], ["Tech", "Utilities"]].to_dict() == {
+        "Tech": 0.6,
+        "Utilities": 0.4,
+    }
+    assert not snapshot.research.sector_contribution.empty
+    assert set(snapshot.research.sector_contribution.columns) >= {"Tech", "Utilities"}
     expected_sortino = _expected_sortino(run.returns)
     assert snapshot.metrics.sortino >= 0.0
     assert snapshot.metrics.sortino == expected_sortino
@@ -43,7 +60,7 @@ def test_performance_snapshot_factory_derives_latest_holdings_when_optional_tabl
     run = _toy_run(latest_weights=None)
     factory = PerformanceSnapshotFactory(
         benchmark_repo=BenchmarkRepository.from_frame(_benchmark_prices()),
-        sector_repo=SectorRepository.from_frame(_sector_map()),
+        sector_repo=SectorRepository.from_frame(_sector_map(), prices=_asset_prices()),
     )
 
     snapshot = factory.build(run, BenchmarkConfig.default_kospi200())
@@ -62,7 +79,7 @@ def test_performance_snapshot_factory_uses_fixed_252_day_rolling_window() -> Non
     run = _long_run()
     factory = PerformanceSnapshotFactory(
         benchmark_repo=BenchmarkRepository.from_frame(_long_benchmark_prices(run.equity.index)),
-        sector_repo=SectorRepository.from_frame(_long_sector_map(run.equity.index.max())),
+        sector_repo=SectorRepository.from_frame(_long_sector_map(run.equity.index.max()), prices=_long_asset_prices(run.equity.index)),
     )
 
     snapshot = factory.build(run, BenchmarkConfig.default_kospi200())
@@ -143,7 +160,19 @@ def _sector_map() -> pd.DataFrame:
             "B": ["Utilities"],
             "C": ["Health Care"],
         },
-        index=pd.to_datetime(["2024-01-09"]),
+        index=pd.to_datetime(["2024-01-02"]),
+    )
+
+
+def _asset_prices() -> pd.DataFrame:
+    index = pd.date_range("2024-01-02", periods=8, freq="D")
+    return pd.DataFrame(
+        {
+            "A": [100.0, 102.0, 101.0, 104.0, 105.0, 106.0, 108.0, 110.0],
+            "B": [100.0, 101.0, 100.0, 102.0, 103.0, 102.0, 103.0, 104.0],
+            "C": [100.0, 100.0, 99.0, 98.0, 99.0, 100.0, 101.0, 100.0],
+        },
+        index=index,
     )
 
 
@@ -179,8 +208,15 @@ def _long_benchmark_prices(index: pd.DatetimeIndex) -> pd.DataFrame:
 def _long_sector_map(latest_date: pd.Timestamp) -> pd.DataFrame:
     return pd.DataFrame(
         {"A": ["Tech"], "B": ["Utilities"], "C": ["Health Care"]},
-        index=pd.DatetimeIndex([latest_date]),
+        index=pd.DatetimeIndex([latest_date - pd.Timedelta(days=259)]),
     )
+
+
+def _long_asset_prices(index: pd.DatetimeIndex) -> pd.DataFrame:
+    asset_a = pd.Series([100.0 + step * 0.4 for step in range(len(index))], index=index)
+    asset_b = pd.Series([100.0 + step * 0.2 for step in range(len(index))], index=index)
+    asset_c = pd.Series([100.0 - step * 0.1 for step in range(len(index))], index=index)
+    return pd.DataFrame({"A": asset_a, "B": asset_b, "C": asset_c}, index=index)
 
 
 def _expected_sortino(returns: pd.Series) -> float:

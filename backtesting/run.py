@@ -35,6 +35,10 @@ class RunConfig:
     slippage: float = 0.0
     use_k200: bool = True
     allow_fractional: bool = True
+    benchmark_code: str = "IKS200"
+    benchmark_name: str = "KOSPI200"
+    benchmark_dataset: str = "qw_BM"
+    warmup_days: int = 0
 
 
 @dataclass(slots=True)
@@ -82,7 +86,7 @@ class BacktestRunner:
         market = self.loader.load(
             LoadRequest(
                 datasets=dataset_ids,
-                start=config.start,
+                start=self._resolve_load_start(config.start, config.warmup_days),
                 end=config.end,
             )
         )
@@ -111,6 +115,11 @@ class BacktestRunner:
             fill_mode=config.fill_mode,
             allow_fractional=config.allow_fractional,
         )
+        result = self._trim_result_to_display_range(result, start=config.start, end=config.end)
+        if result.equity.empty:
+            raise ValueError(
+                f"no backtest rows remain after trimming to display range {config.start}..{config.end}"
+            )
 
         summary = summarize_perf(result.returns)
         summary["final_equity"] = float(result.equity.iloc[-1])
@@ -143,6 +152,22 @@ class BacktestRunner:
         if name == "monthly":
             return MonthlySchedule()
         raise ValueError(f"unsupported schedule: {name}")
+
+    @staticmethod
+    def _resolve_load_start(start: str, warmup_days: int) -> str:
+        if warmup_days <= 0:
+            return start
+        return (pd.Timestamp(start) - pd.Timedelta(days=warmup_days)).date().isoformat()
+
+    @staticmethod
+    def _trim_result_to_display_range(result: BacktestResult, *, start: str, end: str) -> BacktestResult:
+        return BacktestResult(
+            equity=result.equity.loc[start:end].copy(),
+            returns=result.returns.loc[start:end].copy(),
+            weights=result.weights.loc[start:end].copy(),
+            qty=result.qty.loc[start:end].copy(),
+            turnover=result.turnover.loc[start:end].copy(),
+        )
 
 
 def _build_parser() -> argparse.ArgumentParser:

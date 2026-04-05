@@ -4,6 +4,8 @@ from dataclasses import dataclass, field
 from collections.abc import Mapping
 from types import MappingProxyType
 
+from backtesting.reporting.models import BenchmarkConfig
+
 
 @dataclass(frozen=True, slots=True)
 class GlobalRunConfig:
@@ -20,11 +22,18 @@ class GlobalRunConfig:
 
 
 @dataclass(frozen=True, slots=True)
+class WarmupConfig:
+    extra_days: int = 0
+
+
+@dataclass(frozen=True, slots=True)
 class StrategyPreset:
     enabled: bool
     strategy_name: str
     display_label: str
     params: Mapping[str, object] = field(default_factory=dict)
+    benchmark: BenchmarkConfig = field(default_factory=BenchmarkConfig.default_kospi200)
+    warmup: WarmupConfig = field(default_factory=WarmupConfig)
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "params", MappingProxyType(dict(self.params)))
@@ -39,7 +48,13 @@ class DashboardLaunchConfig:
 DEFAULT_LAUNCH_CONFIG = DashboardLaunchConfig(
     global_config=GlobalRunConfig(),
     strategies=(
-        StrategyPreset(True, "momentum", "Momentum", {"top_n": 20, "lookback": 20}),
+        StrategyPreset(
+            True,
+            "momentum",
+            "Momentum",
+            {"top_n": 20, "lookback": 20},
+            warmup=WarmupConfig(extra_days=20),
+        ),
         StrategyPreset(True, "op_fwd_yield", "OP Fwd Yield", {"top_n": 20}),
     ),
 )

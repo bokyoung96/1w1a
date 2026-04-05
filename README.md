@@ -119,6 +119,21 @@ python dashboard/run.py
 
 The launcher reuses the newest saved runs whose `global config + strategy name + strategy params` match the default dashboard launch config. If a default strategy is missing or stale, it reruns only that strategy before serving the dashboard.
 
+Dashboard launch presets live in `dashboard/strategies.py`. This is the single source of truth for:
+
+- enabled dashboard strategies
+- strategy params
+- per-strategy benchmark config
+- warmup history used before trimming back to the visible date range
+
+Backtest strategy implementations live in `backtesting/strategies/`.
+
+Saved-run hygiene:
+
+- duplicate saved runs with the same normalized config signature are archived under `results/backtests/_archived/` during dashboard launch
+- `/api/runs` only exposes the newest usable run for each saved config signature
+- incomplete or malformed saved runs are ignored by the dashboard index instead of displacing the last good run
+
 If you are already inside `dashboard/`:
 
 ```powershell

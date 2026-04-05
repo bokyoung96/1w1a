@@ -44,6 +44,9 @@ def test_launch_dashboard_reuses_matching_runs_and_executes_missing_presets(tmp_
     launch_dashboard(runs_root=tmp_path, host="127.0.0.1", port=8000)
 
     assert [config.strategy for config in observed_configs] == ["op_fwd_yield"]
+    assert observed_configs[0].benchmark_code == DEFAULT_LAUNCH_CONFIG.strategies[1].benchmark.code
+    assert observed_configs[0].benchmark_name == DEFAULT_LAUNCH_CONFIG.strategies[1].benchmark.name
+    assert observed_configs[0].warmup_days == DEFAULT_LAUNCH_CONFIG.strategies[1].warmup.extra_days
     assert captured_defaults["run_ids"] == ["momentum_20260405_100000", "op_fwd_yield_20260405_120000"]
 
 

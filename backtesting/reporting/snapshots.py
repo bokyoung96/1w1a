@@ -1,19 +1,28 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import pandas as pd
 
 from .analytics import (
+    SECTOR_CONTRIBUTION_METHOD_WEIGHTED_ASSET_RETURNS,
     DrawdownStats,
     ExposureSnapshot,
     PerformanceMetrics,
+    ResearchSnapshot,
     RollingMetrics,
     SectorSnapshot,
     annualized_sharpe,
+    build_monthly_heatmap,
+    build_return_distribution,
+    build_yearly_excess_returns,
 )
 from .benchmarks import BenchmarkRepository, SectorRepository
 from .models import BenchmarkConfig, SavedRun
+
+
+def _default_benchmark() -> BenchmarkConfig:
+    return BenchmarkConfig.default_kospi200()
 
 
 @dataclass(frozen=True, slots=True)
@@ -29,6 +38,9 @@ class PerformanceSnapshot:
     strategy_returns: pd.Series
     benchmark_returns: pd.Series
     benchmark_equity: pd.Series
+    strategy_name: str = "unknown"
+    benchmark: BenchmarkConfig = field(default_factory=_default_benchmark)
+    research: ResearchSnapshot = field(default_factory=ResearchSnapshot)
 
 
 class PerformanceSnapshotFactory:
@@ -51,16 +63,20 @@ class PerformanceSnapshotFactory:
         drawdowns = self._build_drawdowns(strategy_equity)
         exposure = self._build_exposure(run)
         sectors = self._build_sectors(run.weights)
+        research = self._build_research(run, strategy_returns, benchmark_returns, drawdowns)
         metrics = self._build_metrics(run, strategy_returns, strategy_equity, benchmark_returns, drawdowns.underwater)
 
         return PerformanceSnapshot(
             run_id=run.run_id,
             display_name=str(run.config.get("name") or run.run_id),
+            strategy_name=str(run.config.get("strategy") or "unknown"),
+            benchmark=benchmark,
             metrics=metrics,
             rolling=rolling,
             drawdowns=drawdowns,
             exposure=exposure,
             sectors=sectors,
+            research=research,
             strategy_equity=strategy_equity,
             strategy_returns=strategy_returns,
             benchmark_returns=benchmark_returns,
@@ -130,12 +146,15 @@ class PerformanceSnapshotFactory:
         underwater = equity.div(peak).sub(1.0).rename("underwater")
         records: list[dict[str, object]] = []
         in_drawdown = False
-        start = trough = None
+        start = trough = peak_date = last_recovered = equity.index[0]
         trough_value = 0.0
 
         for date, value in underwater.items():
             value = float(value)
+            if value >= 0.0:
+                last_recovered = date
             if value < 0.0 and not in_drawdown:
+                peak_date = last_recovered
                 start = trough = date
                 trough_value = value
                 in_drawdown = True
@@ -143,27 +162,35 @@ class PerformanceSnapshotFactory:
                 trough = date
                 trough_value = value
             elif value >= 0.0 and in_drawdown:
-                records.append(
-                    {
-                        "start": start,
-                        "trough": trough,
-                        "end": date,
-                        "drawdown": trough_value,
-                    }
-                )
+                records.append(self._build_drawdown_record(peak_date, start, trough, date, trough_value, recovered=True))
                 in_drawdown = False
 
         if in_drawdown:
             records.append(
-                {
-                    "start": start,
-                    "trough": trough,
-                    "end": equity.index[-1],
-                    "drawdown": trough_value,
-                }
+                self._build_drawdown_record(
+                    peak_date,
+                    start,
+                    trough,
+                    equity.index[-1],
+                    trough_value,
+                    recovered=False,
+                )
             )
 
-        episodes = pd.DataFrame.from_records(records, columns=["start", "trough", "end", "drawdown"])
+        episodes = pd.DataFrame.from_records(
+            records,
+            columns=[
+                "peak",
+                "start",
+                "trough",
+                "end",
+                "drawdown",
+                "duration_days",
+                "time_to_trough_days",
+                "recovery_days",
+                "recovered",
+            ],
+        )
         return DrawdownStats(underwater=underwater, episodes=episodes)
 
     def _build_exposure(self, run: SavedRun) -> ExposureSnapshot:
@@ -177,6 +204,26 @@ class PerformanceSnapshotFactory:
         counts = self.sector_repo.latest_sector_counts(weights)
         concentration = latest_weighted.abs().sort_values(ascending=False).rename("concentration")
         return SectorSnapshot(latest_weighted=latest_weighted, latest_count=counts, concentration=concentration)
+
+    def _build_research(
+        self,
+        run: SavedRun,
+        strategy_returns: pd.Series,
+        benchmark_returns: pd.Series,
+        drawdowns: DrawdownStats,
+    ) -> ResearchSnapshot:
+        sector_weights = self.sector_repo.sector_weight_timeseries(run.weights)
+        sector_contribution = self.sector_repo.sector_contribution_timeseries(run.weights, strategy_returns)
+        drawdown_episodes = drawdowns.episodes.sort_values(["drawdown", "start"], ascending=[True, True])
+        return ResearchSnapshot(
+            monthly_heatmap=build_monthly_heatmap(strategy_returns, run.monthly_returns),
+            return_distribution=build_return_distribution(strategy_returns),
+            yearly_excess_returns=build_yearly_excess_returns(strategy_returns, benchmark_returns),
+            sector_contribution_method=SECTOR_CONTRIBUTION_METHOD_WEIGHTED_ASSET_RETURNS,
+            sector_contribution=sector_contribution,
+            sector_weights=sector_weights,
+            drawdown_episodes=drawdown_episodes,
+        )
 
     @staticmethod
     def _latest_holdings(weights: pd.DataFrame) -> pd.DataFrame:
@@ -209,3 +256,29 @@ class PerformanceSnapshotFactory:
         if years <= 0.0:
             return 0.0
         return float((ending / starting) ** (1.0 / years) - 1.0)
+
+    @staticmethod
+    def _build_drawdown_record(
+        peak: pd.Timestamp,
+        start: pd.Timestamp,
+        trough: pd.Timestamp,
+        end: pd.Timestamp,
+        drawdown: float,
+        *,
+        recovered: bool,
+    ) -> dict[str, object]:
+        peak_ts = pd.Timestamp(peak)
+        start_ts = pd.Timestamp(start)
+        trough_ts = pd.Timestamp(trough)
+        end_ts = pd.Timestamp(end)
+        return {
+            "peak": peak_ts,
+            "start": start_ts,
+            "trough": trough_ts,
+            "end": end_ts,
+            "drawdown": float(drawdown),
+            "duration_days": int((end_ts - start_ts).days),
+            "time_to_trough_days": int((trough_ts - start_ts).days),
+            "recovery_days": int((end_ts - trough_ts).days) if recovered else None,
+            "recovered": recovered,
+        }

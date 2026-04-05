@@ -129,6 +129,7 @@ def test_dashboard_returns_single_mode_payload(tmp_path: Path) -> None:
         tmp_path,
         "omega_20260405_110000",
         name="Omega Strategy",
+        strategy="op_fwd_yield",
         final_equity=120.0,
         avg_turnover=0.04,
         weights=[[0.3, 0.4, 0.3], [0.2, 0.5, 0.3]],
@@ -190,6 +191,16 @@ def test_dashboard_returns_single_mode_payload(tmp_path: Path) -> None:
         {"date": "2024-01-02", "value": 100.0},
         {"date": "2024-01-03", "value": 100.49999999999999},
     ]
+    assert payload["performance"]["benchmarks"] == [
+        {
+            "runId": "alpha_20260405_100000",
+            "label": "KOSPI200",
+            "points": [
+                {"date": "2024-01-02", "value": 100.0},
+                {"date": "2024-01-03", "value": 100.49999999999999},
+            ],
+        }
+    ]
     assert payload["performance"]["drawdowns"] == [
         {
             "runId": "alpha_20260405_100000",
@@ -223,6 +234,70 @@ def test_dashboard_returns_single_mode_payload(tmp_path: Path) -> None:
             {"name": "Utilities", "value": 0.45},
         ]
     }
+    assert payload["research"]["focus"] == {"kind": "all-selected", "label": "All Selected", "value": None}
+    assert payload["research"]["sectorContributionMethod"] == "weighted-asset-return-attribution"
+    assert payload["research"]["monthlyHeatmap"] == {
+        "alpha_20260405_100000": [
+            {"year": 2024, "month": 1, "value": pytest.approx(0.1)},
+        ]
+    }
+    assert payload["research"]["returnDistribution"]["alpha_20260405_100000"]
+    assert payload["research"]["yearlyExcessReturns"] == {
+        "alpha_20260405_100000": [
+            {"date": "2024-12-31", "value": pytest.approx(0.095)},
+        ]
+    }
+    assert payload["research"]["sectorWeightSeries"] == {
+        "alpha_20260405_100000": [
+            {
+                "name": "Tech",
+                "points": [
+                    {"date": "2024-01-02", "value": 0.6},
+                    {"date": "2024-01-03", "value": 0.55},
+                ],
+            },
+            {
+                "name": "Utilities",
+                "points": [
+                    {"date": "2024-01-02", "value": 0.4},
+                    {"date": "2024-01-03", "value": 0.45},
+                ],
+            },
+            {
+                "name": "Health Care",
+                "points": [
+                    {"date": "2024-01-02", "value": 0.0},
+                    {"date": "2024-01-03", "value": 0.0},
+                ],
+            },
+        ]
+    }
+    assert payload["research"]["sectorContributionSeries"] == {
+        "alpha_20260405_100000": [
+            {
+                "name": "Tech",
+                "points": [
+                    {"date": "2024-01-02", "value": 0.0},
+                    {"date": "2024-01-03", "value": pytest.approx(0.055)},
+                ],
+            },
+            {
+                "name": "Utilities",
+                "points": [
+                    {"date": "2024-01-02", "value": 0.0},
+                    {"date": "2024-01-03", "value": pytest.approx(0.045)},
+                ],
+            },
+            {
+                "name": "Health Care",
+                "points": [
+                    {"date": "2024-01-02", "value": 0.0},
+                    {"date": "2024-01-03", "value": 0.0},
+                ],
+            },
+        ]
+    }
+    assert payload["research"]["drawdownEpisodes"] == {"alpha_20260405_100000": []}
 
 
 def test_dashboard_returns_multi_mode_payload_for_repeated_run_ids(tmp_path: Path) -> None:
@@ -262,6 +337,7 @@ def test_dashboard_returns_multi_mode_payload_for_repeated_run_ids(tmp_path: Pat
         {"date": "2024-01-02", "value": 100.0},
         {"date": "2024-01-03", "value": 100.49999999999999},
     ]
+    assert {entry["runId"] for entry in payload["performance"]["benchmarks"]} == {"omega_20260405_110000"}
     assert {entry["runId"] for entry in payload["performance"]["series"]} == {"omega_20260405_110000"}
     assert {entry["runId"] for entry in payload["performance"]["drawdowns"]} == {"omega_20260405_110000"}
     assert {entry["runId"] for entry in payload["rolling"]["rollingSharpe"]} == set()
@@ -272,6 +348,66 @@ def test_dashboard_returns_multi_mode_payload_for_repeated_run_ids(tmp_path: Pat
         {"symbol": "B", "targetWeight": 0.5, "absWeight": 0.5},
         {"symbol": "C", "targetWeight": 0.3, "absWeight": 0.3},
         {"symbol": "A", "targetWeight": 0.2, "absWeight": 0.2},
+    ]
+    assert set(payload["research"]["monthlyHeatmap"]) == {"omega_20260405_110000"}
+    assert set(payload["research"]["returnDistribution"]) == {"omega_20260405_110000"}
+    assert set(payload["research"]["yearlyExcessReturns"]) == {"omega_20260405_110000"}
+    assert set(payload["research"]["sectorWeightSeries"]) == {"omega_20260405_110000"}
+    assert set(payload["research"]["sectorContributionSeries"]) == {"omega_20260405_110000"}
+    assert set(payload["research"]["drawdownEpisodes"]) == {"omega_20260405_110000"}
+
+
+def test_dashboard_returns_per_run_benchmark_series_for_multi_run_selection(tmp_path: Path) -> None:
+    _write_saved_run(
+        tmp_path,
+        "alpha_20260405_100000",
+        name="Alpha Strategy",
+        final_equity=110.0,
+        avg_turnover=0.03,
+        weights=[[0.6, 0.4, 0.0], [0.55, 0.45, 0.0]],
+    )
+    _write_saved_run(
+        tmp_path,
+        "macro_20260405_120000",
+        name="Macro Strategy",
+        final_equity=95.0,
+        avg_turnover=0.02,
+        weights=[[0.2, 0.5, 0.3], [0.1, 0.4, 0.5]],
+        benchmark={"code": "SPX", "name": "S&P 500"},
+    )
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(tmp_path)
+
+    response = client.get(
+        "/api/dashboard",
+        params=[("run_ids", "alpha_20260405_100000"), ("run_ids", "macro_20260405_120000")],
+    )
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["mode"] == "multi"
+    assert payload["context"]["alpha_20260405_100000"]["benchmark"] == {"code": "IKS200", "name": "KOSPI200"}
+    assert payload["context"]["macro_20260405_120000"]["benchmark"] == {"code": "SPX", "name": "S&P 500"}
+    assert payload["performance"]["benchmark"] is None
+    assert payload["performance"]["benchmarks"] == [
+        {
+            "runId": "alpha_20260405_100000",
+            "label": "KOSPI200",
+            "points": [
+                {"date": "2024-01-02", "value": 100.0},
+                {"date": "2024-01-03", "value": 100.49999999999999},
+            ],
+        },
+        {
+            "runId": "macro_20260405_120000",
+            "label": "S&P 500",
+            "points": [
+                {"date": "2024-01-02", "value": 100.0},
+                {"date": "2024-01-03", "value": 101.0},
+            ],
+        },
     ]
 
 
@@ -334,6 +470,22 @@ def test_dashboard_skips_non_finite_sector_weights_values(tmp_path: Path) -> Non
             {"name": "Utilities", "value": 0.45},
         ]
     }
+    assert payload["research"]["sectorWeightSeries"]["alpha_20260405_100000"] == [
+        {
+            "name": "Tech",
+            "points": [
+                {"date": "2024-01-02", "value": 0.0},
+                {"date": "2024-01-03", "value": 0.55},
+            ],
+        },
+        {
+            "name": "Utilities",
+            "points": [
+                {"date": "2024-01-02", "value": 0.0},
+                {"date": "2024-01-03", "value": 0.45},
+            ],
+        },
+    ]
 
 
 def test_dashboard_returns_controlled_error_for_non_directory_run_entry(tmp_path: Path) -> None:
@@ -366,7 +518,7 @@ def _build_payload_service(runs_root: Path, sector_frame: pd.DataFrame | None = 
     if sector_frame is None:
         sector_frame = pd.DataFrame(
             {"A": ["Tech"], "B": ["Utilities"], "C": ["Health Care"]},
-            index=pd.to_datetime(["2024-01-03"]),
+            index=pd.to_datetime(["2024-01-02"]),
         )
     return DashboardPayloadService(
         runs_root=runs_root,
@@ -374,11 +526,21 @@ def _build_payload_service(runs_root: Path, sector_frame: pd.DataFrame | None = 
         snapshot_factory=PerformanceSnapshotFactory(
             benchmark_repo=BenchmarkRepository.from_frame(
                 pd.DataFrame(
-                    {"IKS200": [200.0, 201.0]},
+                    {"IKS200": [200.0, 201.0], "SPX": [500.0, 505.0]},
                     index=pd.to_datetime(["2024-01-02", "2024-01-03"]),
                 )
             ),
-            sector_repo=SectorRepository.from_frame(sector_frame),
+            sector_repo=SectorRepository.from_frame(
+                sector_frame,
+                prices=pd.DataFrame(
+                    {
+                        "A": [100.0, 110.0],
+                        "B": [100.0, 110.0],
+                        "C": [100.0, 100.0],
+                    },
+                    index=pd.to_datetime(["2024-01-02", "2024-01-03"]),
+                ),
+            ),
         ),
     )
 
@@ -388,9 +550,11 @@ def _write_saved_run(
     run_id: str,
     *,
     name: str,
+    strategy: str = "momentum",
     final_equity: float,
     avg_turnover: float,
     weights: list[list[float]],
+    benchmark: dict[str, object] | None = None,
     latest_weights_rows: list[dict[str, object]] | None = None,
 ) -> None:
     run_dir = root / run_id
@@ -399,17 +563,15 @@ def _write_saved_run(
     series_dir.mkdir(parents=True)
     positions_dir.mkdir()
 
-    (run_dir / "config.json").write_text(
-        json.dumps(
-            {
-                "name": name,
-                "strategy": "momentum",
-                "start": "2024-01-02",
-                "end": "2024-01-03",
-            }
-        ),
-        encoding="utf-8",
-    )
+    config: dict[str, object] = {
+        "name": name,
+        "strategy": strategy,
+        "start": "2024-01-02",
+        "end": "2024-01-03",
+    }
+    if benchmark is not None:
+        config["benchmark"] = benchmark
+    (run_dir / "config.json").write_text(json.dumps(config), encoding="utf-8")
     (run_dir / "summary.json").write_text(
         json.dumps({"final_equity": final_equity, "avg_turnover": avg_turnover}),
         encoding="utf-8",

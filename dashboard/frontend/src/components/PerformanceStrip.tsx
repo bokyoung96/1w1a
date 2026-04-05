@@ -2,88 +2,130 @@ import EChartsReact from "echarts-for-react";
 import { motion } from "framer-motion";
 
 import { formatMoney, formatPercent } from "../lib/format";
-import type { DashboardPayload } from "../lib/types";
+import type { DashboardPayload, ResearchFocus } from "../lib/types";
 
 type PerformanceStripProps = {
   dashboard: DashboardPayload;
+  focus: ResearchFocus;
+  onFocusChange: (focus: ResearchFocus) => void;
 };
 
-export function PerformanceStrip({ dashboard }: PerformanceStripProps) {
-  const title = dashboard.mode === "single" ? "Single strategy view" : "Multi strategy comparison";
-  const selectedRuns = dashboard.selectedRunIds.map((runId) => {
+const STRATEGY_COLORS = ["#f0a44b", "#e3c06b", "#7cb8d8", "#c98f7d", "#8fa77f", "#bea1d8"];
+
+function focusLabel(focus: ResearchFocus, dashboard: DashboardPayload) {
+  if (focus.kind === "strategy") {
+    const context = dashboard.context[focus.runId];
+    return `Focus: Strategy · ${context?.label ?? focus.runId}`;
+  }
+
+  if (focus.kind === "sector") {
+    return `Focus: Sector · ${focus.sectorName}`;
+  }
+
+  return "Focus: All selected";
+}
+
+export function PerformanceStrip({ dashboard, focus, onFocusChange }: PerformanceStripProps) {
+  const selectedRuns = dashboard.selectedRunIds.map((runId, index) => {
     const run = dashboard.availableRuns.find((entry) => entry.run_id === runId);
     const metric = dashboard.metrics[runId];
     const context = dashboard.context[runId];
+    const benchmark =
+      dashboard.performance.benchmarks.find((entry) => entry.runId === runId) ??
+      (dashboard.mode === "single" && dashboard.performance.benchmark
+        ? {
+            runId,
+            label: context?.benchmark.name ?? "Benchmark",
+            points: dashboard.performance.benchmark,
+          }
+        : undefined);
+    const color = STRATEGY_COLORS[index % STRATEGY_COLORS.length];
 
     return {
       runId,
+      color,
       label: context?.label ?? run?.label ?? runId,
       strategy: context?.strategy ?? run?.strategy ?? runId,
+      benchmarkLabel: benchmark?.label ?? context?.benchmark.name ?? "Benchmark",
       metric,
+      benchmark,
+      series: dashboard.performance.series.find((entry) => entry.runId === runId),
     };
   });
 
-  const summarySeries: any[] = dashboard.performance.series.map((series) => ({
-    name: series.label,
-    type: "line" as const,
-    data: series.points.map((point) => [point.date, point.value]),
-    showSymbol: false,
-    smooth: true,
-    lineStyle: { width: 2 },
-    emphasis: { focus: "series" as const },
-  }));
+  const summarySeries = selectedRuns.flatMap((run) => {
+    const strategySeries = run.series
+      ? [
+          {
+            name: run.label,
+            type: "line" as const,
+            data: run.series.points.map((point) => [point.date, point.value]),
+            showSymbol: false,
+            smooth: true,
+            lineStyle: { width: 2.6, color: run.color },
+            itemStyle: { color: run.color },
+            emphasis: { focus: "series" as const },
+          },
+        ]
+      : [];
 
-  if (dashboard.performance.benchmark) {
-    const primaryRunId = selectedRuns[0]?.runId;
-    const benchmarkLabel = primaryRunId ? dashboard.context[primaryRunId]?.benchmark.name : "Benchmark";
+    const benchmarkSeries = run.benchmark
+      ? [
+          {
+            name: run.benchmarkLabel,
+            type: "line" as const,
+            data: run.benchmark.points.map((point) => [point.date, point.value]),
+            showSymbol: false,
+            smooth: true,
+            lineStyle: { width: 1.8, type: "dashed" as const, color: run.color, opacity: 0.65 },
+            itemStyle: { color: run.color, opacity: 0.65 },
+            emphasis: { focus: "series" as const },
+          },
+        ]
+      : [];
 
-    summarySeries.push({
-      name: benchmarkLabel,
-      type: "line" as const,
-      data: dashboard.performance.benchmark.map((point) => [point.date, point.value]),
-      showSymbol: false,
-      smooth: true,
-      lineStyle: { width: 2, type: "dashed" as const },
-      emphasis: { focus: "series" as const },
-    });
-  }
+    return [...strategySeries, ...benchmarkSeries];
+  });
 
   const chartOption = {
     backgroundColor: "transparent",
-    color: ["#d88d36", "#f3c97f", "#8bc6ff", "#f08f70"],
+    animationDuration: 450,
+    animationEasing: "cubicOut",
     grid: {
-      left: 4,
-      right: 14,
-      top: 12,
-      bottom: 24,
+      left: 10,
+      right: 24,
+      top: 18,
+      bottom: 28,
       containLabel: true,
     },
     tooltip: {
       trigger: "axis" as const,
       valueFormatter: (value: number) => formatMoney(value),
+      backgroundColor: "rgba(15, 18, 21, 0.96)",
+      borderColor: "rgba(240, 164, 75, 0.22)",
+      textStyle: { color: "#f7f0e7" },
     },
     legend: {
-      show: summarySeries.length > 1,
       top: 0,
       textStyle: {
-        color: "#b8aca0",
+        color: "#bdaea1",
         fontFamily: "inherit",
       },
     },
     xAxis: {
       type: "time" as const,
-      axisLine: { lineStyle: { color: "rgba(255, 248, 240, 0.18)" } },
-      axisLabel: { color: "#b8aca0" },
+      axisLine: { lineStyle: { color: "rgba(247, 240, 231, 0.18)" } },
+      axisLabel: { color: "#bdaea1" },
       splitLine: { show: false },
     },
     yAxis: {
       type: "value" as const,
       axisLabel: {
-        color: "#b8aca0",
+        color: "#bdaea1",
         formatter: (value: number) => formatMoney(value),
       },
       splitLine: {
-        lineStyle: { color: "rgba(255, 248, 240, 0.08)" },
+        lineStyle: { color: "rgba(247, 240, 231, 0.08)" },
       },
     },
     series: summarySeries,
@@ -94,42 +136,63 @@ export function PerformanceStrip({ dashboard }: PerformanceStripProps) {
       className="workspace-strip performance-strip"
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="workspace-strip-copy">
-        <p className="section-label">Performance plane</p>
-        <h2>{title}</h2>
+        <div>
+          <p className="section-label">Comparison plane</p>
+          <h2>{dashboard.mode === "single" ? "Single strategy view" : "Multi strategy comparison"}</h2>
+        </div>
         <p className="workspace-summary">
-          {selectedRuns.length} active run{selectedRuns.length === 1 ? "" : "s"} inside the 1W1A live workspace.
+          Each selected strategy is paired with its own benchmark overlay. Click a strategy row to inspect it without
+          leaving the page.
         </p>
       </div>
 
-      <div className="workspace-strip-grid">
-        <motion.div className="workspace-chart-plane" whileHover={{ scale: 1.005 }}>
+      <div className="workspace-strip-grid workspace-strip-grid--wide">
+        <motion.div className="workspace-chart-plane workspace-chart-plane--hero" whileHover={{ scale: 1.003 }}>
           <EChartsReact option={chartOption} style={{ height: 360, width: "100%" }} />
         </motion.div>
 
-        <div className="workspace-metrics">
-          {selectedRuns.map((run) => (
-            <article key={run.runId} className="workspace-metric-line">
-              <div className="workspace-metric-head">
-                <strong>{run.label}</strong>
-                <span>{run.strategy}</span>
-              </div>
-              <div className="workspace-metric-row">
-                <span>CAGR {run.metric ? formatPercent(run.metric.cagr) : "n/a"}</span>
-                <span>Sharpe {run.metric ? run.metric.sharpe.toFixed(2) : "n/a"}</span>
-              </div>
-              <div className="workspace-metric-row">
-                <span>Max drawdown {run.metric ? formatPercent(run.metric.max_drawdown) : "n/a"}</span>
-                <span>Turnover {run.metric ? formatPercent(run.metric.avg_turnover) : "n/a"}</span>
-              </div>
-              <div className="workspace-metric-row workspace-metric-accent">
-                <span>Final equity</span>
-                <span>{run.metric ? formatMoney(run.metric.final_equity) : "n/a"}</span>
-              </div>
-            </article>
-          ))}
+        <div className="workspace-metrics workspace-metrics--stack">
+          <div className="focus-banner">
+            <span className="section-label">Detail focus</span>
+            <strong>{focusLabel(focus, dashboard)}</strong>
+          </div>
+
+          {selectedRuns.map((run) => {
+            const isFocused = focus.kind === "strategy" && focus.runId === run.runId;
+            return (
+              <button
+                key={run.runId}
+                type="button"
+                className={`workspace-metric-line workspace-metric-line--button ${isFocused ? "is-focused" : ""}`}
+                onClick={() => onFocusChange({ kind: "strategy", runId: run.runId })}
+                aria-pressed={isFocused}
+                aria-label={`Focus strategy ${run.label}`}
+              >
+                <div className="workspace-metric-head">
+                  <strong>{run.label}</strong>
+                  <span>{run.strategy}</span>
+                </div>
+                <div className="workspace-metric-row">
+                  <span>CAGR {run.metric ? formatPercent(run.metric.cagr) : "n/a"}</span>
+                  <span>Sharpe {run.metric ? run.metric.sharpe.toFixed(2) : "n/a"}</span>
+                </div>
+                <div className="workspace-metric-row">
+                  <span>Max drawdown {run.metric ? formatPercent(run.metric.maxDrawdown) : "n/a"}</span>
+                  <span>{run.benchmarkLabel}</span>
+                </div>
+                <div className="workspace-metric-row workspace-metric-accent">
+                  <span>Final equity</span>
+                  <span>{run.metric ? formatMoney(run.metric.finalEquity) : "n/a"}</span>
+                </div>
+                <span className="workspace-metric-action">
+                  Focus strategy {run.label}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </motion.section>

@@ -7,11 +7,13 @@ type RunSelectorProps = {
 };
 
 export function RunSelector({ runs, selectedRunIds, onToggle }: RunSelectorProps) {
+  const uniqueRuns = runs.filter((run, index) => runs.findIndex((entry) => entry.run_id === run.run_id) === index);
+
   return (
     <section className="selector-panel run-selector">
       <p className="section-label">Select saved runs</p>
       <div className="run-selector-list">
-        {runs.map((run) => {
+        {uniqueRuns.map((run) => {
           const selected = selectedRunIds.includes(run.run_id);
 
           return (

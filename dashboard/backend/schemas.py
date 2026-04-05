@@ -42,6 +42,11 @@ class NamedSeriesModel(DashboardBaseModel):
     points: list[ValuePointModel]
 
 
+class CategorySeriesModel(DashboardBaseModel):
+    name: str
+    points: list[ValuePointModel]
+
+
 class HoldingModel(DashboardBaseModel):
     symbol: str
     target_weight: float
@@ -51,6 +56,37 @@ class HoldingModel(DashboardBaseModel):
 class CategoryPointModel(DashboardBaseModel):
     name: str
     value: float
+
+
+class HeatmapCellModel(DashboardBaseModel):
+    year: int
+    month: int
+    value: float
+
+
+class DistributionBinModel(DashboardBaseModel):
+    start: float
+    end: float
+    count: int
+    frequency: float
+
+
+class DrawdownEpisodeModel(DashboardBaseModel):
+    peak: str
+    start: str
+    trough: str
+    end: str
+    drawdown: float
+    duration_days: int
+    time_to_trough_days: int
+    recovery_days: int | None = None
+    recovered: bool
+
+
+class ResearchFocusModel(DashboardBaseModel):
+    kind: str
+    label: str
+    value: str | None = None
 
 
 class DashboardMetricModel(DashboardBaseModel):
@@ -81,7 +117,8 @@ class DashboardContextModel(DashboardBaseModel):
 
 class DashboardPerformanceModel(DashboardBaseModel):
     series: list[NamedSeriesModel]
-    benchmark: list[ValuePointModel] | None
+    benchmark: list[ValuePointModel] | None = None
+    benchmarks: list[NamedSeriesModel]
     drawdowns: list[NamedSeriesModel]
 
 
@@ -96,6 +133,17 @@ class DashboardExposureModel(DashboardBaseModel):
     sector_weights: dict[str, list[CategoryPointModel]]
 
 
+class DashboardResearchModel(DashboardBaseModel):
+    focus: ResearchFocusModel
+    sector_contribution_method: str
+    monthly_heatmap: dict[str, list[HeatmapCellModel]]
+    return_distribution: dict[str, list[DistributionBinModel]]
+    yearly_excess_returns: dict[str, list[ValuePointModel]]
+    sector_contribution_series: dict[str, list[CategorySeriesModel]]
+    sector_weight_series: dict[str, list[CategorySeriesModel]]
+    drawdown_episodes: dict[str, list[DrawdownEpisodeModel]]
+
+
 class DashboardPayloadModel(DashboardBaseModel):
     mode: str
     selected_run_ids: list[str]
@@ -105,6 +153,7 @@ class DashboardPayloadModel(DashboardBaseModel):
     performance: DashboardPerformanceModel
     rolling: DashboardRollingModel
     exposure: DashboardExposureModel
+    research: DashboardResearchModel
 
 
 class SessionBootstrapModel(DashboardBaseModel):

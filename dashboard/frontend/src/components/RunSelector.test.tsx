@@ -1,6 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi, afterEach as afterEachHook } from "vitest";
 
 const { fetchRuns, fetchDashboard, fetchSession } = vi.hoisted(() => ({
   fetchRuns: vi.fn(),
@@ -14,23 +14,33 @@ vi.mock("../lib/api", () => ({
   fetchSession,
 }));
 
+vi.mock("echarts-for-react", () => ({
+  default: () => <div data-testid="chart" />,
+}));
+
 beforeEach(() => {
   fetchRuns.mockReset();
   fetchDashboard.mockReset();
   fetchSession.mockReset();
-  fetchSession.mockResolvedValue({ defaultSelectedRunIds: [] });
+  fetchSession.mockResolvedValue({ defaultSelectedRunIds: ["momentum_run", "momentum_run"] });
   fetchRuns.mockResolvedValue([
     {
       run_id: "momentum_run",
       label: "Momentum",
       strategy: "momentum",
-      summary: { final_equity: 100, avg_turnover: 0.1 },
+      summary: { finalEquity: 100, avgTurnover: 0.1 },
+    },
+    {
+      run_id: "momentum_run",
+      label: "Momentum",
+      strategy: "momentum",
+      summary: { finalEquity: 100, avgTurnover: 0.1 },
     },
     {
       run_id: "value_run",
       label: "OP Fwd Yield",
       strategy: "op_fwd_yield",
-      summary: { final_equity: 105, avg_turnover: 0.2 },
+      summary: { finalEquity: 105, avgTurnover: 0.2 },
     },
   ]);
   fetchDashboard.mockResolvedValue({
@@ -41,16 +51,33 @@ beforeEach(() => {
         run_id: "momentum_run",
         label: "Momentum",
         strategy: "momentum",
-        summary: { final_equity: 100, avg_turnover: 0.1 },
+        summary: { finalEquity: 100, avgTurnover: 0.1 },
       },
       {
         run_id: "value_run",
         label: "OP Fwd Yield",
         strategy: "op_fwd_yield",
-        summary: { final_equity: 105, avg_turnover: 0.2 },
+        summary: { finalEquity: 105, avgTurnover: 0.2 },
       },
     ],
-    metrics: {},
+    metrics: {
+      momentum_run: {
+        label: "Momentum",
+        cumulativeReturn: 0.12,
+        cagr: 0.12,
+        annualVolatility: 0.15,
+        sharpe: 1.1,
+        sortino: 1.3,
+        calmar: 1.5,
+        maxDrawdown: -0.08,
+        avgTurnover: 0.1,
+        finalEquity: 112,
+        alpha: 0.01,
+        beta: 0.9,
+        trackingError: 0.04,
+        informationRatio: 0.2,
+      },
+    },
     context: {
       momentum_run: {
         label: "Momentum",
@@ -62,41 +89,95 @@ beforeEach(() => {
       },
     },
     performance: {
-      series: [],
+      series: [
+        {
+          runId: "momentum_run",
+          label: "Momentum",
+          points: [
+            { date: "2025-01-01", value: 100 },
+            { date: "2025-01-02", value: 101 },
+          ],
+        },
+      ],
       benchmark: [
         { date: "2025-01-01", value: 100 },
         { date: "2025-01-02", value: 101 },
+      ],
+      benchmarks: [
+        {
+          runId: "momentum_run",
+          label: "KOSPI200 benchmark",
+          points: [
+            { date: "2025-01-01", value: 100 },
+            { date: "2025-01-02", value: 101 },
+          ],
+        },
       ],
       drawdowns: [],
     },
     rolling: { rollingSharpe: [], rollingBeta: [] },
     exposure: { holdingsCount: [], latestHoldings: {}, sectorWeights: {} },
+    research: {
+      focus: { kind: "all-selected", label: "All Selected", value: null },
+      sectorContributionMethod: "weighted-asset-return-attribution",
+      monthlyHeatmap: {},
+      returnDistribution: {},
+      yearlyExcessReturns: {},
+      sectorContributionSeries: {},
+      sectorWeightSeries: {},
+      drawdownEpisodes: {},
+    },
   });
 });
 
 import { App } from "../app/App";
 
+afterEachHook(() => {
+  cleanup();
+});
+
+async function selectorScope() {
+  const selector = (await screen.findByText("Select saved runs")).closest("section");
+  if (!selector) {
+    throw new Error("run selector not found");
+  }
+
+  return within(selector);
+}
+
 describe("Run selection", () => {
-  it("allows selecting and deselecting runs from the manual selector", async () => {
+  it("suppresses duplicate run ids from the interactive selector and bootstrap request", async () => {
+    render(<App />);
+
+    const selector = await selectorScope();
+    expect(selector.getAllByRole("button", { name: /Momentum/i })).toHaveLength(1);
+    expect(selector.getAllByRole("button", { name: /OP Fwd Yield/i })).toHaveLength(1);
+    await waitFor(() => expect(fetchDashboard).toHaveBeenCalledWith(["momentum_run"]));
+  });
+
+  it("allows selecting and deselecting runs without introducing duplicate selected ids", async () => {
     const user = userEvent.setup();
 
     render(<App />);
 
-    expect(await screen.findByText("1 selected")).toBeInTheDocument();
-    await user.click(await screen.findByRole("button", { name: /OP Fwd Yield/i }));
+    expect(await screen.findAllByText("1 selected")).toHaveLength(1);
+    let selector = await selectorScope();
+    await user.click(selector.getByRole("button", { name: /OP Fwd Yield/i }));
 
-    expect(screen.getByText("2 selected")).toBeInTheDocument();
+    expect(screen.getAllByText("2 selected")).toHaveLength(1);
     expect(fetchDashboard).toHaveBeenNthCalledWith(1, ["momentum_run"]);
     expect(fetchDashboard).toHaveBeenNthCalledWith(2, ["momentum_run", "value_run"]);
 
-    await user.click(screen.getByRole("button", { name: /Momentum/i }));
+    selector = await selectorScope();
+    await user.click(selector.getByRole("button", { name: /Momentum/i }));
 
-    expect(screen.getByText("1 selected")).toBeInTheDocument();
+    expect(screen.getAllByText("1 selected")).toHaveLength(1);
     expect(fetchDashboard).toHaveBeenNthCalledWith(3, ["value_run"]);
 
-    await user.click(screen.getByRole("button", { name: /OP Fwd Yield/i }));
+    selector = await selectorScope();
+    await user.click(selector.getByRole("button", { name: /OP Fwd Yield/i }));
 
-    expect(screen.getByText("0 selected")).toBeInTheDocument();
+    expect(screen.getAllByText("0 selected")).toHaveLength(1);
     expect(fetchDashboard).toHaveBeenCalledTimes(3);
   });
 });
