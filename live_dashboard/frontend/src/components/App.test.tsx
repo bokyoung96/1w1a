@@ -20,7 +20,7 @@ describe("App", () => {
     render(<App />);
 
     expect(await screen.findByText("1W1A")).toBeInTheDocument();
+    expect(await screen.findByText("Live Performance")).toBeInTheDocument();
     expect(await screen.findByText("Select saved runs")).toBeInTheDocument();
-    expect(await screen.findByText("Momentum")).toBeInTheDocument();
   });
 });
