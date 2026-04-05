@@ -31,6 +31,11 @@ body {
 
 .top-rail {
   padding: 24px 32px 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .brand-lockup {
@@ -63,6 +68,8 @@ body {
 
 .dashboard-stage {
   padding: 0 32px 32px;
+  display: grid;
+  gap: 18px;
 }
 
 .selector-panel {
@@ -78,27 +85,94 @@ body {
   margin: 0 0 16px;
 }
 
-.saved-runs-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
+.top-rail-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.top-rail-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 248, 240, 0.06);
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.run-selector-list {
+  display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
 
-.saved-run-item {
+.run-chip {
+  min-width: 220px;
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
+  flex-direction: column;
+  gap: 6px;
   padding: 14px 16px;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: rgba(255, 248, 240, 0.03);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    transform 120ms ease,
+    background 120ms ease;
 }
 
-.status-message {
-  margin: 0;
+.run-chip:hover {
+  border-color: rgba(216, 141, 54, 0.5);
+  transform: translateY(-1px);
+}
+
+.run-chip.is-selected {
+  border-color: rgba(216, 141, 54, 0.9);
+  background: rgba(216, 141, 54, 0.14);
+}
+
+.run-chip-label {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.run-chip-meta,
+.empty-state p,
+.error-state p,
+.debug-state {
   color: var(--muted);
+}
+
+.run-chip-meta {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+}
+
+.empty-state h2,
+.error-state h2 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+}
+
+.empty-state p,
+.error-state p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.debug-state {
+  margin: 0;
+  font: inherit;
 }
 
 @media (max-width: 640px) {
@@ -108,8 +182,12 @@ body {
     padding-right: 20px;
   }
 
-  .saved-run-item {
-    flex-direction: column;
-    align-items: flex-start;
+  .top-rail-meta {
+    justify-content: flex-start;
+  }
+
+  .run-chip {
+    width: 100%;
+    min-width: 0;
   }
 }

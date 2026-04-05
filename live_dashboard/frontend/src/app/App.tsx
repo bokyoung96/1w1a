@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
 
-import { fetchRuns } from "../lib/api";
-import type { RunOption } from "../lib/types";
+import { EmptyState } from "../components/EmptyState";
+import { ErrorState } from "../components/ErrorState";
+import { RunSelector } from "../components/RunSelector";
+import { TopRail } from "../components/TopRail";
+import { fetchDashboard, fetchRuns } from "../lib/api";
+import type { DashboardPayload, RunOption } from "../lib/types";
 
 export function App() {
   const [runs, setRuns] = useState<RunOption[]>([]);
+  const [selectedRunIds, setSelectedRunIds] = useState<string[]>([]);
+  const [dashboard, setDashboard] = useState<DashboardPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -32,27 +38,55 @@ export function App() {
     };
   }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    if (selectedRunIds.length === 0) {
+      setDashboard(null);
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    void fetchDashboard(selectedRunIds)
+      .then((nextDashboard) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setDashboard(nextDashboard);
+        setError(null);
+      })
+      .catch((nextError: unknown) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setError(nextError instanceof Error ? nextError.message : "Failed to load dashboard.");
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedRunIds]);
+
   return (
     <div className="dashboard-shell">
-      <header className="top-rail">
-        <div className="brand-lockup">
-          <span className="brand-mark">1W1A</span>
-          <span className="brand-subtitle">Live Performance</span>
-        </div>
-      </header>
+      <TopRail selectionCount={selectedRunIds.length} />
       <main className="dashboard-stage">
-        <section className="selector-panel">
-          <p className="section-label">Select saved runs</p>
-          {error ? <p className="status-message">{error}</p> : null}
-          <ul className="saved-runs-list">
-            {runs.map((run) => (
-              <li key={run.run_id} className="saved-run-item">
-                {run.label}
-              </li>
-            ))}
-          </ul>
-        </section>
+        {error ? <ErrorState message={error} /> : null}
+        {!error && runs.length === 0 ? <EmptyState /> : null}
+        {runs.length > 0 ? (
+          <RunSelector runs={runs} selectedRunIds={selectedRunIds} onToggle={toggleRun} />
+        ) : null}
+        {dashboard ? <pre className="selector-panel debug-state">{dashboard.mode}</pre> : null}
       </main>
     </div>
   );
+
+  function toggleRun(runId: string) {
+    setSelectedRunIds((current) =>
+      current.includes(runId) ? current.filter((value) => value !== runId) : [...current, runId],
+    );
+  }
 }
