@@ -427,6 +427,24 @@ textarea {
   gap: 10px;
 }
 
+.focus-chip-row--filters {
+  align-items: flex-start;
+}
+
+.research-filter-panel {
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px solid rgba(247, 240, 231, 0.1);
+  border-radius: 24px;
+  background: rgba(247, 240, 231, 0.02);
+}
+
+.research-filter-copy {
+  display: grid;
+  gap: 6px;
+}
+
 .research-figure {
   padding: 18px;
   display: grid;
@@ -440,6 +458,18 @@ textarea {
 
 .research-figure-chart {
   min-height: 220px;
+}
+
+.research-figure-empty {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  border-radius: 20px;
+  border: 1px dashed rgba(247, 240, 231, 0.14);
+  background: rgba(247, 240, 231, 0.02);
+  color: var(--muted);
+  text-align: center;
 }
 
 .detail-section-copy {

@@ -399,6 +399,13 @@ function findChartOption(names: string[]) {
   });
 }
 
+function findSectorChartOptions() {
+  return chartOptions.filter((option) => {
+    const series = (option as { series?: Array<{ name?: string }> }).series ?? [];
+    return series.some((entry) => entry.name?.includes(" · "));
+  });
+}
+
 async function selectorScope() {
   const selector = (await screen.findByText("Select saved runs")).closest("section");
   if (!selector) {
@@ -441,7 +448,7 @@ describe("App", () => {
 
     render(<App />);
 
-    expect(await screen.findByRole("heading", { name: "Research workspace" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Research charts" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Return distribution" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Monthly heatmap" })).toBeInTheDocument();
     expect(screen.getByText("Focus: All selected")).toBeInTheDocument();
@@ -458,13 +465,53 @@ describe("App", () => {
     expect(screen.getByText("Sector drill-down")).toBeInTheDocument();
   });
 
+  it("shows a simple empty-state message when return distribution data is unavailable", async () => {
+    fetchRuns.mockResolvedValue([RUNS[0]]);
+    const dashboard = createDashboard("single", ["momentum_run"]);
+    dashboard.research.returnDistribution.momentum_run = [];
+    fetchDashboard.mockResolvedValue(dashboard);
+
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Research charts" })).toBeInTheDocument();
+    expect(screen.getByText("Returns, risk, and sector trends for the selected strategies.")).toBeInTheDocument();
+    expect(screen.getByText("No return distribution data.")).toBeInTheDocument();
+  });
+
+  it("filters sector charts with explicit sector selection controls", async () => {
+    const user = userEvent.setup();
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    await screen.findByRole("heading", { name: "Research charts" });
+    expect(screen.getByRole("button", { name: "Show all sectors" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Toggle sector Tech" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Toggle sector Energy" })).toBeInTheDocument();
+
+    chartOptions.length = 0;
+    await user.click(screen.getByRole("button", { name: "Toggle sector Energy" }));
+
+    const sectorOptions = findSectorChartOptions();
+    expect(sectorOptions).toHaveLength(2);
+    expect(sectorOptions[0]).toMatchObject({
+      series: [expect.objectContaining({ name: "OP Fwd Yield · Energy" })],
+    });
+    expect(sectorOptions[1]).toMatchObject({
+      series: [expect.objectContaining({ name: "OP Fwd Yield · Energy" })],
+    });
+    expect(JSON.stringify(sectorOptions)).not.toContain("Tech");
+    expect(JSON.stringify(sectorOptions)).not.toContain("Industrials");
+  });
+
   it("plots each selected strategy beside its corresponding benchmark overlay", async () => {
     fetchRuns.mockResolvedValue(RUNS);
     fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
 
     render(<App />);
 
-    await screen.findByRole("heading", { name: "Research workspace" });
+    await screen.findByRole("heading", { name: "Research charts" });
 
     expect(
       findChartOption(["Momentum", "KOSPI200 benchmark", "OP Fwd Yield", "S&P 500 benchmark"]),

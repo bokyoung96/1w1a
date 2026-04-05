@@ -69,11 +69,9 @@ export function ResearchDetailPanel({ dashboard, focus }: ResearchDetailPanelPro
       transition={{ duration: 0.42, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="detail-section-copy">
-        <p className="section-label">Detail inspector</p>
-        <h2>Research detail layer</h2>
-        <p className="workspace-summary">
-          Metrics, drawdown episodes, and sector contribution context update with the current in-page focus.
-        </p>
+        <p className="section-label">Details</p>
+        <h2>Research details</h2>
+        <p className="workspace-summary">Key metrics and drawdown episodes for the current focus.</p>
       </div>
 
       <div className="focus-banner focus-banner--inline">
@@ -148,12 +146,12 @@ export function ResearchDetailPanel({ dashboard, focus }: ResearchDetailPanelPro
 
       <div className="detail-note-list">
         <div className="detail-note">
-          <span className="section-label">Contribution naming</span>
+          <span className="section-label">Sector contribution</span>
           <strong>Sector contribution series</strong>
           <p>Method: {contributionMethodLabel(dashboard.research.sectorContributionMethod)}.</p>
         </div>
         <div className="detail-note">
-          <span className="section-label">Benchmark context</span>
+          <span className="section-label">Benchmark</span>
           <strong>Yearly excess returns</strong>
           <p>Excess return panels remain benchmark-relative for each selected run.</p>
         </div>

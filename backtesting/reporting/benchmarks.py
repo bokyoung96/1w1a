@@ -99,7 +99,11 @@ class SectorRepository:
         if self.prices is None:
             return pd.DataFrame()
 
-        asset_returns = self.prices.reindex(columns=weights.columns).pct_change().replace([float("inf"), float("-inf")], 0.0)
+        asset_returns = (
+            self.prices.reindex(columns=weights.columns)
+            .pct_change(fill_method=None)
+            .replace([float("inf"), float("-inf")], 0.0)
+        )
         asset_returns = asset_returns.reindex(weights.index).fillna(0.0).astype(float)
         weighted_returns = weights.fillna(0.0).astype(float).mul(asset_returns, axis=0)
 

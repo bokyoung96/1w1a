@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import EChartsReact from "echarts-for-react";
 import { motion } from "framer-motion";
 
@@ -23,21 +25,31 @@ type ResearchFigureProps = {
   subtitle: string;
   option: object;
   height?: number;
+  isEmpty?: boolean;
+  emptyMessage?: string;
 };
 
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const SERIES_COLORS = ["#f0a44b", "#e3c06b", "#7cb8d8", "#c98f7d", "#8fa77f", "#bea1d8", "#dca96e", "#7ea5a5"];
 const WEIGHTED_ASSET_RETURN_METHOD = "weighted-asset-return-attribution";
+const DEFAULT_VISIBLE_SECTORS = 4;
 
 function contributionSubtitle(method: string) {
   if (method === WEIGHTED_ASSET_RETURN_METHOD) {
-    return "Sector-level cumulative contribution computed from weighted asset returns.";
+    return "How much each sector added or detracted over time.";
   }
 
-  return `Sector-level contribution series using backend method: ${method || "not provided"}.`;
+  return `Sector contribution from ${method || "the backend method"}.`;
 }
 
-function ResearchFigure({ title, subtitle, option, height = 280 }: ResearchFigureProps) {
+function ResearchFigure({
+  title,
+  subtitle,
+  option,
+  height = 280,
+  isEmpty = false,
+  emptyMessage = "No data available.",
+}: ResearchFigureProps) {
   return (
     <motion.article
       className="research-figure"
@@ -50,7 +62,11 @@ function ResearchFigure({ title, subtitle, option, height = 280 }: ResearchFigur
         <p>{subtitle}</p>
       </div>
       <div className="research-figure-chart">
-        <EChartsReact option={option} style={{ height, width: "100%" }} />
+        {isEmpty ? (
+          <div className="research-figure-empty">{emptyMessage}</div>
+        ) : (
+          <EChartsReact option={option} style={{ height, width: "100%" }} />
+        )}
       </div>
     </motion.article>
   );
@@ -66,6 +82,18 @@ function visibleRunIds(dashboard: DashboardPayload, focus: ResearchFocus) {
 
 function runLabel(dashboard: DashboardPayload, runId: string) {
   return dashboard.context[runId]?.label ?? runId;
+}
+
+function hasDistributionData(dashboard: DashboardPayload, runIds: string[]) {
+  return runIds.some((runId) => (dashboard.research.returnDistribution[runId] ?? []).length > 0);
+}
+
+function hasSeriesData(series: NamedSeries[]) {
+  return series.some((entry) => entry.points.length > 0);
+}
+
+function hasHeatmapData(cells: HeatmapCell[]) {
+  return cells.length > 0;
 }
 
 function chartBase() {
@@ -316,14 +344,15 @@ function collectSectorSeries(
   dashboard: DashboardPayload,
   runIds: string[],
   source: Record<string, CategorySeries[]>,
-  focus: ResearchFocus,
+  sectorNames: string[],
 ) {
   const collected: NamedSeries[] = [];
+  const visibleSectors = new Set(sectorNames);
 
   runIds.forEach((runId) => {
     const label = runLabel(dashboard, runId);
     const seriesSet = source[runId] ?? [];
-    const visible = focus.kind === "sector" ? seriesSet.filter((entry) => entry.name === focus.sectorName) : seriesSet;
+    const visible = seriesSet.filter((entry) => visibleSectors.has(entry.name));
 
     visible.forEach((entry) => {
       collected.push({
@@ -337,30 +366,66 @@ function collectSectorSeries(
   return collected;
 }
 
+function collectSectorNamesByRelevance(dashboard: DashboardPayload, runIds: string[]) {
+  const scores = new Map<string, number>();
+  const sources = [dashboard.research.sectorContributionSeries, dashboard.research.sectorWeightSeries];
+
+  sources.forEach((source) => {
+    runIds.forEach((runId) => {
+      (source[runId] ?? []).forEach((entry) => {
+        const latestPoint = entry.points[entry.points.length - 1];
+        const score = latestPoint ? Math.abs(latestPoint.value) : 0;
+        scores.set(entry.name, (scores.get(entry.name) ?? 0) + score);
+      });
+    });
+  });
+
+  return Array.from(scores.entries())
+    .sort((left, right) => {
+      if (right[1] !== left[1]) {
+        return right[1] - left[1];
+      }
+      return left[0].localeCompare(right[0]);
+    })
+    .map(([name]) => name);
+}
+
 export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchWorkspaceProps) {
   const runIds = visibleRunIds(dashboard, focus);
+  const availableSectorNames = collectSectorNamesByRelevance(dashboard, runIds);
+  const availableSectorNamesKey = availableSectorNames.join("|");
+  const [selectedSectorNames, setSelectedSectorNames] = useState<string[]>([]);
+
+  useEffect(() => {
+    setSelectedSectorNames((current) => {
+      const next = current.filter((name) => availableSectorNames.includes(name));
+      if (next.length === current.length && next.every((name, index) => name === current[index])) {
+        return current;
+      }
+      return next;
+    });
+  }, [availableSectorNamesKey]);
+
+  const fallbackSectorNames =
+    focus.kind === "sector" && availableSectorNames.includes(focus.sectorName)
+      ? [focus.sectorName]
+      : availableSectorNames.slice(0, DEFAULT_VISIBLE_SECTORS);
+  const activeSectorNames = selectedSectorNames.length > 0 ? selectedSectorNames : fallbackSectorNames;
   const activeHeatmapRunId = heatmapRunId(dashboard, focus);
   const activeHeatmapLabel = activeHeatmapRunId ? runLabel(dashboard, activeHeatmapRunId) : "Selected run";
   const heatmapCells = activeHeatmapRunId ? dashboard.research.monthlyHeatmap[activeHeatmapRunId] ?? [] : [];
   const rollingSharpeSeries = dashboard.rolling.rollingSharpe.filter((series) => runIds.includes(series.runId));
-  const sectorContributionSeries = collectSectorSeries(
-    dashboard,
-    runIds,
-    dashboard.research.sectorContributionSeries,
-    focus,
-  );
-  const sectorWeightSeries = collectSectorSeries(dashboard, runIds, dashboard.research.sectorWeightSeries, focus);
+  const sectorContributionSeries = collectSectorSeries(dashboard, runIds, dashboard.research.sectorContributionSeries, activeSectorNames);
+  const sectorWeightSeries = collectSectorSeries(dashboard, runIds, dashboard.research.sectorWeightSeries, activeSectorNames);
 
   return (
     <section className="research-workspace">
       <div className="research-workspace-head">
         <div>
-          <p className="section-label">Analytics area</p>
-          <h2 id="research-workspace-heading">Research workspace</h2>
+          <p className="section-label">Research</p>
+          <h2 id="research-workspace-heading">Research charts</h2>
         </div>
-        <p className="workspace-summary">
-          Multi-strategy comparison remains the default. Strategy and sector clicks narrow the same in-page workspace.
-        </p>
+        <p className="workspace-summary">Returns, risk, and sector trends for the selected strategies.</p>
         <div className="focus-chip-row">
           <button
             type="button"
@@ -382,53 +447,111 @@ export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchW
             </button>
           ))}
         </div>
+        <div className="research-filter-panel">
+          <div className="research-filter-copy">
+            <p className="section-label">Sector filter</p>
+            <p className="workspace-summary">
+              Pick sectors to compare. Without a manual selection, the charts show the most relevant sectors.
+            </p>
+          </div>
+          <div className="focus-chip-row focus-chip-row--filters">
+            <button
+              type="button"
+              className={`focus-chip ${selectedSectorNames.length === 0 ? "is-active" : ""}`}
+              onClick={() => setSelectedSectorNames([])}
+              aria-label="Show all sectors"
+              aria-pressed={selectedSectorNames.length === 0}
+            >
+              All sectors
+            </button>
+            {availableSectorNames.map((sectorName) => {
+              const isActive =
+                selectedSectorNames.includes(sectorName) ||
+                (selectedSectorNames.length === 0 && fallbackSectorNames.includes(sectorName));
+              return (
+                <button
+                  key={sectorName}
+                  type="button"
+                  className={`focus-chip ${isActive ? "is-active" : ""}`}
+                  onClick={() =>
+                    setSelectedSectorNames((current) =>
+                      current.includes(sectorName) ? current.filter((name) => name !== sectorName) : [...current, sectorName],
+                    )
+                  }
+                  aria-label={`Toggle sector ${sectorName}`}
+                  aria-pressed={selectedSectorNames.includes(sectorName)}
+                >
+                  {sectorName}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       <div className="research-grid research-grid--full">
         <ResearchFigure
-          title="Return and max drawdown"
-          subtitle="Shared figure row for strategy equity and underwater pressure."
+          title="Cumulative return and drawdown"
+          subtitle="Cumulative return above, drawdown below."
           option={buildReturnDrawdownOption(dashboard, runIds)}
           height={360}
+          isEmpty={!hasSeriesData(dashboard.performance.series.filter((series) => runIds.includes(series.runId)))}
+          emptyMessage="No performance history available."
         />
       </div>
 
       <div className="research-grid research-grid--double">
         <ResearchFigure
           title="Return distribution"
-          subtitle="Frequency by return bucket across the active comparison set."
+          subtitle="How daily returns are distributed."
           option={buildDistributionOption(dashboard, runIds)}
+          isEmpty={!hasDistributionData(dashboard, runIds)}
+          emptyMessage="No return distribution data."
         />
         <ResearchFigure
           title="Monthly heatmap"
-          subtitle={`Monthly return heatmap for ${activeHeatmapLabel}.`}
+          subtitle={`Monthly returns for ${activeHeatmapLabel}.`}
           option={buildHeatmapOption(heatmapCells)}
+          isEmpty={!hasHeatmapData(heatmapCells)}
+          emptyMessage="No monthly return data."
         />
       </div>
 
       <div className="research-grid research-grid--double">
         <ResearchFigure
           title="Rolling Sharpe"
-          subtitle="Rolling Sharpe stays aligned to the current strategy selection."
+          subtitle="Rolling risk-adjusted return."
           option={buildLineOption(rollingSharpeSeries)}
+          isEmpty={!hasSeriesData(rollingSharpeSeries)}
+          emptyMessage="No rolling Sharpe data."
         />
         <ResearchFigure
           title="Yearly excess returns"
-          subtitle="Benchmark-relative yearly return spread by run."
+          subtitle="Annual return minus benchmark."
           option={buildYearlyExcessOption(dashboard, runIds)}
+          isEmpty={!runIds.some((runId) => (dashboard.research.yearlyExcessReturns[runId] ?? []).length > 0)}
+          emptyMessage="No yearly excess return data."
         />
       </div>
 
       <div className="research-grid research-grid--double">
         <ResearchFigure
           title="Sector contribution series"
-          subtitle={contributionSubtitle(dashboard.research.sectorContributionMethod)}
+          subtitle={
+            selectedSectorNames.length > 0
+              ? `Selected sectors: ${selectedSectorNames.join(", ")}.`
+              : contributionSubtitle(dashboard.research.sectorContributionMethod)
+          }
           option={buildLineOption(sectorContributionSeries)}
+          isEmpty={!hasSeriesData(sectorContributionSeries)}
+          emptyMessage="No sector contribution data."
         />
         <ResearchFigure
           title="Sector weight series"
-          subtitle="Sector allocations over time for the current comparison focus."
+          subtitle="How sector weights changed over time."
           option={buildLineOption(sectorWeightSeries)}
+          isEmpty={!hasSeriesData(sectorWeightSeries)}
+          emptyMessage="No sector weight data."
         />
       </div>
 
