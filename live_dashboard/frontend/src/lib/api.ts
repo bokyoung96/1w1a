@@ -1,5 +1,15 @@
 import type { DashboardPayload, RunOption } from "./types";
 
+declare global {
+  interface ImportMetaEnv {
+    readonly VITE_API_ROOT?: string;
+  }
+
+  interface ImportMeta {
+    readonly env: ImportMetaEnv;
+  }
+}
+
 const API_ROOT = import.meta.env.VITE_API_ROOT ?? "http://localhost:8000/api";
 
 export async function fetchRuns(): Promise<RunOption[]> {
