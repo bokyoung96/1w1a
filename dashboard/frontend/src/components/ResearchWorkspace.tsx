@@ -186,39 +186,44 @@ function buildReturnDrawdownOption(dashboard: DashboardPayload, runIds: string[]
 }
 
 function buildDistributionOption(dashboard: DashboardPayload, runIds: string[]) {
-  const labels = Array.from(
-    new Set(
-      runIds.flatMap((runId) =>
-        (dashboard.research.returnDistribution[runId] ?? []).map((bin) => `${bin.start.toFixed(2)} to ${bin.end.toFixed(2)}`),
-      ),
-    ),
-  );
+  const series = runIds.map((runId) => {
+    const bins = dashboard.research.returnDistribution[runId] ?? [];
+    return {
+      name: runLabel(dashboard, runId),
+      type: "line" as const,
+      smooth: true,
+      showSymbol: false,
+      areaStyle: { opacity: 0.12 },
+      lineStyle: { width: 2.2 },
+      data: bins.map((bin) => [distributionMidpoint(bin), bin.frequency]),
+    };
+  });
 
   return {
     ...chartBase(),
-    grid: { left: 12, right: 18, top: 36, bottom: 40, containLabel: true },
+    grid: { left: 12, right: 18, top: 36, bottom: 24, containLabel: true },
     xAxis: {
-      type: "category" as const,
-      data: labels,
-      axisLabel: { color: "#bdaea1", interval: 0, rotate: 25 },
+      type: "value" as const,
+      axisLabel: {
+        color: "#bdaea1",
+        formatter: (value: number) => `${(value * 100).toFixed(1)}%`,
+      },
       axisLine: { lineStyle: { color: "rgba(247, 240, 231, 0.18)" } },
     },
     yAxis: {
       type: "value" as const,
-      axisLabel: { color: "#bdaea1" },
+      axisLabel: {
+        color: "#bdaea1",
+        formatter: (value: number) => `${(value * 100).toFixed(0)}%`,
+      },
       splitLine: { lineStyle: { color: "rgba(247, 240, 231, 0.08)" } },
     },
-    series: runIds.map((runId) => {
-      const bins = dashboard.research.returnDistribution[runId] ?? [];
-      const frequencyByLabel = new Map(bins.map((bin) => [`${bin.start.toFixed(2)} to ${bin.end.toFixed(2)}`, bin.frequency]));
-      return {
-        name: runLabel(dashboard, runId),
-        type: "bar" as const,
-        data: labels.map((label) => frequencyByLabel.get(label) ?? 0),
-        barMaxWidth: 18,
-      };
-    }),
+    series,
   };
+}
+
+function distributionMidpoint(bin: DistributionBin) {
+  return (bin.start + bin.end) / 2;
 }
 
 function heatmapRunId(dashboard: DashboardPayload, focus: ResearchFocus) {
@@ -304,6 +309,67 @@ function buildLineOption(series: NamedSeries[], labelFormatter?: (series: NamedS
       lineStyle: { width: 2 },
       emphasis: { focus: "series" as const },
     })),
+  };
+}
+
+function buildSectorWeightHeatmapOption(series: NamedSeries[]) {
+  const labels = series.map((entry) => entry.label);
+  const dates = Array.from(
+    new Set(series.flatMap((entry) => entry.points.map((point) => point.date))),
+  ).sort();
+  const data = series.flatMap((entry, rowIndex) =>
+    entry.points.map((point) => [dates.indexOf(point.date), rowIndex, point.value]),
+  );
+  const maxValue = Math.max(
+    0.01,
+    ...series.flatMap((entry) => entry.points.map((point) => point.value)),
+  );
+
+  return {
+    backgroundColor: "transparent",
+    tooltip: {
+      position: "top" as const,
+      backgroundColor: "rgba(15, 18, 21, 0.96)",
+      borderColor: "rgba(240, 164, 75, 0.22)",
+      textStyle: { color: "#f7f0e7" },
+    },
+    grid: { left: 12, right: 18, top: 18, bottom: 20, containLabel: true },
+    xAxis: {
+      type: "category" as const,
+      data: dates,
+      axisLabel: { color: "#bdaea1", rotate: 25 },
+      axisLine: { lineStyle: { color: "rgba(247, 240, 231, 0.18)" } },
+      splitArea: { show: true },
+    },
+    yAxis: {
+      type: "category" as const,
+      data: labels,
+      axisLabel: { color: "#bdaea1" },
+      axisLine: { lineStyle: { color: "rgba(247, 240, 231, 0.18)" } },
+      splitArea: { show: true },
+    },
+    visualMap: {
+      min: 0,
+      max: maxValue,
+      calculable: true,
+      orient: "horizontal" as const,
+      left: "center" as const,
+      bottom: 0,
+      textStyle: { color: "#bdaea1" },
+      formatter: (value: number) => `${(value * 100).toFixed(0)}%`,
+      inRange: {
+        color: ["#161a1f", "#43617a", "#7cb8d8", "#d4b15c"],
+      },
+    },
+    series: [
+      {
+        name: "Sector weight",
+        type: "heatmap" as const,
+        data,
+        label: { show: false },
+        emphasis: { itemStyle: { shadowBlur: 8, shadowColor: "rgba(0, 0, 0, 0.3)" } },
+      },
+    ],
   };
 }
 
@@ -508,7 +574,7 @@ export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchW
       <div className="research-grid research-grid--double">
         <ResearchFigure
           title="Return distribution"
-          subtitle="How daily returns are distributed."
+          subtitle="Where daily returns cluster and how wide the tails are."
           option={buildDistributionOption(dashboard, runIds)}
           isEmpty={!hasDistributionData(dashboard, runIds)}
           emptyMessage="No return distribution data."
@@ -553,8 +619,8 @@ export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchW
         />
         <ResearchFigure
           title="Sector weight series"
-          subtitle="How sector weights changed over time."
-          option={buildLineOption(sectorWeightSeries)}
+          subtitle="How sector exposure was distributed across time."
+          option={buildSectorWeightHeatmapOption(sectorWeightSeries)}
           isEmpty={!hasSeriesData(sectorWeightSeries)}
           emptyMessage="No sector weight data."
         />

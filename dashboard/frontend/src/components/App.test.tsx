@@ -406,6 +406,27 @@ function findSectorChartOptions() {
   });
 }
 
+function findSectorContributionChartOption() {
+  return findSectorChartOptions()[0];
+}
+
+function findDistributionChartOption() {
+  return chartOptions.find((option) => {
+    const xAxis = (option as { xAxis?: { type?: string } }).xAxis;
+    const series = (option as { series?: Array<{ name?: string; type?: string }> }).series ?? [];
+    const seriesNames = series.map((entry) => entry.name);
+    return xAxis?.type === "value" && series.every((entry) => entry.type === "line") && seriesNames.includes("Momentum");
+  });
+}
+
+function findSectorWeightHeatmapOption() {
+  return chartOptions.find((option) => {
+    const yAxis = (option as { yAxis?: { type?: string; data?: string[] } }).yAxis;
+    const series = (option as { series?: Array<{ type?: string; name?: string }> }).series ?? [];
+    return yAxis?.type === "category" && series.some((entry) => entry.type === "heatmap" && entry.name === "Sector weight");
+  });
+}
+
 async function selectorScope() {
   const selector = (await screen.findByText("Select saved runs")).closest("section");
   if (!selector) {
@@ -478,6 +499,23 @@ describe("App", () => {
     expect(screen.getByText("No return distribution data.")).toBeInTheDocument();
   });
 
+  it("renders return distribution as a numeric distribution curve", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    await screen.findByRole("heading", { name: "Research charts" });
+
+    expect(findDistributionChartOption()).toMatchObject({
+      xAxis: expect.objectContaining({ type: "value" }),
+      series: [
+        expect.objectContaining({ name: "Momentum", type: "line" }),
+        expect.objectContaining({ name: "OP Fwd Yield", type: "line" }),
+      ],
+    });
+  });
+
   it("filters sector charts with explicit sector selection controls", async () => {
     const user = userEvent.setup();
     fetchRuns.mockResolvedValue(RUNS);
@@ -493,16 +531,17 @@ describe("App", () => {
     chartOptions.length = 0;
     await user.click(screen.getByRole("button", { name: "Toggle sector Energy" }));
 
-    const sectorOptions = findSectorChartOptions();
-    expect(sectorOptions).toHaveLength(2);
-    expect(sectorOptions[0]).toMatchObject({
+    const contributionOption = findSectorContributionChartOption();
+    const weightOption = findSectorWeightHeatmapOption();
+    expect(contributionOption).toMatchObject({
       series: [expect.objectContaining({ name: "OP Fwd Yield · Energy" })],
     });
-    expect(sectorOptions[1]).toMatchObject({
-      series: [expect.objectContaining({ name: "OP Fwd Yield · Energy" })],
+    expect(weightOption).toMatchObject({
+      yAxis: expect.objectContaining({ data: ["OP Fwd Yield · Energy"] }),
     });
-    expect(JSON.stringify(sectorOptions)).not.toContain("Tech");
-    expect(JSON.stringify(sectorOptions)).not.toContain("Industrials");
+    expect(JSON.stringify(contributionOption)).not.toContain("Tech");
+    expect(JSON.stringify(weightOption)).not.toContain("Tech");
+    expect(JSON.stringify(weightOption)).not.toContain("Industrials");
   });
 
   it("lets sector drill-down override a previously selected manual sector filter", async () => {
@@ -519,11 +558,30 @@ describe("App", () => {
     const exposureBand = screen.getByRole("region", { name: "Exposure band" });
     await user.click(within(exposureBand).getByRole("button", { name: "Focus sector Tech" }));
 
-    const sectorOptions = findSectorChartOptions();
+    const contributionOption = findSectorContributionChartOption();
+    const weightOption = findSectorWeightHeatmapOption();
     expect(screen.getByText("Focus: Sector · Tech")).toBeInTheDocument();
-    expect(sectorOptions).toHaveLength(2);
-    expect(JSON.stringify(sectorOptions)).toContain("Momentum · Tech");
-    expect(JSON.stringify(sectorOptions)).not.toContain("Energy");
+    expect(JSON.stringify(contributionOption)).toContain("Momentum · Tech");
+    expect(JSON.stringify(weightOption)).toContain("Momentum · Tech");
+    expect(JSON.stringify(contributionOption)).not.toContain("Energy");
+    expect(JSON.stringify(weightOption)).not.toContain("Energy");
+  });
+
+  it("renders sector weights as a heatmap instead of another line chart", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    await screen.findByRole("heading", { name: "Research charts" });
+
+    expect(findSectorWeightHeatmapOption()).toMatchObject({
+      yAxis: expect.objectContaining({
+        type: "category",
+        data: expect.arrayContaining(["Momentum · Tech", "OP Fwd Yield · Energy"]),
+      }),
+      series: [expect.objectContaining({ type: "heatmap", name: "Sector weight" })],
+    });
   });
 
   it("plots each selected strategy beside its corresponding benchmark overlay", async () => {
