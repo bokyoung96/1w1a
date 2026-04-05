@@ -62,7 +62,6 @@ export function App() {
 
     setDashboard(null);
     setDashboardError(null);
-
     void fetchDashboard(selectedRunIds)
       .then((nextDashboard) => {
         if (!isMounted) {
