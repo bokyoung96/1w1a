@@ -332,9 +332,9 @@ function createDashboard(mode: "single" | "multi", selectedRunIds: string[]) {
           {
             name: "Energy",
             points: [
-              { date: "2025-01-01", value: 0.2 },
-              { date: "2025-02-01", value: 0.24 },
-              { date: "2025-03-01", value: 0.28 },
+              { date: "2025-01-01", value: -0.2 },
+              { date: "2025-02-01", value: -0.24 },
+              { date: "2025-03-01", value: -0.28 },
             ],
           },
           {
@@ -516,6 +516,25 @@ describe("App", () => {
     });
   });
 
+  it("formats return distribution tooltip values as percentages", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    await screen.findByRole("heading", { name: "Research charts" });
+
+    const option = findDistributionChartOption() as {
+      tooltip?: { formatter?: (params: Array<{ axisValue: number; seriesName: string; data: [number, number] }>) => string };
+    };
+    const output = option.tooltip?.formatter?.([
+      { axisValue: 0.015, seriesName: "Momentum", data: [0.015, 0.4] },
+    ]);
+
+    expect(output).toContain("1.50%");
+    expect(output).toContain("40.00%");
+  });
+
   it("filters sector charts with explicit sector selection controls", async () => {
     const user = userEvent.setup();
     fetchRuns.mockResolvedValue(RUNS);
@@ -582,6 +601,28 @@ describe("App", () => {
       }),
       series: [expect.objectContaining({ type: "heatmap", name: "Sector weight" })],
     });
+  });
+
+  it("preserves negative sector weights and formats the heatmap tooltip as percentages", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    await screen.findByRole("heading", { name: "Research charts" });
+
+    const option = findSectorWeightHeatmapOption() as {
+      visualMap?: { min?: number; max?: number };
+      tooltip?: { formatter?: (params: { name: string; value: [number, number, number] }) => string };
+    };
+    const output = option.tooltip?.formatter?.({
+      name: "Sector weight",
+      value: [0, 1, -0.28],
+    });
+
+    expect(option.visualMap?.min).toBeLessThan(0);
+    expect(option.visualMap?.max).toBeGreaterThan(0);
+    expect(output).toContain("-28.00%");
   });
 
   it("plots each selected strategy beside its corresponding benchmark overlay", async () => {

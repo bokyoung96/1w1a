@@ -34,6 +34,10 @@ const SERIES_COLORS = ["#f0a44b", "#e3c06b", "#7cb8d8", "#c98f7d", "#8fa77f", "#
 const WEIGHTED_ASSET_RETURN_METHOD = "weighted-asset-return-attribution";
 const DEFAULT_VISIBLE_SECTORS = 4;
 
+function formatPercentValue(value: number, digits = 2) {
+  return `${(value * 100).toFixed(digits)}%`;
+}
+
 function contributionSubtitle(method: string) {
   if (method === WEIGHTED_ASSET_RETURN_METHOD) {
     return "How much each sector added or detracted over time.";
@@ -201,6 +205,22 @@ function buildDistributionOption(dashboard: DashboardPayload, runIds: string[]) 
 
   return {
     ...chartBase(),
+    tooltip: {
+      trigger: "axis" as const,
+      backgroundColor: "rgba(15, 18, 21, 0.96)",
+      borderColor: "rgba(240, 164, 75, 0.22)",
+      textStyle: { color: "#f7f0e7" },
+      formatter: (params: Array<{ axisValue: number; seriesName: string; data: [number, number] }>) => {
+        if (params.length === 0) {
+          return "";
+        }
+        const lines = [`Return: ${formatPercentValue(params[0].axisValue)}`];
+        params.forEach((entry) => {
+          lines.push(`${entry.seriesName}: ${formatPercentValue(entry.data[1])}`);
+        });
+        return lines.join("<br/>");
+      },
+    },
     grid: { left: 12, right: 18, top: 36, bottom: 24, containLabel: true },
     xAxis: {
       type: "value" as const,
@@ -320,10 +340,9 @@ function buildSectorWeightHeatmapOption(series: NamedSeries[]) {
   const data = series.flatMap((entry, rowIndex) =>
     entry.points.map((point) => [dates.indexOf(point.date), rowIndex, point.value]),
   );
-  const maxValue = Math.max(
-    0.01,
-    ...series.flatMap((entry) => entry.points.map((point) => point.value)),
-  );
+  const values = series.flatMap((entry) => entry.points.map((point) => point.value));
+  const minValue = Math.min(-0.01, ...values);
+  const maxValue = Math.max(0.01, ...values);
 
   return {
     backgroundColor: "transparent",
@@ -332,6 +351,10 @@ function buildSectorWeightHeatmapOption(series: NamedSeries[]) {
       backgroundColor: "rgba(15, 18, 21, 0.96)",
       borderColor: "rgba(240, 164, 75, 0.22)",
       textStyle: { color: "#f7f0e7" },
+      formatter: (params: { value: [number, number, number] }) => {
+        const [dateIndex, rowIndex, value] = params.value;
+        return `${labels[rowIndex]}<br/>${dates[dateIndex]}<br/>Weight: ${formatPercentValue(value)}`;
+      },
     },
     grid: { left: 12, right: 18, top: 18, bottom: 20, containLabel: true },
     xAxis: {
@@ -349,16 +372,16 @@ function buildSectorWeightHeatmapOption(series: NamedSeries[]) {
       splitArea: { show: true },
     },
     visualMap: {
-      min: 0,
+      min: minValue,
       max: maxValue,
       calculable: true,
       orient: "horizontal" as const,
       left: "center" as const,
       bottom: 0,
       textStyle: { color: "#bdaea1" },
-      formatter: (value: number) => `${(value * 100).toFixed(0)}%`,
+      formatter: (value: number) => formatPercentValue(value, 0),
       inRange: {
-        color: ["#161a1f", "#43617a", "#7cb8d8", "#d4b15c"],
+        color: ["#5a2e28", "#a4684f", "#171b1f", "#7cb8d8", "#d4b15c"],
       },
     },
     series: [
