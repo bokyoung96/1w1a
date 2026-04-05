@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 from backtesting.reporting.benchmarks import BenchmarkRepository, SectorRepository
 from backtesting.reporting.snapshots import PerformanceSnapshotFactory
 from live_dashboard.backend.api import get_dashboard_payload_service
-from live_dashboard.backend.main import app
+from live_dashboard.backend.main import app, create_app
 from live_dashboard.backend.services.dashboard_payload import DashboardPayloadService
 from live_dashboard.backend.services.run_index import RunIndexService
 
@@ -124,7 +124,7 @@ def test_dashboard_returns_single_mode_payload(tmp_path: Path) -> None:
     }
 
 
-def test_dashboard_returns_multi_mode_payload_for_repeated_run_ids(tmp_path: Path) -> None:
+def test_dashboard_deduplicates_repeated_run_ids_into_single_mode_payload(tmp_path: Path) -> None:
     _write_saved_run(
         tmp_path,
         "alpha_20260405_100000",
@@ -259,6 +259,63 @@ def test_dashboard_returns_controlled_error_for_unreadable_run_directory(tmp_pat
     app.dependency_overrides.clear()
     assert response.status_code == 404
     assert response.json()["detail"].startswith("unable to read run_id: broken_20260405_130000")
+
+
+def test_session_endpoint_returns_default_selected_run_ids() -> None:
+    client = TestClient(create_app(default_selected_run_ids=["momentum_20260405_100000"]))
+
+    response = client.get("/api/session")
+
+    assert response.status_code == 200
+    assert response.json() == {"defaultSelectedRunIds": ["momentum_20260405_100000"]}
+
+
+def test_create_app_serves_index_html_for_non_api_routes(tmp_path: Path) -> None:
+    frontend_dist = tmp_path / "dist"
+    assets_dir = frontend_dist / "assets"
+    assets_dir.mkdir(parents=True)
+    (frontend_dist / "index.html").write_text("<html><body>dashboard</body></html>", encoding="utf-8")
+
+    client = TestClient(create_app(default_selected_run_ids=[], frontend_dist=frontend_dist))
+
+    response = client.get("/workspace")
+
+    assert response.status_code == 200
+    assert "dashboard" in response.text
+
+
+def test_create_app_rejects_requests_outside_frontend_dist(tmp_path: Path) -> None:
+    frontend_dist = tmp_path / "dist"
+    frontend_dist.mkdir(parents=True)
+    (frontend_dist / "index.html").write_text("<html><body>dashboard</body></html>", encoding="utf-8")
+    secret_path = tmp_path / "secret.txt"
+    secret_path.write_text("secret", encoding="utf-8")
+
+    client = TestClient(create_app(default_selected_run_ids=[], frontend_dist=frontend_dist))
+
+    response = client.get("/..%2Fsecret.txt")
+
+    assert response.status_code == 404
+
+
+def test_create_app_does_not_route_unknown_api_paths_to_spa(tmp_path: Path) -> None:
+    frontend_dist = tmp_path / "dist"
+    frontend_dist.mkdir(parents=True)
+    (frontend_dist / "index.html").write_text("<html><body>dashboard</body></html>", encoding="utf-8")
+
+    client = TestClient(create_app(default_selected_run_ids=[], frontend_dist=frontend_dist))
+
+    response = client.get("/api/unknown")
+
+    assert response.status_code == 404
+
+
+def test_create_app_fails_fast_when_index_html_is_missing(tmp_path: Path) -> None:
+    frontend_dist = tmp_path / "dist"
+    frontend_dist.mkdir(parents=True)
+
+    with pytest.raises(FileNotFoundError):
+        create_app(default_selected_run_ids=[], frontend_dist=frontend_dist)
 
 
 def _build_payload_service(runs_root: Path, sector_frame: pd.DataFrame | None = None) -> DashboardPayloadService:

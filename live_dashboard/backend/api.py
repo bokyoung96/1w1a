@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 
-from live_dashboard.backend.schemas import DashboardPayloadModel
+from live_dashboard.backend.schemas import DashboardPayloadModel, SessionBootstrapModel
 from live_dashboard.backend.services.dashboard_payload import DashboardPayloadService
 from live_dashboard.backend.services.run_index import RunIndexService
 
@@ -22,6 +22,13 @@ def get_dashboard_payload_service() -> DashboardPayloadService:
 @router.get("/runs")
 def list_runs() -> list[dict[str, object]]:
     return [run.model_dump() for run in get_run_index_service().list_runs()]
+
+
+@router.get("/session", response_model=SessionBootstrapModel)
+def get_session(request: Request) -> dict[str, object]:
+    return {
+        "default_selected_run_ids": list(getattr(request.app.state, "default_selected_run_ids", [])),
+    }
 
 
 @router.get("/dashboard", response_model=DashboardPayloadModel)

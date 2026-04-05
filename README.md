@@ -81,6 +81,20 @@ Each run writes an output bundle under `results/backtests/` by default.
 
 You can override the root output folder with `--out-root` and the run folder name with `--name`.
 
+## Live Dashboard
+
+Launch the dashboard with:
+
+```powershell
+python live_dashboard/run.py
+```
+
+The launcher builds the frontend, starts a single FastAPI process that serves both the API and the built SPA, and picks the newest saved runs under `results/backtests/` that match the default launch config. If a default strategy is missing or its saved run is stale, the launcher re-executes that strategy, saves the new bundle, and then opens the dashboard with the resolved runs selected.
+
+The normal browser URL is:
+
+`http://127.0.0.1:8000`
+
 ## Build Reports
 
 Use `report.py` to build a single-run or comparison report from saved run bundles. Reports are written under `results/reports/`.
