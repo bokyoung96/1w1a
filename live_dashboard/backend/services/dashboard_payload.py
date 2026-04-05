@@ -77,9 +77,12 @@ class DashboardPayloadService:
 
     def _read_run(self, run_id: str) -> SavedRun:
         run_dir = self.runs_root / run_id
-        if not run_dir.exists():
+        if not run_dir.exists() or not run_dir.is_dir():
             raise HTTPException(status_code=404, detail=f"unknown run_id: {run_id}")
-        return self.run_reader.read(run_dir)
+        try:
+            return self.run_reader.read(run_dir)
+        except OSError as exc:
+            raise HTTPException(status_code=404, detail=f"unable to read run_id: {run_id}") from exc
 
     def _serialize_context(self, snapshot: PerformanceSnapshot) -> DashboardContextModel:
         run = self._read_run(snapshot.run_id)

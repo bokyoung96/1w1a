@@ -147,49 +147,73 @@ def test_dashboard_returns_multi_mode_payload_for_repeated_run_ids(tmp_path: Pat
 
     response = client.get(
         "/api/dashboard",
-        params=[("run_ids", "omega_20260405_110000"), ("run_ids", "alpha_20260405_100000")],
+        params=[("run_ids", "omega_20260405_110000"), ("run_ids", "omega_20260405_110000")],
     )
 
     app.dependency_overrides.clear()
     assert response.status_code == 200
     payload = response.json()
-    assert payload["mode"] == "multi"
-    assert payload["selectedRunIds"] == ["omega_20260405_110000", "alpha_20260405_100000"]
-    assert set(payload["metrics"]) == {
-        "omega_20260405_110000",
-        "alpha_20260405_100000",
-    }
-    assert set(payload["context"]) == {
-        "omega_20260405_110000",
-        "alpha_20260405_100000",
-    }
-    assert payload["performance"]["benchmark"] is None
-    assert {entry["runId"] for entry in payload["performance"]["series"]} == {
-        "omega_20260405_110000",
-        "alpha_20260405_100000",
-    }
-    assert {entry["runId"] for entry in payload["performance"]["drawdowns"]} == {
-        "omega_20260405_110000",
-        "alpha_20260405_100000",
-    }
+    assert payload["mode"] == "single"
+    assert payload["selectedRunIds"] == ["omega_20260405_110000"]
+    assert set(payload["metrics"]) == {"omega_20260405_110000"}
+    assert set(payload["context"]) == {"omega_20260405_110000"}
+    assert payload["performance"]["benchmark"] == [
+        {"date": "2024-01-02", "value": 100.0},
+        {"date": "2024-01-03", "value": 100.49999999999999},
+    ]
+    assert {entry["runId"] for entry in payload["performance"]["series"]} == {"omega_20260405_110000"}
+    assert {entry["runId"] for entry in payload["performance"]["drawdowns"]} == {"omega_20260405_110000"}
     assert {entry["runId"] for entry in payload["rolling"]["rollingSharpe"]} == set()
-    assert {entry["runId"] for entry in payload["exposure"]["holdingsCount"]} == {
-        "omega_20260405_110000",
-        "alpha_20260405_100000",
-    }
-    assert set(payload["exposure"]["latestHoldings"]) == {
-        "omega_20260405_110000",
-        "alpha_20260405_100000",
-    }
-    assert set(payload["exposure"]["sectorWeights"]) == {
-        "omega_20260405_110000",
-        "alpha_20260405_100000",
-    }
+    assert {entry["runId"] for entry in payload["exposure"]["holdingsCount"]} == {"omega_20260405_110000"}
+    assert set(payload["exposure"]["latestHoldings"]) == {"omega_20260405_110000"}
+    assert set(payload["exposure"]["sectorWeights"]) == {"omega_20260405_110000"}
     assert payload["exposure"]["latestHoldings"]["omega_20260405_110000"] == [
         {"symbol": "B", "targetWeight": 0.5, "absWeight": 0.5},
         {"symbol": "C", "targetWeight": 0.3, "absWeight": 0.3},
         {"symbol": "A", "targetWeight": 0.2, "absWeight": 0.2},
     ]
+
+
+def test_dashboard_skips_non_finite_latest_holdings_values(tmp_path: Path) -> None:
+    _write_saved_run(
+        tmp_path,
+        "alpha_20260405_100000",
+        name="Alpha Strategy",
+        final_equity=110.0,
+        avg_turnover=0.03,
+        weights=[[0.6, 0.4, 0.0], [0.55, 0.45, 0.0]],
+        latest_weights_rows=[
+            {"symbol": "A", "target_weight": 0.55, "abs_weight": 0.55},
+            {"symbol": "B", "target_weight": float("nan"), "abs_weight": float("nan")},
+        ],
+    )
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(tmp_path)
+
+    response = client.get("/api/dashboard", params=[("run_ids", "alpha_20260405_100000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["exposure"]["latestHoldings"] == {
+        "alpha_20260405_100000": [
+            {"symbol": "A", "targetWeight": 0.55, "absWeight": 0.55},
+        ]
+    }
+
+
+def test_dashboard_returns_controlled_error_for_non_directory_run_entry(tmp_path: Path) -> None:
+    (tmp_path / "broken_20260405_120000").write_text("not a directory", encoding="utf-8")
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(tmp_path)
+
+    response = client.get("/api/dashboard", params=[("run_ids", "broken_20260405_120000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 404
+    assert response.json() == {"detail": "unknown run_id: broken_20260405_120000"}
 
 
 def _build_payload_service(runs_root: Path) -> DashboardPayloadService:
@@ -221,6 +245,7 @@ def _write_saved_run(
     final_equity: float,
     avg_turnover: float,
     weights: list[list[float]],
+    latest_weights_rows: list[dict[str, object]] | None = None,
 ) -> None:
     run_dir = root / run_id
     series_dir = run_dir / "series"
@@ -256,3 +281,5 @@ def _write_saved_run(
     turnover.to_csv(series_dir / "turnover.csv", index_label="date")
     weights_frame.to_parquet(positions_dir / "weights.parquet")
     qty_frame.to_parquet(positions_dir / "qty.parquet")
+    if latest_weights_rows is not None:
+        pd.DataFrame(latest_weights_rows).to_csv(positions_dir / "latest_weights.csv", index=False)

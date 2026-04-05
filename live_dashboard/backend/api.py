@@ -29,4 +29,5 @@ def get_dashboard(
     run_ids: Annotated[list[str], Query(alias="run_ids")],
     service: DashboardPayloadService = Depends(get_dashboard_payload_service),
 ) -> dict[str, object]:
-    return service.build(run_ids).model_dump(by_alias=True)
+    canonical_run_ids = list(dict.fromkeys(run_ids))
+    return service.build(canonical_run_ids).model_dump(by_alias=True)
