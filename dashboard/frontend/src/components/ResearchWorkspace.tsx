@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import EChartsReact from "echarts-for-react";
 import { motion } from "framer-motion";
+import { formatMoney } from "../lib/format";
 
 import type {
   CategorySeries,
@@ -36,6 +37,10 @@ const DEFAULT_VISIBLE_SECTORS = 4;
 
 function formatPercentValue(value: number, digits = 2) {
   return `${(value * 100).toFixed(digits)}%`;
+}
+
+function formatNumberValue(value: number, digits = 2) {
+  return value.toFixed(digits);
 }
 
 function contributionSubtitle(method: string) {
@@ -132,6 +137,7 @@ function buildReturnDrawdownOption(dashboard: DashboardPayload, runIds: string[]
       smooth: true,
       lineStyle: { width: 2.2 },
       emphasis: { focus: "series" as const },
+      tooltip: { valueFormatter: (value: number) => formatMoney(value) },
     }));
 
   const drawdownSeries = dashboard.performance.drawdowns
@@ -147,6 +153,7 @@ function buildReturnDrawdownOption(dashboard: DashboardPayload, runIds: string[]
       areaStyle: { opacity: 0.14 },
       lineStyle: { width: 1.8 },
       emphasis: { focus: "series" as const },
+      tooltip: { valueFormatter: (value: number) => formatPercentValue(value) },
     }));
 
   return {
@@ -175,13 +182,13 @@ function buildReturnDrawdownOption(dashboard: DashboardPayload, runIds: string[]
       {
         type: "value" as const,
         gridIndex: 0,
-        axisLabel: { color: "#bdaea1" },
+        axisLabel: { color: "#bdaea1", formatter: (value: number) => formatMoney(value) },
         splitLine: { lineStyle: { color: "rgba(247, 240, 231, 0.08)" } },
       },
       {
         type: "value" as const,
         gridIndex: 1,
-        axisLabel: { color: "#bdaea1" },
+        axisLabel: { color: "#bdaea1", formatter: (value: number) => formatPercentValue(value, 0) },
         splitLine: { lineStyle: { color: "rgba(247, 240, 231, 0.08)" } },
       },
     ],
@@ -265,6 +272,10 @@ function buildHeatmapOption(cells: HeatmapCell[]) {
       backgroundColor: "rgba(15, 18, 21, 0.96)",
       borderColor: "rgba(240, 164, 75, 0.22)",
       textStyle: { color: "#f7f0e7" },
+      formatter: (params: { value: [number, number, number] }) => {
+        const [monthIndex, yearIndex, value] = params.value;
+        return `${years[yearIndex]} ${MONTH_LABELS[monthIndex]}<br/>Return: ${formatPercentValue(value)}`;
+      },
     },
     grid: { left: 12, right: 18, top: 16, bottom: 18, containLabel: true },
     xAxis: {
@@ -305,7 +316,12 @@ function buildHeatmapOption(cells: HeatmapCell[]) {
   };
 }
 
-function buildLineOption(series: NamedSeries[], labelFormatter?: (series: NamedSeries) => string) {
+function buildLineOption(
+  series: NamedSeries[],
+  labelFormatter?: (series: NamedSeries) => string,
+  valueFormatter: (value: number) => string = (value) => formatPercentValue(value),
+  axisFormatter: (value: number) => string = (value) => formatPercentValue(value, 0),
+) {
   return {
     ...chartBase(),
     grid: { left: 12, right: 18, top: 36, bottom: 24, containLabel: true },
@@ -317,7 +333,7 @@ function buildLineOption(series: NamedSeries[], labelFormatter?: (series: NamedS
     },
     yAxis: {
       type: "value" as const,
-      axisLabel: { color: "#bdaea1" },
+      axisLabel: { color: "#bdaea1", formatter: axisFormatter },
       splitLine: { lineStyle: { color: "rgba(247, 240, 231, 0.08)" } },
     },
     series: series.map((entry) => ({
@@ -328,6 +344,7 @@ function buildLineOption(series: NamedSeries[], labelFormatter?: (series: NamedS
       smooth: true,
       lineStyle: { width: 2 },
       emphasis: { focus: "series" as const },
+      tooltip: { valueFormatter },
     })),
   };
 }
@@ -414,7 +431,7 @@ function buildYearlyExcessOption(dashboard: DashboardPayload, runIds: string[]) 
     },
     yAxis: {
       type: "value" as const,
-      axisLabel: { color: "#bdaea1" },
+      axisLabel: { color: "#bdaea1", formatter: (value: number) => formatPercentValue(value, 0) },
       splitLine: { lineStyle: { color: "rgba(247, 240, 231, 0.08)" } },
     },
     series: runIds.map((runId) => {
@@ -424,6 +441,7 @@ function buildYearlyExcessOption(dashboard: DashboardPayload, runIds: string[]) 
         type: "bar" as const,
         data: years.map((year) => values.get(year) ?? 0),
         barMaxWidth: 18,
+        tooltip: { valueFormatter: (value: number) => formatPercentValue(value) },
       };
     }),
   };
@@ -615,7 +633,7 @@ export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchW
         <ResearchFigure
           title="Rolling Sharpe"
           subtitle="Rolling risk-adjusted return."
-          option={buildLineOption(rollingSharpeSeries)}
+          option={buildLineOption(rollingSharpeSeries, undefined, (value) => formatNumberValue(value), (value) => formatNumberValue(value, 1))}
           isEmpty={!hasSeriesData(rollingSharpeSeries)}
           emptyMessage="No rolling Sharpe data."
         />

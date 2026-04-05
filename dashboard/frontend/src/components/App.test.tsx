@@ -427,6 +427,29 @@ function findSectorWeightHeatmapOption() {
   });
 }
 
+function findResearchReturnDrawdownOption() {
+  return chartOptions.find((option) => {
+    const xAxis = (option as { xAxis?: unknown }).xAxis;
+    const yAxis = (option as { yAxis?: unknown }).yAxis;
+    return Array.isArray(xAxis) && Array.isArray(yAxis);
+  });
+}
+
+function findRollingSharpeOption() {
+  return chartOptions.find((option) => {
+    const xAxis = (option as { xAxis?: { type?: string } }).xAxis;
+    const series = (option as { series?: Array<{ name?: string; type?: string; tooltip?: { valueFormatter?: (value: number) => string } }> }).series ?? [];
+    const seriesNames = series.map((entry) => entry.name);
+    return (
+      xAxis?.type === "time" &&
+      series.length === 2 &&
+      series.every((entry) => entry.type === "line") &&
+      seriesNames.includes("Momentum") &&
+      seriesNames.includes("OP Fwd Yield")
+    );
+  });
+}
+
 async function selectorScope() {
   const selector = (await screen.findByText("Select saved runs")).closest("section");
   if (!selector) {
@@ -623,6 +646,43 @@ describe("App", () => {
     expect(option.visualMap?.min).toBeLessThan(0);
     expect(option.visualMap?.max).toBeGreaterThan(0);
     expect(output).toContain("-28.00%");
+  });
+
+  it("formats research return and drawdown tooltips with money and percentages", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    await screen.findByRole("heading", { name: "Research charts" });
+
+    const option = findResearchReturnDrawdownOption() as {
+      series: Array<{ name: string; tooltip?: { valueFormatter?: (value: number) => string } }>;
+    };
+    const momentumSeries = option.series.find((series) => series.name === "Momentum");
+    const drawdownSeries = option.series.find((series) => series.name === "Momentum drawdown");
+
+    expect(momentumSeries?.tooltip?.valueFormatter?.(108000000)).toBe("$108.0M");
+    expect(drawdownSeries?.tooltip?.valueFormatter?.(-0.12)).toBe("-12.00%");
+  });
+
+  it("formats rolling and sector contribution line tooltips as short percentages", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    await screen.findByRole("heading", { name: "Research charts" });
+
+    const rollingOption = findRollingSharpeOption() as {
+      series: Array<{ name: string; tooltip?: { valueFormatter?: (value: number) => string } }>;
+    };
+    const sectorContributionOption = findSectorContributionChartOption() as {
+      series: Array<{ name: string; tooltip?: { valueFormatter?: (value: number) => string } }>;
+    };
+
+    expect(rollingOption.series[0]?.tooltip?.valueFormatter?.(1.14)).toBe("1.14");
+    expect(sectorContributionOption.series[0]?.tooltip?.valueFormatter?.(0.05)).toBe("5.00%");
   });
 
   it("plots each selected strategy beside its corresponding benchmark overlay", async () => {
