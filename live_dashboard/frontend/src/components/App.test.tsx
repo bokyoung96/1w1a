@@ -146,12 +146,18 @@ function createDashboard(mode: "single" | "multi", selectedRunIds: string[]) {
               momentum_run: [
                 { symbol: "AAPL", targetWeight: 0.6, absWeight: 0.6 },
                 { symbol: "MSFT", targetWeight: 0.4, absWeight: 0.4 },
+                { symbol: "GOOG", targetWeight: 0.0, absWeight: 0.0 },
+                { symbol: "AMZN", targetWeight: 0.0, absWeight: 0.0 },
+                { symbol: "TSLA", targetWeight: 0.0, absWeight: 0.0 },
               ],
             },
             sectorWeights: {
               momentum_run: [
                 { name: "Tech", value: 0.72 },
                 { name: "Financials", value: 0.28 },
+                { name: "Industrials", value: 0.0 },
+                { name: "Consumer", value: 0.0 },
+                { name: "Health Care", value: 0.0 },
               ],
             },
           }
@@ -314,6 +320,9 @@ describe("App", () => {
 
     expect(await screen.findByRole("heading", { name: "Latest holdings" })).toBeInTheDocument();
     expect(screen.getByText("AAPL")).toBeInTheDocument();
+    expect(screen.getByText("Target weight")).toBeInTheDocument();
+    expect(screen.getByText("Absolute weight")).toBeInTheDocument();
+    expect(screen.queryByText("TSLA")).not.toBeInTheDocument();
     expect(screen.getByText("Selected-run context")).toBeInTheDocument();
     expect(screen.getByText("KOSPI200 benchmark", { selector: "dd" })).toBeInTheDocument();
   });

@@ -269,6 +269,21 @@ body {
   gap: 10px;
 }
 
+.detail-column-labels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 12px;
+  padding: 0 0 4px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.detail-column-labels--sectors {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
 .detail-list {
   display: grid;
   gap: 8px;
@@ -475,6 +490,12 @@ body {
   .detail-subgrid,
   .context-definition-list {
     grid-template-columns: 1fr;
+  }
+
+  .detail-column-labels,
+  .detail-column-labels--sectors {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 
   .detail-list-row {

@@ -112,6 +112,7 @@ The live dashboard reads saved backtest bundles from `results/backtests/` and se
 Backend:
 
 ```powershell
+python -m pip install -r live_dashboard/backend/requirements.txt
 uvicorn live_dashboard.backend.main:app --reload --port 8000
 ```
 

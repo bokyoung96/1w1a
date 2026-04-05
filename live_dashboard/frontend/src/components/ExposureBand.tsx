@@ -3,6 +3,9 @@ import { motion } from "framer-motion";
 import { formatPercent } from "../lib/format";
 import type { DashboardPayload } from "../lib/types";
 
+const MAX_VISIBLE_HOLDINGS = 4;
+const MAX_VISIBLE_SECTORS = 4;
+
 type ExposureBandProps = {
   dashboard: DashboardPayload;
 };
@@ -11,8 +14,8 @@ export function ExposureBand({ dashboard }: ExposureBandProps) {
   const selectedRuns = dashboard.selectedRunIds.map((runId) => {
     const run = dashboard.availableRuns.find((entry) => entry.run_id === runId);
     const context = dashboard.context[runId];
-    const holdings = dashboard.exposure.latestHoldings[runId] ?? [];
-    const sectorWeights = dashboard.exposure.sectorWeights[runId] ?? [];
+    const holdings = (dashboard.exposure.latestHoldings[runId] ?? []).slice(0, MAX_VISIBLE_HOLDINGS);
+    const sectorWeights = (dashboard.exposure.sectorWeights[runId] ?? []).slice(0, MAX_VISIBLE_SECTORS);
 
     return {
       runId,
@@ -49,6 +52,11 @@ export function ExposureBand({ dashboard }: ExposureBandProps) {
                   <span>Latest holdings</span>
                   <span>{run.holdings.length} line{run.holdings.length === 1 ? "" : "s"}</span>
                 </div>
+                <div className="detail-column-labels">
+                  <span>Symbol</span>
+                  <span>Target weight</span>
+                  <span>Absolute weight</span>
+                </div>
                 <div className="detail-list">
                   {run.holdings.length > 0 ? (
                     run.holdings.map((holding) => (
@@ -71,6 +79,10 @@ export function ExposureBand({ dashboard }: ExposureBandProps) {
                 <div className="detail-subsection-head">
                   <span>Sector mix</span>
                   <span>{run.sectorWeights.length} segment{run.sectorWeights.length === 1 ? "" : "s"}</span>
+                </div>
+                <div className="detail-column-labels detail-column-labels--sectors">
+                  <span>Sector</span>
+                  <span>Weight</span>
                 </div>
                 <div className="detail-list">
                   {run.sectorWeights.length > 0 ? (
