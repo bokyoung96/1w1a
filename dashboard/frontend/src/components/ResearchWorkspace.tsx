@@ -410,7 +410,12 @@ export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchW
     focus.kind === "sector" && availableSectorNames.includes(focus.sectorName)
       ? [focus.sectorName]
       : availableSectorNames.slice(0, DEFAULT_VISIBLE_SECTORS);
-  const activeSectorNames = selectedSectorNames.length > 0 ? selectedSectorNames : fallbackSectorNames;
+  const activeSectorNames =
+    focus.kind === "sector" && availableSectorNames.includes(focus.sectorName)
+      ? [focus.sectorName]
+      : selectedSectorNames.length > 0
+        ? selectedSectorNames
+        : fallbackSectorNames;
   const activeHeatmapRunId = heatmapRunId(dashboard, focus);
   const activeHeatmapLabel = activeHeatmapRunId ? runLabel(dashboard, activeHeatmapRunId) : "Selected run";
   const heatmapCells = activeHeatmapRunId ? dashboard.research.monthlyHeatmap[activeHeatmapRunId] ?? [] : [];

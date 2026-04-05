@@ -505,6 +505,27 @@ describe("App", () => {
     expect(JSON.stringify(sectorOptions)).not.toContain("Industrials");
   });
 
+  it("lets sector drill-down override a previously selected manual sector filter", async () => {
+    const user = userEvent.setup();
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    await screen.findByRole("heading", { name: "Research charts" });
+    await user.click(screen.getByRole("button", { name: "Toggle sector Energy" }));
+
+    chartOptions.length = 0;
+    const exposureBand = screen.getByRole("region", { name: "Exposure band" });
+    await user.click(within(exposureBand).getByRole("button", { name: "Focus sector Tech" }));
+
+    const sectorOptions = findSectorChartOptions();
+    expect(screen.getByText("Focus: Sector · Tech")).toBeInTheDocument();
+    expect(sectorOptions).toHaveLength(2);
+    expect(JSON.stringify(sectorOptions)).toContain("Momentum · Tech");
+    expect(JSON.stringify(sectorOptions)).not.toContain("Energy");
+  });
+
   it("plots each selected strategy beside its corresponding benchmark overlay", async () => {
     fetchRuns.mockResolvedValue(RUNS);
     fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
