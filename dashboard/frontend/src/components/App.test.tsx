@@ -1,6 +1,7 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { DashboardPayload } from "../lib/types";
 
 const { fetchRuns, fetchDashboard, fetchSession } = vi.hoisted(() => ({
   fetchRuns: vi.fn(),
@@ -41,11 +42,35 @@ const RUNS = [
   },
 ];
 
-function createDashboard(mode: "single" | "multi", selectedRunIds: string[]) {
+function createDashboard(mode: "single" | "multi", selectedRunIds: string[]): DashboardPayload {
   return {
     mode,
     selectedRunIds,
     availableRuns: RUNS,
+    launch: {
+      configuredStartDate: "2025-01-01",
+      configuredEndDate: "2025-12-31",
+      capital: 100000000,
+      schedule: "monthly",
+      fillMode: "next_open",
+      benchmark: {
+        kind: "shared",
+        shared: { code: "KOSPI200", name: "KOSPI200 benchmark" },
+        strategies: [
+          {
+            strategy: "momentum",
+            label: "Momentum",
+            benchmark: { code: "KOSPI200", name: "KOSPI200 benchmark" },
+          },
+          {
+            strategy: "op_fwd_yield",
+            label: "OP Fwd Yield",
+            benchmark: { code: "SPX", name: "S&P 500 benchmark" },
+          },
+        ],
+      },
+      asOfDate: "2025-12-31",
+    },
     metrics: Object.fromEntries(
       selectedRunIds.map((runId) => [
         runId,
@@ -193,7 +218,50 @@ function createDashboard(mode: "single" | "multi", selectedRunIds: string[]) {
           ],
         },
       ].filter((entry) => selectedRunIds.includes(entry.runId)),
-      rollingBeta: [],
+      rollingBeta: [
+        {
+          runId: "momentum_run",
+          label: "Momentum",
+          points: [
+            { date: "2025-01-01", value: 0.88 },
+            { date: "2025-02-01", value: 0.94 },
+            { date: "2025-03-01", value: 1.01 },
+          ],
+        },
+        {
+          runId: "value_run",
+          label: "OP Fwd Yield",
+          points: [
+            { date: "2025-01-01", value: 0.61 },
+            { date: "2025-02-01", value: 0.69 },
+            { date: "2025-03-01", value: 0.73 },
+          ],
+        },
+      ].filter((entry) => selectedRunIds.includes(entry.runId)),
+      rollingCorrelation: [
+        {
+          runId: "momentum_run",
+          label: "Momentum",
+          benchmark: { code: "KOSPI200", name: "KOSPI200 benchmark" },
+          window: 252,
+          points: [
+            { date: "2025-01-01", value: 0.72 },
+            { date: "2025-02-01", value: 0.8 },
+            { date: "2025-03-01", value: 0.85 },
+          ],
+        },
+        {
+          runId: "value_run",
+          label: "OP Fwd Yield",
+          benchmark: { code: "SPX", name: "S&P 500 benchmark" },
+          window: 252,
+          points: [
+            { date: "2025-01-01", value: 0.58 },
+            { date: "2025-02-01", value: 0.63 },
+            { date: "2025-03-01", value: 0.67 },
+          ],
+        },
+      ].filter((entry) => selectedRunIds.includes(entry.runId)),
     },
     exposure: {
       holdingsCount: [
@@ -224,6 +292,38 @@ function createDashboard(mode: "single" | "multi", selectedRunIds: string[]) {
           { symbol: "XOM", targetWeight: 0.28, absWeight: 0.28 },
           { symbol: "JPM", targetWeight: 0.19, absWeight: 0.19 },
           { symbol: "UNP", targetWeight: 0.16, absWeight: 0.16 },
+        ],
+      },
+      latestHoldingsWinners: {
+        momentum_run: [
+          { symbol: "TSLA", targetWeight: 0.04, absWeight: 0.04, returnSinceLatestRebalance: 0.3 },
+          { symbol: "GOOG", targetWeight: 0.06, absWeight: 0.06, returnSinceLatestRebalance: 0.15 },
+          { symbol: "AMZN", targetWeight: 0.1, absWeight: 0.1, returnSinceLatestRebalance: 0.1 },
+          { symbol: "NVDA", targetWeight: 0.15, absWeight: 0.15, returnSinceLatestRebalance: 0.05 },
+          { symbol: "MSFT", targetWeight: 0.25, absWeight: 0.25, returnSinceLatestRebalance: 0.01 },
+        ],
+        value_run: [
+          { symbol: "XOM", targetWeight: 0.28, absWeight: 0.28, returnSinceLatestRebalance: 0.12 },
+          { symbol: "JPM", targetWeight: 0.19, absWeight: 0.19, returnSinceLatestRebalance: 0.09 },
+          { symbol: "UNP", targetWeight: 0.16, absWeight: 0.16, returnSinceLatestRebalance: 0.04 },
+          { symbol: "CVX", targetWeight: 0.12, absWeight: 0.12, returnSinceLatestRebalance: 0.03 },
+          { symbol: "CAT", targetWeight: 0.08, absWeight: 0.08, returnSinceLatestRebalance: 0.01 },
+        ],
+      },
+      latestHoldingsLosers: {
+        momentum_run: [
+          { symbol: "AAPL", targetWeight: 0.34, absWeight: 0.34, returnSinceLatestRebalance: -0.04 },
+          { symbol: "MSFT", targetWeight: 0.21, absWeight: 0.21, returnSinceLatestRebalance: 0.01 },
+          { symbol: "NVDA", targetWeight: 0.18, absWeight: 0.18, returnSinceLatestRebalance: 0.05 },
+          { symbol: "AMZN", targetWeight: 0.1, absWeight: 0.1, returnSinceLatestRebalance: 0.1 },
+          { symbol: "GOOG", targetWeight: 0.06, absWeight: 0.06, returnSinceLatestRebalance: 0.15 },
+        ],
+        value_run: [
+          { symbol: "XOM", targetWeight: 0.28, absWeight: 0.28, returnSinceLatestRebalance: -0.08 },
+          { symbol: "JPM", targetWeight: 0.19, absWeight: 0.19, returnSinceLatestRebalance: -0.02 },
+          { symbol: "UNP", targetWeight: 0.16, absWeight: 0.16, returnSinceLatestRebalance: 0.01 },
+          { symbol: "CVX", targetWeight: 0.12, absWeight: 0.12, returnSinceLatestRebalance: 0.03 },
+          { symbol: "CAT", targetWeight: 0.08, absWeight: 0.08, returnSinceLatestRebalance: 0.05 },
         ],
       },
       sectorWeights: {
@@ -265,6 +365,20 @@ function createDashboard(mode: "single" | "multi", selectedRunIds: string[]) {
           { start: -0.03, end: -0.01, count: 1, frequency: 0.2 },
           { start: -0.01, end: 0.01, count: 2, frequency: 0.4 },
           { start: 0.01, end: 0.03, count: 2, frequency: 0.4 },
+        ],
+      },
+      monthlyReturnDistribution: {
+        momentum_run: [
+          { start: -0.06, end: -0.03, count: 1, frequency: 0.17 },
+          { start: -0.03, end: 0, count: 1, frequency: 0.17 },
+          { start: 0, end: 0.03, count: 2, frequency: 0.33 },
+          { start: 0.03, end: 0.06, count: 2, frequency: 0.33 },
+        ],
+        value_run: [
+          { start: -0.04, end: -0.02, count: 1, frequency: 0.17 },
+          { start: -0.02, end: 0, count: 1, frequency: 0.17 },
+          { start: 0, end: 0.02, count: 2, frequency: 0.33 },
+          { start: 0.02, end: 0.04, count: 2, frequency: 0.33 },
         ],
       },
       yearlyExcessReturns: {
@@ -520,6 +634,58 @@ describe("App", () => {
     expect(await screen.findByRole("heading", { name: "Research charts" })).toBeInTheDocument();
     expect(screen.getByText("Returns, risk, and sector trends for the selected strategies.")).toBeInTheDocument();
     expect(screen.getByText("No return distribution data.")).toBeInTheDocument();
+  });
+
+  it("renders launch metadata in the comparison plane", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    expect(await screen.findByText("Comparison plane")).toBeInTheDocument();
+    expect(screen.getByText("Launch metadata")).toBeInTheDocument();
+    expect(screen.getByText("Configured start")).toBeInTheDocument();
+    expect(screen.getByText("Configured end")).toBeInTheDocument();
+    expect(screen.getByText("Capital")).toBeInTheDocument();
+    expect(screen.getByText("Schedule")).toBeInTheDocument();
+    expect(screen.getByText("Fill mode")).toBeInTheDocument();
+  });
+
+  it("renders rolling risk diagnostics for Sharpe, correlation, and beta", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Research charts" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Rolling risk/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Rolling Sharpe" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Rolling Correlation" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Rolling Beta" })).toBeInTheDocument();
+  });
+
+  it("shows daily and monthly return distributions separately", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Research charts" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Daily return distribution/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Monthly return distribution/i })).toBeInTheDocument();
+  });
+
+  it("renders latest-holdings winners and losers panels", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Latest holdings and sector context" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Latest holdings winners/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Latest holdings losers/i })).toBeInTheDocument();
+    expect(screen.getByText("TSLA")).toBeInTheDocument();
+    expect(screen.getByText("AAPL")).toBeInTheDocument();
   });
 
   it("renders return distribution as a numeric distribution curve", async () => {

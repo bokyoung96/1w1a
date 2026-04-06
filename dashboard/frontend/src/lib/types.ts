@@ -27,6 +27,11 @@ export type NamedSeries = {
   points: SeriesPoint[];
 };
 
+export type RollingSeries = NamedSeries & {
+  benchmark: BenchmarkOption;
+  window: number;
+};
+
 export type CategorySeries = {
   name: string;
   points: SeriesPoint[];
@@ -38,6 +43,10 @@ export type ExposureHolding = {
   absWeight: number;
 };
 
+export type HoldingPerformance = ExposureHolding & {
+  returnSinceLatestRebalance: number;
+};
+
 export type CategoryPoint = {
   name: string;
   value: number;
@@ -46,6 +55,28 @@ export type CategoryPoint = {
 export type BenchmarkOption = {
   code: string;
   name: string;
+};
+
+export type LaunchStrategyBenchmark = {
+  strategy: string;
+  label: string;
+  benchmark: BenchmarkOption;
+};
+
+export type LaunchBenchmarkContext = {
+  kind: string;
+  shared: BenchmarkOption | null;
+  strategies: LaunchStrategyBenchmark[];
+};
+
+export type DashboardLaunch = {
+  configuredStartDate: string | null;
+  configuredEndDate: string | null;
+  capital: number | null;
+  schedule: string | null;
+  fillMode: string | null;
+  benchmark: LaunchBenchmarkContext | null;
+  asOfDate: string | null;
 };
 
 export type DashboardMetric = {
@@ -114,6 +145,7 @@ export type DashboardPayload = {
   mode: "single" | "multi";
   selectedRunIds: string[];
   availableRuns: RunOption[];
+  launch: DashboardLaunch;
   metrics: Record<string, DashboardMetric>;
   context: Record<string, DashboardContext>;
   performance: {
@@ -125,10 +157,13 @@ export type DashboardPayload = {
   rolling: {
     rollingSharpe: NamedSeries[];
     rollingBeta: NamedSeries[];
+    rollingCorrelation: RollingSeries[];
   };
   exposure: {
     holdingsCount: NamedSeries[];
     latestHoldings: Record<string, ExposureHolding[]>;
+    latestHoldingsWinners: Record<string, HoldingPerformance[]>;
+    latestHoldingsLosers: Record<string, HoldingPerformance[]>;
     sectorWeights: Record<string, CategoryPoint[]>;
   };
   research: {
@@ -136,6 +171,7 @@ export type DashboardPayload = {
     sectorContributionMethod: string;
     monthlyHeatmap: Record<string, HeatmapCell[]>;
     returnDistribution: Record<string, DistributionBin[]>;
+    monthlyReturnDistribution: Record<string, DistributionBin[]>;
     yearlyExcessReturns: Record<string, SeriesPoint[]>;
     sectorContributionSeries: Record<string, CategorySeries[]>;
     sectorWeightSeries: Record<string, CategorySeries[]>;
