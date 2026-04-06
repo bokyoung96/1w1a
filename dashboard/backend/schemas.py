@@ -31,6 +31,16 @@ class BenchmarkModel(DashboardBaseModel):
     name: str
 
 
+class DashboardLaunchModel(DashboardBaseModel):
+    configured_start_date: str | None = None
+    configured_end_date: str | None = None
+    capital: float | None = None
+    schedule: str | None = None
+    fill_mode: str | None = None
+    benchmark: BenchmarkModel | None = None
+    as_of_date: str | None = None
+
+
 class ValuePointModel(DashboardBaseModel):
     date: str
     value: float
@@ -42,6 +52,11 @@ class NamedSeriesModel(DashboardBaseModel):
     points: list[ValuePointModel]
 
 
+class RollingSeriesModel(NamedSeriesModel):
+    benchmark: BenchmarkModel
+    window: int
+
+
 class CategorySeriesModel(DashboardBaseModel):
     name: str
     points: list[ValuePointModel]
@@ -51,6 +66,10 @@ class HoldingModel(DashboardBaseModel):
     symbol: str
     target_weight: float
     abs_weight: float
+
+
+class HoldingPerformanceModel(HoldingModel):
+    return_since_latest_rebalance: float
 
 
 class CategoryPointModel(DashboardBaseModel):
@@ -125,11 +144,14 @@ class DashboardPerformanceModel(DashboardBaseModel):
 class DashboardRollingModel(DashboardBaseModel):
     rolling_sharpe: list[NamedSeriesModel]
     rolling_beta: list[NamedSeriesModel]
+    rolling_correlation: list[RollingSeriesModel]
 
 
 class DashboardExposureModel(DashboardBaseModel):
     holdings_count: list[NamedSeriesModel]
     latest_holdings: dict[str, list[HoldingModel]]
+    latest_holdings_winners: dict[str, list[HoldingPerformanceModel]]
+    latest_holdings_losers: dict[str, list[HoldingPerformanceModel]]
     sector_weights: dict[str, list[CategoryPointModel]]
 
 
@@ -138,6 +160,7 @@ class DashboardResearchModel(DashboardBaseModel):
     sector_contribution_method: str
     monthly_heatmap: dict[str, list[HeatmapCellModel]]
     return_distribution: dict[str, list[DistributionBinModel]]
+    monthly_return_distribution: dict[str, list[DistributionBinModel]]
     yearly_excess_returns: dict[str, list[ValuePointModel]]
     sector_contribution_series: dict[str, list[CategorySeriesModel]]
     sector_weight_series: dict[str, list[CategorySeriesModel]]
@@ -148,6 +171,7 @@ class DashboardPayloadModel(DashboardBaseModel):
     mode: str
     selected_run_ids: list[str]
     available_runs: list[RunOptionModel]
+    launch: DashboardLaunchModel
     metrics: dict[str, DashboardMetricModel]
     context: dict[str, DashboardContextModel]
     performance: DashboardPerformanceModel

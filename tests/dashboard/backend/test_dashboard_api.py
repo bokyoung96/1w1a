@@ -376,7 +376,7 @@ def test_dashboard_returns_single_mode_payload(tmp_path: Path) -> None:
             ],
         }
     ]
-    assert payload["rolling"] == {"rollingSharpe": [], "rollingBeta": []}
+    assert payload["rolling"] == {"rollingSharpe": [], "rollingBeta": [], "rollingCorrelation": []}
     assert payload["exposure"]["holdingsCount"] == [
         {
             "runId": "alpha_20260405_100000",

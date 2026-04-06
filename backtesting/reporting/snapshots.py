@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 import pandas as pd
 
 from .analytics import (
+    ROLLING_WINDOW,
     SECTOR_CONTRIBUTION_METHOD_WEIGHTED_ASSET_RETURNS,
     DrawdownStats,
     ExposureSnapshot,
@@ -16,6 +17,7 @@ from .analytics import (
     build_monthly_heatmap,
     build_return_distribution,
     build_yearly_excess_returns,
+    monthly_return_series,
 )
 from .benchmarks import BenchmarkRepository, SectorRepository
 from .models import BenchmarkConfig, SavedRun
@@ -124,7 +126,7 @@ class PerformanceSnapshotFactory:
         )
 
     def _build_rolling_metrics(self, strategy_returns: pd.Series, benchmark_returns: pd.Series) -> RollingMetrics:
-        window = 252
+        window = ROLLING_WINDOW
         rolling_sharpe = strategy_returns.rolling(window=window, min_periods=252).apply(
             lambda values: annualized_sharpe(pd.Series(values)),
             raw=False,
@@ -134,10 +136,13 @@ class PerformanceSnapshotFactory:
             benchmark_variance
         )
         rolling_beta = rolling_beta.replace([float("inf"), float("-inf")], pd.NA)
+        rolling_correlation = strategy_returns.rolling(window=window, min_periods=252).corr(benchmark_returns)
         return RollingMetrics(
+            window=window,
             series={
                 "rolling_sharpe": rolling_sharpe.rename("rolling_sharpe"),
                 "rolling_beta": rolling_beta.rename("rolling_beta"),
+                "rolling_correlation": rolling_correlation.rename("rolling_correlation"),
             }
         )
 
@@ -196,7 +201,13 @@ class PerformanceSnapshotFactory:
     def _build_exposure(self, run: SavedRun) -> ExposureSnapshot:
         holdings_count = run.weights.fillna(0.0).ne(0.0).sum(axis=1).rename("holdings_count")
         latest_holdings = run.latest_weights.copy() if run.latest_weights is not None else self._latest_holdings(run.weights)
-        return ExposureSnapshot(holdings_count=holdings_count.astype(float), latest_holdings=latest_holdings)
+        relative_performance = self._latest_holdings_relative_performance(run, latest_holdings)
+        return ExposureSnapshot(
+            holdings_count=holdings_count.astype(float),
+            latest_holdings=latest_holdings,
+            latest_holdings_winners=self._rank_latest_holdings(relative_performance, ascending=False),
+            latest_holdings_losers=self._rank_latest_holdings(relative_performance, ascending=True),
+        )
 
     def _build_sectors(self, weights: pd.DataFrame) -> SectorSnapshot:
         latest_weighted = self.sector_repo.latest_sector_weights(weights)
@@ -218,12 +229,109 @@ class PerformanceSnapshotFactory:
         return ResearchSnapshot(
             monthly_heatmap=build_monthly_heatmap(strategy_returns, run.monthly_returns),
             return_distribution=build_return_distribution(strategy_returns),
+            monthly_return_distribution=build_return_distribution(monthly_return_series(strategy_returns, run.monthly_returns)),
             yearly_excess_returns=build_yearly_excess_returns(strategy_returns, benchmark_returns),
             sector_contribution_method=SECTOR_CONTRIBUTION_METHOD_WEIGHTED_ASSET_RETURNS,
             sector_contribution=sector_contribution,
             sector_weights=sector_weights,
             drawdown_episodes=drawdown_episodes,
         )
+
+    def _latest_holdings_relative_performance(self, run: SavedRun, latest_holdings: pd.DataFrame) -> pd.DataFrame:
+        if latest_holdings.empty:
+            return pd.DataFrame(columns=["symbol", "target_weight", "abs_weight", "return_since_latest_rebalance"])
+
+        if run.path is not None:
+            returns_path = run.path / "positions" / "latest_holdings_returns.csv"
+            if returns_path.exists():
+                returns_frame = pd.read_csv(returns_path)
+                return self._merge_latest_holdings_returns(latest_holdings, returns_frame)
+
+        computed_returns = self._compute_latest_holdings_returns(run, latest_holdings)
+        if computed_returns.empty:
+            return pd.DataFrame(columns=["symbol", "target_weight", "abs_weight", "return_since_latest_rebalance"])
+        return self._merge_latest_holdings_returns(latest_holdings, computed_returns)
+
+    def _compute_latest_holdings_returns(self, run: SavedRun, latest_holdings: pd.DataFrame) -> pd.DataFrame:
+        prices = self.sector_repo.prices
+        if prices is None or latest_holdings.empty:
+            return pd.DataFrame(columns=["symbol", "return_since_latest_rebalance"])
+
+        symbols = [str(symbol) for symbol in latest_holdings["symbol"]]
+        latest_date = pd.Timestamp(run.equity.index.max())
+        rebalance_date = self._latest_rebalance_date(run)
+        if rebalance_date is None:
+            return pd.DataFrame(columns=["symbol", "return_since_latest_rebalance"])
+
+        price_window = prices.reindex(columns=symbols).sort_index().loc[rebalance_date:latest_date]
+        rows: list[dict[str, object]] = []
+        for symbol in symbols:
+            series = price_window[symbol].dropna()
+            if series.empty:
+                continue
+            starting_price = float(series.iloc[0])
+            ending_price = float(series.iloc[-1])
+            if starting_price == 0.0:
+                continue
+            rows.append(
+                {
+                    "symbol": symbol,
+                    "return_since_latest_rebalance": ending_price / starting_price - 1.0,
+                }
+            )
+        return pd.DataFrame(rows, columns=["symbol", "return_since_latest_rebalance"])
+
+    @staticmethod
+    def _merge_latest_holdings_returns(latest_holdings: pd.DataFrame, returns_frame: pd.DataFrame) -> pd.DataFrame:
+        if returns_frame.empty or "symbol" not in returns_frame.columns:
+            return pd.DataFrame(columns=["symbol", "target_weight", "abs_weight", "return_since_latest_rebalance"])
+
+        ranked = latest_holdings.copy()
+        merged = ranked.merge(
+            returns_frame.loc[:, [column for column in ["symbol", "return_since_latest_rebalance"] if column in returns_frame.columns]],
+            on="symbol",
+            how="inner",
+        )
+        if merged.empty or "return_since_latest_rebalance" not in merged.columns:
+            return pd.DataFrame(columns=["symbol", "target_weight", "abs_weight", "return_since_latest_rebalance"])
+
+        for column in ["target_weight", "abs_weight", "return_since_latest_rebalance"]:
+            merged[column] = pd.to_numeric(merged[column], errors="coerce")
+        merged = merged.replace([float("inf"), float("-inf")], pd.NA).dropna(
+            subset=["target_weight", "abs_weight", "return_since_latest_rebalance"]
+        )
+        return merged.loc[:, ["symbol", "target_weight", "abs_weight", "return_since_latest_rebalance"]].reset_index(
+            drop=True
+        )
+
+    @staticmethod
+    def _rank_latest_holdings(frame: pd.DataFrame, *, ascending: bool) -> pd.DataFrame:
+        if frame.empty:
+            return pd.DataFrame(columns=["symbol", "target_weight", "abs_weight", "return_since_latest_rebalance"])
+        ranked = frame.sort_values(
+            ["return_since_latest_rebalance", "abs_weight", "symbol"],
+            ascending=[ascending, False, True],
+        )
+        return ranked.head(5).reset_index(drop=True)
+
+    @staticmethod
+    def _latest_rebalance_date(run: SavedRun) -> pd.Timestamp | None:
+        if run.weights.empty:
+            return None
+
+        weights = run.weights.fillna(0.0).astype(float).sort_index()
+        latest_cohort = tuple(sorted(str(symbol) for symbol in weights.columns[weights.iloc[-1].ne(0.0)]))
+        if not latest_cohort:
+            return None
+
+        trailing_start = pd.Timestamp(weights.index[-1])
+        for index in range(len(weights.index) - 2, -1, -1):
+            row = weights.iloc[index]
+            cohort = tuple(sorted(str(symbol) for symbol in row.index[row.ne(0.0)]))
+            if cohort != latest_cohort:
+                break
+            trailing_start = pd.Timestamp(weights.index[index])
+        return trailing_start
 
     @staticmethod
     def _latest_holdings(weights: pd.DataFrame) -> pd.DataFrame:

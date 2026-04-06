@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 
 SECTOR_CONTRIBUTION_METHOD_WEIGHTED_ASSET_RETURNS = "weighted-asset-return-attribution"
+ROLLING_WINDOW = 252
 
 
 @dataclass(frozen=True, slots=True)
@@ -28,6 +29,7 @@ class PerformanceMetrics:
 
 @dataclass(frozen=True, slots=True)
 class RollingMetrics:
+    window: int
     series: dict[str, pd.Series]
 
 
@@ -41,6 +43,8 @@ class DrawdownStats:
 class ExposureSnapshot:
     holdings_count: pd.Series
     latest_holdings: pd.DataFrame
+    latest_holdings_winners: pd.DataFrame = field(default_factory=pd.DataFrame)
+    latest_holdings_losers: pd.DataFrame = field(default_factory=pd.DataFrame)
 
 
 @dataclass(frozen=True, slots=True)
@@ -54,6 +58,7 @@ class SectorSnapshot:
 class ResearchSnapshot:
     monthly_heatmap: pd.DataFrame = field(default_factory=pd.DataFrame)
     return_distribution: pd.DataFrame = field(default_factory=pd.DataFrame)
+    monthly_return_distribution: pd.DataFrame = field(default_factory=pd.DataFrame)
     yearly_excess_returns: pd.Series = field(default_factory=lambda: pd.Series(dtype=float))
     sector_contribution_method: str = ""
     sector_contribution: pd.DataFrame = field(default_factory=pd.DataFrame)
@@ -104,7 +109,17 @@ def build_return_distribution(returns: pd.Series, bins: int = 20) -> pd.DataFram
         edges = np.array([lower - padding, upper + padding], dtype=float)
     else:
         effective_bins = max(1, min(bins, len(clean)))
-        edges = np.linspace(lower, upper, num=effective_bins + 1, dtype=float)
+        unique_values = np.sort(clean.unique())
+        if len(unique_values) <= effective_bins:
+            midpoints = [(left + right) / 2.0 for left, right in zip(unique_values[:-1], unique_values[1:])]
+            leading_gap = max(abs(unique_values[0]) * 0.01, 1e-6)
+            trailing_gap = max(abs(unique_values[-1]) * 0.01, 1e-6)
+            edges = np.array(
+                [unique_values[0] - leading_gap, *midpoints, unique_values[-1] + trailing_gap],
+                dtype=float,
+            )
+        else:
+            edges = np.linspace(lower, upper, num=effective_bins + 1, dtype=float)
 
     buckets = pd.cut(clean, bins=edges, include_lowest=True, duplicates="drop")
     counts = buckets.value_counts(sort=False)

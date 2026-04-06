@@ -11,6 +11,7 @@ from dashboard.backend.schemas import (
     DrawdownEpisodeModel,
     HeatmapCellModel,
     HoldingModel,
+    HoldingPerformanceModel,
     NamedSeriesModel,
     ValuePointModel,
 )
@@ -63,6 +64,27 @@ def serialize_latest_holdings(frame: pd.DataFrame | None) -> list[HoldingModel]:
                 symbol=str(row["symbol"]),
                 target_weight=target_weight,
                 abs_weight=abs_weight,
+            )
+        )
+    return holdings
+
+
+def serialize_latest_holdings_performance(frame: pd.DataFrame | None) -> list[HoldingPerformanceModel]:
+    if frame is None or frame.empty:
+        return []
+    holdings: list[HoldingPerformanceModel] = []
+    for _, row in frame.iterrows():
+        target_weight = sanitize_finite_number(row["target_weight"])
+        abs_weight = sanitize_finite_number(row["abs_weight"])
+        return_since_latest_rebalance = sanitize_finite_number(row["return_since_latest_rebalance"])
+        if target_weight is None or abs_weight is None or return_since_latest_rebalance is None:
+            continue
+        holdings.append(
+            HoldingPerformanceModel(
+                symbol=str(row["symbol"]),
+                target_weight=target_weight,
+                abs_weight=abs_weight,
+                return_since_latest_rebalance=return_since_latest_rebalance,
             )
         )
     return holdings

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from fastapi import HTTPException
 
-from backtesting.reporting.analytics import SECTOR_CONTRIBUTION_METHOD_WEIGHTED_ASSET_RETURNS
+from backtesting.reporting.analytics import ROLLING_WINDOW, SECTOR_CONTRIBUTION_METHOD_WEIGHTED_ASSET_RETURNS
 from backtesting.reporting.benchmarks import BenchmarkRepository, SectorRepository
 from backtesting.reporting.models import BenchmarkConfig, SavedRun
 from backtesting.reporting.reader import RunReader
@@ -13,12 +13,14 @@ from dashboard.backend.schemas import (
     BenchmarkModel,
     DashboardContextModel,
     DashboardExposureModel,
+    DashboardLaunchModel,
     DashboardMetricModel,
     DashboardPayloadModel,
     DashboardPerformanceModel,
     DashboardResearchModel,
     DashboardRollingModel,
     ResearchFocusModel,
+    RollingSeriesModel,
 )
 from dashboard.backend.serializers import (
     serialize_category_series,
@@ -26,11 +28,13 @@ from dashboard.backend.serializers import (
     serialize_drawdown_episodes,
     serialize_heatmap,
     serialize_latest_holdings,
+    serialize_latest_holdings_performance,
     serialize_named_series,
     serialize_named_values,
     serialize_value_points,
 )
 from dashboard.backend.services.run_index import RunIndexService
+from dashboard.strategies import DEFAULT_LAUNCH_CONFIG
 from root import ROOT
 
 
@@ -60,6 +64,7 @@ class DashboardPayloadService:
             mode="single" if len(run_ids) == 1 else "multi",
             selected_run_ids=run_ids,
             available_runs=self.run_index_service.list_runs(),
+            launch=self._serialize_launch(snapshots),
             metrics={snapshot.run_id: self._serialize_metrics(snapshot) for snapshot in snapshots},
             context={snapshot.run_id: self._serialize_context(snapshot) for snapshot in snapshots},
             performance=DashboardPerformanceModel(
@@ -71,17 +76,43 @@ class DashboardPayloadService:
             rolling=DashboardRollingModel(
                 rolling_sharpe=self._serialize_rolling_series(snapshots, "rolling_sharpe"),
                 rolling_beta=self._serialize_rolling_series(snapshots, "rolling_beta"),
+                rolling_correlation=self._serialize_rolling_correlation(snapshots),
             ),
             exposure=DashboardExposureModel(
                 holdings_count=[self._serialize_series(snapshot, snapshot.exposure.holdings_count) for snapshot in snapshots],
                 latest_holdings={
                     snapshot.run_id: serialize_latest_holdings(snapshot.exposure.latest_holdings) for snapshot in snapshots
                 },
+                latest_holdings_winners={
+                    snapshot.run_id: serialize_latest_holdings_performance(snapshot.exposure.latest_holdings_winners)
+                    for snapshot in snapshots
+                },
+                latest_holdings_losers={
+                    snapshot.run_id: serialize_latest_holdings_performance(snapshot.exposure.latest_holdings_losers)
+                    for snapshot in snapshots
+                },
                 sector_weights={
                     snapshot.run_id: serialize_named_values(snapshot.sectors.latest_weighted) for snapshot in snapshots
                 },
             ),
             research=self._serialize_research(snapshots),
+        )
+
+    @staticmethod
+    def _serialize_launch(snapshots: list[PerformanceSnapshot]) -> DashboardLaunchModel:
+        config = DEFAULT_LAUNCH_CONFIG.global_config
+        benchmark = snapshots[0].benchmark if snapshots else BenchmarkConfig.default_kospi200()
+        as_of_date = None
+        if snapshots:
+            as_of_date = max(snapshot.strategy_equity.index.max() for snapshot in snapshots).date().isoformat()
+        return DashboardLaunchModel(
+            configured_start_date=config.start,
+            configured_end_date=config.end,
+            capital=config.capital,
+            schedule=config.schedule,
+            fill_mode=config.fill_mode,
+            benchmark=BenchmarkModel(code=benchmark.code, name=benchmark.name),
+            as_of_date=as_of_date,
         )
 
     def _read_run(self, run_id: str) -> SavedRun:
@@ -152,6 +183,20 @@ class DashboardPayloadService:
         ]
 
     @staticmethod
+    def _serialize_rolling_correlation(snapshots: list[PerformanceSnapshot]) -> list[RollingSeriesModel]:
+        return [
+            RollingSeriesModel(
+                run_id=snapshot.run_id,
+                label=snapshot.display_name,
+                benchmark=BenchmarkModel(code=snapshot.benchmark.code, name=snapshot.benchmark.name),
+                window=snapshot.rolling.window if snapshot.rolling.window else ROLLING_WINDOW,
+                points=serialize_value_points(snapshot.rolling.series["rolling_correlation"]),
+            )
+            for snapshot in snapshots
+            if not snapshot.rolling.series["rolling_correlation"].dropna().empty
+        ]
+
+    @staticmethod
     def _serialize_research(snapshots: list[PerformanceSnapshot]) -> DashboardResearchModel:
         return DashboardResearchModel(
             focus=ResearchFocusModel(kind="all-selected", label="All Selected", value=None),
@@ -161,6 +206,10 @@ class DashboardPayloadService:
             },
             return_distribution={
                 snapshot.run_id: serialize_distribution(snapshot.research.return_distribution) for snapshot in snapshots
+            },
+            monthly_return_distribution={
+                snapshot.run_id: serialize_distribution(snapshot.research.monthly_return_distribution)
+                for snapshot in snapshots
             },
             yearly_excess_returns={
                 snapshot.run_id: serialize_named_series(
