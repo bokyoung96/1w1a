@@ -245,6 +245,36 @@ textarea {
   gap: 18px;
 }
 
+.detail-metric-grid {
+  display: grid;
+  gap: 12px;
+  border: 1px solid rgba(247, 240, 231, 0.15);
+  border-radius: 16px;
+  padding: 16px;
+  background: var(--panel);
+}
+
+.detail-metric-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.detail-metric-row strong {
+  font-size: 0.95rem;
+  letter-spacing: normal;
+}
+
+.detail-metric-row--empty {
+  justify-content: center;
+  color: var(--muted);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
 .workspace-strip-grid {
   grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.88fr);
   align-items: stretch;
@@ -255,8 +285,9 @@ textarea {
 }
 
 .detail-band {
-  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-  align-items: start;
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
 }
 
 .research-grid--full {

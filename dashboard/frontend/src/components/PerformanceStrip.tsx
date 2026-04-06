@@ -25,6 +25,10 @@ function focusLabel(focus: ResearchFocus, dashboard: DashboardPayload) {
   return "Focus: All selected";
 }
 
+function normalizeFocusLabel(value: string) {
+  return value.replace(/\s(?:쨌|夷?)\s/g, " · ");
+}
+
 function formatLaunchText(value: string | null) {
   return value ?? "n/a";
 }
@@ -196,27 +200,19 @@ export function PerformanceStrip({ dashboard, focus, onFocusChange }: Performanc
                 <dd>{formatLaunchText(dashboard.launch.configuredEndDate)}</dd>
               </div>
               <div>
-                <dt>Capital</dt>
-                <dd>{formatLaunchMoney(dashboard.launch.capital)}</dd>
-              </div>
-              <div>
-                <dt>Schedule</dt>
-                <dd>{formatLaunchText(dashboard.launch.schedule)}</dd>
-              </div>
-              <div>
-                <dt>Fill mode</dt>
-                <dd>{formatLaunchText(dashboard.launch.fillMode)}</dd>
-              </div>
-              <div>
-                <dt>Benchmark setup</dt>
+                <dt>Benchmark</dt>
                 <dd>{benchmarkSummary(dashboard)}</dd>
+              </div>
+              <div>
+                <dt>Costs</dt>
+                <dd>{`fee 0% / tax 0% / slippage 0%`}</dd>
               </div>
             </dl>
           </section>
 
           <div className="focus-banner">
             <span className="section-label">Detail focus</span>
-            <strong>{focusLabel(focus, dashboard)}</strong>
+            <strong>{normalizeFocusLabel(focusLabel(focus, dashboard))}</strong>
           </div>
 
           {selectedRuns.map((run) => {

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { ContextDrawer } from "../components/ContextDrawer";
 import { DiagnosticStrip } from "../components/DiagnosticStrip";
 import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
@@ -191,7 +190,6 @@ export function App() {
             <ResearchWorkspace dashboard={dashboard} focus={focus} onFocusChange={setFocus} />
             <div className="detail-band">
               <ExposureBand dashboard={dashboard} focus={focus} onFocusChange={setFocus} />
-              <ContextDrawer dashboard={dashboard} focus={focus} onFocusChange={setFocus} />
             </div>
           </div>
         ) : null}

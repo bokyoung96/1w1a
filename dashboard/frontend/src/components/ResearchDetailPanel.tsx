@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-import { formatMoney, formatPercent } from "../lib/format";
+import { formatPercent } from "../lib/format";
 import type { DashboardPayload, DrawdownEpisode, ResearchFocus } from "../lib/types";
 
 type ResearchDetailPanelProps = {
@@ -41,14 +41,6 @@ function flattenEpisodes(dashboard: DashboardPayload, runIds: string[]) {
   });
 }
 
-function renderEpisodeStatus(episode: DrawdownEpisode) {
-  if (!episode.recovered) {
-    return "Open";
-  }
-
-  return episode.recoveryDays == null ? "Recovered" : `${episode.recoveryDays}d recovery`;
-}
-
 function contributionMethodLabel(method: string) {
   if (method === WEIGHTED_ASSET_RETURN_METHOD) {
     return "Weighted asset return attribution";
@@ -57,9 +49,29 @@ function contributionMethodLabel(method: string) {
   return method || "not provided";
 }
 
+function formatNumberValue(value: number, digits = 2) {
+  return value.toFixed(digits);
+}
+
 export function ResearchDetailPanel({ dashboard, focus }: ResearchDetailPanelProps) {
   const runIds = visibleRunIds(dashboard, focus);
   const episodes = flattenEpisodes(dashboard, runIds);
+  const metricRunId =
+    focus.kind === "strategy" && dashboard.metrics[focus.runId] ? focus.runId : runIds[0] ?? "";
+  const metric = metricRunId ? dashboard.metrics[metricRunId] : undefined;
+  const metricRows = metric
+    ? [
+        ["Sharpe", formatNumberValue(metric.sharpe, 2)],
+        ["Calmar", formatNumberValue(metric.calmar, 2)],
+        ["Information Ratio", formatNumberValue(metric.informationRatio, 2)],
+        ["Hit Rate", formatPercent(metric.cagr / Math.max(metric.cumulativeReturn, 1e-6), 1)],
+        ["Profit / Risk", formatPercent(metric.cagr / Math.max(metric.maxDrawdown, 1e-6), 2)],
+      ]
+    : [];
+  const toughest = episodes.filter((entry) => !entry.episode.recovered);
+  const longestOpen = toughest.sort(
+    (left, right) => right.episode.durationDays - left.episode.durationDays,
+  )[0];
 
   return (
     <motion.section
@@ -71,7 +83,7 @@ export function ResearchDetailPanel({ dashboard, focus }: ResearchDetailPanelPro
       <div className="detail-section-copy">
         <p className="section-label">Details</p>
         <h2>Research details</h2>
-        <p className="workspace-summary">Key metrics and drawdown episodes for the current focus.</p>
+        <p className="workspace-summary">Key metrics and drawdown context for the current focus.</p>
       </div>
 
       <div className="focus-banner focus-banner--inline">
@@ -80,67 +92,24 @@ export function ResearchDetailPanel({ dashboard, focus }: ResearchDetailPanelPro
       </div>
 
       <div className="detail-panel-grid">
-        <div className="detail-table-shell">
-          <table className="detail-table" aria-label="Detail metrics">
-            <thead>
-              <tr>
-                <th scope="col">Strategy</th>
-                <th scope="col">Return</th>
-                <th scope="col">Sharpe</th>
-                <th scope="col">Max drawdown</th>
-                <th scope="col">Final equity</th>
-              </tr>
-            </thead>
-            <tbody>
-              {runIds.map((runId) => {
-                const metric = dashboard.metrics[runId];
-                const label = dashboard.context[runId]?.label ?? runId;
-                return (
-                  <tr key={runId}>
-                    <th scope="row">{label}</th>
-                    <td>{metric ? formatPercent(metric.cumulativeReturn) : "n/a"}</td>
-                    <td>{metric ? metric.sharpe.toFixed(2) : "n/a"}</td>
-                    <td>{metric ? formatPercent(metric.maxDrawdown) : "n/a"}</td>
-                    <td>{metric ? formatMoney(metric.finalEquity) : "n/a"}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="detail-metric-grid">
+          {metricRows.length > 0 ? (
+            metricRows.map(([label, value]) => (
+              <div key={label} className="detail-metric-row">
+                <span>{label}</span>
+                <strong>{value}</strong>
+              </div>
+            ))
+          ) : (
+            <div className="detail-metric-row detail-metric-row--empty">
+              <span>No metric data available.</span>
+            </div>
+          )}
         </div>
-
-        <div className="detail-table-shell">
-          <table className="detail-table" aria-label="Drawdown episodes">
-            <thead>
-              <tr>
-                <th scope="col">Strategy</th>
-                <th scope="col">Peak</th>
-                <th scope="col">Trough</th>
-                <th scope="col">Drawdown</th>
-                <th scope="col">Duration</th>
-                <th scope="col">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {episodes.length > 0 ? (
-                episodes.map(({ runId, label, episode }) => (
-                  <tr key={`${runId}-${episode.peak}-${episode.trough}`}>
-                    <th scope="row">{label}</th>
-                    <td>{episode.peak}</td>
-                    <td>{episode.trough}</td>
-                    <td>{formatPercent(episode.drawdown)}</td>
-                    <td>{episode.durationDays}d</td>
-                    <td>{renderEpisodeStatus(episode)}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <th scope="row">No drawdowns</th>
-                  <td colSpan={5}>No drawdown episodes are available for the current focus.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div className="detail-note">
+          <span className="section-label">Toughest drawdown</span>
+          <strong>{longestOpen ? `${longestOpen.episode.durationDays}d open` : "None in progress"}</strong>
+          <p>{longestOpen ? `Peaked ${longestOpen.episode.peak}` : "All drawdowns recovered."}</p>
         </div>
       </div>
 

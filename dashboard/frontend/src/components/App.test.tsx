@@ -683,7 +683,7 @@ describe("App", () => {
     await user.click(screen.getByRole("button", { name: "Focus strategy Momentum" }));
 
     expect(screen.getByText((text) => text.startsWith("Focus: Strategy") && text.includes("Momentum"))).toBeInTheDocument();
-    expect(screen.getByRole("table", { name: "Detail metrics" })).toBeInTheDocument();
+    expect(screen.getByText("Sharpe")).toBeInTheDocument();
 
     const exposureBand = screen.getByRole("region", { name: "Exposure band" });
     await user.click(within(exposureBand).getByRole("button", { name: "Focus sector Tech" }));
@@ -719,9 +719,8 @@ describe("App", () => {
     expect(within(comparisonPlane).getByText("Launch metadata")).toBeInTheDocument();
     expect(within(comparisonPlane).getByText("Configured start")).toBeInTheDocument();
     expect(within(comparisonPlane).getByText("Configured end")).toBeInTheDocument();
-    expect(within(comparisonPlane).getByText("Capital")).toBeInTheDocument();
-    expect(within(comparisonPlane).getByText("Schedule")).toBeInTheDocument();
-    expect(within(comparisonPlane).getByText("Fill mode")).toBeInTheDocument();
+    expect(within(comparisonPlane).getByText("Benchmark")).toBeInTheDocument();
+    expect(within(comparisonPlane).getByText("Costs")).toBeInTheDocument();
   });
 
   it("renders rolling risk diagnostics for Sharpe, correlation, and beta", async () => {
