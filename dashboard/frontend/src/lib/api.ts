@@ -1,14 +1,19 @@
 import type {
+  BenchmarkOption,
   CategoryPoint,
   CategorySeries,
   DashboardContext,
+  DashboardLaunch,
   DashboardMetric,
   DashboardPayload,
   DistributionBin,
   DrawdownEpisode,
   ExposureHolding,
   HeatmapCell,
+  HoldingPerformance,
+  LaunchBenchmarkContext,
   NamedSeries,
+  RollingSeries,
   RunOption,
   SeriesPoint,
   SessionBootstrap,
@@ -85,6 +90,25 @@ function normalizeNamedSeries(value: unknown): NamedSeries {
   };
 }
 
+function normalizeBenchmarkOption(value: unknown): BenchmarkOption {
+  const candidate = asRecord(value);
+
+  return {
+    code: asString(candidate.code),
+    name: asString(candidate.name),
+  };
+}
+
+function normalizeRollingSeries(value: unknown): RollingSeries {
+  const candidate = asRecord(value);
+
+  return {
+    ...normalizeNamedSeries(value),
+    benchmark: normalizeBenchmarkOption(candidate.benchmark),
+    window: asNumber(candidate.window),
+  };
+}
+
 function normalizeCategorySeries(value: unknown): CategorySeries {
   const candidate = asRecord(value);
 
@@ -110,6 +134,73 @@ function normalizeHolding(value: unknown): ExposureHolding {
     symbol: asString(candidate.symbol),
     targetWeight: asNumber(candidate.target_weight ?? candidate.targetWeight),
     absWeight: asNumber(candidate.abs_weight ?? candidate.absWeight),
+  };
+}
+
+function normalizeHoldingPerformance(value: unknown): HoldingPerformance {
+  const candidate = asRecord(value);
+
+  return {
+    ...normalizeHolding(value),
+    returnSinceLatestRebalance: asNumber(
+      candidate.return_since_latest_rebalance ?? candidate.returnSinceLatestRebalance,
+    ),
+  };
+}
+
+function normalizeLaunchBenchmarkContext(value: unknown): LaunchBenchmarkContext | null {
+  const candidate = asRecord(value);
+  if (Object.keys(candidate).length === 0) {
+    return null;
+  }
+
+  const strategies = Array.isArray(candidate.strategies)
+    ? candidate.strategies.map((entry) => {
+        const strategy = asRecord(entry);
+        return {
+          strategy: asString(strategy.strategy),
+          label: asString(strategy.label),
+          benchmark: normalizeBenchmarkOption(strategy.benchmark),
+        };
+      })
+    : [];
+
+  return {
+    kind: asString(candidate.kind),
+    shared: candidate.shared == null ? null : normalizeBenchmarkOption(candidate.shared),
+    strategies,
+  };
+}
+
+function normalizeLaunch(value: unknown): DashboardLaunch {
+  const candidate = asRecord(value);
+
+  return {
+    configuredStartDate:
+      candidate.configured_start_date == null && candidate.configuredStartDate == null
+        ? null
+        : asString(candidate.configured_start_date ?? candidate.configuredStartDate),
+    configuredEndDate:
+      candidate.configured_end_date == null && candidate.configuredEndDate == null
+        ? null
+        : asString(candidate.configured_end_date ?? candidate.configuredEndDate),
+    capital:
+      candidate.capital == null
+        ? null
+        : asNumber(candidate.capital),
+    schedule:
+      candidate.schedule == null
+        ? null
+        : asString(candidate.schedule),
+    fillMode:
+      candidate.fill_mode == null && candidate.fillMode == null
+        ? null
+        : asString(candidate.fill_mode ?? candidate.fillMode),
+    benchmark: normalizeLaunchBenchmarkContext(candidate.benchmark),
+    asOfDate:
+      candidate.as_of_date == null && candidate.asOfDate == null
+        ? null
+        : asString(candidate.as_of_date ?? candidate.asOfDate),
   };
 }
 
@@ -209,6 +300,7 @@ function normalizeDashboardPayload(value: unknown): DashboardPayload {
   const research = asRecord(candidate.research);
   const rollingSharpeInput = rolling.rolling_sharpe ?? rolling.rollingSharpe;
   const rollingBetaInput = rolling.rolling_beta ?? rolling.rollingBeta;
+  const rollingCorrelationInput = rolling.rolling_correlation ?? rolling.rollingCorrelation;
   const holdingsCountInput = exposure.holdings_count ?? exposure.holdingsCount;
 
   return {
@@ -217,6 +309,7 @@ function normalizeDashboardPayload(value: unknown): DashboardPayload {
       ? candidate.selectedRunIds.filter((runId): runId is string => typeof runId === "string")
       : [],
     availableRuns: Array.isArray(candidate.availableRuns) ? candidate.availableRuns.map(normalizeRunOption) : [],
+    launch: normalizeLaunch(candidate.launch),
     metrics: Object.fromEntries(
       Object.entries(metricsInput).map(([runId, entry]) => [runId, normalizeMetric(entry, runId)]),
     ),
@@ -232,10 +325,21 @@ function normalizeDashboardPayload(value: unknown): DashboardPayload {
     rolling: {
       rollingSharpe: Array.isArray(rollingSharpeInput) ? rollingSharpeInput.map(normalizeNamedSeries) : [],
       rollingBeta: Array.isArray(rollingBetaInput) ? rollingBetaInput.map(normalizeNamedSeries) : [],
+      rollingCorrelation: Array.isArray(rollingCorrelationInput)
+        ? rollingCorrelationInput.map(normalizeRollingSeries)
+        : [],
     },
     exposure: {
       holdingsCount: Array.isArray(holdingsCountInput) ? holdingsCountInput.map(normalizeNamedSeries) : [],
       latestHoldings: normalizeRecordArray(exposure.latest_holdings ?? exposure.latestHoldings, normalizeHolding),
+      latestHoldingsWinners: normalizeRecordArray(
+        exposure.latest_holdings_winners ?? exposure.latestHoldingsWinners,
+        normalizeHoldingPerformance,
+      ),
+      latestHoldingsLosers: normalizeRecordArray(
+        exposure.latest_holdings_losers ?? exposure.latestHoldingsLosers,
+        normalizeHoldingPerformance,
+      ),
       sectorWeights: normalizeRecordArray(exposure.sector_weights ?? exposure.sectorWeights, normalizeCategoryPoint),
     },
     research: {
@@ -253,6 +357,10 @@ function normalizeDashboardPayload(value: unknown): DashboardPayload {
       monthlyHeatmap: normalizeRecordArray(research.monthly_heatmap ?? research.monthlyHeatmap, normalizeHeatmapCell),
       returnDistribution: normalizeRecordArray(
         research.return_distribution ?? research.returnDistribution,
+        normalizeDistributionBin,
+      ),
+      monthlyReturnDistribution: normalizeRecordArray(
+        research.monthly_return_distribution ?? research.monthlyReturnDistribution,
         normalizeDistributionBin,
       ),
       yearlyExcessReturns: normalizeRecordArray(

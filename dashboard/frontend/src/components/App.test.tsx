@@ -32,13 +32,13 @@ const RUNS = [
     run_id: "momentum_run",
     label: "Momentum",
     strategy: "momentum",
-    summary: { final_equity: 100000000, avg_turnover: 0.12 },
+    summary: { finalEquity: 100000000, avgTurnover: 0.12 },
   },
   {
     run_id: "value_run",
     label: "OP Fwd Yield",
     strategy: "op_fwd_yield",
-    summary: { final_equity: 105000000, avg_turnover: 0.2 },
+    summary: { finalEquity: 105000000, avgTurnover: 0.2 },
   },
 ];
 

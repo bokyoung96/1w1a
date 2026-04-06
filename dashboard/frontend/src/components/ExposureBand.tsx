@@ -1,7 +1,8 @@
+import EChartsReact from "echarts-for-react";
 import { motion } from "framer-motion";
 
 import { formatPercent } from "../lib/format";
-import type { DashboardPayload, ResearchFocus } from "../lib/types";
+import type { DashboardPayload, HoldingPerformance, ResearchFocus } from "../lib/types";
 
 const MAX_VISIBLE_HOLDINGS = 5;
 
@@ -17,6 +18,59 @@ function resolveRunIds(dashboard: DashboardPayload, focus: ResearchFocus) {
   }
 
   return dashboard.selectedRunIds;
+}
+
+function buildSectorSnapshotOption(
+  label: string,
+  sectors: Array<{
+    name: string;
+    value: number;
+  }>,
+) {
+  return {
+    backgroundColor: "transparent",
+    tooltip: {
+      trigger: "item" as const,
+      backgroundColor: "rgba(15, 18, 21, 0.96)",
+      borderColor: "rgba(240, 164, 75, 0.22)",
+      textStyle: { color: "#f7f0e7" },
+      formatter: (params: { name: string; value: number }) => `${params.name}: ${formatPercent(params.value, 2)}`,
+    },
+    legend: {
+      bottom: 0,
+      textStyle: { color: "#bdaea1", fontFamily: "inherit" },
+    },
+    series: [
+      {
+        name: `${label} sector snapshot`,
+        type: "pie" as const,
+        radius: ["50%", "72%"],
+        center: ["50%", "44%"],
+        avoidLabelOverlap: true,
+        label: { color: "#f7f0e7", formatter: "{b}" },
+        labelLine: { lineStyle: { color: "rgba(247, 240, 231, 0.22)" } },
+        itemStyle: { borderColor: "#12161a", borderWidth: 2 },
+        data: sectors,
+      },
+    ],
+  };
+}
+
+function renderHoldingRows(holdings: HoldingPerformance[]) {
+  return holdings.length > 0 ? (
+    holdings.map((holding) => (
+      <div key={holding.symbol} className="detail-list-row">
+        <strong>{holding.symbol}</strong>
+        <span>{formatPercent(holding.absWeight)}</span>
+        <span>{formatPercent(holding.returnSinceLatestRebalance, 2)}</span>
+      </div>
+    ))
+  ) : (
+    <div className="detail-list-row detail-list-row--empty">
+      <strong>No holdings</strong>
+      <span>latest snapshot missing</span>
+    </div>
+  );
 }
 
 export function ExposureBand({ dashboard, focus, onFocusChange }: ExposureBandProps) {
@@ -135,6 +189,106 @@ export function ExposureBand({ dashboard, focus, onFocusChange }: ExposureBandPr
           );
         })}
       </div>
+
+      <div className="detail-panel-grid">
+        <section className="detail-run-block" aria-label="Latest holdings winners">
+          <div className="detail-subsection-head">
+            <span>Latest holdings winners</span>
+            <span>Top performers since rebalance</span>
+          </div>
+          <div className="detail-run-list">
+            {runIds.map((runId) => {
+              const context = dashboard.context[runId];
+              const winners = (dashboard.exposure.latestHoldingsWinners[runId] ?? []).slice(0, MAX_VISIBLE_HOLDINGS);
+
+              return (
+                <div key={`winners-${runId}`} className="detail-run-block detail-run-block--nested">
+                  <div className="detail-run-head">
+                    <strong>{context?.label ?? runId}</strong>
+                    <span>{winners.length} lines</span>
+                  </div>
+                  <div className="detail-column-labels">
+                    <span>Symbol</span>
+                    <span>Weight</span>
+                    <span>Return</span>
+                  </div>
+                  <div className="detail-list">{renderHoldingRows(winners)}</div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="detail-run-block" aria-label="Latest holdings losers">
+          <div className="detail-subsection-head">
+            <span>Latest holdings losers</span>
+            <span>Lagging since rebalance</span>
+          </div>
+          <div className="detail-run-list">
+            {runIds.map((runId) => {
+              const context = dashboard.context[runId];
+              const losers = (dashboard.exposure.latestHoldingsLosers[runId] ?? []).slice(0, MAX_VISIBLE_HOLDINGS);
+
+              return (
+                <div key={`losers-${runId}`} className="detail-run-block detail-run-block--nested">
+                  <div className="detail-run-head">
+                    <strong>{context?.label ?? runId}</strong>
+                    <span>{losers.length} lines</span>
+                  </div>
+                  <div className="detail-column-labels">
+                    <span>Symbol</span>
+                    <span>Weight</span>
+                    <span>Return</span>
+                  </div>
+                  <div className="detail-list">{renderHoldingRows(losers)}</div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      </div>
+
+      <section className="detail-run-block" aria-label="Latest sector snapshot">
+        <div className="detail-subsection-head">
+          <span>Latest sector snapshot</span>
+          <span>Latest allocation mix by selected strategy</span>
+        </div>
+        <div className="detail-panel-grid">
+          {runIds.map((runId) => {
+            const run = dashboard.availableRuns.find((entry) => entry.run_id === runId);
+            const context = dashboard.context[runId];
+            const sectors = dashboard.exposure.sectorWeights[runId] ?? [];
+
+            return (
+              <div key={`sector-snapshot-${runId}`} className="detail-run-block detail-run-block--nested">
+                <div className="detail-run-head">
+                  <strong>{context?.label ?? run?.label ?? runId}</strong>
+                  <span>{sectors.length} sectors</span>
+                </div>
+                {sectors.length > 0 ? (
+                  <>
+                    <div className="detail-chart-shell">
+                      <EChartsReact
+                        option={buildSectorSnapshotOption(context?.label ?? run?.label ?? runId, sectors)}
+                        style={{ height: 260, width: "100%" }}
+                      />
+                    </div>
+                    <div className="detail-note">
+                      <strong>{sectors[0]?.name ?? "Top sector"}</strong>
+                      <p>{sectors[0] ? `${formatPercent(sectors[0].value)} of latest snapshot.` : "No sector snapshot available."}</p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="detail-note">
+                    <strong>No sectors</strong>
+                    <p>Latest sector snapshot is unavailable.</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
     </motion.section>
   );
 }

@@ -15,14 +15,44 @@ const STRATEGY_COLORS = ["#f0a44b", "#e3c06b", "#7cb8d8", "#c98f7d", "#8fa77f", 
 function focusLabel(focus: ResearchFocus, dashboard: DashboardPayload) {
   if (focus.kind === "strategy") {
     const context = dashboard.context[focus.runId];
-    return `Focus: Strategy · ${context?.label ?? focus.runId}`;
+    return `Focus: Strategy 쨌 ${context?.label ?? focus.runId}`;
   }
 
   if (focus.kind === "sector") {
-    return `Focus: Sector · ${focus.sectorName}`;
+    return `Focus: Sector 쨌 ${focus.sectorName}`;
   }
 
   return "Focus: All selected";
+}
+
+function normalizeLegacySeparator(value: string) {
+  return value.replace(/\s(?:쨌|夷\?)\s/g, " \u00b7 ");
+}
+
+function formatLaunchText(value: string | null) {
+  return value ?? "n/a";
+}
+
+function formatLaunchMoney(value: number | null) {
+  return value == null ? "n/a" : formatMoney(value);
+}
+
+function benchmarkSummary(dashboard: DashboardPayload) {
+  const benchmark = dashboard.launch.benchmark;
+
+  if (!benchmark) {
+    return "n/a";
+  }
+
+  if (benchmark.kind === "shared" && benchmark.shared) {
+    return benchmark.shared.name;
+  }
+
+  if (benchmark.strategies.length === 0) {
+    return "Strategy-specific";
+  }
+
+  return benchmark.strategies.map((entry) => `${entry.label}: ${entry.benchmark.name}`).join(" | ");
 }
 
 export function PerformanceStrip({ dashboard, focus, onFocusChange }: PerformanceStripProps) {
@@ -155,9 +185,42 @@ export function PerformanceStrip({ dashboard, focus, onFocusChange }: Performanc
         </motion.div>
 
         <div className="workspace-metrics workspace-metrics--stack">
+          <section className="workspace-metadata-rail" aria-label="Launch metadata">
+            <div className="workspace-metadata-head">
+              <span className="section-label">Launch metadata</span>
+              <span>{dashboard.launch.asOfDate ? `As of ${dashboard.launch.asOfDate}` : "Snapshot context"}</span>
+            </div>
+            <dl className="workspace-metadata-grid">
+              <div>
+                <dt>Configured start</dt>
+                <dd>{formatLaunchText(dashboard.launch.configuredStartDate)}</dd>
+              </div>
+              <div>
+                <dt>Configured end</dt>
+                <dd>{formatLaunchText(dashboard.launch.configuredEndDate)}</dd>
+              </div>
+              <div>
+                <dt>Capital</dt>
+                <dd>{formatLaunchMoney(dashboard.launch.capital)}</dd>
+              </div>
+              <div>
+                <dt>Schedule</dt>
+                <dd>{formatLaunchText(dashboard.launch.schedule)}</dd>
+              </div>
+              <div>
+                <dt>Fill mode</dt>
+                <dd>{formatLaunchText(dashboard.launch.fillMode)}</dd>
+              </div>
+              <div>
+                <dt>Benchmark setup</dt>
+                <dd>{benchmarkSummary(dashboard)}</dd>
+              </div>
+            </dl>
+          </section>
+
           <div className="focus-banner">
             <span className="section-label">Detail focus</span>
-            <strong>{focusLabel(focus, dashboard)}</strong>
+            <strong>{normalizeLegacySeparator(focusLabel(focus, dashboard))}</strong>
           </div>
 
           {selectedRuns.map((run) => {
@@ -187,9 +250,7 @@ export function PerformanceStrip({ dashboard, focus, onFocusChange }: Performanc
                   <span>Final equity</span>
                   <span>{run.metric ? formatMoney(run.metric.finalEquity) : "n/a"}</span>
                 </div>
-                <span className="workspace-metric-action">
-                  Focus strategy {run.label}
-                </span>
+                <span className="workspace-metric-action">Focus strategy {run.label}</span>
               </button>
             );
           })}

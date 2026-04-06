@@ -43,6 +43,10 @@ function formatNumberValue(value: number, digits = 2) {
   return value.toFixed(digits);
 }
 
+function normalizeLegacySeparator(value: string) {
+  return value.replace(/\s(?:쨌|夷\?)\s/g, " \u00b7 ");
+}
+
 function contributionSubtitle(method: string) {
   if (method === WEIGHTED_ASSET_RETURN_METHOD) {
     return "How much each sector added or detracted over time.";
@@ -95,6 +99,10 @@ function runLabel(dashboard: DashboardPayload, runId: string) {
 
 function hasDistributionData(dashboard: DashboardPayload, runIds: string[]) {
   return runIds.some((runId) => (dashboard.research.returnDistribution[runId] ?? []).length > 0);
+}
+
+function hasMonthlyDistributionData(dashboard: DashboardPayload, runIds: string[]) {
+  return runIds.some((runId) => (dashboard.research.monthlyReturnDistribution[runId] ?? []).length > 0);
 }
 
 function hasSeriesData(series: NamedSeries[]) {
@@ -196,9 +204,13 @@ function buildReturnDrawdownOption(dashboard: DashboardPayload, runIds: string[]
   };
 }
 
-function buildDistributionOption(dashboard: DashboardPayload, runIds: string[]) {
+function buildDistributionOption(
+  dashboard: DashboardPayload,
+  runIds: string[],
+  distributionSource: Record<string, DistributionBin[]>,
+) {
   const series = runIds.map((runId) => {
-    const bins = dashboard.research.returnDistribution[runId] ?? [];
+    const bins = distributionSource[runId] ?? [];
     return {
       name: runLabel(dashboard, runId),
       type: "line" as const,
@@ -337,7 +349,7 @@ function buildLineOption(
       splitLine: { lineStyle: { color: "rgba(247, 240, 231, 0.08)" } },
     },
     series: series.map((entry) => ({
-      name: labelFormatter ? labelFormatter(entry) : entry.label,
+      name: normalizeLegacySeparator(labelFormatter ? labelFormatter(entry) : entry.label),
       type: "line" as const,
       data: entry.points.map((point) => [point.date, point.value]),
       showSymbol: false,
@@ -350,7 +362,7 @@ function buildLineOption(
 }
 
 function buildSectorWeightHeatmapOption(series: NamedSeries[]) {
-  const labels = series.map((entry) => entry.label);
+  const labels = series.map((entry) => normalizeLegacySeparator(entry.label));
   const dates = Array.from(
     new Set(series.flatMap((entry) => entry.points.map((point) => point.date))),
   ).sort();
@@ -527,6 +539,8 @@ export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchW
   const activeHeatmapLabel = activeHeatmapRunId ? runLabel(dashboard, activeHeatmapRunId) : "Selected run";
   const heatmapCells = activeHeatmapRunId ? dashboard.research.monthlyHeatmap[activeHeatmapRunId] ?? [] : [];
   const rollingSharpeSeries = dashboard.rolling.rollingSharpe.filter((series) => runIds.includes(series.runId));
+  const rollingCorrelationSeries = dashboard.rolling.rollingCorrelation.filter((series) => runIds.includes(series.runId));
+  const rollingBetaSeries = dashboard.rolling.rollingBeta.filter((series) => runIds.includes(series.runId));
   const sectorContributionSeries = collectSectorSeries(dashboard, runIds, dashboard.research.sectorContributionSeries, activeSectorNames);
   const sectorWeightSeries = collectSectorSeries(dashboard, runIds, dashboard.research.sectorWeightSeries, activeSectorNames);
 
@@ -616,10 +630,20 @@ export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchW
         <ResearchFigure
           title="Return distribution"
           subtitle="Where daily returns cluster and how wide the tails are."
-          option={buildDistributionOption(dashboard, runIds)}
+          option={buildDistributionOption(dashboard, runIds, dashboard.research.returnDistribution)}
           isEmpty={!hasDistributionData(dashboard, runIds)}
           emptyMessage="No return distribution data."
         />
+        <ResearchFigure
+          title="Monthly return distribution"
+          subtitle="How monthly outcomes cluster across the selected strategies."
+          option={buildDistributionOption(dashboard, runIds, dashboard.research.monthlyReturnDistribution)}
+          isEmpty={!hasMonthlyDistributionData(dashboard, runIds)}
+          emptyMessage="No monthly return distribution data."
+        />
+      </div>
+
+      <div className="research-grid research-grid--double">
         <ResearchFigure
           title="Monthly heatmap"
           subtitle={`Monthly returns for ${activeHeatmapLabel}.`}
@@ -627,16 +651,48 @@ export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchW
           isEmpty={!hasHeatmapData(heatmapCells)}
           emptyMessage="No monthly return data."
         />
+        <ResearchFigure
+          title="Rolling Sharpe"
+          subtitle="Rolling risk-adjusted return."
+          option={buildLineOption(
+            rollingSharpeSeries,
+            undefined,
+            (value) => formatNumberValue(value),
+            (value) => formatNumberValue(value, 1),
+          )}
+          isEmpty={!hasSeriesData(rollingSharpeSeries)}
+          emptyMessage="No rolling Sharpe data."
+        />
       </div>
 
       <div className="research-grid research-grid--double">
         <ResearchFigure
-          title="Rolling Sharpe"
-          subtitle="Rolling risk-adjusted return."
-          option={buildLineOption(rollingSharpeSeries, undefined, (value) => formatNumberValue(value), (value) => formatNumberValue(value, 1))}
-          isEmpty={!hasSeriesData(rollingSharpeSeries)}
-          emptyMessage="No rolling Sharpe data."
+          title="Rolling correlation"
+          subtitle="Rolling correlation against each selected benchmark."
+          option={buildLineOption(
+            rollingCorrelationSeries,
+            undefined,
+            (value) => formatNumberValue(value),
+            (value) => formatNumberValue(value, 1),
+          )}
+          isEmpty={!hasSeriesData(rollingCorrelationSeries)}
+          emptyMessage="No rolling correlation data."
         />
+        <ResearchFigure
+          title="Rolling beta"
+          subtitle="Rolling beta versus each selected benchmark."
+          option={buildLineOption(
+            rollingBetaSeries,
+            undefined,
+            (value) => formatNumberValue(value),
+            (value) => formatNumberValue(value, 1),
+          )}
+          isEmpty={!hasSeriesData(rollingBetaSeries)}
+          emptyMessage="No rolling beta data."
+        />
+      </div>
+
+      <div className="research-grid research-grid--double">
         <ResearchFigure
           title="Yearly excess returns"
           subtitle="Annual return minus benchmark."
