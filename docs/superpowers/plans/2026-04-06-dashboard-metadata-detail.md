@@ -4,7 +4,7 @@
 
 **Goal:** Trim the hero metadata rail to start/end/benchmark/costs, normalize focus text, remove the ContextDrawer, and replace the Research Detail tables with a compact metrics grid plus the toughest drawdown highlight.
 
-**Architecture:** Update PerformanceStrip for the refreshed launch rail and focus caption, remove ContextDrawer, and rework ResearchDetailPanel to render the requested metrics directly from dashboard.metrics. Leave the rest of the workspace unchanged but adjust layout spacing once the drawer is gone.
+**Architecture:** Update PerformanceStrip for the refreshed launch rail and focus banner, remove ContextDrawer, and rework ResearchDetailPanel to render the requested metrics directly from dashboard.metrics. Keep the rest of the workspace unchanged while adjusting layout spacing after the drawer removal.
 
 **Tech Stack:** React + TypeScript, Vitest, ECharts, FastAPI payload.
 
