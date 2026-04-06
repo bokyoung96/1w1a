@@ -25,10 +25,6 @@ function focusLabel(focus: ResearchFocus, dashboard: DashboardPayload) {
   return "Focus: All selected";
 }
 
-function normalizeLegacySeparator(value: string) {
-  return value.replace(/\s(?:쨌|夷\?)\s/g, " \u00b7 ");
-}
-
 function formatLaunchText(value: string | null) {
   return value ?? "n/a";
 }
@@ -220,7 +216,7 @@ export function PerformanceStrip({ dashboard, focus, onFocusChange }: Performanc
 
           <div className="focus-banner">
             <span className="section-label">Detail focus</span>
-            <strong>{normalizeLegacySeparator(focusLabel(focus, dashboard))}</strong>
+            <strong>{focusLabel(focus, dashboard)}</strong>
           </div>
 
           {selectedRuns.map((run) => {

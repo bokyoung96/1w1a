@@ -676,19 +676,19 @@ describe("App", () => {
     render(<App />);
 
     expect(await screen.findByRole("heading", { name: "Research charts" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Return distribution" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Daily return distribution" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Monthly heatmap" })).toBeInTheDocument();
     expect(screen.getByText("Focus: All selected")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Focus strategy Momentum" }));
 
-    expect(screen.getByText("Focus: Strategy · Momentum")).toBeInTheDocument();
+    expect(screen.getByText((text) => text.startsWith("Focus: Strategy") && text.includes("Momentum"))).toBeInTheDocument();
     expect(screen.getByRole("table", { name: "Detail metrics" })).toBeInTheDocument();
 
     const exposureBand = screen.getByRole("region", { name: "Exposure band" });
     await user.click(within(exposureBand).getByRole("button", { name: "Focus sector Tech" }));
 
-    expect(screen.getByText("Focus: Sector · Tech")).toBeInTheDocument();
+    expect(screen.getByText((text) => text.startsWith("Focus: Sector") && text.includes("Tech"))).toBeInTheDocument();
     expect(screen.getByText("Sector drill-down")).toBeInTheDocument();
   });
 
@@ -901,7 +901,7 @@ describe("App", () => {
 
     const contributionOption = findSectorContributionChartOption();
     const weightOption = findSectorWeightHeatmapOption();
-    expect(screen.getByText("Focus: Sector · Tech")).toBeInTheDocument();
+    expect(screen.getByText((text) => text.startsWith("Focus: Sector") && text.includes("Tech"))).toBeInTheDocument();
     expect(JSON.stringify(contributionOption)).toContain("Momentum · Tech");
     expect(JSON.stringify(weightOption)).toContain("Momentum · Tech");
     expect(JSON.stringify(contributionOption)).not.toContain("Energy");

@@ -9,6 +9,8 @@ from pathlib import Path
 from dashboard.run import build_frontend, build_parser, launch_dashboard
 from dashboard.strategies import DEFAULT_LAUNCH_CONFIG
 
+EXPECTED_NPM_COMMAND = "npm.cmd" if sys.platform.startswith("win") else "npm"
+
 
 def test_launch_dashboard_reuses_matching_runs_and_executes_missing_presets(tmp_path: Path, monkeypatch) -> None:
     observed_configs = []
@@ -68,7 +70,7 @@ def test_build_frontend_runs_npm_build_without_install_when_lockfile_matches(tmp
     build_frontend(frontend_dir)
 
     assert observed_commands == [
-        (["npm", "run", "build"], frontend_dir, True),
+        ([EXPECTED_NPM_COMMAND, "run", "build"], frontend_dir, True),
     ]
 
 
@@ -87,8 +89,8 @@ def test_build_frontend_installs_dependencies_when_node_modules_are_missing(tmp_
     build_frontend(frontend_dir)
 
     assert observed_commands == [
-        (["npm", "ci"], frontend_dir, True),
-        (["npm", "run", "build"], frontend_dir, True),
+        ([EXPECTED_NPM_COMMAND, "ci"], frontend_dir, True),
+        ([EXPECTED_NPM_COMMAND, "run", "build"], frontend_dir, True),
     ]
 
 
@@ -113,8 +115,8 @@ def test_build_frontend_reinstalls_when_lockfile_is_newer_than_install_marker(tm
     build_frontend(frontend_dir)
 
     assert observed_commands == [
-        (["npm", "ci"], frontend_dir, True),
-        (["npm", "run", "build"], frontend_dir, True),
+        ([EXPECTED_NPM_COMMAND, "ci"], frontend_dir, True),
+        ([EXPECTED_NPM_COMMAND, "run", "build"], frontend_dir, True),
     ]
 
 
@@ -143,9 +145,9 @@ def test_build_frontend_retries_after_clearing_corrupt_node_modules(tmp_path: Pa
     build_frontend(frontend_dir)
 
     assert observed_commands == [
-        (["npm", "ci"], frontend_dir, True),
-        (["npm", "ci"], frontend_dir, True),
-        (["npm", "run", "build"], frontend_dir, True),
+        ([EXPECTED_NPM_COMMAND, "ci"], frontend_dir, True),
+        ([EXPECTED_NPM_COMMAND, "ci"], frontend_dir, True),
+        ([EXPECTED_NPM_COMMAND, "run", "build"], frontend_dir, True),
     ]
     assert removed_paths == [(node_modules, True)]
 

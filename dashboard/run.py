@@ -28,9 +28,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def build_frontend(frontend_dir: Path) -> None:
+    npm_command = _resolve_npm_command()
     if _needs_npm_install(frontend_dir):
-        _install_frontend_dependencies(frontend_dir)
-    subprocess.run(["npm", "run", "build"], cwd=frontend_dir, check=True)
+        _install_frontend_dependencies(frontend_dir, npm_command=npm_command)
+    subprocess.run([npm_command, "run", "build"], cwd=frontend_dir, check=True)
 
 
 def launch_dashboard(
@@ -99,8 +100,20 @@ def _needs_npm_install(frontend_dir: Path) -> bool:
     return False
 
 
-def _install_frontend_dependencies(frontend_dir: Path) -> None:
-    install_command = ["npm", "ci"] if (frontend_dir / "package-lock.json").is_file() else ["npm", "install"]
+def _resolve_npm_command() -> str:
+    candidates = ["npm.cmd", "npm"] if sys.platform.startswith("win") else ["npm"]
+    for candidate in candidates:
+        if shutil.which(candidate):
+            return candidate
+    raise FileNotFoundError("npm executable not found. Install Node.js and ensure npm is available on PATH.")
+
+
+def _install_frontend_dependencies(frontend_dir: Path, *, npm_command: str) -> None:
+    install_command = (
+        [npm_command, "ci"]
+        if (frontend_dir / "package-lock.json").is_file()
+        else [npm_command, "install"]
+    )
 
     try:
         subprocess.run(install_command, cwd=frontend_dir, check=True)

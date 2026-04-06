@@ -11,7 +11,7 @@ export function TopRail({ selectionCount }: TopRailProps) {
       </div>
       <div className="top-rail-meta">
         <span className="top-rail-pill">{selectionCount} selected</span>
-        <span className="top-rail-pill">KOSPI200 benchmark</span>
+        <span className="top-rail-pill">Comparison workspace</span>
       </div>
     </header>
   );

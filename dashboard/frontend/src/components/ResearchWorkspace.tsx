@@ -43,10 +43,6 @@ function formatNumberValue(value: number, digits = 2) {
   return value.toFixed(digits);
 }
 
-function normalizeLegacySeparator(value: string) {
-  return value.replace(/\s(?:쨌|夷\?)\s/g, " \u00b7 ");
-}
-
 function contributionSubtitle(method: string) {
   if (method === WEIGHTED_ASSET_RETURN_METHOD) {
     return "How much each sector added or detracted over time.";
@@ -349,7 +345,7 @@ function buildLineOption(
       splitLine: { lineStyle: { color: "rgba(247, 240, 231, 0.08)" } },
     },
     series: series.map((entry) => ({
-      name: normalizeLegacySeparator(labelFormatter ? labelFormatter(entry) : entry.label),
+      name: labelFormatter ? labelFormatter(entry) : entry.label,
       type: "line" as const,
       data: entry.points.map((point) => [point.date, point.value]),
       showSymbol: false,
@@ -362,7 +358,7 @@ function buildLineOption(
 }
 
 function buildSectorWeightHeatmapOption(series: NamedSeries[]) {
-  const labels = series.map((entry) => normalizeLegacySeparator(entry.label));
+  const labels = series.map((entry) => entry.label);
   const dates = Array.from(
     new Set(series.flatMap((entry) => entry.points.map((point) => point.date))),
   ).sort();
@@ -628,7 +624,7 @@ export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchW
 
       <div className="research-grid research-grid--double">
         <ResearchFigure
-          title="Return distribution"
+          title="Daily return distribution"
           subtitle="Where daily returns cluster and how wide the tails are."
           option={buildDistributionOption(dashboard, runIds, dashboard.research.returnDistribution)}
           isEmpty={!hasDistributionData(dashboard, runIds)}
@@ -665,7 +661,7 @@ export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchW
         />
       </div>
 
-      <div className="research-grid research-grid--double">
+      <div className="research-grid research-grid--triple">
         <ResearchFigure
           title="Rolling correlation"
           subtitle="Rolling correlation against each selected benchmark."
@@ -690,9 +686,6 @@ export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchW
           isEmpty={!hasSeriesData(rollingBetaSeries)}
           emptyMessage="No rolling beta data."
         />
-      </div>
-
-      <div className="research-grid research-grid--double">
         <ResearchFigure
           title="Yearly excess returns"
           subtitle="Annual return minus benchmark."
