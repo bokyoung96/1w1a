@@ -372,6 +372,18 @@ textarea {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.research-sector-trends {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.research-sector-trends__pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
 .workspace-chart-plane,
 .research-figure,
 .detail-table-shell,

@@ -203,10 +203,11 @@ function buildReturnDrawdownOption(dashboard: DashboardPayload, runIds: string[]
 function buildDistributionOption(
   dashboard: DashboardPayload,
   runIds: string[],
-  distributionSource: Record<string, DistributionBin[]>,
+  distributionSource?: Record<string, DistributionBin[]>,
 ) {
+  const source = distributionSource ?? {};
   const series = runIds.map((runId) => {
-    const bins = distributionSource[runId] ?? [];
+    const bins = source[runId] ?? [];
     return {
       name: runLabel(dashboard, runId),
       type: "line" as const,
@@ -396,28 +397,146 @@ function buildSectorWeightHeatmapOption(series: NamedSeries[]) {
       axisLine: { lineStyle: { color: "rgba(247, 240, 231, 0.18)" } },
       splitArea: { show: true },
     },
-    visualMap: {
-      min: minValue,
-      max: maxValue,
-      calculable: true,
-      orient: "horizontal" as const,
-      left: "center" as const,
-      bottom: 0,
-      textStyle: { color: "#bdaea1" },
-      formatter: (value: number) => formatPercentValue(value, 0),
-      inRange: {
-        color: ["#5a2e28", "#a4684f", "#171b1f", "#7cb8d8", "#d4b15c"],
+      visualMap: {
+        min: minValue,
+        max: maxValue,
+        calculable: true,
+        orient: "horizontal" as const,
+        left: "center" as const,
+        bottom: 0,
+        textStyle: { color: "#bdaea1" },
+        formatter: (value: number) => formatPercentValue(value, 0),
+        inRange: {
+          color: ["#5a2e28", "#a4684f", "#171b1f", "#7cb8d8", "#d4b15c"],
+        },
+      },
+      series: [
+        {
+          name: "Sector weight",
+          type: "heatmap" as const,
+          data,
+          label: { show: false },
+          emphasis: { itemStyle: { shadowBlur: 8, shadowColor: "rgba(0, 0, 0, 0.3)" } },
+        },
+      ],
+    };
+  }
+
+function buildNormalizedSectorWeightsOption(dashboard: DashboardPayload, runId: string) {
+  const sectors = dashboard.research.sectorWeightSeries[runId] ?? [];
+  const dates = Array.from(
+    new Set(sectors.flatMap((entry) => entry.points.map((point) => point.date))),
+  ).sort();
+
+  return {
+    ...chartBase(),
+    grid: { left: 12, right: 18, top: 34, bottom: 28, containLabel: true },
+    tooltip: {
+      ...chartBase().tooltip,
+      formatter: (params: Array<{ seriesName: string; axisValue?: string | number; data: [string, number] | number }>) => {
+        if (params.length === 0) {
+          return "";
+        }
+        const header = params[0].axisValue ?? "";
+        const lines = header ? [`${header}`] : [];
+        params.forEach((entry) => {
+          const value = Array.isArray(entry.data) ? entry.data[1] : entry.data;
+          lines.push(`${entry.seriesName}: ${formatPercentValue(value, 1)}`);
+        });
+        return lines.join("<br/>");
       },
     },
-    series: [
-      {
-        name: "Sector weight",
-        type: "heatmap" as const,
-        data,
-        label: { show: false },
-        emphasis: { itemStyle: { shadowBlur: 8, shadowColor: "rgba(0, 0, 0, 0.3)" } },
+    xAxis: {
+      type: "category" as const,
+      data: dates,
+      axisLine: { lineStyle: { color: "rgba(247, 240, 231, 0.18)" } },
+      axisLabel: { color: "#bdaea1" },
+      splitLine: { show: false },
+    },
+    yAxis: {
+      type: "value" as const,
+      min: 0,
+      max: 1,
+      axisLabel: {
+        color: "#bdaea1",
+        formatter: (value: number) => formatPercentValue(value, 0),
       },
-    ],
+      splitLine: { lineStyle: { color: "rgba(247, 240, 231, 0.08)" } },
+    },
+    series: sectors.map((entry) => ({
+      name: entry.name,
+      type: "line" as const,
+      data: dates.map((date) => {
+        const point = entry.points.find((item) => item.date === date);
+        return point ? point.value : 0;
+      }),
+      stack: "sector-weights",
+      areaStyle: { opacity: 0.6 },
+      showSymbol: false,
+      smooth: true,
+      emphasis: { focus: "series" as const },
+      lineStyle: { width: 1.6 },
+    })),
+  };
+}
+
+function buildCumulativeContributionOption(dashboard: DashboardPayload, runId: string) {
+  const sectors = dashboard.research.sectorContributionSeries[runId] ?? [];
+  const dates = Array.from(
+    new Set(sectors.flatMap((entry) => entry.points.map((point) => point.date))),
+  ).sort();
+
+  return {
+    ...chartBase(),
+    grid: { left: 12, right: 18, top: 34, bottom: 28, containLabel: true },
+    tooltip: {
+      ...chartBase().tooltip,
+      formatter: (params: Array<{ seriesName: string; axisValue?: string | number; data: [string, number] | number }>) => {
+        if (params.length === 0) {
+          return "";
+        }
+        const header = params[0].axisValue ?? "";
+        const lines = header ? [`${header}`] : [];
+        params.forEach((entry) => {
+          const value = Array.isArray(entry.data) ? entry.data[1] : entry.data;
+          lines.push(`${entry.seriesName}: ${formatPercentValue(value, 1)}`);
+        });
+        return lines.join("<br/>");
+      },
+    },
+    xAxis: {
+      type: "category" as const,
+      data: dates,
+      axisLine: { lineStyle: { color: "rgba(247, 240, 231, 0.18)" } },
+      axisLabel: { color: "#bdaea1" },
+      splitLine: { show: false },
+    },
+    yAxis: {
+      type: "value" as const,
+      axisLabel: {
+        color: "#bdaea1",
+        formatter: (value: number) => formatPercentValue(value, 0),
+      },
+      splitLine: { lineStyle: { color: "rgba(247, 240, 231, 0.08)" } },
+    },
+    series: sectors.map((entry) => {
+      let runningTotal = 0;
+      const pointsByDate = new Map(entry.points.map((point) => [point.date, point.value]));
+      const cumulative = dates.map((date) => {
+        runningTotal += pointsByDate.get(date) ?? 0;
+        return runningTotal;
+      });
+      return {
+        name: entry.name,
+        type: "line" as const,
+        data: cumulative,
+        areaStyle: { opacity: 0.32 },
+        showSymbol: false,
+        smooth: true,
+        emphasis: { focus: "series" as const },
+        lineStyle: { width: 1.8 },
+      };
+    }),
   };
 }
 
@@ -539,6 +658,17 @@ export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchW
   const rollingBetaSeries = dashboard.rolling.rollingBeta.filter((series) => runIds.includes(series.runId));
   const sectorContributionSeries = collectSectorSeries(dashboard, runIds, dashboard.research.sectorContributionSeries, activeSectorNames);
   const sectorWeightSeries = collectSectorSeries(dashboard, runIds, dashboard.research.sectorWeightSeries, activeSectorNames);
+  const strategySectorTrends = runIds.map((runId) => {
+    const weightSeries = dashboard.research.sectorWeightSeries[runId] ?? [];
+    const contributionSeries = dashboard.research.sectorContributionSeries[runId] ?? [];
+    return {
+      runId,
+      label: runLabel(dashboard, runId),
+      weightOption: buildNormalizedSectorWeightsOption(dashboard, runId),
+      contributionOption: buildCumulativeContributionOption(dashboard, runId),
+      hasData: weightSeries.length > 0 && contributionSeries.length > 0,
+    };
+  });
 
   return (
     <section className="research-workspace">
@@ -695,26 +825,28 @@ export function ResearchWorkspace({ dashboard, focus, onFocusChange }: ResearchW
         />
       </div>
 
-      <div className="research-grid research-grid--double">
-        <ResearchFigure
-          title="Sector contribution series"
-          subtitle={
-            selectedSectorNames.length > 0
-              ? `Selected sectors: ${selectedSectorNames.join(", ")}.`
-              : contributionSubtitle(dashboard.research.sectorContributionMethod)
-          }
-          option={buildLineOption(sectorContributionSeries)}
-          isEmpty={!hasSeriesData(sectorContributionSeries)}
-          emptyMessage="No sector contribution data."
-        />
-        <ResearchFigure
-          title="Sector weight series"
-          subtitle="How sector exposure was distributed across time."
-          option={buildSectorWeightHeatmapOption(sectorWeightSeries)}
-          isEmpty={!hasSeriesData(sectorWeightSeries)}
-          emptyMessage="No sector weight data."
-        />
-      </div>
+      {strategySectorTrends.length > 0 && (
+        <div className="research-grid research-sector-trends">
+          {strategySectorTrends.map(({ runId, label, weightOption, contributionOption, hasData }) => (
+            <div key={runId} className="research-sector-trends__pair">
+              <ResearchFigure
+                title={`Sector weights (normalized 100%) — ${label}`}
+                subtitle="How exposure shares stack up."
+                option={weightOption}
+                isEmpty={!hasData}
+                emptyMessage="No sector data for this strategy."
+              />
+              <ResearchFigure
+                title={`Sector contribution (cumulative) — ${label}`}
+                subtitle="Cumulative attribution per sector."
+                option={contributionOption}
+                isEmpty={!hasData}
+                emptyMessage="No sector data for this strategy."
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       <ResearchDetailPanel dashboard={dashboard} focus={focus} />
     </section>
