@@ -222,7 +222,9 @@ def test_dashboard_payload_includes_monthly_return_distribution(tmp_path: Path) 
     app.dependency_overrides.clear()
     assert response.status_code == 200
     payload = response.json()
-    assert payload["research"]["returnDistribution"]["alpha_20240430_100000"]
+    daily_distribution = payload["research"]["returnDistribution"]["alpha_20240430_100000"]
+    assert len(daily_distribution) == 6
+    assert sum(bin_entry["count"] for bin_entry in daily_distribution) == 6
     monthly_distribution = payload["research"]["monthlyReturnDistribution"]["alpha_20240430_100000"]
     assert len(monthly_distribution) == 6
     assert monthly_distribution[0]["count"] == 1
