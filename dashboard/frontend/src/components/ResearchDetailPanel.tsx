@@ -1,14 +1,12 @@
 import { motion } from "framer-motion";
 
 import { formatPercent } from "../lib/format";
-import type { DashboardPayload, DrawdownEpisode, ResearchFocus } from "../lib/types";
+import type { DashboardPayload, ResearchFocus, SeriesPoint } from "../lib/types";
 
 type ResearchDetailPanelProps = {
   dashboard: DashboardPayload;
   focus: ResearchFocus;
 };
-
-const WEIGHTED_ASSET_RETURN_METHOD = "weighted-asset-return-attribution";
 
 function visibleRunIds(dashboard: DashboardPayload, focus: ResearchFocus) {
   if (focus.kind === "strategy" && dashboard.selectedRunIds.includes(focus.runId)) {
@@ -41,16 +39,30 @@ function flattenEpisodes(dashboard: DashboardPayload, runIds: string[]) {
   });
 }
 
-function contributionMethodLabel(method: string) {
-  if (method === WEIGHTED_ASSET_RETURN_METHOD) {
-    return "Weighted asset return attribution";
-  }
-
-  return method || "not provided";
-}
-
 function formatNumberValue(value: number, digits = 2) {
   return value.toFixed(digits);
+}
+
+function formatRewardRisk(value: number) {
+  if (!Number.isFinite(value)) {
+    return value === 0 ? "n/a" : "∞";
+  }
+  return `${value.toFixed(2)}:1`;
+}
+
+function computeValueDiffs(series?: SeriesPoint[]) {
+  if (!series || series.length < 2) {
+    return [];
+  }
+  const values: number[] = [];
+  for (let index = 1; index < series.length; index += 1) {
+    const previous = series[index - 1].value;
+    const current = series[index].value;
+    if (Number.isFinite(previous) && Number.isFinite(current)) {
+      values.push(current - previous);
+    }
+  }
+  return values;
 }
 
 export function ResearchDetailPanel({ dashboard, focus }: ResearchDetailPanelProps) {
@@ -59,19 +71,32 @@ export function ResearchDetailPanel({ dashboard, focus }: ResearchDetailPanelPro
   const metricRunId =
     focus.kind === "strategy" && dashboard.metrics[focus.runId] ? focus.runId : runIds[0] ?? "";
   const metric = metricRunId ? dashboard.metrics[metricRunId] : undefined;
-  const metricRows = metric
-    ? [
-        ["Sharpe", formatNumberValue(metric.sharpe, 2)],
-        ["Calmar", formatNumberValue(metric.calmar, 2)],
-        ["Information Ratio", formatNumberValue(metric.informationRatio, 2)],
-        ["Hit Rate", formatPercent(metric.cagr / Math.max(metric.cumulativeReturn, 1e-6), 1)],
-        ["Profit / Risk", formatPercent(metric.cagr / Math.max(metric.maxDrawdown, 1e-6), 2)],
-      ]
-    : [];
-  const toughest = episodes.filter((entry) => !entry.episode.recovered);
-  const longestOpen = toughest.sort(
+  const seriesPoints = dashboard.performance.series.find((series) => series.runId === metricRunId)?.points;
+  const diffs = computeValueDiffs(seriesPoints);
+  const positiveDiffs = diffs.filter((value) => value > 0);
+  const negativeDiffs = diffs.filter((value) => value < 0);
+  const hitRate = diffs.length ? positiveDiffs.length / diffs.length : 0;
+  const avgGain = positiveDiffs.length > 0 ? positiveDiffs.reduce((sum, value) => sum + value, 0) / positiveDiffs.length : 0;
+  const avgLoss =
+    negativeDiffs.length > 0
+      ? negativeDiffs.reduce((sum, value) => sum + Math.abs(value), 0) / negativeDiffs.length
+      : 0;
+  const profitRisk = avgLoss === 0 ? (avgGain > 0 ? Infinity : 0) : avgGain / avgLoss;
+  const openEpisodes = episodes.filter((entry) => !entry.episode.recovered);
+  const longestOpen = [...openEpisodes].sort(
     (left, right) => right.episode.durationDays - left.episode.durationDays,
   )[0];
+  const fallbackEpisode = [...episodes].sort((left, right) => right.episode.drawdown - left.episode.drawdown)[0];
+  const toughestEpisode = longestOpen ?? fallbackEpisode;
+  const metricOrder: Array<[string, string]> = [
+    ["Cumulative return", formatPercent(metric?.cumulativeReturn ?? 0, 1)],
+    ["Max drawdown", formatPercent(metric?.maxDrawdown ?? 0, 1)],
+    ["Sharpe", formatNumberValue(metric?.sharpe ?? 0, 2)],
+    ["Calmar", formatNumberValue(metric?.calmar ?? 0, 2)],
+    ["Information Ratio", formatNumberValue(metric?.informationRatio ?? 0, 2)],
+    ["Hit Rate", diffs.length ? formatPercent(hitRate, 1) : "n/a"],
+    ["Profit / Risk", formatRewardRisk(profitRisk)],
+  ];
 
   return (
     <motion.section
@@ -92,39 +117,32 @@ export function ResearchDetailPanel({ dashboard, focus }: ResearchDetailPanelPro
       </div>
 
       <div className="detail-panel-grid">
-        <div className="detail-metric-grid">
-          {metricRows.length > 0 ? (
-            metricRows.map(([label, value]) => (
-              <div key={label} className="detail-metric-row">
-                <span>{label}</span>
-                <strong>{value}</strong>
-              </div>
-            ))
-          ) : (
-            <div className="detail-metric-row detail-metric-row--empty">
-              <span>No metric data available.</span>
+        <div className="detail-metric-strip detail-metric-strip--row">
+          {metricOrder.map(([label, value]) => (
+            <div key={label} className="detail-metric-chip">
+              <span>{label}</span>
+              <strong>{value}</strong>
             </div>
-          )}
-        </div>
-        <div className="detail-note">
-          <span className="section-label">Toughest drawdown</span>
-          <strong>{longestOpen ? `${longestOpen.episode.durationDays}d open` : "None in progress"}</strong>
-          <p>{longestOpen ? `Peaked ${longestOpen.episode.peak}` : "All drawdowns recovered."}</p>
+          ))}
         </div>
       </div>
 
-      <div className="detail-note-list">
-        <div className="detail-note">
-          <span className="section-label">Sector contribution</span>
-          <strong>Sector contribution series</strong>
-          <p>Method: {contributionMethodLabel(dashboard.research.sectorContributionMethod)}.</p>
-        </div>
-        <div className="detail-note">
-          <span className="section-label">Benchmark</span>
-          <strong>Yearly excess returns</strong>
-          <p>Excess return panels remain benchmark-relative for each selected run.</p>
-        </div>
+      <div className="detail-note">
+        <span className="section-label">Toughest drawdown</span>
+        <strong>
+          {toughestEpisode
+            ? `${toughestEpisode.label}: ${(toughestEpisode.episode.drawdown * 100).toFixed(1)}% · ${toughestEpisode.episode.durationDays}d`
+            : "No drawdowns recorded"}
+        </strong>
+        <p>
+          {toughestEpisode
+            ? toughestEpisode.episode.recovered
+              ? `Recovered in ${toughestEpisode.episode.recoveryDays ?? "?"} days (trough ${toughestEpisode.episode.trough}).`
+              : `Still open since ${toughestEpisode.episode.start}.`
+            : "Awaiting drawdown data."}
+        </p>
       </div>
+
     </motion.section>
   );
 }
