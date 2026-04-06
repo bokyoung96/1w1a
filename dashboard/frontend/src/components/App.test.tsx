@@ -549,10 +549,17 @@ function findResearchReturnDrawdownOption() {
   });
 }
 
+type ChartLineSeries = {
+  name?: string;
+  type?: string;
+  data?: Array<[string | number, number]>;
+  tooltip?: { valueFormatter?: (value: number) => string };
+};
+
 function findRollingSharpeOption() {
   return chartOptions.find((option) => {
     const xAxis = (option as { xAxis?: { type?: string } }).xAxis;
-    const series = (option as { series?: Array<{ name?: string; type?: string; tooltip?: { valueFormatter?: (value: number) => string } }> }).series ?? [];
+    const series = (option as { series?: ChartLineSeries[] }).series ?? [];
     const momentumSeries = series.find((entry) => entry.name === "Momentum");
     const valueSeries = series.find((entry) => entry.name === "OP Fwd Yield");
     return (
@@ -568,7 +575,7 @@ function findRollingSharpeOption() {
 
 function findRollingCorrelationOption() {
   return chartOptions.find((option) => {
-    const series = (option as { series?: Array<{ name?: string; type?: string; data?: Array<[string, number]> }> }).series ?? [];
+    const series = (option as { series?: ChartLineSeries[] }).series ?? [];
     const momentumSeries = series.find((entry) => entry.name === "Momentum");
     const valueSeries = series.find((entry) => entry.name === "OP Fwd Yield");
     return (
@@ -582,7 +589,7 @@ function findRollingCorrelationOption() {
 
 function findRollingBetaOption() {
   return chartOptions.find((option) => {
-    const series = (option as { series?: Array<{ name?: string; type?: string; data?: Array<[string, number]> }> }).series ?? [];
+    const series = (option as { series?: ChartLineSeries[] }).series ?? [];
     const momentumSeries = series.find((entry) => entry.name === "Momentum");
     const valueSeries = series.find((entry) => entry.name === "OP Fwd Yield");
     return (
@@ -597,14 +604,15 @@ function findRollingBetaOption() {
 function findDailyDistributionOption() {
   return chartOptions.find((option) => {
     const xAxis = (option as { xAxis?: { type?: string } }).xAxis;
-    const series = (option as { series?: Array<{ name?: string; type?: string; data?: Array<[number, number]> }> }).series ?? [];
+    const series = (option as { series?: ChartLineSeries[] }).series ?? [];
     const seriesNames = series.map((entry) => entry.name);
+    const momentumSeries = series.find((entry) => entry.name === "Momentum");
     return (
       xAxis?.type === "value" &&
       series.every((entry) => entry.type === "line") &&
       seriesNames.includes("Momentum") &&
-      series[0]?.data?.some((point) => point[0] === -0.03) &&
-      series[0]?.data?.some((point) => point[0] === 0.03)
+      momentumSeries?.data?.some((point) => point[0] === -0.03) &&
+      momentumSeries?.data?.some((point) => point[0] === 0.03)
     );
   });
 }
@@ -612,14 +620,15 @@ function findDailyDistributionOption() {
 function findMonthlyDistributionOption() {
   return chartOptions.find((option) => {
     const xAxis = (option as { xAxis?: { type?: string } }).xAxis;
-    const series = (option as { series?: Array<{ name?: string; type?: string; data?: Array<[number, number]> }> }).series ?? [];
+    const series = (option as { series?: ChartLineSeries[] }).series ?? [];
     const seriesNames = series.map((entry) => entry.name);
+    const momentumSeries = series.find((entry) => entry.name === "Momentum");
     return (
       xAxis?.type === "value" &&
       series.every((entry) => entry.type === "line") &&
       seriesNames.includes("Momentum") &&
-      series[0]?.data?.some((point) => point[0] === -0.045) &&
-      series[0]?.data?.some((point) => point[0] === 0.045)
+      momentumSeries?.data?.some((point) => point[0] === -0.045) &&
+      momentumSeries?.data?.some((point) => point[0] === 0.045)
     );
   });
 }
@@ -723,9 +732,10 @@ describe("App", () => {
 
     expect(await screen.findByRole("heading", { name: "Research charts" })).toBeInTheDocument();
     const rollingSharpeOption = findRollingSharpeOption() as {
-      series: Array<{ name: string; tooltip?: { valueFormatter?: (value: number) => string } }>;
+      series: Array<ChartLineSeries>;
     };
-    expect(rollingSharpeOption.series[0]?.tooltip?.valueFormatter?.(1.14)).toBe("1.14");
+    const momentumSharpeSeries = rollingSharpeOption.series.find((series) => series.name === "Momentum");
+    expect(momentumSharpeSeries?.tooltip?.valueFormatter?.(1.14)).toBe("1.14");
     expect(findRollingCorrelationOption()).toMatchObject({
       series: [
         expect.objectContaining({
@@ -798,8 +808,14 @@ describe("App", () => {
     render(<App />);
 
     const exposureBand = await screen.findByRole("region", { name: "Exposure band" });
-    const winnersPanel = within(exposureBand).getByRole("region", { name: /Latest holdings winners/i });
-    const losersPanel = within(exposureBand).getByRole("region", { name: /Latest holdings losers/i });
+    const exposureHeading = within(exposureBand).getByRole("heading", { name: "Latest holdings and sector context" });
+    const exposurePanel = exposureHeading.closest("section");
+    if (!exposurePanel) {
+      throw new Error("exposure panel not found");
+    }
+
+    const winnersPanel = within(exposurePanel).getByRole("region", { name: /Latest holdings winners/i });
+    const losersPanel = within(exposurePanel).getByRole("region", { name: /Latest holdings losers/i });
 
     expect(within(winnersPanel).getByText("TSLA")).toBeInTheDocument();
     expect(within(losersPanel).getByText("AAPL")).toBeInTheDocument();
