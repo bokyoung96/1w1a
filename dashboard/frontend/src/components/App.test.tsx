@@ -564,6 +564,64 @@ function findRollingSharpeOption() {
   });
 }
 
+function findRollingCorrelationOption() {
+  return chartOptions.find((option) => {
+    const series = (option as { series?: Array<{ name?: string; type?: string; data?: Array<[string, number]> }> }).series ?? [];
+    const momentumSeries = series.find((entry) => entry.name === "Momentum");
+    const valueSeries = series.find((entry) => entry.name === "OP Fwd Yield");
+    return (
+      series.length === 2 &&
+      series.every((entry) => entry.type === "line") &&
+      momentumSeries?.data?.some((point) => point[1] === 0.72) &&
+      valueSeries?.data?.some((point) => point[1] === 0.58)
+    );
+  });
+}
+
+function findRollingBetaOption() {
+  return chartOptions.find((option) => {
+    const series = (option as { series?: Array<{ name?: string; type?: string; data?: Array<[string, number]> }> }).series ?? [];
+    const momentumSeries = series.find((entry) => entry.name === "Momentum");
+    const valueSeries = series.find((entry) => entry.name === "OP Fwd Yield");
+    return (
+      series.length === 2 &&
+      series.every((entry) => entry.type === "line") &&
+      momentumSeries?.data?.some((point) => point[1] === 0.88) &&
+      valueSeries?.data?.some((point) => point[1] === 0.61)
+    );
+  });
+}
+
+function findDailyDistributionOption() {
+  return chartOptions.find((option) => {
+    const xAxis = (option as { xAxis?: { type?: string } }).xAxis;
+    const series = (option as { series?: Array<{ name?: string; type?: string; data?: Array<[number, number]> }> }).series ?? [];
+    const seriesNames = series.map((entry) => entry.name);
+    return (
+      xAxis?.type === "value" &&
+      series.every((entry) => entry.type === "line") &&
+      seriesNames.includes("Momentum") &&
+      series[0]?.data?.some((point) => point[0] === -0.03) &&
+      series[0]?.data?.some((point) => point[0] === 0.03)
+    );
+  });
+}
+
+function findMonthlyDistributionOption() {
+  return chartOptions.find((option) => {
+    const xAxis = (option as { xAxis?: { type?: string } }).xAxis;
+    const series = (option as { series?: Array<{ name?: string; type?: string; data?: Array<[number, number]> }> }).series ?? [];
+    const seriesNames = series.map((entry) => entry.name);
+    return (
+      xAxis?.type === "value" &&
+      series.every((entry) => entry.type === "line") &&
+      seriesNames.includes("Momentum") &&
+      series[0]?.data?.some((point) => point[0] === -0.045) &&
+      series[0]?.data?.some((point) => point[0] === 0.045)
+    );
+  });
+}
+
 async function selectorScope() {
   const selector = (await screen.findByText("Select saved runs")).closest("section");
   if (!selector) {
@@ -642,13 +700,17 @@ describe("App", () => {
 
     render(<App />);
 
-    expect(await screen.findByText("Comparison plane")).toBeInTheDocument();
-    expect(screen.getByText("Launch metadata")).toBeInTheDocument();
-    expect(screen.getByText("Configured start")).toBeInTheDocument();
-    expect(screen.getByText("Configured end")).toBeInTheDocument();
-    expect(screen.getByText("Capital")).toBeInTheDocument();
-    expect(screen.getByText("Schedule")).toBeInTheDocument();
-    expect(screen.getByText("Fill mode")).toBeInTheDocument();
+    const comparisonPlane = (await screen.findByText("Comparison plane")).closest("section");
+    if (!comparisonPlane) {
+      throw new Error("comparison plane not found");
+    }
+
+    expect(within(comparisonPlane).getByText("Launch metadata")).toBeInTheDocument();
+    expect(within(comparisonPlane).getByText("Configured start")).toBeInTheDocument();
+    expect(within(comparisonPlane).getByText("Configured end")).toBeInTheDocument();
+    expect(within(comparisonPlane).getByText("Capital")).toBeInTheDocument();
+    expect(within(comparisonPlane).getByText("Schedule")).toBeInTheDocument();
+    expect(within(comparisonPlane).getByText("Fill mode")).toBeInTheDocument();
   });
 
   it("renders rolling risk diagnostics for Sharpe, correlation, and beta", async () => {
@@ -658,10 +720,40 @@ describe("App", () => {
     render(<App />);
 
     expect(await screen.findByRole("heading", { name: "Research charts" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Rolling risk/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Rolling Sharpe" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Rolling Correlation" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Rolling Beta" })).toBeInTheDocument();
+    expect(findRollingSharpeOption()).toMatchObject({
+      series: [
+        expect.objectContaining({ name: "Momentum", type: "line" }),
+        expect.objectContaining({ name: "OP Fwd Yield", type: "line" }),
+      ],
+    });
+    expect(findRollingCorrelationOption()).toMatchObject({
+      series: [
+        expect.objectContaining({
+          name: "Momentum",
+          type: "line",
+          data: expect.arrayContaining([expect.arrayContaining([expect.any(String), 0.72])]),
+        }),
+        expect.objectContaining({
+          name: "OP Fwd Yield",
+          type: "line",
+          data: expect.arrayContaining([expect.arrayContaining([expect.any(String), 0.58])]),
+        }),
+      ],
+    });
+    expect(findRollingBetaOption()).toMatchObject({
+      series: [
+        expect.objectContaining({
+          name: "Momentum",
+          type: "line",
+          data: expect.arrayContaining([expect.arrayContaining([expect.any(String), 0.88])]),
+        }),
+        expect.objectContaining({
+          name: "OP Fwd Yield",
+          type: "line",
+          data: expect.arrayContaining([expect.arrayContaining([expect.any(String), 0.61])]),
+        }),
+      ],
+    });
   });
 
   it("shows daily and monthly return distributions separately", async () => {
@@ -671,8 +763,32 @@ describe("App", () => {
     render(<App />);
 
     expect(await screen.findByRole("heading", { name: "Research charts" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Daily return distribution/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Monthly return distribution/i })).toBeInTheDocument();
+    expect(findDailyDistributionOption()).toMatchObject({
+      series: [
+        expect.objectContaining({
+          name: "Momentum",
+          type: "line",
+          data: expect.arrayContaining([expect.arrayContaining([expect.any(Number), expect.any(Number)])]),
+        }),
+        expect.objectContaining({
+          name: "OP Fwd Yield",
+          type: "line",
+        }),
+      ],
+    });
+    expect(findMonthlyDistributionOption()).toMatchObject({
+      series: [
+        expect.objectContaining({
+          name: "Momentum",
+          type: "line",
+          data: expect.arrayContaining([expect.arrayContaining([expect.any(Number), expect.any(Number)])]),
+        }),
+        expect.objectContaining({
+          name: "OP Fwd Yield",
+          type: "line",
+        }),
+      ],
+    });
   });
 
   it("renders latest-holdings winners and losers panels", async () => {
@@ -681,11 +797,12 @@ describe("App", () => {
 
     render(<App />);
 
-    expect(await screen.findByRole("heading", { name: "Latest holdings and sector context" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Latest holdings winners/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Latest holdings losers/i })).toBeInTheDocument();
-    expect(screen.getByText("TSLA")).toBeInTheDocument();
-    expect(screen.getByText("AAPL")).toBeInTheDocument();
+    const exposureBand = await screen.findByRole("region", { name: "Exposure band" });
+    expect(within(exposureBand).getByRole("heading", { name: "Latest holdings and sector context" })).toBeInTheDocument();
+    expect(within(exposureBand).getByRole("heading", { name: /Latest holdings winners/i })).toBeInTheDocument();
+    expect(within(exposureBand).getByRole("heading", { name: /Latest holdings losers/i })).toBeInTheDocument();
+    expect(within(exposureBand).getByText("TSLA")).toBeInTheDocument();
+    expect(within(exposureBand).getByText("AAPL")).toBeInTheDocument();
   });
 
   it("renders return distribution as a numeric distribution curve", async () => {
