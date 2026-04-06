@@ -141,6 +141,9 @@ def test_dashboard_payload_includes_launch_metadata(tmp_path: Path) -> None:
         "capital": DEFAULT_LAUNCH_CONFIG.global_config.capital,
         "schedule": DEFAULT_LAUNCH_CONFIG.global_config.schedule,
         "fillMode": DEFAULT_LAUNCH_CONFIG.global_config.fill_mode,
+        "fee": DEFAULT_LAUNCH_CONFIG.global_config.fee,
+        "sellTax": DEFAULT_LAUNCH_CONFIG.global_config.sell_tax,
+        "slippage": DEFAULT_LAUNCH_CONFIG.global_config.slippage,
         "benchmark": {
             "kind": "shared",
             "shared": {"code": "IKS200", "name": "KOSPI200"},
@@ -807,6 +810,45 @@ def test_dashboard_skips_non_finite_sector_weights_values(tmp_path: Path) -> Non
     ]
 
 
+def test_dashboard_payload_preserves_korean_sector_and_stock_names(tmp_path: Path) -> None:
+    _write_saved_run(
+        tmp_path,
+        "alpha_20260405_100000",
+        name="Alpha Strategy",
+        final_equity=110.0,
+        avg_turnover=0.03,
+        weights=[[0.6, 0.4, 0.0], [0.55, 0.45, 0.0]],
+        latest_weights_rows=[
+            {"symbol": "A005930", "target_weight": 0.55, "abs_weight": 0.55},
+            {"symbol": "A000660", "target_weight": 0.45, "abs_weight": 0.45},
+        ],
+    )
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(
+        tmp_path,
+        sector_frame=pd.DataFrame(
+            {"A": ["G45", "G45"], "B": ["G40", "G40"], "C": ["G10", "G10"]},
+            index=pd.to_datetime(["2024-01-02", "2024-01-03"]),
+        ),
+        sector_name_map={"G45": "IT", "G40": "금융", "G10": "에너지"},
+        stock_name_map={"A005930": "삼성전자", "A000660": "SK하이닉스"},
+    )
+
+    response = client.get("/api/dashboard", params=[("run_ids", "alpha_20260405_100000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["exposure"]["latestHoldings"] == {
+        "alpha_20260405_100000": [
+            {"symbol": "삼성전자 (005930)", "targetWeight": 0.55, "absWeight": 0.55},
+            {"symbol": "SK하이닉스 (000660)", "targetWeight": 0.45, "absWeight": 0.45},
+        ]
+    }
+    assert payload["exposure"]["sectorWeights"]["alpha_20260405_100000"][0]["name"] == "IT"
+
+
 def test_dashboard_returns_controlled_error_for_non_directory_run_entry(tmp_path: Path) -> None:
     (tmp_path / "broken_20260405_120000").write_text("not a directory", encoding="utf-8")
 
@@ -838,6 +880,8 @@ def _build_payload_service(
     sector_frame: pd.DataFrame | None = None,
     benchmark_frame: pd.DataFrame | None = None,
     prices_frame: pd.DataFrame | None = None,
+    sector_name_map: dict[str, str] | None = None,
+    stock_name_map: dict[str, str] | None = None,
 ) -> DashboardPayloadService:
     if benchmark_frame is None:
         benchmark_frame = pd.DataFrame(
@@ -872,6 +916,8 @@ def _build_payload_service(
             sector_repo=SectorRepository.from_frame(
                 sector_frame,
                 prices=prices_frame,
+                sector_name_map=sector_name_map,
+                stock_name_map=stock_name_map,
             ),
         ),
     )
@@ -925,7 +971,15 @@ def _write_saved_run(
         turnover_values = [avg_turnover for _ in dates]
     turnover = pd.Series(turnover_values, index=date_index, name="turnover")
     weights_frame = pd.DataFrame(weights, columns=["A", "B", "C"], index=date_index)
-    qty_frame = weights_frame.mul(10.0)
+    price_frame = pd.DataFrame(
+        {
+            "A": [100.0 + 10.0 * index for index in range(len(date_index))],
+            "B": [100.0 + 10.0 * index for index in range(len(date_index))],
+            "C": [100.0 for _ in date_index],
+        },
+        index=date_index,
+    )
+    qty_frame = weights_frame.mul(equity, axis=0).div(price_frame).fillna(0.0)
     if monthly_returns_values is not None:
         monthly_dates = pd.to_datetime(dates[: len(monthly_returns_values)])
         monthly_returns = pd.Series(monthly_returns_values, index=monthly_dates, name="monthly_returns")

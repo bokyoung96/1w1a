@@ -75,6 +75,36 @@ def test_performance_snapshot_factory_derives_latest_holdings_when_optional_tabl
     assert_frame_equal(snapshot.exposure.latest_holdings.reset_index(drop=True), expected)
 
 
+def test_performance_snapshot_factory_applies_korean_sector_and_stock_display_names() -> None:
+    run = _toy_run()
+    factory = PerformanceSnapshotFactory(
+        benchmark_repo=BenchmarkRepository.from_frame(_benchmark_prices()),
+        sector_repo=SectorRepository.from_frame(
+            _sector_map().rename(columns={"A": "A000001", "B": "A000002", "C": "A000003"}),
+            prices=_asset_prices(),
+            sector_name_map={"Tech": "기술", "Utilities": "유틸리티", "Health Care": "헬스케어"},
+            stock_name_map={"A000001": "에이", "A000002": "비", "A000003": "씨"},
+        ),
+    )
+    mapped_run = SavedRun(
+        run_id=run.run_id,
+        path=run.path,
+        config=run.config,
+        summary=run.summary,
+        equity=run.equity,
+        returns=run.returns,
+        turnover=run.turnover,
+        weights=run.weights.rename(columns={"A": "A000001", "B": "A000002", "C": "A000003"}),
+        qty=run.qty.rename(columns={"A": "A000001", "B": "A000002", "C": "A000003"}),
+        latest_weights=run.latest_weights.assign(symbol=["A000001", "A000002"]),
+    )
+
+    snapshot = factory.build(mapped_run, BenchmarkConfig.default_kospi200())
+
+    assert snapshot.sectors.latest_weighted.to_dict() == {"기술": 0.6, "유틸리티": 0.4}
+    assert snapshot.exposure.latest_holdings["symbol"].tolist() == ["에이 (000001)", "비 (000002)"]
+
+
 def test_performance_snapshot_factory_uses_fixed_252_day_rolling_window() -> None:
     run = _long_run()
     factory = PerformanceSnapshotFactory(

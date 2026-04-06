@@ -47,13 +47,16 @@ function createDashboard(mode: "single" | "multi", selectedRunIds: string[]): Da
     mode,
     selectedRunIds,
     availableRuns: RUNS,
-    launch: {
-      configuredStartDate: "2025-01-01",
-      configuredEndDate: "2025-12-31",
-      capital: 100000000,
-      schedule: "monthly",
-      fillMode: "next_open",
-      benchmark: {
+      launch: {
+        configuredStartDate: "2025-01-01",
+        configuredEndDate: "2025-12-31",
+        capital: 100000000,
+        schedule: "monthly",
+        fillMode: "next_open",
+        fee: 0,
+        sellTax: 0,
+        slippage: 0,
+        benchmark: {
         kind: "shared",
         shared: { code: "KOSPI200", name: "KOSPI200 benchmark" },
         strategies: [
@@ -513,31 +516,21 @@ function findChartOption(names: string[]) {
   });
 }
 
-function findSectorChartOptions() {
-  return chartOptions.filter((option) => {
-    const series = (option as { series?: Array<{ name?: string }> }).series ?? [];
-    return series.some((entry) => entry.name?.includes(" · "));
-  });
-}
-
-function findSectorContributionChartOption() {
-  return findSectorChartOptions()[0];
-}
-
 function findDistributionChartOption() {
   return chartOptions.find((option) => {
     const xAxis = (option as { xAxis?: { type?: string } }).xAxis;
     const series = (option as { series?: Array<{ name?: string; type?: string }> }).series ?? [];
     const seriesNames = series.map((entry) => entry.name);
-    return xAxis?.type === "value" && series.every((entry) => entry.type === "line") && seriesNames.includes("Momentum");
+    return xAxis?.type === "category" && series.every((entry) => entry.type === "bar") && seriesNames.includes("Momentum");
   });
 }
 
-function findSectorWeightHeatmapOption() {
+function findStrategySectorWeightOption() {
   return chartOptions.find((option) => {
-    const yAxis = (option as { yAxis?: { type?: string; data?: string[] } }).yAxis;
+    const yAxis = (option as { yAxis?: { min?: number; max?: number } }).yAxis;
     const series = (option as { series?: Array<{ type?: string; name?: string }> }).series ?? [];
-    return yAxis?.type === "category" && series.some((entry) => entry.type === "heatmap" && entry.name === "Sector weight");
+    const names = series.map((entry) => entry.name);
+    return yAxis?.min === 0 && yAxis?.max === 1 && series.every((entry) => entry.type === "line") && names.includes("Tech");
   });
 }
 
@@ -603,32 +596,72 @@ function findRollingBetaOption() {
 
 function findDailyDistributionOption() {
   return chartOptions.find((option) => {
-    const xAxis = (option as { xAxis?: { type?: string } }).xAxis;
-    const series = (option as { series?: ChartLineSeries[] }).series ?? [];
+    const xAxis = (option as { xAxis?: { type?: string; data?: string[] } }).xAxis;
+    const series = (option as { series?: Array<{ name?: string; type?: string; data?: number[] }> }).series ?? [];
     const seriesNames = series.map((entry) => entry.name);
     const momentumSeries = series.find((entry) => entry.name === "Momentum");
     return (
-      xAxis?.type === "value" &&
-      series.every((entry) => entry.type === "line") &&
+      xAxis?.type === "category" &&
+      xAxis.data?.includes("-4.0% to -2.0%") &&
+      xAxis.data?.includes("2.0% to 4.0%") &&
+      series.every((entry) => entry.type === "bar") &&
       seriesNames.includes("Momentum") &&
-      momentumSeries?.data?.some((point) => point[0] === -0.03) &&
-      momentumSeries?.data?.some((point) => point[0] === 0.03)
+      momentumSeries?.data?.includes(0.2) &&
+      momentumSeries?.data?.includes(0.4)
     );
   });
 }
 
 function findMonthlyDistributionOption() {
   return chartOptions.find((option) => {
-    const xAxis = (option as { xAxis?: { type?: string } }).xAxis;
-    const series = (option as { series?: ChartLineSeries[] }).series ?? [];
+    const xAxis = (option as { xAxis?: { type?: string; data?: string[] } }).xAxis;
+    const series = (option as { series?: Array<{ name?: string; type?: string; data?: number[] }> }).series ?? [];
     const seriesNames = series.map((entry) => entry.name);
     const momentumSeries = series.find((entry) => entry.name === "Momentum");
     return (
-      xAxis?.type === "value" &&
-      series.every((entry) => entry.type === "line") &&
+      xAxis?.type === "category" &&
+      xAxis.data?.includes("-6.0% to -3.0%") &&
+      xAxis.data?.includes("3.0% to 6.0%") &&
+      series.every((entry) => entry.type === "bar") &&
       seriesNames.includes("Momentum") &&
-      momentumSeries?.data?.some((point) => point[0] === -0.045) &&
-      momentumSeries?.data?.some((point) => point[0] === 0.045)
+      momentumSeries?.data?.includes(0.17) &&
+      momentumSeries?.data?.includes(0.33)
+    );
+  });
+}
+
+function findStrategySectorContributionOption() {
+  return chartOptions.find((option) => {
+    const series = (option as { series?: Array<{ name?: string; type?: string; data?: number[] }> }).series ?? [];
+    const names = series.map((entry) => entry.name);
+    return (
+      series.every((entry) => entry.type === "line") &&
+      names.includes("Tech") &&
+      names.includes("Financials") &&
+      series.some((entry) => entry.data?.includes(0.05))
+    );
+  });
+}
+
+function findFilteredStrategyContributionOption(seriesName: string) {
+  return chartOptions.find((option) => {
+    const series = (option as { series?: Array<{ name?: string; type?: string }> }).series ?? [];
+    const names = series.map((entry) => entry.name);
+    return series.every((entry) => entry.type === "line") && names.length > 0 && names.every((name) => name === seriesName);
+  });
+}
+
+function findFilteredStrategyWeightOption(seriesName: string) {
+  return chartOptions.find((option) => {
+    const yAxis = (option as { yAxis?: { min?: number; max?: number } }).yAxis;
+    const series = (option as { series?: Array<{ name?: string; type?: string }> }).series ?? [];
+    const names = series.map((entry) => entry.name);
+    return (
+      yAxis?.min === 0 &&
+      yAxis?.max === 1 &&
+      series.every((entry) => entry.type === "line") &&
+      names.length > 0 &&
+      names.every((name) => name === seriesName)
     );
   });
 }
@@ -689,7 +722,8 @@ describe("App", () => {
     await user.click(within(exposureBand).getByRole("button", { name: "Focus sector Tech" }));
 
     expect(screen.getByText((text) => text.startsWith("Focus: Sector") && text.includes("Tech"))).toBeInTheDocument();
-    expect(screen.getByText("Sector drill-down")).toBeInTheDocument();
+    expect(screen.getByText("Hit Rate")).toBeInTheDocument();
+    expect(screen.getByText("Profit / Risk")).toBeInTheDocument();
   });
 
   it("shows a simple empty-state message when return distribution data is unavailable", async () => {
@@ -776,12 +810,12 @@ describe("App", () => {
       series: [
         expect.objectContaining({
           name: "Momentum",
-          type: "line",
-          data: expect.arrayContaining([expect.arrayContaining([expect.any(Number), expect.any(Number)])]),
+          type: "bar",
+          data: expect.arrayContaining([expect.any(Number)]),
         }),
         expect.objectContaining({
           name: "OP Fwd Yield",
-          type: "line",
+          type: "bar",
         }),
       ],
     });
@@ -789,12 +823,12 @@ describe("App", () => {
       series: [
         expect.objectContaining({
           name: "Momentum",
-          type: "line",
-          data: expect.arrayContaining([expect.arrayContaining([expect.any(Number), expect.any(Number)])]),
+          type: "bar",
+          data: expect.arrayContaining([expect.any(Number)]),
         }),
         expect.objectContaining({
           name: "OP Fwd Yield",
-          type: "line",
+          type: "bar",
         }),
       ],
     });
@@ -829,10 +863,10 @@ describe("App", () => {
     await screen.findByRole("heading", { name: "Research charts" });
 
     expect(findDistributionChartOption()).toMatchObject({
-      xAxis: expect.objectContaining({ type: "value" }),
+      xAxis: expect.objectContaining({ type: "category" }),
       series: [
-        expect.objectContaining({ name: "Momentum", type: "line" }),
-        expect.objectContaining({ name: "OP Fwd Yield", type: "line" }),
+        expect.objectContaining({ name: "Momentum", type: "bar" }),
+        expect.objectContaining({ name: "OP Fwd Yield", type: "bar" }),
       ],
     });
   });
@@ -846,13 +880,13 @@ describe("App", () => {
     await screen.findByRole("heading", { name: "Research charts" });
 
     const option = findDistributionChartOption() as {
-      tooltip?: { formatter?: (params: Array<{ axisValue: number; seriesName: string; data: [number, number] }>) => string };
+      tooltip?: { formatter?: (params: Array<{ axisValue: string; seriesName: string; data: number }>) => string };
     };
     const output = option.tooltip?.formatter?.([
-      { axisValue: 0.015, seriesName: "Momentum", data: [0.015, 0.4] },
+      { axisValue: "1.0% to 3.0%", seriesName: "Momentum", data: 0.4 },
     ]);
 
-    expect(output).toContain("1.50%");
+    expect(output).toContain("1.0% to 3.0%");
     expect(output).toContain("40.00%");
   });
 
@@ -871,13 +905,13 @@ describe("App", () => {
     chartOptions.length = 0;
     await user.click(screen.getByRole("button", { name: "Toggle sector Energy" }));
 
-    const contributionOption = findSectorContributionChartOption();
-    const weightOption = findSectorWeightHeatmapOption();
+    const contributionOption = findFilteredStrategyContributionOption("Energy");
+    const weightOption = findFilteredStrategyWeightOption("Energy");
     expect(contributionOption).toMatchObject({
-      series: [expect.objectContaining({ name: "OP Fwd Yield · Energy" })],
+      series: [expect.objectContaining({ name: "Energy" })],
     });
     expect(weightOption).toMatchObject({
-      yAxis: expect.objectContaining({ data: ["OP Fwd Yield · Energy"] }),
+      series: [expect.objectContaining({ name: "Energy" })],
     });
     expect(JSON.stringify(contributionOption)).not.toContain("Tech");
     expect(JSON.stringify(weightOption)).not.toContain("Tech");
@@ -898,16 +932,16 @@ describe("App", () => {
     const exposureBand = screen.getByRole("region", { name: "Exposure band" });
     await user.click(within(exposureBand).getByRole("button", { name: "Focus sector Tech" }));
 
-    const contributionOption = findSectorContributionChartOption();
-    const weightOption = findSectorWeightHeatmapOption();
+    const contributionOption = findFilteredStrategyContributionOption("Tech");
+    const weightOption = findFilteredStrategyWeightOption("Tech");
     expect(screen.getByText((text) => text.startsWith("Focus: Sector") && text.includes("Tech"))).toBeInTheDocument();
-    expect(JSON.stringify(contributionOption)).toContain("Momentum · Tech");
-    expect(JSON.stringify(weightOption)).toContain("Momentum · Tech");
+    expect(JSON.stringify(contributionOption)).toContain("Tech");
+    expect(JSON.stringify(weightOption)).toContain("Tech");
     expect(JSON.stringify(contributionOption)).not.toContain("Energy");
     expect(JSON.stringify(weightOption)).not.toContain("Energy");
   });
 
-  it("renders sector weights as a heatmap instead of another line chart", async () => {
+  it("renders strategy sector weights as normalized trend lines", async () => {
     fetchRuns.mockResolvedValue(RUNS);
     fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
 
@@ -915,16 +949,19 @@ describe("App", () => {
 
     await screen.findByRole("heading", { name: "Research charts" });
 
-    expect(findSectorWeightHeatmapOption()).toMatchObject({
+    expect(findStrategySectorWeightOption()).toMatchObject({
       yAxis: expect.objectContaining({
-        type: "category",
-        data: expect.arrayContaining(["Momentum · Tech", "OP Fwd Yield · Energy"]),
+        min: 0,
+        max: 1,
       }),
-      series: [expect.objectContaining({ type: "heatmap", name: "Sector weight" })],
+      series: expect.arrayContaining([
+        expect.objectContaining({ type: "line", name: "Tech" }),
+        expect.objectContaining({ type: "line", name: "Financials" }),
+      ]),
     });
   });
 
-  it("preserves negative sector weights and formats the heatmap tooltip as percentages", async () => {
+  it("normalizes sector weights to percentages on the trend chart", async () => {
     fetchRuns.mockResolvedValue(RUNS);
     fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
 
@@ -932,18 +969,13 @@ describe("App", () => {
 
     await screen.findByRole("heading", { name: "Research charts" });
 
-    const option = findSectorWeightHeatmapOption() as {
-      visualMap?: { min?: number; max?: number };
-      tooltip?: { formatter?: (params: { name: string; value: [number, number, number] }) => string };
+    const option = findStrategySectorWeightOption() as {
+      yAxis?: { min?: number; max?: number; axisLabel?: { formatter?: (value: number) => string } };
     };
-    const output = option.tooltip?.formatter?.({
-      name: "Sector weight",
-      value: [0, 1, -0.28],
-    });
 
-    expect(option.visualMap?.min).toBeLessThan(0);
-    expect(option.visualMap?.max).toBeGreaterThan(0);
-    expect(output).toContain("-28.00%");
+    expect(option.yAxis?.min).toBe(0);
+    expect(option.yAxis?.max).toBe(1);
+    expect(option.yAxis?.axisLabel?.formatter?.(0.62)).toBe("62%");
   });
 
   it("formats research return and drawdown tooltips with money and percentages", async () => {
@@ -975,12 +1007,28 @@ describe("App", () => {
     const rollingOption = findRollingSharpeOption() as {
       series: Array<{ name: string; tooltip?: { valueFormatter?: (value: number) => string } }>;
     };
-    const sectorContributionOption = findSectorContributionChartOption() as {
+    const sectorContributionOption = findStrategySectorContributionOption() as {
       series: Array<{ name: string; tooltip?: { valueFormatter?: (value: number) => string } }>;
     };
 
     expect(rollingOption.series[0]?.tooltip?.valueFormatter?.(1.14)).toBe("1.14");
     expect(sectorContributionOption.series[0]?.tooltip?.valueFormatter?.(0.05)).toBe("5.00%");
+  });
+
+  it("does not cumulatively sum sector contribution a second time in the strategy trend chart", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    await screen.findByRole("heading", { name: "Research charts" });
+
+    const option = findStrategySectorContributionOption() as {
+      series: Array<{ name?: string; data?: number[] }>;
+    };
+    const techSeries = option.series.find((series) => series.name === "Tech");
+
+    expect(techSeries?.data).toEqual([0, 0.02, 0.05]);
   });
 
   it("plots each selected strategy beside its corresponding benchmark overlay", async () => {

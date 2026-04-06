@@ -43,20 +43,52 @@ class BenchmarkRepository:
 
 
 class SectorRepository:
-    def __init__(self, sector: pd.DataFrame, prices: pd.DataFrame | None = None) -> None:
-        self.sector = sector.sort_index()
+    def __init__(
+        self,
+        sector: pd.DataFrame,
+        prices: pd.DataFrame | None = None,
+        *,
+        sector_name_map: dict[str, str] | None = None,
+        stock_name_map: dict[str, str] | None = None,
+    ) -> None:
+        self.sector_name_map = {str(key): str(value) for key, value in (sector_name_map or {}).items()}
+        self.stock_name_map = {self._normalize_symbol_key(key): str(value) for key, value in (stock_name_map or {}).items()}
+        self.sector = sector.sort_index().apply(lambda column: column.map(self._display_sector_label))
         self.prices = prices.sort_index() if prices is not None else None
 
     @classmethod
-    def from_frame(cls, frame: pd.DataFrame, prices: pd.DataFrame | None = None) -> "SectorRepository":
-        return cls(sector=frame, prices=prices)
+    def from_frame(
+        cls,
+        frame: pd.DataFrame,
+        prices: pd.DataFrame | None = None,
+        *,
+        sector_name_map: dict[str, str] | None = None,
+        stock_name_map: dict[str, str] | None = None,
+    ) -> "SectorRepository":
+        return cls(
+            sector=frame,
+            prices=prices,
+            sector_name_map=sector_name_map,
+            stock_name_map=stock_name_map,
+        )
 
     @classmethod
     def default(cls) -> "SectorRepository":
+        sector_name_map, stock_name_map = _load_display_name_maps(ROOT.raw_path / "map.xlsx")
         return cls(
             sector=_load_default_frame(DatasetId.QW_WICS_SEC_BIG),
             prices=_load_default_frame(DatasetId.QW_ADJ_C),
+            sector_name_map=sector_name_map,
+            stock_name_map=stock_name_map,
         )
+
+    def display_symbol(self, symbol: str) -> str:
+        raw = str(symbol)
+        stock_name = self.stock_name_map.get(self._normalize_symbol_key(raw))
+        if not stock_name:
+            return raw
+        ticker = raw[1:] if raw.startswith("A") and raw[1:].isdigit() else raw
+        return f"{stock_name} ({ticker})"
 
     def latest_sector_row(self, as_of: pd.Timestamp) -> pd.Series:
         sector_history = self.sector.loc[:as_of]
@@ -95,22 +127,57 @@ class SectorRepository:
         frame.index.name = "date"
         return frame
 
-    def sector_contribution_timeseries(self, weights: pd.DataFrame, returns: pd.Series) -> pd.DataFrame:
+    def sector_contribution_timeseries(self, qty: pd.DataFrame, equity: pd.Series) -> pd.DataFrame:
         if self.prices is None:
             return pd.DataFrame()
 
-        asset_returns = (
-            self.prices.reindex(columns=weights.columns)
-            .pct_change(fill_method=None)
-            .replace([float("inf"), float("-inf")], 0.0)
-        )
-        asset_returns = asset_returns.reindex(weights.index).fillna(0.0).astype(float)
-        weighted_returns = weights.fillna(0.0).astype(float).mul(asset_returns, axis=0)
-
         records: list[pd.Series] = []
-        for date, row in weighted_returns.sort_index().iterrows():
-            grouped = self._group_row_by_sector(pd.Timestamp(date), row.astype(float))
-            grouped.name = pd.Timestamp(date)
+        quantities = qty.fillna(0.0).astype(float).sort_index()
+        aligned_prices = self.prices.reindex(columns=quantities.columns).reindex(quantities.index).astype(float)
+
+        for index, date in enumerate(quantities.index):
+            timestamp = pd.Timestamp(date)
+            if index == 0:
+                grouped = self._group_row_by_sector(timestamp, pd.Series(0.0, index=quantities.columns, dtype=float))
+                grouped.name = timestamp
+                records.append(grouped)
+                continue
+
+            prev_date = pd.Timestamp(quantities.index[index - 1])
+            prev_equity = float(equity.reindex(quantities.index).iloc[index - 1])
+            if abs(prev_equity) < 1e-12:
+                grouped = self._group_row_by_sector(timestamp, pd.Series(0.0, index=quantities.columns, dtype=float))
+                grouped.name = timestamp
+                records.append(grouped)
+                continue
+
+            current_qty = quantities.iloc[index]
+            previous_qty = quantities.iloc[index - 1]
+            current_close = aligned_prices.iloc[index].fillna(0.0)
+            previous_close = aligned_prices.iloc[index - 1].fillna(0.0)
+
+            holding_pnl = current_qty.mul(current_close.sub(previous_close), fill_value=0.0).fillna(0.0)
+            holding_contribution = holding_pnl.div(prev_equity)
+            sector_holding = self._group_row_by_sector(timestamp, holding_contribution.astype(float)).fillna(0.0)
+
+            actual_net_return = float(equity.reindex(quantities.index).pct_change().fillna(0.0).iloc[index])
+            gross_total_return = float(sector_holding.sum())
+            residual_return = actual_net_return - gross_total_return
+
+            trade_value = current_qty.sub(previous_qty).abs().mul(current_close, fill_value=0.0).fillna(0.0)
+            sector_trade = self._group_row_by_sector(timestamp, trade_value.astype(float)).fillna(0.0)
+            sector_exposure = self._group_row_by_sector(timestamp, current_qty.abs().mul(current_close).astype(float)).fillna(0.0)
+            allocation_basis = sector_trade.where(sector_trade.gt(0.0), 0.0)
+            if float(allocation_basis.sum()) <= 1e-12:
+                allocation_basis = sector_exposure.where(sector_exposure.gt(0.0), 0.0)
+
+            if float(allocation_basis.sum()) > 1e-12:
+                sector_residual = allocation_basis.div(float(allocation_basis.sum())).mul(residual_return)
+            else:
+                sector_residual = pd.Series(0.0, index=sector_holding.index, dtype=float)
+
+            grouped = sector_holding.add(sector_residual, fill_value=0.0).fillna(0.0)
+            grouped.name = timestamp
             records.append(grouped)
 
         if not records:
@@ -145,6 +212,22 @@ class SectorRepository:
         grouped = aligned.groupby("sector", sort=False)["weight"].sum()
         grouped.index.name = None
         return grouped
+
+    def _display_sector_label(self, value: object) -> object:
+        if value is None or pd.isna(value):
+            return value
+        return self.sector_name_map.get(str(value), value)
+
+    @staticmethod
+    def _normalize_symbol_key(symbol: str) -> str:
+        raw = str(symbol).strip().upper()
+        if not raw:
+            return raw
+        if raw.startswith("A") and raw[1:].isdigit():
+            return raw
+        if raw.isdigit():
+            return f"A{raw.zfill(6)}"
+        return raw
 
 
 def _load_default_frame(dataset_id: DatasetId) -> pd.DataFrame:
@@ -183,3 +266,28 @@ def _read_quantwise_benchmark_frame(path: Path) -> pd.DataFrame:
     frame = frame.apply(pd.to_numeric, errors="coerce")
     frame.index.name = "date"
     return frame
+
+
+def _load_display_name_maps(path: Path) -> tuple[dict[str, str], dict[str, str]]:
+    if not path.exists():
+        return {}, {}
+
+    workbook = pd.ExcelFile(path)
+    sector_name_map: dict[str, str] = {}
+    stock_name_map: dict[str, str] = {}
+
+    for sheet_name in workbook.sheet_names:
+        frame = pd.read_excel(path, sheet_name=sheet_name)
+        columns = {str(column).strip().lower(): column for column in frame.columns}
+        if {"code", "name"} <= set(columns):
+            pairs = frame.loc[:, [columns["code"], columns["name"]]].dropna()
+            for _, row in pairs.iterrows():
+                sector_name_map[str(row.iloc[0]).strip()] = str(row.iloc[1]).strip()
+            continue
+        if {"ticker", "name"} <= set(columns):
+            pairs = frame.loc[:, [columns["ticker"], columns["name"]]].dropna()
+            for _, row in pairs.iterrows():
+                ticker = SectorRepository._normalize_symbol_key(str(row.iloc[0]).strip())
+                stock_name_map[ticker] = str(row.iloc[1]).strip()
+
+    return sector_name_map, stock_name_map

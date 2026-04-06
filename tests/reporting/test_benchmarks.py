@@ -4,7 +4,12 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal, assert_series_equal
 
-from backtesting.reporting.benchmarks import BenchmarkRepository, SectorRepository, _read_quantwise_benchmark_frame
+from backtesting.reporting.benchmarks import (
+    BenchmarkRepository,
+    SectorRepository,
+    _load_display_name_maps,
+    _read_quantwise_benchmark_frame,
+)
 from backtesting.reporting.models import BenchmarkConfig
 
 
@@ -110,43 +115,54 @@ def test_sector_contribution_timeseries_avoids_pct_change_future_warning() -> No
         },
         index=pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"]),
     )
-    weights = pd.DataFrame(
+    qty = pd.DataFrame(
         {
-            "A": [0.6, 0.55, 0.5],
-            "B": [0.4, 0.45, 0.5],
+            "A": [6.0, 5.5, 5.0],
+            "B": [4.0, 4.5, 5.0],
         },
         index=prices.index,
     )
+    equity = pd.Series([100.0, 100.2, 100.4], index=prices.index)
     repo = SectorRepository.from_frame(sector_frame, prices=prices)
 
     with warnings.catch_warnings(record=True) as recorded:
         warnings.simplefilter("always")
-        contributions = repo.sector_contribution_timeseries(weights, pd.Series(0.0, index=prices.index))
+        contributions = repo.sector_contribution_timeseries(qty, equity)
 
     assert not [warning for warning in recorded if issubclass(warning.category, FutureWarning)]
-    assert contributions.loc[pd.Timestamp("2024-01-04"), "Tech"] == pytest.approx(0.0)
+    assert float(contributions.loc[pd.Timestamp("2024-01-04"), "Tech"]) <= 0.0
     assert_frame_equal(contributions.fillna(0.0), contributions.fillna(0.0).replace([float("inf"), float("-inf")], 0.0))
 
 
-def test_sector_contribution_timeseries_disables_pct_change_forward_fill(monkeypatch: pytest.MonkeyPatch) -> None:
-    sector_frame = pd.DataFrame({"A": ["Tech"]}, index=pd.to_datetime(["2024-01-02"]))
-    prices = pd.DataFrame({"A": [100.0, 101.0]}, index=pd.to_datetime(["2024-01-02", "2024-01-03"]))
-    weights = pd.DataFrame({"A": [1.0, 1.0]}, index=prices.index)
-    captured: dict[str, object] = {}
-    original_pct_change = pd.DataFrame.pct_change
-
-    def patched_pct_change(self: pd.DataFrame, *args: object, **kwargs: object):
-        captured["fill_method"] = kwargs.get("fill_method", "__missing__")
-        return original_pct_change(self, *args, **kwargs)
-
-    monkeypatch.setattr(pd.DataFrame, "pct_change", patched_pct_change)
-
-    SectorRepository.from_frame(sector_frame, prices=prices).sector_contribution_timeseries(
-        weights,
-        pd.Series(0.0, index=prices.index),
+def test_sector_contribution_timeseries_matches_net_portfolio_return() -> None:
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+    sector_frame = pd.DataFrame(
+        {
+            "A": ["Tech"],
+            "B": ["Utilities"],
+        },
+        index=pd.to_datetime(["2024-01-02"]),
     )
+    prices = pd.DataFrame(
+        {
+            "A": [100.0, 110.0, 108.0],
+            "B": [100.0, 90.0, 92.0],
+        },
+        index=index,
+    )
+    qty = pd.DataFrame(
+        {
+            "A": [0.0, 0.5, 0.4],
+            "B": [0.0, 0.5, 0.6],
+        },
+        index=index,
+    )
+    equity = pd.Series([100.0, 99.0, 98.5], index=index)
 
-    assert captured["fill_method"] is None
+    contributions = SectorRepository.from_frame(sector_frame, prices=prices).sector_contribution_timeseries(qty, equity)
+    portfolio_cumulative = equity.pct_change().fillna(0.0).cumsum()
+
+    assert contributions.sum(axis=1).tolist() == pytest.approx(portfolio_cumulative.tolist())
 
 
 def test_read_quantwise_benchmark_frame_extracts_codes_and_dates(tmp_path) -> None:
@@ -177,3 +193,15 @@ def test_read_quantwise_benchmark_frame_extracts_codes_and_dates(tmp_path) -> No
     expected.index.name = "date"
 
     assert_frame_equal(frame, expected, check_dtype=False)
+
+
+def test_load_display_name_maps_reads_sector_and_stock_sheets(tmp_path) -> None:
+    path = tmp_path / "map.xlsx"
+    with pd.ExcelWriter(path) as writer:
+        pd.DataFrame({"Code": ["G10"], "Name": ["에너지"]}).to_excel(writer, sheet_name="sector_map", index=False)
+        pd.DataFrame({"Ticker": ["A005930"], "Name": ["삼성전자"]}).to_excel(writer, sheet_name="Sheet3", index=False)
+
+    sector_name_map, stock_name_map = _load_display_name_maps(path)
+
+    assert sector_name_map == {"G10": "에너지"}
+    assert stock_name_map == {"A005930": "삼성전자"}

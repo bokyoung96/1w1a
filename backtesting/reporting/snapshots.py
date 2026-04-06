@@ -203,11 +203,14 @@ class PerformanceSnapshotFactory:
         holdings_count = run.weights.fillna(0.0).ne(0.0).sum(axis=1).rename("holdings_count")
         latest_holdings = run.latest_weights.copy() if run.latest_weights is not None else self._latest_holdings(run.weights)
         relative_performance = self._latest_holdings_relative_performance(run, latest_holdings)
+        display_latest_holdings = self._decorate_holding_symbols(latest_holdings)
+        display_winners = self._decorate_holding_symbols(self._rank_latest_holdings(relative_performance, ascending=False))
+        display_losers = self._decorate_holding_symbols(self._rank_latest_holdings(relative_performance, ascending=True))
         return ExposureSnapshot(
             holdings_count=holdings_count.astype(float),
-            latest_holdings=latest_holdings,
-            latest_holdings_winners=self._rank_latest_holdings(relative_performance, ascending=False),
-            latest_holdings_losers=self._rank_latest_holdings(relative_performance, ascending=True),
+            latest_holdings=display_latest_holdings,
+            latest_holdings_winners=display_winners,
+            latest_holdings_losers=display_losers,
         )
 
     def _build_sectors(self, weights: pd.DataFrame) -> SectorSnapshot:
@@ -225,7 +228,7 @@ class PerformanceSnapshotFactory:
         drawdowns: DrawdownStats,
     ) -> ResearchSnapshot:
         sector_weights = self.sector_repo.sector_weight_timeseries(run.weights)
-        sector_contribution = self.sector_repo.sector_contribution_timeseries(run.weights, strategy_returns)
+        sector_contribution = self.sector_repo.sector_contribution_timeseries(run.qty, run.equity)
         drawdown_episodes = drawdowns.episodes.sort_values(["drawdown", "start"], ascending=[True, True])
         return ResearchSnapshot(
             monthly_heatmap=build_monthly_heatmap(strategy_returns, run.monthly_returns),
@@ -314,6 +317,13 @@ class PerformanceSnapshotFactory:
             ascending=[ascending, False, True],
         )
         return ranked.head(5).reset_index(drop=True)
+
+    def _decorate_holding_symbols(self, frame: pd.DataFrame) -> pd.DataFrame:
+        if frame.empty or "symbol" not in frame.columns:
+            return frame
+        decorated = frame.copy()
+        decorated["symbol"] = decorated["symbol"].map(lambda symbol: self.sector_repo.display_symbol(str(symbol)))
+        return decorated
 
     @staticmethod
     def _latest_rebalance_date(run: SavedRun) -> pd.Timestamp | None:
