@@ -553,13 +553,15 @@ function findRollingSharpeOption() {
   return chartOptions.find((option) => {
     const xAxis = (option as { xAxis?: { type?: string } }).xAxis;
     const series = (option as { series?: Array<{ name?: string; type?: string; tooltip?: { valueFormatter?: (value: number) => string } }> }).series ?? [];
-    const seriesNames = series.map((entry) => entry.name);
+    const momentumSeries = series.find((entry) => entry.name === "Momentum");
+    const valueSeries = series.find((entry) => entry.name === "OP Fwd Yield");
     return (
       xAxis?.type === "time" &&
-      series.length === 2 &&
       series.every((entry) => entry.type === "line") &&
-      seriesNames.includes("Momentum") &&
-      seriesNames.includes("OP Fwd Yield")
+      momentumSeries?.data?.some((point) => point[1] === 1.05) &&
+      momentumSeries?.data?.some((point) => point[1] === 1.14) &&
+      valueSeries?.data?.some((point) => point[1] === 0.52) &&
+      valueSeries?.data?.some((point) => point[1] === 0.81)
     );
   });
 }
@@ -720,12 +722,10 @@ describe("App", () => {
     render(<App />);
 
     expect(await screen.findByRole("heading", { name: "Research charts" })).toBeInTheDocument();
-    expect(findRollingSharpeOption()).toMatchObject({
-      series: [
-        expect.objectContaining({ name: "Momentum", type: "line" }),
-        expect.objectContaining({ name: "OP Fwd Yield", type: "line" }),
-      ],
-    });
+    const rollingSharpeOption = findRollingSharpeOption() as {
+      series: Array<{ name: string; tooltip?: { valueFormatter?: (value: number) => string } }>;
+    };
+    expect(rollingSharpeOption.series[0]?.tooltip?.valueFormatter?.(1.14)).toBe("1.14");
     expect(findRollingCorrelationOption()).toMatchObject({
       series: [
         expect.objectContaining({
@@ -798,11 +798,11 @@ describe("App", () => {
     render(<App />);
 
     const exposureBand = await screen.findByRole("region", { name: "Exposure band" });
-    expect(within(exposureBand).getByRole("heading", { name: "Latest holdings and sector context" })).toBeInTheDocument();
-    expect(within(exposureBand).getByRole("heading", { name: /Latest holdings winners/i })).toBeInTheDocument();
-    expect(within(exposureBand).getByRole("heading", { name: /Latest holdings losers/i })).toBeInTheDocument();
-    expect(within(exposureBand).getByText("TSLA")).toBeInTheDocument();
-    expect(within(exposureBand).getByText("AAPL")).toBeInTheDocument();
+    const winnersPanel = within(exposureBand).getByRole("region", { name: /Latest holdings winners/i });
+    const losersPanel = within(exposureBand).getByRole("region", { name: /Latest holdings losers/i });
+
+    expect(within(winnersPanel).getByText("TSLA")).toBeInTheDocument();
+    expect(within(losersPanel).getByText("AAPL")).toBeInTheDocument();
   });
 
   it("renders return distribution as a numeric distribution curve", async () => {
