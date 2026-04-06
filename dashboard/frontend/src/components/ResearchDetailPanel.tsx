@@ -43,6 +43,14 @@ function formatNumberValue(value: number, digits = 2) {
   return value.toFixed(digits);
 }
 
+function formatMetricPercent(value: number | undefined, fractionDigits = 1) {
+  return value == null ? "n/a" : formatPercent(value, fractionDigits);
+}
+
+function formatMetricNumber(value: number | undefined, digits = 2) {
+  return value == null ? "n/a" : formatNumberValue(value, digits);
+}
+
 function formatRewardRisk(value: number) {
   if (!Number.isFinite(value)) {
     return value === 0 ? "n/a" : "∞";
@@ -71,6 +79,7 @@ export function ResearchDetailPanel({ dashboard, focus }: ResearchDetailPanelPro
   const metricRunId =
     focus.kind === "strategy" && dashboard.metrics[focus.runId] ? focus.runId : runIds[0] ?? "";
   const metric = metricRunId ? dashboard.metrics[metricRunId] : undefined;
+  const hasMetric = Boolean(metric);
   const seriesPoints = dashboard.performance.series.find((series) => series.runId === metricRunId)?.points;
   const diffs = computeValueDiffs(seriesPoints);
   const positiveDiffs = diffs.filter((value) => value > 0);
@@ -89,13 +98,13 @@ export function ResearchDetailPanel({ dashboard, focus }: ResearchDetailPanelPro
   const fallbackEpisode = [...episodes].sort((left, right) => right.episode.drawdown - left.episode.drawdown)[0];
   const toughestEpisode = longestOpen ?? fallbackEpisode;
   const metricOrder: Array<[string, string]> = [
-    ["Cumulative return", formatPercent(metric?.cumulativeReturn ?? 0, 1)],
-    ["Max drawdown", formatPercent(metric?.maxDrawdown ?? 0, 1)],
-    ["Sharpe", formatNumberValue(metric?.sharpe ?? 0, 2)],
-    ["Calmar", formatNumberValue(metric?.calmar ?? 0, 2)],
-    ["Information Ratio", formatNumberValue(metric?.informationRatio ?? 0, 2)],
-    ["Hit Rate", diffs.length ? formatPercent(hitRate, 1) : "n/a"],
-    ["Profit / Risk", formatRewardRisk(profitRisk)],
+    ["Cumulative return", formatMetricPercent(metric?.cumulativeReturn, 1)],
+    ["Max drawdown", formatMetricPercent(metric?.maxDrawdown, 1)],
+    ["Sharpe", formatMetricNumber(metric?.sharpe, 2)],
+    ["Calmar", formatMetricNumber(metric?.calmar, 2)],
+    ["Information Ratio", formatMetricNumber(metric?.informationRatio, 2)],
+    ["Hit Rate", hasMetric && diffs.length ? formatPercent(hitRate, 1) : "n/a"],
+    ["Profit / Risk", hasMetric ? formatRewardRisk(profitRisk) : "n/a"],
   ];
 
   return (
