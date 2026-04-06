@@ -31,13 +31,25 @@ class BenchmarkModel(DashboardBaseModel):
     name: str
 
 
+class LaunchStrategyBenchmarkModel(DashboardBaseModel):
+    strategy: str
+    label: str
+    benchmark: BenchmarkModel
+
+
+class LaunchBenchmarkContextModel(DashboardBaseModel):
+    kind: str
+    shared: BenchmarkModel | None = None
+    strategies: list[LaunchStrategyBenchmarkModel]
+
+
 class DashboardLaunchModel(DashboardBaseModel):
     configured_start_date: str | None = None
     configured_end_date: str | None = None
     capital: float | None = None
     schedule: str | None = None
     fill_mode: str | None = None
-    benchmark: BenchmarkModel | None = None
+    benchmark: LaunchBenchmarkContextModel | None = None
     as_of_date: str | None = None
 
 

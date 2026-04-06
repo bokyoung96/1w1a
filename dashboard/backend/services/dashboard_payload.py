@@ -19,6 +19,8 @@ from dashboard.backend.schemas import (
     DashboardPerformanceModel,
     DashboardResearchModel,
     DashboardRollingModel,
+    LaunchBenchmarkContextModel,
+    LaunchStrategyBenchmarkModel,
     ResearchFocusModel,
     RollingSeriesModel,
 )
@@ -101,8 +103,6 @@ class DashboardPayloadService:
     @staticmethod
     def _serialize_launch(snapshots: list[PerformanceSnapshot]) -> DashboardLaunchModel:
         config = DEFAULT_LAUNCH_CONFIG.global_config
-        presets = enabled_strategy_presets(DEFAULT_LAUNCH_CONFIG.strategies)
-        benchmark = presets[0].benchmark if presets else BenchmarkConfig.default_kospi200()
         as_of_date = None
         if snapshots:
             as_of_date = max(snapshot.strategy_equity.index.max() for snapshot in snapshots).date().isoformat()
@@ -112,8 +112,38 @@ class DashboardPayloadService:
             capital=config.capital,
             schedule=config.schedule,
             fill_mode=config.fill_mode,
-            benchmark=BenchmarkModel(code=benchmark.code, name=benchmark.name),
+            benchmark=DashboardPayloadService._serialize_launch_benchmark_context(),
             as_of_date=as_of_date,
+        )
+
+    @staticmethod
+    def _serialize_launch_benchmark_context() -> LaunchBenchmarkContextModel:
+        presets = sorted(
+            enabled_strategy_presets(DEFAULT_LAUNCH_CONFIG.strategies),
+            key=lambda preset: (preset.strategy_name, preset.display_label),
+        )
+        if not presets:
+            default = BenchmarkConfig.default_kospi200()
+            return LaunchBenchmarkContextModel(
+                kind="shared",
+                shared=BenchmarkModel(code=default.code, name=default.name),
+                strategies=[],
+            )
+
+        strategies = [
+            LaunchStrategyBenchmarkModel(
+                strategy=preset.strategy_name,
+                label=preset.display_label,
+                benchmark=BenchmarkModel(code=preset.benchmark.code, name=preset.benchmark.name),
+            )
+            for preset in presets
+        ]
+        unique_benchmarks = {(entry.benchmark.code, entry.benchmark.name) for entry in strategies}
+        shared = strategies[0].benchmark if len(unique_benchmarks) == 1 else None
+        return LaunchBenchmarkContextModel(
+            kind="shared" if shared is not None else "strategy-specific",
+            shared=shared,
+            strategies=strategies,
         )
 
     def _read_run(self, run_id: str) -> SavedRun:

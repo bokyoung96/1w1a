@@ -141,7 +141,22 @@ def test_dashboard_payload_includes_launch_metadata(tmp_path: Path) -> None:
         "capital": DEFAULT_LAUNCH_CONFIG.global_config.capital,
         "schedule": DEFAULT_LAUNCH_CONFIG.global_config.schedule,
         "fillMode": DEFAULT_LAUNCH_CONFIG.global_config.fill_mode,
-        "benchmark": {"code": "IKS200", "name": "KOSPI200"},
+        "benchmark": {
+            "kind": "shared",
+            "shared": {"code": "IKS200", "name": "KOSPI200"},
+            "strategies": [
+                {
+                    "strategy": "momentum",
+                    "label": "Momentum",
+                    "benchmark": {"code": "IKS200", "name": "KOSPI200"},
+                },
+                {
+                    "strategy": "op_fwd_yield",
+                    "label": "OP Fwd Yield",
+                    "benchmark": {"code": "IKS200", "name": "KOSPI200"},
+                },
+            ],
+        },
         "asOfDate": "2024-01-03",
     }
 
@@ -166,7 +181,22 @@ def test_dashboard_payload_launch_benchmark_uses_shared_dashboard_default(tmp_pa
     app.dependency_overrides.clear()
     assert response.status_code == 200
     payload = response.json()
-    assert payload["launch"]["benchmark"] == {"code": "IKS200", "name": "KOSPI200"}
+    assert payload["launch"]["benchmark"] == {
+        "kind": "shared",
+        "shared": {"code": "IKS200", "name": "KOSPI200"},
+        "strategies": [
+            {
+                "strategy": "momentum",
+                "label": "Momentum",
+                "benchmark": {"code": "IKS200", "name": "KOSPI200"},
+            },
+            {
+                "strategy": "op_fwd_yield",
+                "label": "OP Fwd Yield",
+                "benchmark": {"code": "IKS200", "name": "KOSPI200"},
+            },
+        ],
+    }
     assert payload["context"]["macro_20260405_120000"]["benchmark"] == {"code": "SPX", "name": "S&P 500"}
 
 
@@ -319,6 +349,56 @@ def test_dashboard_latest_holdings_returns_use_latest_rebalance_weights_not_just
             [0.60, 0.40, 0.0],
             [0.55, 0.45, 0.0],
             [0.50, 0.50, 0.0],
+            [0.50, 0.50, 0.0],
+        ],
+    )
+
+    prices_frame = pd.DataFrame(
+        {
+            "A": [50.0, 100.0, 100.0, 102.0],
+            "B": [100.0, 100.0, 100.0, 105.0],
+            "C": [100.0, 100.0, 100.0, 100.0],
+        },
+        index=pd.to_datetime(dates),
+    )
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(
+        tmp_path,
+        benchmark_frame=pd.DataFrame(
+            {"IKS200": [200.0, 201.0, 202.0, 203.0], "SPX": [500.0, 501.0, 502.0, 503.0]},
+            index=pd.to_datetime(dates),
+        ),
+        prices_frame=prices_frame,
+    )
+
+    response = client.get("/api/dashboard", params=[("run_ids", "alpha_20260405_100000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    payload = response.json()
+    winners = payload["exposure"]["latestHoldingsWinners"]["alpha_20260405_100000"]
+    losers = payload["exposure"]["latestHoldingsLosers"]["alpha_20260405_100000"]
+    assert winners[0]["symbol"] == "B"
+    assert winners[0]["returnSinceLatestRebalance"] == pytest.approx(0.05)
+    assert losers[0]["symbol"] == "A"
+    assert losers[0]["returnSinceLatestRebalance"] == pytest.approx(0.02)
+
+
+def test_dashboard_latest_holdings_returns_tolerate_small_float_residue_in_final_weights(tmp_path: Path) -> None:
+    dates = ["2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"]
+    _write_saved_run(
+        tmp_path,
+        "alpha_20260405_100000",
+        name="Alpha Strategy",
+        final_equity=102.0,
+        avg_turnover=0.03,
+        dates=dates,
+        equity_values=[100.0, 101.0, 101.5, 102.0],
+        weights=[
+            [0.60, 0.40, 0.0],
+            [0.55, 0.45, 0.0],
+            [0.50000000001, 0.49999999999, 0.0],
             [0.50, 0.50, 0.0],
         ],
     )

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+import numpy as np
 import pandas as pd
 
 from .analytics import (
@@ -327,7 +328,7 @@ class PerformanceSnapshotFactory:
         trailing_start = pd.Timestamp(weights.index[-1])
         for index in range(len(weights.index) - 2, -1, -1):
             row = weights.iloc[index]
-            if not row.sub(final_weights).abs().le(1e-12).all():
+            if not np.allclose(row.to_numpy(dtype=float), final_weights.to_numpy(dtype=float), rtol=1e-7, atol=1e-9):
                 break
             trailing_start = pd.Timestamp(weights.index[index])
         return trailing_start
