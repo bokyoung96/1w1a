@@ -320,15 +320,14 @@ class PerformanceSnapshotFactory:
             return None
 
         weights = run.weights.fillna(0.0).astype(float).sort_index()
-        latest_cohort = tuple(sorted(str(symbol) for symbol in weights.columns[weights.iloc[-1].ne(0.0)]))
-        if not latest_cohort:
+        final_weights = weights.iloc[-1]
+        if final_weights.eq(0.0).all():
             return None
 
         trailing_start = pd.Timestamp(weights.index[-1])
         for index in range(len(weights.index) - 2, -1, -1):
             row = weights.iloc[index]
-            cohort = tuple(sorted(str(symbol) for symbol in row.index[row.ne(0.0)]))
-            if cohort != latest_cohort:
+            if not row.sub(final_weights).abs().le(1e-12).all():
                 break
             trailing_start = pd.Timestamp(weights.index[index])
         return trailing_start

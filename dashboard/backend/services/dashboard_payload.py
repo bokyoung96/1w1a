@@ -34,7 +34,7 @@ from dashboard.backend.serializers import (
     serialize_value_points,
 )
 from dashboard.backend.services.run_index import RunIndexService
-from dashboard.strategies import DEFAULT_LAUNCH_CONFIG
+from dashboard.strategies import DEFAULT_LAUNCH_CONFIG, enabled_strategy_presets
 from root import ROOT
 
 
@@ -101,7 +101,8 @@ class DashboardPayloadService:
     @staticmethod
     def _serialize_launch(snapshots: list[PerformanceSnapshot]) -> DashboardLaunchModel:
         config = DEFAULT_LAUNCH_CONFIG.global_config
-        benchmark = snapshots[0].benchmark if snapshots else BenchmarkConfig.default_kospi200()
+        presets = enabled_strategy_presets(DEFAULT_LAUNCH_CONFIG.strategies)
+        benchmark = presets[0].benchmark if presets else BenchmarkConfig.default_kospi200()
         as_of_date = None
         if snapshots:
             as_of_date = max(snapshot.strategy_equity.index.max() for snapshot in snapshots).date().isoformat()

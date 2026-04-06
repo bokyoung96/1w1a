@@ -146,6 +146,30 @@ def test_dashboard_payload_includes_launch_metadata(tmp_path: Path) -> None:
     }
 
 
+def test_dashboard_payload_launch_benchmark_uses_shared_dashboard_default(tmp_path: Path) -> None:
+    _write_saved_run(
+        tmp_path,
+        "macro_20260405_120000",
+        name="Macro Strategy",
+        strategy="macro",
+        final_equity=101.0,
+        avg_turnover=0.02,
+        weights=[[0.6, 0.4, 0.0], [0.6, 0.4, 0.0]],
+        benchmark={"code": "SPX", "name": "S&P 500"},
+    )
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(tmp_path)
+
+    response = client.get("/api/dashboard", params=[("run_ids", "macro_20260405_120000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["launch"]["benchmark"] == {"code": "IKS200", "name": "KOSPI200"}
+    assert payload["context"]["macro_20260405_120000"]["benchmark"] == {"code": "SPX", "name": "S&P 500"}
+
+
 def test_dashboard_payload_includes_rolling_correlation(tmp_path: Path) -> None:
     dates = [date.date().isoformat() for date in pd.bdate_range("2024-01-02", periods=260)]
     benchmark_frame = pd.DataFrame(
@@ -279,6 +303,56 @@ def test_dashboard_payload_includes_latest_holdings_winners_and_losers(tmp_path:
     assert losers[0]["returnSinceLatestRebalance"] < losers[-1]["returnSinceLatestRebalance"]
     assert winners[0]["targetWeight"] == pytest.approx(0.04)
     assert losers[0]["targetWeight"] == pytest.approx(0.40)
+
+
+def test_dashboard_latest_holdings_returns_use_latest_rebalance_weights_not_just_symbol_cohort(tmp_path: Path) -> None:
+    dates = ["2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"]
+    _write_saved_run(
+        tmp_path,
+        "alpha_20260405_100000",
+        name="Alpha Strategy",
+        final_equity=102.0,
+        avg_turnover=0.03,
+        dates=dates,
+        equity_values=[100.0, 101.0, 101.5, 102.0],
+        weights=[
+            [0.60, 0.40, 0.0],
+            [0.55, 0.45, 0.0],
+            [0.50, 0.50, 0.0],
+            [0.50, 0.50, 0.0],
+        ],
+    )
+
+    prices_frame = pd.DataFrame(
+        {
+            "A": [50.0, 100.0, 100.0, 102.0],
+            "B": [100.0, 100.0, 100.0, 105.0],
+            "C": [100.0, 100.0, 100.0, 100.0],
+        },
+        index=pd.to_datetime(dates),
+    )
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(
+        tmp_path,
+        benchmark_frame=pd.DataFrame(
+            {"IKS200": [200.0, 201.0, 202.0, 203.0], "SPX": [500.0, 501.0, 502.0, 503.0]},
+            index=pd.to_datetime(dates),
+        ),
+        prices_frame=prices_frame,
+    )
+
+    response = client.get("/api/dashboard", params=[("run_ids", "alpha_20260405_100000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    payload = response.json()
+    winners = payload["exposure"]["latestHoldingsWinners"]["alpha_20260405_100000"]
+    losers = payload["exposure"]["latestHoldingsLosers"]["alpha_20260405_100000"]
+    assert winners[0]["symbol"] == "B"
+    assert winners[0]["returnSinceLatestRebalance"] == pytest.approx(0.05)
+    assert losers[0]["symbol"] == "A"
+    assert losers[0]["returnSinceLatestRebalance"] == pytest.approx(0.02)
 
 
 def test_dashboard_returns_single_mode_payload(tmp_path: Path) -> None:
@@ -683,6 +757,7 @@ def _build_payload_service(
     runs_root: Path,
     sector_frame: pd.DataFrame | None = None,
     benchmark_frame: pd.DataFrame | None = None,
+    prices_frame: pd.DataFrame | None = None,
 ) -> DashboardPayloadService:
     if benchmark_frame is None:
         benchmark_frame = pd.DataFrame(
@@ -698,6 +773,15 @@ def _build_payload_service(
             },
             index=pd.to_datetime(benchmark_frame.index),
         )
+    if prices_frame is None:
+        prices_frame = pd.DataFrame(
+            {
+                "A": [100.0 + 10.0 * index for index in range(len(benchmark_frame.index))],
+                "B": [100.0 + 10.0 * index for index in range(len(benchmark_frame.index))],
+                "C": [100.0 for _ in benchmark_frame.index],
+            },
+            index=pd.to_datetime(benchmark_frame.index),
+        )
     return DashboardPayloadService(
         runs_root=runs_root,
         run_index_service=RunIndexService(runs_root),
@@ -707,14 +791,7 @@ def _build_payload_service(
             ),
             sector_repo=SectorRepository.from_frame(
                 sector_frame,
-                prices=pd.DataFrame(
-                    {
-                        "A": [100.0 + 10.0 * index for index in range(len(benchmark_frame.index))],
-                        "B": [100.0 + 10.0 * index for index in range(len(benchmark_frame.index))],
-                        "C": [100.0 for _ in benchmark_frame.index],
-                    },
-                    index=pd.to_datetime(benchmark_frame.index),
-                ),
+                prices=prices_frame,
             ),
         ),
     )
