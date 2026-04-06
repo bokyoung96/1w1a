@@ -148,6 +148,21 @@ def test_dashboard_payload_includes_launch_metadata(tmp_path: Path) -> None:
 
 def test_dashboard_payload_includes_rolling_correlation(tmp_path: Path) -> None:
     dates = [date.date().isoformat() for date in pd.bdate_range("2024-01-02", periods=260)]
+    benchmark_frame = pd.DataFrame(
+        {
+            "IKS200": [200.0 + (index * 0.12) for index in range(len(dates))],
+            "SPX": [500.0 + (index * 0.05) for index in range(len(dates))],
+        },
+        index=pd.to_datetime(dates),
+    )
+    strategy_equity = pd.Series(
+        [100.0 + (index * 0.1) + ((index % 7) * 0.03) for index in range(len(dates))],
+        index=pd.to_datetime(dates),
+        name="equity",
+    )
+    expected_correlation = strategy_equity.pct_change().fillna(0.0).rolling(252, min_periods=252).corr(
+        benchmark_frame["IKS200"].pct_change().fillna(0.0)
+    )
     _write_saved_run(
         tmp_path,
         "alpha_20240430_100000",
@@ -155,21 +170,12 @@ def test_dashboard_payload_includes_rolling_correlation(tmp_path: Path) -> None:
         final_equity=126.0,
         avg_turnover=0.03,
         dates=dates,
-        equity_values=[100.0 + (index * 0.1) + ((index % 7) * 0.03) for index in range(len(dates))],
+        equity_values=strategy_equity.tolist(),
         weights=[[0.6, 0.4, 0.0] for _ in dates],
     )
 
     client = TestClient(app)
-    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(
-        tmp_path,
-        benchmark_frame=pd.DataFrame(
-            {
-                "IKS200": [200.0 + (index * 0.12) for index in range(len(dates))],
-                "SPX": [500.0 + (index * 0.05) for index in range(len(dates))],
-            },
-            index=pd.to_datetime(dates),
-        ),
-    )
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(tmp_path, benchmark_frame=benchmark_frame)
 
     response = client.get("/api/dashboard", params=[("run_ids", "alpha_20240430_100000")])
 
@@ -177,16 +183,15 @@ def test_dashboard_payload_includes_rolling_correlation(tmp_path: Path) -> None:
     assert response.status_code == 200
     payload = response.json()
     correlation = payload["rolling"]["rollingCorrelation"][0]
-    assert correlation == {
-        "runId": "alpha_20240430_100000",
-        "label": "Alpha Strategy",
-        "benchmark": {"code": "IKS200", "name": "KOSPI200"},
-        "window": 252,
-        "points": correlation["points"],
-    }
+    assert correlation["runId"] == "alpha_20240430_100000"
+    assert correlation["label"] == "Alpha Strategy"
+    assert correlation["benchmark"] == {"code": "IKS200", "name": "KOSPI200"}
+    assert correlation["window"] == 252
     assert len(correlation["points"]) == 9
     assert correlation["points"][0]["date"] == dates[251]
     assert correlation["points"][-1]["date"] == dates[-1]
+    assert correlation["points"][0]["value"] == pytest.approx(expected_correlation.iloc[251])
+    assert correlation["points"][-1]["value"] == pytest.approx(expected_correlation.iloc[-1])
 
 
 def test_dashboard_payload_includes_monthly_return_distribution(tmp_path: Path) -> None:
@@ -217,6 +222,7 @@ def test_dashboard_payload_includes_monthly_return_distribution(tmp_path: Path) 
     app.dependency_overrides.clear()
     assert response.status_code == 200
     payload = response.json()
+    assert payload["research"]["returnDistribution"]["alpha_20240430_100000"]
     monthly_distribution = payload["research"]["monthlyReturnDistribution"]["alpha_20240430_100000"]
     assert len(monthly_distribution) == 6
     assert monthly_distribution[0]["count"] == 1
@@ -235,20 +241,21 @@ def test_dashboard_payload_includes_latest_holdings_winners_and_losers(tmp_path:
         avg_turnover=0.03,
         weights=[[0.6, 0.4, 0.0], [0.55, 0.45, 0.0]],
         latest_weights_rows=[
-            {"symbol": "AAPL", "target_weight": 0.32, "abs_weight": 0.32},
-            {"symbol": "MSFT", "target_weight": 0.24, "abs_weight": 0.24},
-            {"symbol": "NVDA", "target_weight": 0.18, "abs_weight": 0.18},
-            {"symbol": "AMZN", "target_weight": 0.12, "abs_weight": 0.12},
-            {"symbol": "GOOG", "target_weight": 0.08, "abs_weight": 0.08},
-            {"symbol": "TSLA", "target_weight": 0.06, "abs_weight": 0.06},
+            {"symbol": "AAPL", "target_weight": 0.40, "abs_weight": 0.40},
+            {"symbol": "MSFT", "target_weight": 0.25, "abs_weight": 0.25},
+            {"symbol": "NVDA", "target_weight": 0.15, "abs_weight": 0.15},
+            {"symbol": "AMZN", "target_weight": 0.10, "abs_weight": 0.10},
+            {"symbol": "GOOG", "target_weight": 0.06, "abs_weight": 0.06},
+            {"symbol": "TSLA", "target_weight": 0.04, "abs_weight": 0.04},
         ],
         latest_holdings_return_rows=[
-            {"symbol": "AAPL", "return_since_latest_rebalance": 0.19},
-            {"symbol": "MSFT", "return_since_latest_rebalance": 0.11},
-            {"symbol": "NVDA", "return_since_latest_rebalance": 0.07},
-            {"symbol": "AMZN", "return_since_latest_rebalance": 0.03},
-            {"symbol": "GOOG", "return_since_latest_rebalance": -0.02},
-            {"symbol": "TSLA", "return_since_latest_rebalance": -0.15},
+            {"symbol": "AAPL", "return_since_latest_rebalance": -0.04},
+            {"symbol": "MSFT", "return_since_latest_rebalance": 0.01},
+            {"symbol": "NVDA", "return_since_latest_rebalance": 0.05},
+            {"symbol": "AMZN", "return_since_latest_rebalance": 0.10},
+            {"symbol": "GOOG", "return_since_latest_rebalance": 0.15},
+            {"symbol": "TSLA", "return_since_latest_rebalance": 0.30},
+            {"symbol": "META", "return_since_latest_rebalance": 0.99},
         ],
     )
 
@@ -264,10 +271,13 @@ def test_dashboard_payload_includes_latest_holdings_winners_and_losers(tmp_path:
     losers = payload["exposure"]["latestHoldingsLosers"]["alpha_20260405_100000"]
     assert len(winners) == 5
     assert len(losers) == 5
-    assert [entry["symbol"] for entry in winners] == ["AAPL", "MSFT", "NVDA", "AMZN", "GOOG"]
-    assert [entry["symbol"] for entry in losers] == ["TSLA", "GOOG", "AMZN", "NVDA", "MSFT"]
+    assert [entry["symbol"] for entry in winners] == ["TSLA", "GOOG", "AMZN", "NVDA", "MSFT"]
+    assert [entry["symbol"] for entry in losers] == ["AAPL", "MSFT", "NVDA", "AMZN", "GOOG"]
+    assert "META" not in {entry["symbol"] for entry in winners + losers}
     assert winners[0]["returnSinceLatestRebalance"] > winners[-1]["returnSinceLatestRebalance"]
     assert losers[0]["returnSinceLatestRebalance"] < losers[-1]["returnSinceLatestRebalance"]
+    assert winners[0]["targetWeight"] == pytest.approx(0.04)
+    assert losers[0]["targetWeight"] == pytest.approx(0.40)
 
 
 def test_dashboard_returns_single_mode_payload(tmp_path: Path) -> None:
