@@ -116,6 +116,126 @@ def test_dashboard_endpoint_includes_exposure_payload(tmp_path: Path) -> None:
     }
 
 
+def test_dashboard_payload_includes_launch_metadata(tmp_path: Path) -> None:
+    _write_saved_run(
+        tmp_path,
+        "alpha_20260405_100000",
+        name="Alpha Strategy",
+        final_equity=110.0,
+        avg_turnover=0.03,
+        weights=[[0.6, 0.4, 0.0], [0.55, 0.45, 0.0]],
+    )
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(tmp_path)
+
+    response = client.get("/api/dashboard", params=[("run_ids", "alpha_20260405_100000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["launch"]["selectedRunIds"] == ["alpha_20260405_100000"]
+    assert payload["launch"]["availableRunIds"] == ["alpha_20260405_100000"]
+
+
+def test_dashboard_payload_includes_rolling_correlation(tmp_path: Path) -> None:
+    _write_saved_run(
+        tmp_path,
+        "alpha_20240430_100000",
+        name="Alpha Strategy",
+        final_equity=128.0,
+        avg_turnover=0.03,
+        dates=["2024-01-31", "2024-02-29", "2024-03-31", "2024-04-30"],
+        equity_values=[100.0, 104.0, 101.0, 128.0],
+        weights=[
+            [0.6, 0.4, 0.0],
+            [0.58, 0.42, 0.0],
+            [0.57, 0.43, 0.0],
+            [0.55, 0.45, 0.0],
+        ],
+    )
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(
+        tmp_path,
+        benchmark_frame=pd.DataFrame(
+            {"IKS200": [200.0, 204.0, 202.0, 208.0], "SPX": [500.0, 505.0, 503.0, 510.0]},
+            index=pd.to_datetime(["2024-01-31", "2024-02-29", "2024-03-31", "2024-04-30"]),
+        ),
+    )
+
+    response = client.get("/api/dashboard", params=[("run_ids", "alpha_20240430_100000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload["rolling"]["rollingCorrelation"]) == 1
+    assert payload["rolling"]["rollingCorrelation"][0]["runId"] == "alpha_20240430_100000"
+    assert len(payload["rolling"]["rollingCorrelation"][0]["points"]) == 4
+
+
+def test_dashboard_payload_includes_monthly_return_distribution(tmp_path: Path) -> None:
+    _write_saved_run(
+        tmp_path,
+        "alpha_20240430_100000",
+        name="Alpha Strategy",
+        final_equity=111.0,
+        avg_turnover=0.03,
+        dates=["2024-01-31", "2024-02-29", "2024-03-31", "2024-04-30"],
+        equity_values=[100.0, 108.0, 103.0, 111.0],
+        weights=[
+            [0.6, 0.4, 0.0],
+            [0.58, 0.42, 0.0],
+            [0.57, 0.43, 0.0],
+            [0.55, 0.45, 0.0],
+        ],
+    )
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(
+        tmp_path,
+        benchmark_frame=pd.DataFrame(
+            {"IKS200": [200.0, 204.0, 202.0, 208.0], "SPX": [500.0, 505.0, 503.0, 510.0]},
+            index=pd.to_datetime(["2024-01-31", "2024-02-29", "2024-03-31", "2024-04-30"]),
+        ),
+    )
+
+    response = client.get("/api/dashboard", params=[("run_ids", "alpha_20240430_100000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["research"]["monthlyReturnDistribution"]["alpha_20240430_100000"]
+
+
+def test_dashboard_payload_includes_latest_holdings_winners_and_losers(tmp_path: Path) -> None:
+    _write_saved_run(
+        tmp_path,
+        "alpha_20260405_100000",
+        name="Alpha Strategy",
+        final_equity=110.0,
+        avg_turnover=0.03,
+        weights=[[0.6, 0.4, 0.0], [0.55, 0.45, 0.0]],
+        latest_weights_rows=[
+            {"symbol": "AAPL", "target_weight": 0.4, "abs_weight": 0.4},
+            {"symbol": "MSFT", "target_weight": 0.25, "abs_weight": 0.25},
+            {"symbol": "TSLA", "target_weight": -0.05, "abs_weight": 0.05},
+            {"symbol": "GME", "target_weight": -0.12, "abs_weight": 0.12},
+        ],
+    )
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(tmp_path)
+
+    response = client.get("/api/dashboard", params=[("run_ids", "alpha_20260405_100000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["exposure"]["latestHoldingsWinners"]["alpha_20260405_100000"][0]["symbol"] == "AAPL"
+    assert payload["exposure"]["latestHoldingsLosers"]["alpha_20260405_100000"][0]["symbol"] == "GME"
+
+
 def test_dashboard_returns_single_mode_payload(tmp_path: Path) -> None:
     _write_saved_run(
         tmp_path,
@@ -514,31 +634,41 @@ def test_dashboard_returns_controlled_error_for_unreadable_run_directory(tmp_pat
     assert response.json()["detail"].startswith("unable to read run_id: broken_20260405_130000")
 
 
-def _build_payload_service(runs_root: Path, sector_frame: pd.DataFrame | None = None) -> DashboardPayloadService:
+def _build_payload_service(
+    runs_root: Path,
+    sector_frame: pd.DataFrame | None = None,
+    benchmark_frame: pd.DataFrame | None = None,
+) -> DashboardPayloadService:
+    if benchmark_frame is None:
+        benchmark_frame = pd.DataFrame(
+            {"IKS200": [200.0, 201.0], "SPX": [500.0, 505.0]},
+            index=pd.to_datetime(["2024-01-02", "2024-01-03"]),
+        )
     if sector_frame is None:
         sector_frame = pd.DataFrame(
-            {"A": ["Tech"], "B": ["Utilities"], "C": ["Health Care"]},
-            index=pd.to_datetime(["2024-01-02"]),
+            {
+                "A": ["Tech"] * len(benchmark_frame.index),
+                "B": ["Utilities"] * len(benchmark_frame.index),
+                "C": ["Health Care"] * len(benchmark_frame.index),
+            },
+            index=pd.to_datetime(benchmark_frame.index),
         )
     return DashboardPayloadService(
         runs_root=runs_root,
         run_index_service=RunIndexService(runs_root),
         snapshot_factory=PerformanceSnapshotFactory(
             benchmark_repo=BenchmarkRepository.from_frame(
-                pd.DataFrame(
-                    {"IKS200": [200.0, 201.0], "SPX": [500.0, 505.0]},
-                    index=pd.to_datetime(["2024-01-02", "2024-01-03"]),
-                )
+                benchmark_frame
             ),
             sector_repo=SectorRepository.from_frame(
                 sector_frame,
                 prices=pd.DataFrame(
                     {
-                        "A": [100.0, 110.0],
-                        "B": [100.0, 110.0],
-                        "C": [100.0, 100.0],
+                        "A": [100.0 + 10.0 * index for index in range(len(benchmark_frame.index))],
+                        "B": [100.0 + 10.0 * index for index in range(len(benchmark_frame.index))],
+                        "C": [100.0 for _ in benchmark_frame.index],
                     },
-                    index=pd.to_datetime(["2024-01-02", "2024-01-03"]),
+                    index=pd.to_datetime(benchmark_frame.index),
                 ),
             ),
         ),
@@ -554,6 +684,9 @@ def _write_saved_run(
     final_equity: float,
     avg_turnover: float,
     weights: list[list[float]],
+    dates: list[str] | None = None,
+    equity_values: list[float] | None = None,
+    turnover_values: list[float] | None = None,
     benchmark: dict[str, object] | None = None,
     latest_weights_rows: list[dict[str, object]] | None = None,
 ) -> None:
@@ -577,11 +710,17 @@ def _write_saved_run(
         encoding="utf-8",
     )
 
-    dates = pd.to_datetime(["2024-01-02", "2024-01-03"])
-    equity = pd.Series([100.0, final_equity], index=dates, name="equity")
+    if dates is None:
+        dates = ["2024-01-02", "2024-01-03"]
+    date_index = pd.to_datetime(dates)
+    if equity_values is None:
+        equity_values = [100.0, final_equity]
+    equity = pd.Series(equity_values, index=date_index, name="equity")
     returns = equity.pct_change().fillna(0.0).rename("returns")
-    turnover = pd.Series([0.02, avg_turnover * 2 - 0.02], index=dates, name="turnover")
-    weights_frame = pd.DataFrame(weights, columns=["A", "B", "C"], index=dates)
+    if turnover_values is None:
+        turnover_values = [avg_turnover for _ in dates]
+    turnover = pd.Series(turnover_values, index=date_index, name="turnover")
+    weights_frame = pd.DataFrame(weights, columns=["A", "B", "C"], index=date_index)
     qty_frame = weights_frame.mul(10.0)
 
     equity.to_csv(series_dir / "equity.csv", index_label="date")
