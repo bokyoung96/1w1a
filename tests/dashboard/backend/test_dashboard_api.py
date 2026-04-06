@@ -14,6 +14,7 @@ from dashboard.backend.main import app, create_app
 from dashboard.backend import main as dashboard_main
 from dashboard.backend.services.dashboard_payload import DashboardPayloadService
 from dashboard.backend.services.run_index import RunIndexService
+from dashboard.strategies import DEFAULT_LAUNCH_CONFIG
 
 
 def test_dashboard_app_serves_frontend_index_when_dist_exists(tmp_path: Path, monkeypatch) -> None:
@@ -134,33 +135,39 @@ def test_dashboard_payload_includes_launch_metadata(tmp_path: Path) -> None:
     app.dependency_overrides.clear()
     assert response.status_code == 200
     payload = response.json()
-    assert payload["launch"]["selectedRunIds"] == ["alpha_20260405_100000"]
-    assert payload["launch"]["availableRunIds"] == ["alpha_20260405_100000"]
+    assert payload["launch"] == {
+        "configuredStartDate": DEFAULT_LAUNCH_CONFIG.global_config.start,
+        "configuredEndDate": DEFAULT_LAUNCH_CONFIG.global_config.end,
+        "capital": DEFAULT_LAUNCH_CONFIG.global_config.capital,
+        "schedule": DEFAULT_LAUNCH_CONFIG.global_config.schedule,
+        "fillMode": DEFAULT_LAUNCH_CONFIG.global_config.fill_mode,
+        "benchmark": {"code": "IKS200", "name": "KOSPI200"},
+        "asOfDate": "2024-01-03",
+    }
 
 
 def test_dashboard_payload_includes_rolling_correlation(tmp_path: Path) -> None:
+    dates = [date.date().isoformat() for date in pd.bdate_range("2024-01-02", periods=260)]
     _write_saved_run(
         tmp_path,
         "alpha_20240430_100000",
         name="Alpha Strategy",
-        final_equity=128.0,
+        final_equity=126.0,
         avg_turnover=0.03,
-        dates=["2024-01-31", "2024-02-29", "2024-03-31", "2024-04-30"],
-        equity_values=[100.0, 104.0, 101.0, 128.0],
-        weights=[
-            [0.6, 0.4, 0.0],
-            [0.58, 0.42, 0.0],
-            [0.57, 0.43, 0.0],
-            [0.55, 0.45, 0.0],
-        ],
+        dates=dates,
+        equity_values=[100.0 + (index * 0.1) + ((index % 7) * 0.03) for index in range(len(dates))],
+        weights=[[0.6, 0.4, 0.0] for _ in dates],
     )
 
     client = TestClient(app)
     app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(
         tmp_path,
         benchmark_frame=pd.DataFrame(
-            {"IKS200": [200.0, 204.0, 202.0, 208.0], "SPX": [500.0, 505.0, 503.0, 510.0]},
-            index=pd.to_datetime(["2024-01-31", "2024-02-29", "2024-03-31", "2024-04-30"]),
+            {
+                "IKS200": [200.0 + (index * 0.12) for index in range(len(dates))],
+                "SPX": [500.0 + (index * 0.05) for index in range(len(dates))],
+            },
+            index=pd.to_datetime(dates),
         ),
     )
 
@@ -169,34 +176,39 @@ def test_dashboard_payload_includes_rolling_correlation(tmp_path: Path) -> None:
     app.dependency_overrides.clear()
     assert response.status_code == 200
     payload = response.json()
-    assert len(payload["rolling"]["rollingCorrelation"]) == 1
-    assert payload["rolling"]["rollingCorrelation"][0]["runId"] == "alpha_20240430_100000"
-    assert len(payload["rolling"]["rollingCorrelation"][0]["points"]) == 4
+    correlation = payload["rolling"]["rollingCorrelation"][0]
+    assert correlation == {
+        "runId": "alpha_20240430_100000",
+        "label": "Alpha Strategy",
+        "benchmark": {"code": "IKS200", "name": "KOSPI200"},
+        "window": 252,
+        "points": correlation["points"],
+    }
+    assert len(correlation["points"]) == 9
+    assert correlation["points"][0]["date"] == dates[251]
+    assert correlation["points"][-1]["date"] == dates[-1]
 
 
 def test_dashboard_payload_includes_monthly_return_distribution(tmp_path: Path) -> None:
+    monthly_dates = ["2024-01-31", "2024-02-29", "2024-03-31", "2024-04-30", "2024-05-31", "2024-06-28"]
     _write_saved_run(
         tmp_path,
         "alpha_20240430_100000",
         name="Alpha Strategy",
-        final_equity=111.0,
+        final_equity=112.0,
         avg_turnover=0.03,
-        dates=["2024-01-31", "2024-02-29", "2024-03-31", "2024-04-30"],
-        equity_values=[100.0, 108.0, 103.0, 111.0],
-        weights=[
-            [0.6, 0.4, 0.0],
-            [0.58, 0.42, 0.0],
-            [0.57, 0.43, 0.0],
-            [0.55, 0.45, 0.0],
-        ],
+        dates=monthly_dates,
+        equity_values=[100.0, 106.0, 103.0, 109.0, 107.0, 112.0],
+        monthly_returns_values=[0.06, -0.028301886792452824, 0.05825242718446602, -0.01834862385321101, 0.04672897196261672, 0.0],
+        weights=[[0.6, 0.4, 0.0] for _ in monthly_dates],
     )
 
     client = TestClient(app)
     app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(
         tmp_path,
         benchmark_frame=pd.DataFrame(
-            {"IKS200": [200.0, 204.0, 202.0, 208.0], "SPX": [500.0, 505.0, 503.0, 510.0]},
-            index=pd.to_datetime(["2024-01-31", "2024-02-29", "2024-03-31", "2024-04-30"]),
+            {"IKS200": [200.0, 204.0, 202.0, 208.0, 207.0, 210.0], "SPX": [500.0, 505.0, 503.0, 510.0, 508.0, 512.0]},
+            index=pd.to_datetime(monthly_dates),
         ),
     )
 
@@ -205,7 +217,13 @@ def test_dashboard_payload_includes_monthly_return_distribution(tmp_path: Path) 
     app.dependency_overrides.clear()
     assert response.status_code == 200
     payload = response.json()
-    assert payload["research"]["monthlyReturnDistribution"]["alpha_20240430_100000"]
+    monthly_distribution = payload["research"]["monthlyReturnDistribution"]["alpha_20240430_100000"]
+    assert len(monthly_distribution) == 6
+    assert monthly_distribution[0]["count"] == 1
+    assert monthly_distribution[-1]["count"] == 1
+    assert sum(bin_entry["count"] for bin_entry in monthly_distribution) == 6
+    assert monthly_distribution[0]["start"] < 0.0
+    assert monthly_distribution[-1]["end"] > 0.0
 
 
 def test_dashboard_payload_includes_latest_holdings_winners_and_losers(tmp_path: Path) -> None:
@@ -217,10 +235,20 @@ def test_dashboard_payload_includes_latest_holdings_winners_and_losers(tmp_path:
         avg_turnover=0.03,
         weights=[[0.6, 0.4, 0.0], [0.55, 0.45, 0.0]],
         latest_weights_rows=[
-            {"symbol": "AAPL", "target_weight": 0.4, "abs_weight": 0.4},
-            {"symbol": "MSFT", "target_weight": 0.25, "abs_weight": 0.25},
-            {"symbol": "TSLA", "target_weight": -0.05, "abs_weight": 0.05},
-            {"symbol": "GME", "target_weight": -0.12, "abs_weight": 0.12},
+            {"symbol": "AAPL", "target_weight": 0.32, "abs_weight": 0.32},
+            {"symbol": "MSFT", "target_weight": 0.24, "abs_weight": 0.24},
+            {"symbol": "NVDA", "target_weight": 0.18, "abs_weight": 0.18},
+            {"symbol": "AMZN", "target_weight": 0.12, "abs_weight": 0.12},
+            {"symbol": "GOOG", "target_weight": 0.08, "abs_weight": 0.08},
+            {"symbol": "TSLA", "target_weight": 0.06, "abs_weight": 0.06},
+        ],
+        latest_holdings_return_rows=[
+            {"symbol": "AAPL", "return_since_latest_rebalance": 0.19},
+            {"symbol": "MSFT", "return_since_latest_rebalance": 0.11},
+            {"symbol": "NVDA", "return_since_latest_rebalance": 0.07},
+            {"symbol": "AMZN", "return_since_latest_rebalance": 0.03},
+            {"symbol": "GOOG", "return_since_latest_rebalance": -0.02},
+            {"symbol": "TSLA", "return_since_latest_rebalance": -0.15},
         ],
     )
 
@@ -232,8 +260,14 @@ def test_dashboard_payload_includes_latest_holdings_winners_and_losers(tmp_path:
     app.dependency_overrides.clear()
     assert response.status_code == 200
     payload = response.json()
-    assert payload["exposure"]["latestHoldingsWinners"]["alpha_20260405_100000"][0]["symbol"] == "AAPL"
-    assert payload["exposure"]["latestHoldingsLosers"]["alpha_20260405_100000"][0]["symbol"] == "GME"
+    winners = payload["exposure"]["latestHoldingsWinners"]["alpha_20260405_100000"]
+    losers = payload["exposure"]["latestHoldingsLosers"]["alpha_20260405_100000"]
+    assert len(winners) == 5
+    assert len(losers) == 5
+    assert [entry["symbol"] for entry in winners] == ["AAPL", "MSFT", "NVDA", "AMZN", "GOOG"]
+    assert [entry["symbol"] for entry in losers] == ["TSLA", "GOOG", "AMZN", "NVDA", "MSFT"]
+    assert winners[0]["returnSinceLatestRebalance"] > winners[-1]["returnSinceLatestRebalance"]
+    assert losers[0]["returnSinceLatestRebalance"] < losers[-1]["returnSinceLatestRebalance"]
 
 
 def test_dashboard_returns_single_mode_payload(tmp_path: Path) -> None:
@@ -687,8 +721,10 @@ def _write_saved_run(
     dates: list[str] | None = None,
     equity_values: list[float] | None = None,
     turnover_values: list[float] | None = None,
+    monthly_returns_values: list[float] | None = None,
     benchmark: dict[str, object] | None = None,
     latest_weights_rows: list[dict[str, object]] | None = None,
+    latest_holdings_return_rows: list[dict[str, object]] | None = None,
 ) -> None:
     run_dir = root / run_id
     series_dir = run_dir / "series"
@@ -722,14 +758,23 @@ def _write_saved_run(
     turnover = pd.Series(turnover_values, index=date_index, name="turnover")
     weights_frame = pd.DataFrame(weights, columns=["A", "B", "C"], index=date_index)
     qty_frame = weights_frame.mul(10.0)
+    if monthly_returns_values is not None:
+        monthly_dates = pd.to_datetime(dates[: len(monthly_returns_values)])
+        monthly_returns = pd.Series(monthly_returns_values, index=monthly_dates, name="monthly_returns")
+    else:
+        monthly_returns = None
 
     equity.to_csv(series_dir / "equity.csv", index_label="date")
     returns.to_csv(series_dir / "returns.csv", index_label="date")
     turnover.to_csv(series_dir / "turnover.csv", index_label="date")
+    if monthly_returns is not None:
+        monthly_returns.to_csv(series_dir / "monthly_returns.csv", index_label="date")
     weights_frame.to_parquet(positions_dir / "weights.parquet")
     qty_frame.to_parquet(positions_dir / "qty.parquet")
     if latest_weights_rows is not None:
         pd.DataFrame(latest_weights_rows).to_csv(positions_dir / "latest_weights.csv", index=False)
+    if latest_holdings_return_rows is not None:
+        pd.DataFrame(latest_holdings_return_rows).to_csv(positions_dir / "latest_holdings_returns.csv", index=False)
 
 
 def _write_incomplete_run(root: Path, run_id: str) -> None:
