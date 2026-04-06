@@ -15,11 +15,11 @@ const STRATEGY_COLORS = ["#f0a44b", "#e3c06b", "#7cb8d8", "#c98f7d", "#8fa77f", 
 function focusLabel(focus: ResearchFocus, dashboard: DashboardPayload) {
   if (focus.kind === "strategy") {
     const context = dashboard.context[focus.runId];
-    return `Focus: Strategy 쨌 ${context?.label ?? focus.runId}`;
+    return `Focus: Strategy · ${context?.label ?? focus.runId}`;
   }
 
   if (focus.kind === "sector") {
-    return `Focus: Sector 쨌 ${focus.sectorName}`;
+    return `Focus: Sector · ${focus.sectorName}`;
   }
 
   return "Focus: All selected";
@@ -35,6 +35,18 @@ function formatLaunchText(value: string | null) {
 
 function formatLaunchMoney(value: number | null) {
   return value == null ? "n/a" : formatMoney(value);
+}
+
+function formatCostValue(value: number | null) {
+  return value == null ? "n/a" : formatPercent(value, 2);
+}
+
+function buildCostSummary(launch: DashboardPayload["launch"]) {
+  return [
+    `Fee ${formatCostValue(launch.fee)}`,
+    `Sell tax ${formatCostValue(launch.sellTax)}`,
+    `Slippage ${formatCostValue(launch.slippage)}`,
+  ].join(" / ");
 }
 
 function benchmarkSummary(dashboard: DashboardPayload) {
@@ -161,6 +173,45 @@ export function PerformanceStrip({ dashboard, focus, onFocusChange }: Performanc
     series: summarySeries,
   };
 
+  const drawdownSeries = selectedRuns
+    .map((run) => {
+      const series = dashboard.performance.drawdowns.find((entry) => entry.runId === run.runId);
+      if (!series) {
+        return null;
+      }
+      return {
+        name: `${run.label} drawdown`,
+        type: "line" as const,
+        data: series.points.map((point) => [point.date, point.value]),
+        showSymbol: false,
+        lineStyle: { width: 1.6 },
+      };
+    })
+    .filter((entry): entry is { name: string; type: "line"; data: [string, number][]; showSymbol: boolean; lineStyle: { width: number } } => Boolean(entry));
+
+  const drawdownOption = {
+    backgroundColor: "transparent",
+    color: STRATEGY_COLORS,
+    tooltip: {
+      trigger: "axis" as const,
+      axisPointer: { type: "cross" },
+      formatter: (params: any) => params.map((entry: any) => `${entry.seriesName}: ${formatPercent(entry.data[1])}`).join("<br/>"),
+    },
+    legend: { show: false },
+    grid: { left: 8, right: 18, top: 8, bottom: 12, containLabel: true },
+    xAxis: {
+      type: "time" as const,
+      axisLine: { lineStyle: { color: "rgba(247, 240, 231, 0.18)" } },
+      axisLabel: { color: "#bdaea1" },
+    },
+    yAxis: {
+      type: "value" as const,
+      axisLabel: { formatter: (value: number) => `${(value * 100).toFixed(0)}%`, color: "#bdaea1" },
+      splitLine: { lineStyle: { color: "rgba(247, 240, 231, 0.08)" } },
+    },
+    series: drawdownSeries,
+  };
+
   return (
     <motion.section
       className="workspace-strip performance-strip"
@@ -180,12 +231,8 @@ export function PerformanceStrip({ dashboard, focus, onFocusChange }: Performanc
       </div>
 
       <div className="workspace-strip-grid workspace-strip-grid--wide">
-        <motion.div className="workspace-chart-plane workspace-chart-plane--hero" whileHover={{ scale: 1.003 }}>
-          <EChartsReact option={chartOption} style={{ height: 360, width: "100%" }} />
-        </motion.div>
-
-        <div className="workspace-metrics workspace-metrics--stack">
-          <section className="workspace-metadata-rail" aria-label="Launch metadata">
+        <div className="workspace-strip-main">
+          <section className="workspace-metadata-rail workspace-metadata-rail--hero" aria-label="Launch metadata">
             <div className="workspace-metadata-head">
               <span className="section-label">Launch metadata</span>
               <span>{dashboard.launch.asOfDate ? `As of ${dashboard.launch.asOfDate}` : "Snapshot context"}</span>
@@ -205,11 +252,22 @@ export function PerformanceStrip({ dashboard, focus, onFocusChange }: Performanc
               </div>
               <div>
                 <dt>Costs</dt>
-                <dd>{`fee 0% / tax 0% / slippage 0%`}</dd>
+                <dd>{buildCostSummary(dashboard.launch)}</dd>
               </div>
             </dl>
           </section>
 
+          <div className="workspace-chart-stack">
+            <motion.div className="workspace-chart-plane workspace-chart-plane--hero" whileHover={{ scale: 1.003 }}>
+              <EChartsReact option={chartOption} style={{ height: 360, width: "100%" }} />
+            </motion.div>
+            <motion.div className="workspace-chart-plane workspace-chart-plane--drawdown" whileHover={{ scale: 1.0 }}>
+              <EChartsReact option={drawdownOption} style={{ height: 140, width: "100%" }} />
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="workspace-metrics workspace-metrics--stack workspace-metrics--stack-side">
           <div className="focus-banner">
             <span className="section-label">Detail focus</span>
             <strong>{normalizeFocusLabel(focusLabel(focus, dashboard))}</strong>

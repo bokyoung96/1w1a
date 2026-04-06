@@ -197,6 +197,12 @@ function normalizeLaunch(value: unknown): DashboardLaunch {
         ? null
         : asString(candidate.fill_mode ?? candidate.fillMode),
     benchmark: normalizeLaunchBenchmarkContext(candidate.benchmark),
+    fee: candidate.fee == null ? null : asNumber(candidate.fee),
+    sellTax:
+      candidate.sell_tax == null && candidate.sellTax == null
+        ? null
+        : asNumber(candidate.sell_tax ?? candidate.sellTax),
+    slippage: candidate.slippage == null ? null : asNumber(candidate.slippage),
     asOfDate:
       candidate.as_of_date == null && candidate.asOfDate == null
         ? null

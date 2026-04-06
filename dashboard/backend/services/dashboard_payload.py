@@ -112,6 +112,9 @@ class DashboardPayloadService:
             capital=config.capital,
             schedule=config.schedule,
             fill_mode=config.fill_mode,
+            fee=config.fee,
+            sell_tax=config.sell_tax,
+            slippage=config.slippage,
             benchmark=DashboardPayloadService._serialize_launch_benchmark_context(),
             as_of_date=as_of_date,
         )

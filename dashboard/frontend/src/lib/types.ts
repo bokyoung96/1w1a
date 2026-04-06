@@ -76,6 +76,9 @@ export type DashboardLaunch = {
   schedule: string | null;
   fillMode: string | null;
   benchmark: LaunchBenchmarkContext | null;
+  fee: number | null;
+  sellTax: number | null;
+  slippage: number | null;
   asOfDate: string | null;
 };
 

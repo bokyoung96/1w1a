@@ -49,6 +49,9 @@ class DashboardLaunchModel(DashboardBaseModel):
     capital: float | None = None
     schedule: str | None = None
     fill_mode: str | None = None
+    fee: float | None = None
+    sell_tax: float | None = None
+    slippage: float | None = None
     benchmark: LaunchBenchmarkContextModel | None = None
     as_of_date: str | None = None
 
