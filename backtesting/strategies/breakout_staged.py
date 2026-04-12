@@ -71,9 +71,9 @@ class Breakout52WeekStaged(RegisteredStrategy):
                             if active[bucket_index]:
                                 active[bucket_index] = False
                                 break
+                        pullback_ready = False
                         if not any(active):
                             peak = None
-                            pullback_ready = False
                     else:
                         current_peak = float(price) if peak is None else float(peak)
                         ma_value = ma10.loc[timestamp, symbol]

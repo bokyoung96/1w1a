@@ -67,8 +67,9 @@ This is a long-only breakout strategy with three-stage entry and three-stage exi
 
 - Additional entries are allowed only after:
   - the symbol pulls back to the 10-day moving average area, and
-  - then re-breaks the post-entry reference high
-- The staged implementation should use the existing staged-policy infrastructure, but the strategy-specific eligibility rules should be derived from breakout-state logic, not from generic alpha availability.
+  - then reclaims the short-term trend by moving back above the 10-day moving average
+- This is intentionally simpler than a strict prior-peak recapture rule because the immediate goal is to validate that the strategy layer can express staged breakout behavior on top of the existing framework.
+- The staged implementation should use the existing staged-policy infrastructure or an equivalent strategy-local state machine that preserves the same bucket-ledger contract.
 
 #### Position sizing
 

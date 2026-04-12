@@ -64,6 +64,14 @@ python run.py --strategy momentum --start 2020-01-01 --end 2020-12-31 --top-n 20
 python run.py --strategy op_fwd_yield --start 2020-01-01 --end 2020-12-31 --top-n 20 --schedule monthly --fill-mode next_open
 ```
 
+```powershell
+python run.py --strategy breakout_52w_simple --start 2020-01-01 --end 2020-12-31 --schedule daily --fill-mode close
+```
+
+```powershell
+python run.py --strategy breakout_52w_staged --start 2020-01-01 --end 2020-12-31 --schedule daily --fill-mode close
+```
+
 Each run writes an output bundle under `results/backtests/` by default.
 
 - `config.json`

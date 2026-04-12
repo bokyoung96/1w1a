@@ -103,54 +103,15 @@ def test_runner_executes_op_fwd_strategy(tmp_path: Path) -> None:
     assert (report.output_dir / "positions" / "qty.parquet").exists()
 
 
-def test_runner_rejects_removed_example_strategy_name(tmp_path: Path) -> None:
+def test_runner_executes_breakout_52w_simple_strategy(tmp_path: Path) -> None:
     parquet_dir = tmp_path / "parquet"
     raw_dir = tmp_path / "raw"
     result_dir = tmp_path / "results"
     parquet_dir.mkdir()
     raw_dir.mkdir()
     store = ParquetStore(parquet_dir)
-    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
-    store.write(
-        "qw_adj_c",
-        pd.DataFrame(
-            {
-                "A": [10.0, 12.0, 15.0],
-                "B": [10.0, 9.0, 8.0],
-                "C": [20.0, 24.0, 30.0],
-                "D": [20.0, 19.0, 18.0],
-            },
-            index=index,
-        ),
-    )
-    store.write(
-        "qw_adj_o",
-        pd.DataFrame(
-            {
-                "A": [10.0, 12.0, 15.0],
-                "B": [10.0, 9.0, 8.0],
-                "C": [20.0, 24.0, 30.0],
-                "D": [20.0, 19.0, 18.0],
-            },
-            index=index,
-        ),
-    )
-    store.write(
-        "qw_k200_yn",
-        pd.DataFrame({"A": [1, 1, 1], "B": [1, 1, 1], "C": [1, 1, 1], "D": [1, 1, 1]}, index=index),
-    )
-    store.write(
-        "qw_wics_sec_big",
-        pd.DataFrame(
-            {
-                "A": ["Tech"],
-                "B": ["Tech"],
-                "C": ["Energy"],
-                "D": ["Energy"],
-            },
-            index=pd.to_datetime(["2024-01-31"]),
-        ),
-    )
+    index = pd.bdate_range("2024-01-02", periods=260)
+    store.write("qw_adj_c", pd.DataFrame({"A": [100.0] * 252 + [101.0] + [102.0] * 7}, index=index))
     runner = BacktestRunner(
         catalog=DataCatalog.default(),
         raw_dir=raw_dir,
@@ -158,14 +119,94 @@ def test_runner_rejects_removed_example_strategy_name(tmp_path: Path) -> None:
         result_dir=result_dir,
     )
 
-    with pytest.raises(KeyError, match="momentum_sector_neutral_staged"):
-        runner.run(
-            RunConfig(
-                strategy="momentum_sector_neutral_staged",
-                start="2024-01-02",
-                end="2024-01-04",
-            )
+    report = runner.run(
+        RunConfig(
+            strategy="breakout_52w_simple",
+            start=index[0].date().isoformat(),
+            end=index[-1].date().isoformat(),
+            schedule="daily",
+            fill_mode="close",
+            use_k200=False,
         )
+    )
+
+    assert report.summary["final_equity"] > 0.0
+    assert report.result.weights.to_numpy().sum() > 0.0
+    assert report.result.weights.iloc[-1]["A"] == 1.0
+    assert report.output_dir is not None
+
+
+def test_runner_executes_breakout_52w_staged_strategy_and_persists_bucket_ledger(
+    tmp_path: Path,
+) -> None:
+    parquet_dir = tmp_path / "parquet"
+    raw_dir = tmp_path / "raw"
+    result_dir = tmp_path / "results"
+    parquet_dir.mkdir()
+    raw_dir.mkdir()
+    store = ParquetStore(parquet_dir)
+    index = pd.bdate_range("2024-01-02", periods=270)
+    close = pd.DataFrame(
+        {
+            "A": [
+                *([100.0] * 252),
+                101.0,
+                103.0,
+                105.0,
+                104.0,
+                103.0,
+                102.0,
+                104.5,
+                106.0,
+                104.0,
+                103.0,
+                102.0,
+                105.0,
+                107.0,
+                108.0,
+                109.0,
+                110.0,
+                111.0,
+                112.0,
+            ]
+        },
+        index=index,
+    )
+    store.write("qw_adj_c", close)
+    runner = BacktestRunner(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+        result_dir=result_dir,
+    )
+
+    report = runner.run(
+        RunConfig(
+            strategy="breakout_52w_staged",
+            start=index[0].date().isoformat(),
+            end=index[-1].date().isoformat(),
+            schedule="daily",
+            fill_mode="close",
+            use_k200=False,
+        )
+    )
+
+    assert report.summary["final_equity"] > 0.0
+    assert report.result.weights.to_numpy().sum() > 0.0
+    assert report.output_dir is not None
+    bucket_ledger_path = report.output_dir / "positions" / "bucket_ledger.parquet"
+    assert bucket_ledger_path.exists()
+    bucket_ledger = pd.read_parquet(bucket_ledger_path)
+    assert not bucket_ledger.empty
+    assert set(bucket_ledger["bucket_id"]) == {"entry", "add_1", "add_2"}
+    bucket_weights = (
+        bucket_ledger.groupby(["date", "symbol"])["target_weight"]
+        .sum()
+        .unstack(fill_value=0.0)
+        .reindex_like(report.result.weights)
+        .fillna(0.0)
+    )
+    assert_frame_equal(bucket_weights, report.result.weights)
 
 
 def test_runner_uses_warmup_history_but_trims_persisted_outputs(
