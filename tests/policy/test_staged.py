@@ -63,6 +63,47 @@ def test_staged_policy_releases_budget_over_multiple_buckets_and_handles_signed_
     validate_position_plan(plan)
 
 
+def test_staged_policy_never_exceeds_base_budget() -> None:
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+    base = pd.DataFrame(
+        {"LONG": [0.6, 0.6, 0.6], "SHORT": [-0.8, -0.8, -0.8]},
+        index=index,
+    )
+    close = pd.DataFrame(
+        {"LONG": [10.0, 10.2, 10.4], "SHORT": [20.0, 19.8, 19.6]},
+        index=index,
+    )
+    construction = ConstructionResult(
+        base_target_weights=base,
+        selection_mask=base.ne(0.0),
+        group_long_budget=None,
+        group_short_budget=None,
+        meta={},
+    )
+    bundle = SignalBundle(
+        alpha=base,
+        context={
+            "tradable": base.notna(),
+            "eligible_entry": pd.DataFrame(True, index=index, columns=base.columns),
+            "eligible_add_1": pd.DataFrame(True, index=index, columns=base.columns),
+            "eligible_add_2": pd.DataFrame(True, index=index, columns=base.columns),
+            "eligible_exit": pd.DataFrame(False, index=index, columns=base.columns),
+        },
+    )
+
+    plan = BudgetPreservingStagedPolicy(
+        buckets=(BucketDefinition("b0", 0.25), BucketDefinition("b1", 0.25), BucketDefinition("b2", 0.50)),
+        rules=StagedRuleSet(
+            entry_key="eligible_entry",
+            add_keys=("eligible_add_1", "eligible_add_2"),
+            exit_key="eligible_exit",
+        ),
+    ).apply(construction, MarketData(frames={"close": close}, universe=None, benchmark=None), bundle)
+
+    assert (plan.target_weights.abs() <= base.abs() + 1e-12).all().all()
+    assert plan.target_weights.equals(base)
+
+
 def test_staged_policy_clears_active_buckets_on_exit_and_allows_reentry() -> None:
     index = pd.to_datetime(
         ["2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05", "2024-01-06"]
