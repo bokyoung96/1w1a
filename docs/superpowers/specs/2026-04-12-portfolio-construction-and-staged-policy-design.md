@@ -169,8 +169,8 @@ Recommended fields:
 
 - `base_target_weights: pd.DataFrame`
 - `selection_mask: pd.DataFrame`
-- `group_budget_long: pd.DataFrame | None`
-- `group_budget_short: pd.DataFrame | None`
+- `group_long_budget: pd.DataFrame | None`
+- `group_short_budget: pd.DataFrame | None`
 - `meta: dict[str, pd.DataFrame | pd.Series]`
 
 This output must be richer than a weight frame because the position policy should not need to reverse-engineer how the construction result was created.
@@ -183,6 +183,8 @@ Recommended interface:
 
 The policy is a budget-preserving overlay by default.
 
+Phase 1 default policy is `PassThroughPolicy`.
+
 ### `PositionPlan`
 
 Recommended fields:
@@ -193,6 +195,8 @@ Recommended fields:
 - `validation: dict[str, object] | None = None`
 
 The engine consumes `target_weights`. Reporting and diagnostics consume the bucket ledger and bucket metadata.
+
+`target_weights` must equal the sum of bucket-level target weights within a configured tolerance.
 
 ## Reserved Metadata Keys
 
@@ -209,8 +213,8 @@ To avoid contract drift, reserve the following minimum keys from the start.
 - `selected_long`
 - `selected_short`
 - `group_id`
-- `group_budget_long`
-- `group_budget_short`
+- `group_long_budget`
+- `group_short_budget`
 - `constraint_violation`
 
 Additional keys may be added later, but these reserved names should remain stable.
