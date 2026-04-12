@@ -24,6 +24,7 @@ class RunReader:
             monthly_returns=self._read_optional_series(series_dir / "monthly_returns.csv", "monthly_returns"),
             latest_qty=self._read_optional_frame(positions_dir / "latest_qty.csv"),
             latest_weights=self._read_optional_frame(positions_dir / "latest_weights.csv"),
+            bucket_ledger=self._read_optional_parquet(positions_dir / "bucket_ledger.parquet"),
             validation=self._read_optional_json(run_dir / "validation.json"),
             split=self._read_optional_json(run_dir / "split.json"),
             factor=self._read_optional_json(run_dir / "factor.json"),
@@ -46,6 +47,12 @@ class RunReader:
         if not path.exists():
             return None
         return pd.read_csv(path)
+
+    @staticmethod
+    def _read_optional_parquet(path: Path) -> pd.DataFrame | None:
+        if not path.exists():
+            return None
+        return pd.read_parquet(path)
 
     @staticmethod
     def _read_optional_json(path: Path) -> dict[str, object] | None:

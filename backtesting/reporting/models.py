@@ -21,6 +21,7 @@ class SavedRun:
     monthly_returns: pd.Series | None = None
     latest_qty: pd.DataFrame | None = None
     latest_weights: pd.DataFrame | None = None
+    bucket_ledger: pd.DataFrame | None = None
     validation: dict[str, object] | None = None
     split: dict[str, object] | None = None
     factor: dict[str, object] | None = None
