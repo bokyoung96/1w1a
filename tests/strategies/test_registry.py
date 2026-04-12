@@ -2,9 +2,10 @@ from pathlib import Path
 import warnings
 
 import pandas as pd
+from pandas.testing import assert_frame_equal
 
 from backtesting.data import MarketData
-from backtesting.strategies import build_strategy, list_strategies
+from backtesting.strategies import RegisteredStrategy, build_strategy, list_strategies
 
 
 def test_registry_lists_default_strategies() -> None:
@@ -49,6 +50,52 @@ def test_op_fwd_yield_strategy_builds_weights() -> None:
 
     assert weights.loc["2024-01-03", "A"] == 1.0
     assert weights.loc["2024-01-03", "B"] == 0.0
+
+
+def test_op_fwd_yield_strategy_builds_plan() -> None:
+    strategy = build_strategy("op_fwd_yield", top_n=1)
+    index = pd.to_datetime(["2024-01-02", "2024-01-03"])
+    market = MarketData(
+        frames={
+            "op_fwd": pd.DataFrame({"A": [20.0, 20.0], "B": [5.0, 5.0]}, index=index),
+            "market_cap": pd.DataFrame({"A": [10.0, 10.0], "B": [10.0, 10.0]}, index=index),
+        },
+        universe=None,
+        benchmark=None,
+    )
+
+    plan = strategy.build_plan(market)
+
+    assert_frame_equal(plan.target_weights, strategy.build_weights(market))
+    assert plan.bucket_ledger["bucket_id"].eq("base").all()
+
+
+def test_registered_strategy_preserves_legacy_extension_path() -> None:
+    class LegacyStrategy(RegisteredStrategy):
+        @property
+        def datasets(self) -> tuple:
+            return ()
+
+        def build_signal(self, market: MarketData) -> pd.DataFrame:
+            return market.frames["close"].pct_change(fill_method=None)
+
+        def target_weights(self, signal: pd.Series) -> pd.Series:
+            weights = pd.Series(0.0, index=signal.index, dtype=float)
+            winner = signal.dropna().sort_values(ascending=False).head(1)
+            if not winner.empty:
+                weights.loc[winner.index] = 1.0
+            return weights
+
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+    close = pd.DataFrame({"A": [10.0, 11.0, 12.0], "B": [10.0, 10.0, 9.0]}, index=index)
+    market = MarketData(frames={"close": close}, universe=None, benchmark=None)
+
+    strategy = LegacyStrategy()
+
+    plan = strategy.build_plan(market)
+
+    assert plan.target_weights.loc["2024-01-04", "A"] == 1.0
+    assert plan.bucket_ledger["bucket_id"].eq("base").all()
 
 
 def test_momentum_strategy_avoids_future_warning_on_pct_change() -> None:
