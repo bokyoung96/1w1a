@@ -22,9 +22,6 @@ from .strategy import (
     TimeSeriesStrategy,
 )
 from .strategies import (
-    MomentumLongShort,
-    MomentumSectorNeutral,
-    MomentumSectorNeutralStaged,
     MomentumTopN,
     OpFwdYieldTopN,
     RegisteredStrategy,
@@ -38,9 +35,6 @@ __all__ = (
     "BacktestEngine",
     "BacktestResult",
     "BaseStrategy",
-    "MomentumLongShort",
-    "MomentumSectorNeutral",
-    "MomentumSectorNeutralStaged",
     "MomentumTopN",
     "OpFwdYieldTopN",
     "CostModel",

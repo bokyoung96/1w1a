@@ -4,11 +4,8 @@ import inspect
 from typing import Callable
 
 from .base import RegisteredStrategy
-from .long_short import MomentumLongShort
 from .momentum import MomentumTopN
 from .op_fwd import OpFwdYieldTopN
-from .sector_neutral import MomentumSectorNeutral
-from .staged import MomentumSectorNeutralStaged
 
 
 StrategyFactory = Callable[..., RegisteredStrategy]
@@ -38,7 +35,4 @@ def list_strategies() -> tuple[str, ...]:
 
 
 register_strategy("momentum", MomentumTopN)
-register_strategy("momentum_long_short", MomentumLongShort)
-register_strategy("momentum_sector_neutral", MomentumSectorNeutral)
-register_strategy("momentum_sector_neutral_staged", MomentumSectorNeutralStaged)
 register_strategy("op_fwd_yield", OpFwdYieldTopN)

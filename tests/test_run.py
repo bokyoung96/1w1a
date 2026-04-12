@@ -103,7 +103,7 @@ def test_runner_executes_op_fwd_strategy(tmp_path: Path) -> None:
     assert (report.output_dir / "positions" / "qty.parquet").exists()
 
 
-def test_runner_executes_staged_sector_neutral_strategy(tmp_path: Path) -> None:
+def test_runner_rejects_removed_example_strategy_name(tmp_path: Path) -> None:
     parquet_dir = tmp_path / "parquet"
     raw_dir = tmp_path / "raw"
     result_dir = tmp_path / "results"
@@ -151,34 +151,21 @@ def test_runner_executes_staged_sector_neutral_strategy(tmp_path: Path) -> None:
             index=pd.to_datetime(["2024-01-31"]),
         ),
     )
-
     runner = BacktestRunner(
         catalog=DataCatalog.default(),
         raw_dir=raw_dir,
         parquet_dir=parquet_dir,
         result_dir=result_dir,
     )
-    report = runner.run(
-        RunConfig(
-            strategy="momentum_sector_neutral_staged",
-            start="2024-01-02",
-            end="2024-01-04",
-            top_n=1,
-            lookback=1,
-            schedule="daily",
-            fill_mode="close",
-        )
-    )
 
-    assert report.position_plan is not None
-    assert not report.position_plan.bucket_ledger.empty
-    assert report.position_plan.target_weights.loc["2024-01-03", "A"] == 0.25
-    assert report.position_plan.target_weights.loc["2024-01-03", "B"] == -0.25
-    assert report.position_plan.target_weights.loc["2024-01-04", "A"] == 0.5
-    assert report.position_plan.target_weights.loc["2024-01-04", "B"] == -0.5
-    assert sorted(report.position_plan.bucket_ledger["bucket_id"].unique().tolist()) == ["add_1", "entry"]
-    assert report.output_dir is not None
-    assert (report.output_dir / "positions" / "bucket_ledger.parquet").exists()
+    with pytest.raises(KeyError, match="momentum_sector_neutral_staged"):
+        runner.run(
+            RunConfig(
+                strategy="momentum_sector_neutral_staged",
+                start="2024-01-02",
+                end="2024-01-04",
+            )
+        )
 
 
 def test_runner_uses_warmup_history_but_trims_persisted_outputs(
