@@ -22,6 +22,7 @@ from .strategy import (
     TimeSeriesStrategy,
 )
 from .strategies import (
+    Breakout52WeekSimple,
     MomentumTopN,
     OpFwdYieldTopN,
     RegisteredStrategy,
@@ -35,6 +36,7 @@ __all__ = (
     "BacktestEngine",
     "BacktestResult",
     "BaseStrategy",
+    "Breakout52WeekSimple",
     "MomentumTopN",
     "OpFwdYieldTopN",
     "CostModel",

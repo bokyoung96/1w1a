@@ -13,7 +13,6 @@ def test_registry_lists_default_strategies() -> None:
         "momentum",
         "op_fwd_yield",
         "breakout_52w_simple",
-        "breakout_52w_staged",
     }
 
 
@@ -73,6 +72,30 @@ def test_op_fwd_yield_strategy_builds_plan() -> None:
 
     assert_frame_equal(plan.target_weights, strategy.build_weights(market))
     assert plan.bucket_ledger["bucket_id"].eq("base").all()
+
+
+def test_breakout_52w_simple_enters_on_prior_252_day_high_break_and_exits_on_20_day_low_break() -> None:
+    strategy = build_strategy("breakout_52w_simple")
+    index = pd.date_range("2024-01-01", periods=274, freq="B")
+    close = pd.DataFrame(
+        {
+            "A": [
+                *([100.0] * 252),
+                101.0,
+                *([102.0] * 20),
+                99.0,
+            ]
+        },
+        index=index,
+    )
+    market = MarketData(frames={"close": close}, universe=None, benchmark=None)
+
+    plan = strategy.build_plan(market)
+
+    assert plan.target_weights.loc[close.index[251], "A"] == 0.0
+    assert plan.target_weights.loc[close.index[252], "A"] == 1.0
+    assert plan.target_weights.loc[close.index[272], "A"] == 1.0
+    assert plan.target_weights.loc[close.index[273], "A"] == 0.0
 
 
 def test_registered_strategy_preserves_legacy_extension_path() -> None:
