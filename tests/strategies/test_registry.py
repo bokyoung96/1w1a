@@ -2,6 +2,7 @@ from pathlib import Path
 import warnings
 
 import pandas as pd
+import pytest
 from pandas.testing import assert_frame_equal
 
 from backtesting.data import MarketData
@@ -13,6 +14,7 @@ def test_registry_lists_default_strategies() -> None:
         "momentum",
         "op_fwd_yield",
         "breakout_52w_simple",
+        "breakout_52w_staged",
     }
 
 
@@ -96,6 +98,83 @@ def test_breakout_52w_simple_enters_on_prior_252_day_high_break_and_exits_on_20_
     assert plan.target_weights.loc[close.index[252], "A"] == 1.0
     assert plan.target_weights.loc[close.index[272], "A"] == 1.0
     assert plan.target_weights.loc[close.index[273], "A"] == 0.0
+
+
+def test_breakout_52w_staged_adds_second_and_third_buckets_after_10dma_pullback_and_rebreak() -> None:
+    strategy = build_strategy("breakout_52w_staged")
+    index = pd.date_range("2024-01-01", periods=270, freq="B")
+    close = pd.DataFrame(
+        {
+            "A": [
+                *([100.0] * 252),
+                101.0,
+                103.0,
+                105.0,
+                104.0,
+                103.0,
+                102.0,
+                104.5,
+                106.0,
+                104.0,
+                103.0,
+                102.0,
+                105.0,
+                107.0,
+                108.0,
+                109.0,
+                110.0,
+                111.0,
+                112.0,
+            ]
+        },
+        index=index,
+    )
+    market = MarketData(frames={"close": close}, universe=None, benchmark=None)
+
+    plan = strategy.build_plan(market)
+
+    first_breakout = close.index[252]
+    first_rebreak = close.index[258]
+    second_rebreak = close.index[263]
+    assert plan.target_weights.loc[first_breakout, "A"] == pytest.approx(1 / 3)
+    assert plan.target_weights.loc[first_rebreak, "A"] == pytest.approx(2 / 3)
+    assert plan.target_weights.loc[second_rebreak, "A"] == pytest.approx(1.0)
+
+
+def test_breakout_52w_staged_exits_in_three_steps_after_20_day_low_break() -> None:
+    strategy = build_strategy("breakout_52w_staged")
+    index = pd.date_range("2024-01-01", periods=290, freq="B")
+    close = pd.DataFrame(
+        {
+            "A": [
+                *([100.0] * 252),
+                101.0,
+                103.0,
+                105.0,
+                104.0,
+                103.0,
+                102.0,
+                104.5,
+                106.0,
+                104.0,
+                103.0,
+                102.0,
+                105.0,
+                107.0,
+                90.0,
+                89.0,
+                88.0,
+            ]
+        },
+        index=index[:268],
+    )
+    market = MarketData(frames={"close": close}, universe=None, benchmark=None)
+
+    plan = strategy.build_plan(market)
+
+    assert plan.target_weights.iloc[-3, 0] == pytest.approx(2 / 3)
+    assert plan.target_weights.iloc[-2, 0] == pytest.approx(1 / 3)
+    assert plan.target_weights.iloc[-1, 0] == 0.0
 
 
 def test_registered_strategy_preserves_legacy_extension_path() -> None:

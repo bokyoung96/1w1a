@@ -4,6 +4,7 @@ import inspect
 from typing import Callable
 
 from .base import RegisteredStrategy
+from .breakout_staged import Breakout52WeekStaged
 from .breakout_simple import Breakout52WeekSimple
 from .momentum import MomentumTopN
 from .op_fwd import OpFwdYieldTopN
@@ -38,3 +39,4 @@ def list_strategies() -> tuple[str, ...]:
 register_strategy("momentum", MomentumTopN)
 register_strategy("op_fwd_yield", OpFwdYieldTopN)
 register_strategy("breakout_52w_simple", Breakout52WeekSimple)
+register_strategy("breakout_52w_staged", Breakout52WeekStaged)
