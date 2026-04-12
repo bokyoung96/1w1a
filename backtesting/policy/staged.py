@@ -72,20 +72,22 @@ class BudgetPreservingStagedPolicy(PositionPolicy):
             next_active = prior_active.copy()
             base_row = base_values[date_index]
             zero_mask = base_row == 0.0
+            nonzero_mask = ~zero_mask
 
             if zero_mask.any():
                 next_active[:, zero_mask] = False
-            else:
-                entered = entry_mask[date_index]
+
+            if nonzero_mask.any():
+                entered = entry_mask[date_index] & nonzero_mask
                 if entered.any():
                     next_active[0, entered] = True
 
                 for bucket_index, add_mask in enumerate(add_masks, start=1):
-                    activate = add_mask[date_index] & prior_active[bucket_index - 1]
+                    activate = add_mask[date_index] & prior_active[bucket_index - 1] & nonzero_mask
                     if activate.any():
                         next_active[bucket_index, activate] = True
 
-                exited = exit_mask[date_index]
+                exited = exit_mask[date_index] & nonzero_mask
                 if exited.any():
                     next_active[:, exited] = False
 
