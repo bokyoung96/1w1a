@@ -173,6 +173,9 @@ def test_runner_uses_warmup_history_but_trims_persisted_outputs(
     assert report.result.weights.index.min() == pd.Timestamp("2024-01-03")
     assert report.result.weights.loc["2024-01-03", "A"] == 1.0
     assert report.output_dir is not None
+    assert report.position_plan is not None
+    assert report.position_plan.target_weights.index.tolist() == list(pd.to_datetime(["2024-01-03", "2024-01-04"]))
+    assert report.position_plan.bucket_ledger["date"].dt.strftime("%Y-%m-%d").tolist() == ["2024-01-03", "2024-01-04"]
 
     equity = pd.read_csv(report.output_dir / "series" / "equity.csv")
     assert equity["date"].tolist() == ["2024-01-03", "2024-01-04"]

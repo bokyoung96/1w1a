@@ -121,6 +121,7 @@ class BacktestRunner:
             allow_fractional=config.allow_fractional,
         )
         result = self._trim_result_to_display_range(result, start=config.start, end=config.end)
+        plan = self._trim_plan_to_display_range(plan, start=config.start, end=config.end)
         if result.equity.empty:
             raise ValueError(
                 f"no backtest rows remain after trimming to display range {config.start}..{config.end}"
@@ -172,6 +173,25 @@ class BacktestRunner:
             weights=result.weights.loc[start:end].copy(),
             qty=result.qty.loc[start:end].copy(),
             turnover=result.turnover.loc[start:end].copy(),
+        )
+
+    @staticmethod
+    def _trim_plan_to_display_range(plan: PositionPlan, *, start: str, end: str) -> PositionPlan:
+        trimmed_weights = plan.target_weights.loc[start:end].copy()
+        trimmed_ledger = plan.bucket_ledger
+        ledger_changed = False
+        if not trimmed_ledger.empty and "date" in trimmed_ledger.columns:
+            date_values = pd.to_datetime(trimmed_ledger["date"])
+            mask = (date_values >= pd.Timestamp(start)) & (date_values <= pd.Timestamp(end))
+            ledger_changed = not bool(mask.all())
+            trimmed_ledger = trimmed_ledger.loc[mask].reset_index(drop=True)
+        if trimmed_weights.equals(plan.target_weights) and not ledger_changed:
+            return plan
+        return PositionPlan(
+            target_weights=trimmed_weights,
+            bucket_ledger=trimmed_ledger,
+            bucket_meta=plan.bucket_meta,
+            validation=plan.validation,
         )
 
 
