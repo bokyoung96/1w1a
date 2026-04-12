@@ -27,7 +27,7 @@ class SectorNeutralTopBottom:
         group_short_budget_by_date: dict[pd.Timestamp, pd.Series] = {}
         selected_long_by_date: dict[pd.Timestamp, pd.Series] = {}
         selected_short_by_date: dict[pd.Timestamp, pd.Series] = {}
-        group_identity = (
+        group_id = (
             sector.reindex(index=alpha.index, columns=alpha.columns)
             if isinstance(sector, pd.DataFrame)
             else pd.DataFrame(index=alpha.index, columns=alpha.columns)
@@ -110,7 +110,9 @@ class SectorNeutralTopBottom:
             meta={
                 "selected_long": selected_long,
                 "selected_short": selected_short,
-                "group_identity": group_identity,
+                "group_id": group_id,
+                "group_long_budget": group_long_budget,
+                "group_short_budget": group_short_budget,
             },
         )
 

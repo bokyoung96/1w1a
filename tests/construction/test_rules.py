@@ -58,6 +58,9 @@ def test_sector_neutral_top_bottom_balances_by_sector() -> None:
     assert bool(result.meta["selected_short"].loc[index[0], "B"])
     assert bool(result.meta["selected_long"].loc[index[0], "C"])
     assert bool(result.meta["selected_short"].loc[index[0], "D"])
+    assert result.meta["group_id"].loc[index[0], "A"] == "Tech"
+    assert result.meta["group_long_budget"].loc[index[0], "Tech"] == 0.5
+    assert result.meta["group_short_budget"].loc[index[0], "Energy"] == 0.5
 
 
 def test_long_short_top_bottom_shrinks_long_leg_to_preserve_small_universe_neutrality() -> None:
@@ -107,8 +110,8 @@ def test_sector_neutral_top_bottom_skips_undersized_sector() -> None:
     assert bool(result.meta["selected_long"].loc[index[0], "A"])
     assert bool(result.meta["selected_short"].loc[index[0], "B"])
     assert bool(result.meta["selected_long"].loc[index[0], "C"]) is False
-    assert result.meta["group_identity"].loc[index[0], "A"] == "Tech"
-    assert result.meta["group_identity"].loc[index[0], "C"] == "Utilities"
+    assert result.meta["group_id"].loc[index[0], "A"] == "Tech"
+    assert result.meta["group_id"].loc[index[0], "C"] == "Utilities"
 
 
 @pytest.mark.parametrize(
