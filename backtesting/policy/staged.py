@@ -63,29 +63,38 @@ class BudgetPreservingStagedPolicy(PositionPolicy):
         exit_mask = self._aligned_mask(bundle.context[self.rules.exit_key], base)
 
         base_values = base.to_numpy(dtype=float)
-        close_values = close.to_numpy(dtype=float)
         target_values = np.zeros((n_dates, n_symbols), dtype=float)
         bucket_values = np.zeros((n_dates, n_buckets, n_symbols), dtype=float)
         active = np.zeros((n_buckets, n_symbols), dtype=bool)
 
         for date_index in range(n_dates):
-            entered = entry_mask[date_index]
-            if entered.any():
-                active[0, entered] = True
+            prior_active = active.copy()
+            next_active = prior_active.copy()
+            base_row = base_values[date_index]
+            zero_mask = base_row == 0.0
 
-            for bucket_index, add_mask in enumerate(add_masks, start=1):
-                activate = add_mask[date_index] & active[bucket_index - 1]
-                if activate.any():
-                    active[bucket_index, activate] = True
+            if zero_mask.any():
+                next_active[:, zero_mask] = False
+            else:
+                entered = entry_mask[date_index]
+                if entered.any():
+                    next_active[0, entered] = True
 
-            exited = exit_mask[date_index]
-            if exited.any():
-                active[:, exited] = False
+                for bucket_index, add_mask in enumerate(add_masks, start=1):
+                    activate = add_mask[date_index] & prior_active[bucket_index - 1]
+                    if activate.any():
+                        next_active[bucket_index, activate] = True
+
+                exited = exit_mask[date_index]
+                if exited.any():
+                    next_active[:, exited] = False
+
+            active = next_active
 
             for bucket_index, bucket in enumerate(self.buckets):
                 bucket_values[date_index, bucket_index, :] = np.where(
                     active[bucket_index],
-                    base_values[date_index] * float(bucket.budget_fraction),
+                    base_row * float(bucket.budget_fraction),
                     0.0,
                 )
             target_values[date_index, :] = bucket_values[date_index].sum(axis=0)
@@ -98,7 +107,6 @@ class BudgetPreservingStagedPolicy(PositionPolicy):
                     value = float(row[symbol_index])
                     if value == 0.0:
                         continue
-                    price = float(close_values[date_index, symbol_index])
                     records.append(
                         {
                             "date": date,
@@ -110,8 +118,8 @@ class BudgetPreservingStagedPolicy(PositionPolicy):
                             "actual_weight": value,
                             "target_qty": 0.0,
                             "actual_qty": 0.0,
-                            "entry_price": price,
-                            "mark_price": price,
+                            "entry_price": None,
+                            "mark_price": None,
                             "bucket_return": 0.0,
                             "state": "active",
                             "event": "staged",

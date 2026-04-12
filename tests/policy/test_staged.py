@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 
 from backtesting.construction.base import ConstructionResult
 from backtesting.data import MarketData
@@ -63,7 +64,7 @@ def test_staged_policy_releases_budget_over_multiple_buckets_and_handles_signed_
     validate_position_plan(plan)
 
 
-def test_staged_policy_never_exceeds_base_budget() -> None:
+def test_staged_policy_never_exceeds_base_budget_when_all_rules_fire_each_bar() -> None:
     index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
     base = pd.DataFrame(
         {"LONG": [0.6, 0.6, 0.6], "SHORT": [-0.8, -0.8, -0.8]},
@@ -100,16 +101,20 @@ def test_staged_policy_never_exceeds_base_budget() -> None:
         ),
     ).apply(construction, MarketData(frames={"close": close}, universe=None, benchmark=None), bundle)
 
+    assert plan.target_weights["LONG"].tolist() == [0.15, 0.3, 0.6]
+    assert plan.target_weights["SHORT"].tolist() == [-0.2, -0.4, -0.8]
     assert (plan.target_weights.abs() <= base.abs() + 1e-12).all().all()
-    assert plan.target_weights.equals(base)
+    assert plan.bucket_ledger["entry_price"].isna().all()
+    assert plan.bucket_ledger["mark_price"].isna().all()
+    validate_position_plan(plan)
 
 
-def test_staged_policy_clears_active_buckets_on_exit_and_allows_reentry() -> None:
+def test_staged_policy_clears_active_buckets_when_base_weight_is_zero() -> None:
     index = pd.to_datetime(
-        ["2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05", "2024-01-06"]
+        ["2024-01-02", "2024-01-03", "2024-01-04"]
     )
-    base = pd.DataFrame({"A": [1.0] * len(index)}, index=index)
-    close = pd.DataFrame({"A": [10.0, 10.5, 11.0, 11.5, 12.0]}, index=index)
+    base = pd.DataFrame({"A": [1.0, 0.0, 1.0]}, index=index)
+    close = pd.DataFrame({"A": [10.0, 10.5, 11.0]}, index=index)
     construction = ConstructionResult(
         base_target_weights=base,
         selection_mask=base.ne(0.0),
@@ -121,9 +126,9 @@ def test_staged_policy_clears_active_buckets_on_exit_and_allows_reentry() -> Non
         alpha=base,
         context={
             "tradable": base.notna(),
-            "eligible_entry": pd.DataFrame({"A": [True, False, False, True, False]}, index=index),
-            "eligible_add_1": pd.DataFrame({"A": [False, True, False, False, True]}, index=index),
-            "eligible_exit": pd.DataFrame({"A": [False, False, True, False, False]}, index=index),
+            "eligible_entry": pd.DataFrame({"A": [True, False, False]}, index=index),
+            "eligible_add_1": pd.DataFrame({"A": [False, True, True]}, index=index),
+            "eligible_exit": pd.DataFrame({"A": [False, False, False]}, index=index),
         },
     )
 
@@ -136,5 +141,33 @@ def test_staged_policy_clears_active_buckets_on_exit_and_allows_reentry() -> Non
         ),
     ).apply(construction, MarketData(frames={"close": close}, universe=None, benchmark=None), bundle)
 
-    assert plan.target_weights["A"].tolist() == [0.5, 1.0, 0.0, 0.5, 1.0]
+    assert plan.target_weights["A"].tolist() == [0.5, 0.0, 0.0]
     validate_position_plan(plan)
+
+
+def test_staged_policy_rejects_empty_buckets() -> None:
+    with pytest.raises(ValueError, match="buckets must not be empty"):
+        BudgetPreservingStagedPolicy(
+            buckets=(),
+            rules=StagedRuleSet(entry_key="eligible_entry", add_keys=(), exit_key="eligible_exit"),
+        )
+
+
+def test_staged_policy_rejects_bucket_fraction_sum_mismatch() -> None:
+    with pytest.raises(ValueError, match="bucket budget_fraction values must sum to 1.0"):
+        BudgetPreservingStagedPolicy(
+            buckets=(BucketDefinition("b0", 0.60), BucketDefinition("b1", 0.60)),
+            rules=StagedRuleSet(entry_key="eligible_entry", add_keys=("eligible_add_1",), exit_key="eligible_exit"),
+        )
+
+
+def test_staged_policy_rejects_mismatched_add_keys() -> None:
+    with pytest.raises(ValueError, match="add_keys must provide one rule for each staged bucket after the first"):
+        BudgetPreservingStagedPolicy(
+            buckets=(
+                BucketDefinition("b0", 0.25),
+                BucketDefinition("b1", 0.25),
+                BucketDefinition("b2", 0.50),
+            ),
+            rules=StagedRuleSet(entry_key="eligible_entry", add_keys=("eligible_add_1",), exit_key="eligible_exit"),
+        )
