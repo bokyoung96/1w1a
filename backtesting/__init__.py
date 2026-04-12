@@ -1,6 +1,35 @@
-from __future__ import annotations
-
-from importlib import import_module
+from .analytics import quantile_returns, rank_ic, summarize_perf
+from .catalog import DataCatalog, DatasetGroup, DatasetGroups, DatasetId, DatasetSpec
+from .data import DataLoader, LoadRequest, MarketData, ParquetStore, expand_monthly_frame
+from .engine import BacktestEngine, BacktestResult
+from .execution import (
+    CostModel,
+    CustomSchedule,
+    DailySchedule,
+    MonthlySchedule,
+    RebalanceSchedule,
+    TradeCost,
+    WeeklySchedule,
+    fill_prices,
+)
+from .reporting import ReportBuilder, ReportBundle, ReportSpec, RunReader, RunWriter
+from .strategy import (
+    BaseStrategy,
+    CrossSectionalStrategy,
+    RankLongOnly,
+    RankLongShort,
+    ThresholdTrend,
+    TimeSeriesStrategy,
+)
+from .strategies import (
+    MomentumTopN,
+    OpFwdYieldTopN,
+    RegisteredStrategy,
+    build_strategy,
+    list_strategies,
+    register_strategy,
+)
+from .validation import SplitConfig, SplitResult, ValidationSession, split_frame
 
 __all__ = (
     "BacktestEngine",
@@ -48,66 +77,3 @@ __all__ = (
     "split_frame",
     "summarize_perf",
 )
-
-_EXPORTS: dict[str, tuple[str, str]] = {
-    "quantile_returns": (".analytics", "quantile_returns"),
-    "rank_ic": (".analytics", "rank_ic"),
-    "summarize_perf": (".analytics", "summarize_perf"),
-    "DataCatalog": (".catalog", "DataCatalog"),
-    "DatasetGroup": (".catalog", "DatasetGroup"),
-    "DatasetGroups": (".catalog", "DatasetGroups"),
-    "DatasetId": (".catalog", "DatasetId"),
-    "DatasetSpec": (".catalog", "DatasetSpec"),
-    "DataLoader": (".data", "DataLoader"),
-    "LoadRequest": (".data", "LoadRequest"),
-    "MarketData": (".data", "MarketData"),
-    "ParquetStore": (".data", "ParquetStore"),
-    "expand_monthly_frame": (".data", "expand_monthly_frame"),
-    "BacktestEngine": (".engine", "BacktestEngine"),
-    "BacktestResult": (".engine", "BacktestResult"),
-    "CostModel": (".execution", "CostModel"),
-    "CustomSchedule": (".execution", "CustomSchedule"),
-    "DailySchedule": (".execution", "DailySchedule"),
-    "MonthlySchedule": (".execution", "MonthlySchedule"),
-    "RebalanceSchedule": (".execution", "RebalanceSchedule"),
-    "TradeCost": (".execution", "TradeCost"),
-    "WeeklySchedule": (".execution", "WeeklySchedule"),
-    "fill_prices": (".execution", "fill_prices"),
-    "ReportBuilder": (".reporting", "ReportBuilder"),
-    "ReportBundle": (".reporting", "ReportBundle"),
-    "ReportSpec": (".reporting", "ReportSpec"),
-    "RunReader": (".reporting", "RunReader"),
-    "RunWriter": (".reporting", "RunWriter"),
-    "BaseStrategy": (".strategy", "BaseStrategy"),
-    "CrossSectionalStrategy": (".strategy", "CrossSectionalStrategy"),
-    "RankLongOnly": (".strategy", "RankLongOnly"),
-    "RankLongShort": (".strategy", "RankLongShort"),
-    "ThresholdTrend": (".strategy", "ThresholdTrend"),
-    "TimeSeriesStrategy": (".strategy", "TimeSeriesStrategy"),
-    "MomentumTopN": (".strategies", "MomentumTopN"),
-    "OpFwdYieldTopN": (".strategies", "OpFwdYieldTopN"),
-    "RegisteredStrategy": (".strategies", "RegisteredStrategy"),
-    "build_strategy": (".strategies", "build_strategy"),
-    "list_strategies": (".strategies", "list_strategies"),
-    "register_strategy": (".strategies", "register_strategy"),
-    "SplitConfig": (".validation", "SplitConfig"),
-    "SplitResult": (".validation", "SplitResult"),
-    "ValidationSession": (".validation", "ValidationSession"),
-    "split_frame": (".validation", "split_frame"),
-}
-
-
-def __getattr__(name: str):
-    try:
-        module_name, attr_name = _EXPORTS[name]
-    except KeyError as exc:
-        raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from exc
-
-    module = import_module(module_name, __name__)
-    value = getattr(module, attr_name)
-    globals()[name] = value
-    return value
-
-
-def __dir__() -> list[str]:
-    return sorted(set(globals()) | set(__all__))
