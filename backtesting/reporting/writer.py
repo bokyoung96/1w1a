@@ -49,7 +49,7 @@ class RunWriter:
         report.result.weights.to_parquet(positions_dir / "weights.parquet")
         report.result.qty.to_parquet(positions_dir / "qty.parquet")
         if report.position_plan is not None:
-            report.position_plan.bucket_ledger.to_parquet(positions_dir / "bucket_ledger.parquet")
+            self._bucket_ledger(report).to_parquet(positions_dir / "bucket_ledger.parquet")
         self._latest_qty(report).to_csv(positions_dir / "latest_qty.csv", index=False)
         self._latest_weights(report).to_csv(positions_dir / "latest_weights.csv", index=False)
 
@@ -113,6 +113,17 @@ class RunWriter:
         frame = frame.loc[frame["target_weight"].ne(0.0)].copy()
         frame["abs_weight"] = frame["target_weight"].abs()
         return frame.sort_values(["abs_weight", "symbol"], ascending=[False, True]).reset_index(drop=True)
+
+    @staticmethod
+    def _bucket_ledger(report: "RunReport") -> pd.DataFrame:
+        ledger = report.position_plan.bucket_ledger.copy()
+        if ledger.empty or report.result.equity.empty:
+            return ledger
+
+        start = report.result.equity.index.min()
+        end = report.result.equity.index.max()
+        ledger_dates = pd.to_datetime(ledger["date"])
+        return ledger.loc[ledger_dates.between(start, end)].copy()
 
     @staticmethod
     def _plot_series(path: Path, series: pd.Series, title: str, ylabel: str) -> None:

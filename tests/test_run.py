@@ -103,7 +103,10 @@ def test_runner_executes_op_fwd_strategy(tmp_path: Path) -> None:
     assert (report.output_dir / "positions" / "qty.parquet").exists()
 
 
-def test_runner_uses_warmup_history_but_trims_persisted_outputs(tmp_path: Path) -> None:
+def test_runner_uses_warmup_history_but_trims_persisted_outputs(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     parquet_dir = tmp_path / "parquet"
     raw_dir = tmp_path / "raw"
     result_dir = tmp_path / "results"
@@ -114,6 +117,42 @@ def test_runner_uses_warmup_history_but_trims_persisted_outputs(tmp_path: Path) 
     store.write("qw_adj_c", pd.DataFrame({"A": [10.0, 11.0, 12.0], "B": [10.0, 9.0, 8.0]}, index=index))
     store.write("qw_adj_o", pd.DataFrame({"A": [10.0, 11.0, 12.0], "B": [10.0, 9.0, 8.0]}, index=index))
     store.write("qw_k200_yn", pd.DataFrame({"A": [1, 1, 1], "B": [1, 1, 1]}, index=index))
+
+    plan = PositionPlan(
+        target_weights=pd.DataFrame({"A": [0.0, 1.0, 1.0], "B": [0.0, 0.0, 0.0]}, index=index),
+        bucket_ledger=pd.DataFrame.from_records(
+            [
+                {
+                    "date": date,
+                    "symbol": "A",
+                    "side": "long",
+                    "bucket_id": "base",
+                    "stage_index": 0,
+                    "target_weight": weight,
+                    "actual_weight": weight,
+                    "target_qty": 0.0,
+                    "actual_qty": 0.0,
+                    "entry_price": None,
+                    "mark_price": None,
+                    "bucket_return": 0.0,
+                    "state": "active",
+                    "event": "manual_plan",
+                    "construction_group": None,
+                    "budget_id": "base",
+                }
+                for date, weight in zip(index, [0.0, 1.0, 1.0], strict=True)
+            ],
+            columns=BUCKET_LEDGER_COLUMNS,
+        ),
+    )
+
+    class StrategyStub:
+        datasets: tuple = ()
+
+        def build_plan(self, market) -> PositionPlan:
+            return plan
+
+    monkeypatch.setattr("backtesting.run.build_strategy", lambda *args, **kwargs: StrategyStub())
 
     runner = BacktestRunner(
         catalog=DataCatalog.default(),
@@ -126,20 +165,20 @@ def test_runner_uses_warmup_history_but_trims_persisted_outputs(tmp_path: Path) 
             strategy="momentum",
             start="2024-01-03",
             end="2024-01-04",
-            top_n=1,
-            lookback=1,
             schedule="daily",
             fill_mode="close",
             warmup_days=1,
         )
     )
-
     assert report.result.weights.index.min() == pd.Timestamp("2024-01-03")
     assert report.result.weights.loc["2024-01-03", "A"] == 1.0
     assert report.output_dir is not None
 
     equity = pd.read_csv(report.output_dir / "series" / "equity.csv")
     assert equity["date"].tolist() == ["2024-01-03", "2024-01-04"]
+
+    bucket_ledger = pd.read_parquet(report.output_dir / "positions" / "bucket_ledger.parquet")
+    assert bucket_ledger["date"].dt.strftime("%Y-%m-%d").tolist() == ["2024-01-03", "2024-01-04"]
 
 
 def test_runner_executes_strategy_plan_and_stores_position_plan(
@@ -331,7 +370,7 @@ def test_runner_rejects_invalid_position_plan_before_engine_execution(
         result_dir=result_dir,
     )
 
-    with pytest.raises(ValueError, match="bucket target_weight sums do not match plan target_weights"):
+    with pytest.raises(ValueError, match="bucket target_weight values do not match plan target_weights"):
         runner.run(
             RunConfig(
                 strategy="momentum",
