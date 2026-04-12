@@ -15,8 +15,10 @@ from .data import DataLoader, LoadRequest, ParquetStore
 from .engine import BacktestEngine, BacktestResult
 from .execution import CostModel, DailySchedule, MonthlySchedule, WeeklySchedule
 from .ingest import IngestJob
+from .policy.base import PositionPlan
 from .reporting import RunWriter
 from .strategies import build_strategy, list_strategies
+from .validation import validate_position_plan
 
 
 @dataclass(frozen=True, slots=True)
@@ -46,6 +48,7 @@ class RunReport:
     config: RunConfig
     summary: dict[str, float]
     result: BacktestResult
+    position_plan: PositionPlan | None = None
     output_dir: Path | None = None
 
 
@@ -92,7 +95,9 @@ class BacktestRunner:
         )
         market.universe = self._universe(market, config.use_k200)
 
-        weights = strategy.build_weights(market)
+        plan = strategy.build_plan(market)
+        validate_position_plan(plan)
+        weights = plan.target_weights
         close = market.frames["close"]
         tradable = close.notna()
         if market.universe is not None:
@@ -124,7 +129,7 @@ class BacktestRunner:
         summary = summarize_perf(result.returns)
         summary["final_equity"] = float(result.equity.iloc[-1])
         summary["avg_turnover"] = float(result.turnover.mean())
-        report = RunReport(config=config, summary=summary, result=result)
+        report = RunReport(config=config, summary=summary, result=result, position_plan=plan)
         report.output_dir = self.writer.write(report)
         return report
 

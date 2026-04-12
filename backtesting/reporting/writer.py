@@ -48,6 +48,8 @@ class RunWriter:
 
         report.result.weights.to_parquet(positions_dir / "weights.parquet")
         report.result.qty.to_parquet(positions_dir / "qty.parquet")
+        if report.position_plan is not None:
+            report.position_plan.bucket_ledger.to_parquet(positions_dir / "bucket_ledger.parquet")
         self._latest_qty(report).to_csv(positions_dir / "latest_qty.csv", index=False)
         self._latest_weights(report).to_csv(positions_dir / "latest_weights.csv", index=False)
 
