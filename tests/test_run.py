@@ -172,6 +172,11 @@ def test_runner_executes_staged_sector_neutral_strategy(tmp_path: Path) -> None:
 
     assert report.position_plan is not None
     assert not report.position_plan.bucket_ledger.empty
+    assert report.position_plan.target_weights.loc["2024-01-03", "A"] == 0.25
+    assert report.position_plan.target_weights.loc["2024-01-03", "B"] == -0.25
+    assert report.position_plan.target_weights.loc["2024-01-04", "A"] == 0.5
+    assert report.position_plan.target_weights.loc["2024-01-04", "B"] == -0.5
+    assert sorted(report.position_plan.bucket_ledger["bucket_id"].unique().tolist()) == ["add_1", "entry"]
     assert report.output_dir is not None
     assert (report.output_dir / "positions" / "bucket_ledger.parquet").exists()
 

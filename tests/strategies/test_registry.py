@@ -40,6 +40,71 @@ def test_momentum_strategy_builds_weights() -> None:
     assert weights.loc["2024-01-04", "B"] == 0.0
 
 
+def test_momentum_long_short_builds_market_neutral_weights() -> None:
+    strategy = build_strategy("momentum_long_short", top_n=1, lookback=1)
+    close = pd.DataFrame(
+        {
+            "A": [10.0, 11.0, 12.0],
+            "B": [10.0, 10.0, 10.0],
+            "C": [10.0, 9.0, 8.0],
+        },
+        index=pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"]),
+    )
+    market = MarketData(frames={"close": close}, universe=None, benchmark=None)
+
+    plan = strategy.build_plan(market)
+
+    assert plan.target_weights.loc["2024-01-04", "A"] == 1.0
+    assert plan.target_weights.loc["2024-01-04", "B"] == 0.0
+    assert plan.target_weights.loc["2024-01-04", "C"] == -1.0
+    assert round(float(plan.target_weights.loc["2024-01-04"].sum()), 8) == 0.0
+    assert plan.bucket_ledger["bucket_id"].eq("base").all()
+
+
+def test_momentum_sector_neutral_staged_enters_symbols_on_first_nonzero_base_weight_date() -> None:
+    strategy = build_strategy("momentum_sector_neutral_staged", top_n=1, lookback=1)
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+    close = pd.DataFrame(
+        {
+            "A": [100.0, 101.0, 106.05],
+            "B": [100.0, 102.0, 103.02],
+            "C": [100.0, 100.0, 99.0],
+            "D": [100.0, 103.0, 105.06],
+            "E": [100.0, 101.0, 101.0],
+            "F": [100.0, 99.0, 97.02],
+        },
+        index=index,
+    )
+    sector = pd.DataFrame(
+        {
+            "A": ["Tech"],
+            "B": ["Tech"],
+            "C": ["Tech"],
+            "D": ["Energy"],
+            "E": ["Energy"],
+            "F": ["Energy"],
+        },
+        index=pd.to_datetime(["2024-01-31"]),
+    )
+    market = MarketData(
+        frames={"close": close, "sector_big": sector.reindex(index, method="bfill")},
+        universe=None,
+        benchmark=None,
+    )
+
+    plan = strategy.build_plan(market)
+
+    assert plan.target_weights.loc["2024-01-03", "A"] == 0.0
+    assert plan.target_weights.loc["2024-01-04", "A"] == 0.25
+    assert plan.target_weights.loc["2024-01-04", "C"] == -0.5
+    late_entry = plan.bucket_ledger[
+        (plan.bucket_ledger["date"] == pd.Timestamp("2024-01-04"))
+        & (plan.bucket_ledger["symbol"] == "A")
+    ]
+    assert late_entry["bucket_id"].tolist() == ["entry"]
+    assert late_entry["target_weight"].tolist() == [0.25]
+
+
 def test_op_fwd_yield_strategy_builds_weights() -> None:
     strategy = build_strategy("op_fwd_yield", top_n=1)
     index = pd.to_datetime(["2024-01-02", "2024-01-03"])
