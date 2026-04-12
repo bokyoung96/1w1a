@@ -1,12 +1,24 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import pandas as pd
 
-from .base import PositionPlan, PositionPolicy
+from .base import BUCKET_LEDGER_COLUMNS, PositionPlan, PositionPolicy
+
+if TYPE_CHECKING:
+    from backtesting.construction.base import ConstructionResult
+    from backtesting.data import MarketData
+    from backtesting.signals.base import SignalBundle
 
 
 class PassThroughPolicy(PositionPolicy):
-    def apply(self, construction, market, bundle) -> PositionPlan:
+    def apply(
+        self,
+        construction: ConstructionResult,
+        market: MarketData,
+        bundle: SignalBundle,
+    ) -> PositionPlan:
         weights = construction.base_target_weights.fillna(0.0).astype(float)
         records: list[dict[str, object]] = []
 
@@ -34,10 +46,10 @@ class PassThroughPolicy(PositionPolicy):
                     }
                 )
 
-        ledger = pd.DataFrame.from_records(records)
+        ledger = pd.DataFrame.from_records(records, columns=BUCKET_LEDGER_COLUMNS)
         return PositionPlan(
             target_weights=weights,
             bucket_ledger=ledger,
-            bucket_meta={},
-            validation=None,
+            bucket_meta={"policy_name": pd.Series(["pass_through"], name="policy_name")},
+            validation={},
         )
