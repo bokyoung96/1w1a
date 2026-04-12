@@ -9,7 +9,13 @@ from backtesting.strategies import RegisteredStrategy, build_strategy, list_stra
 
 
 def test_registry_lists_default_strategies() -> None:
-    assert {"momentum", "op_fwd_yield"}.issubset(list_strategies())
+    assert {
+        "momentum",
+        "op_fwd_yield",
+        "momentum_long_short",
+        "momentum_sector_neutral",
+        "momentum_sector_neutral_staged",
+    }.issubset(list_strategies())
 
 
 def test_momentum_strategy_builds_weights() -> None:

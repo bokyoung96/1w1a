@@ -103,6 +103,79 @@ def test_runner_executes_op_fwd_strategy(tmp_path: Path) -> None:
     assert (report.output_dir / "positions" / "qty.parquet").exists()
 
 
+def test_runner_executes_staged_sector_neutral_strategy(tmp_path: Path) -> None:
+    parquet_dir = tmp_path / "parquet"
+    raw_dir = tmp_path / "raw"
+    result_dir = tmp_path / "results"
+    parquet_dir.mkdir()
+    raw_dir.mkdir()
+    store = ParquetStore(parquet_dir)
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+    store.write(
+        "qw_adj_c",
+        pd.DataFrame(
+            {
+                "A": [10.0, 12.0, 15.0],
+                "B": [10.0, 9.0, 8.0],
+                "C": [20.0, 24.0, 30.0],
+                "D": [20.0, 19.0, 18.0],
+            },
+            index=index,
+        ),
+    )
+    store.write(
+        "qw_adj_o",
+        pd.DataFrame(
+            {
+                "A": [10.0, 12.0, 15.0],
+                "B": [10.0, 9.0, 8.0],
+                "C": [20.0, 24.0, 30.0],
+                "D": [20.0, 19.0, 18.0],
+            },
+            index=index,
+        ),
+    )
+    store.write(
+        "qw_k200_yn",
+        pd.DataFrame({"A": [1, 1, 1], "B": [1, 1, 1], "C": [1, 1, 1], "D": [1, 1, 1]}, index=index),
+    )
+    store.write(
+        "qw_wics_sec_big",
+        pd.DataFrame(
+            {
+                "A": ["Tech"],
+                "B": ["Tech"],
+                "C": ["Energy"],
+                "D": ["Energy"],
+            },
+            index=pd.to_datetime(["2024-01-31"]),
+        ),
+    )
+
+    runner = BacktestRunner(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+        result_dir=result_dir,
+    )
+    report = runner.run(
+        RunConfig(
+            strategy="momentum_sector_neutral_staged",
+            start="2024-01-02",
+            end="2024-01-04",
+            top_n=1,
+            lookback=1,
+            schedule="daily",
+            fill_mode="close",
+        )
+    )
+
+    assert report.position_plan is not None
+    assert not report.position_plan.bucket_ledger.empty
+    assert report.output_dir is not None
+    assert (report.output_dir / "positions" / "bucket_ledger.parquet").exists()
+
+
 def test_runner_uses_warmup_history_but_trims_persisted_outputs(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
