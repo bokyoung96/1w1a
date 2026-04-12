@@ -50,7 +50,6 @@ class BudgetPreservingStagedPolicy(PositionPolicy):
         bundle,
     ) -> PositionPlan:
         base = construction.base_target_weights.fillna(0.0).astype(float)
-        close = market.frames["close"].reindex(index=base.index, columns=base.columns)
 
         dates = base.index
         symbols = list(base.columns)
@@ -66,16 +65,21 @@ class BudgetPreservingStagedPolicy(PositionPolicy):
         target_values = np.zeros((n_dates, n_symbols), dtype=float)
         bucket_values = np.zeros((n_dates, n_buckets, n_symbols), dtype=float)
         active = np.zeros((n_buckets, n_symbols), dtype=bool)
+        prior_sign = np.zeros(n_symbols, dtype=int)
 
         for date_index in range(n_dates):
             prior_active = active.copy()
             next_active = prior_active.copy()
             base_row = base_values[date_index]
+            current_sign = np.sign(base_row).astype(int)
             zero_mask = base_row == 0.0
+            sign_flip_mask = (current_sign != 0) & (prior_sign != 0) & (current_sign != prior_sign)
             nonzero_mask = ~zero_mask
 
-            if zero_mask.any():
-                next_active[:, zero_mask] = False
+            reset_mask = zero_mask | sign_flip_mask
+            if reset_mask.any():
+                next_active[:, reset_mask] = False
+                prior_active[:, reset_mask] = False
 
             if nonzero_mask.any():
                 entered = entry_mask[date_index] & nonzero_mask
@@ -92,6 +96,7 @@ class BudgetPreservingStagedPolicy(PositionPolicy):
                     next_active[:, exited] = False
 
             active = next_active
+            prior_sign = current_sign
 
             for bucket_index, bucket in enumerate(self.buckets):
                 bucket_values[date_index, bucket_index, :] = np.where(

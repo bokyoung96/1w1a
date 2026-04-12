@@ -182,6 +182,40 @@ def test_staged_policy_zero_reset_is_per_symbol_with_same_day_progression() -> N
     validate_position_plan(plan)
 
 
+def test_staged_policy_resets_progress_on_sign_flip() -> None:
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"])
+    base = pd.DataFrame({"A": [1.0, 1.0, -1.0, -1.0]}, index=index)
+    close = pd.DataFrame({"A": [10.0, 10.5, 10.2, 9.8]}, index=index)
+    construction = ConstructionResult(
+        base_target_weights=base,
+        selection_mask=base.ne(0.0),
+        group_long_budget=None,
+        group_short_budget=None,
+        meta={},
+    )
+    bundle = SignalBundle(
+        alpha=base,
+        context={
+            "tradable": base.notna(),
+            "eligible_entry": pd.DataFrame({"A": [True, False, True, False]}, index=index),
+            "eligible_add_1": pd.DataFrame({"A": [False, True, True, True]}, index=index),
+            "eligible_exit": pd.DataFrame(False, index=index, columns=base.columns),
+        },
+    )
+
+    plan = BudgetPreservingStagedPolicy(
+        buckets=(BucketDefinition("b0", 0.50), BucketDefinition("b1", 0.50)),
+        rules=StagedRuleSet(
+            entry_key="eligible_entry",
+            add_keys=("eligible_add_1",),
+            exit_key="eligible_exit",
+        ),
+    ).apply(construction, MarketData(frames={"close": close}, universe=None, benchmark=None), bundle)
+
+    assert plan.target_weights["A"].tolist() == [0.5, 1.0, -0.5, -1.0]
+    validate_position_plan(plan)
+
+
 def test_staged_policy_rejects_empty_buckets() -> None:
     with pytest.raises(ValueError, match="buckets must not be empty"):
         BudgetPreservingStagedPolicy(
