@@ -22,8 +22,13 @@ def test_momentum_strategy_builds_weights() -> None:
     )
     market = MarketData(frames={"close": close}, universe=None, benchmark=None)
 
+    plan = strategy.build_plan(market)
     weights = strategy.build_weights(market)
 
+    assert plan.bucket_ledger["bucket_id"].eq("base").all()
+    assert plan.target_weights.loc["2024-01-04", "A"] == 1.0
+    assert plan.target_weights.loc["2024-01-04", "B"] == 0.0
+    assert weights.equals(plan.target_weights)
     assert weights.loc["2024-01-04", "A"] == 1.0
     assert weights.loc["2024-01-04", "B"] == 0.0
 
