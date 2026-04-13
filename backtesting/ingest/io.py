@@ -6,9 +6,16 @@ import pandas as pd
 def find_raw_path(raw_dir: Path, stem: str) -> Path:
     # Prefer CSV when both raw exports exist for the same dataset stem.
     for suffix in (".csv", ".xlsx"):
-        path = raw_dir / f"{stem}{suffix}"
-        if path.exists():
-            return path
+        direct = raw_dir / f"{stem}{suffix}"
+        if direct.exists():
+            return direct
+
+    matches: list[Path] = []
+    for suffix in (".csv", ".xlsx"):
+        matches.extend(sorted(raw_dir.rglob(f"{stem}{suffix}")))
+    if matches:
+        return matches[0]
+
     raise FileNotFoundError(f"missing raw dataset: {stem}")
 
 

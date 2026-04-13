@@ -218,3 +218,25 @@ def test_ingest_accepts_unnamed_date_column(tmp_path: Path) -> None:
     assert result.rows == 2
     stored = pd.read_parquet(parquet_dir / "qw_adj_c.parquet", engine="pyarrow")
     assert stored.index.tolist() == list(pd.to_datetime(["2024-01-02", "2024-01-03"]))
+
+
+def test_ingest_finds_nested_raw_dataset(tmp_path: Path) -> None:
+    raw_dir = tmp_path / "raw"
+    parquet_dir = tmp_path / "parquet"
+    nested = raw_dir / "ksdq"
+    nested.mkdir(parents=True)
+    parquet_dir.mkdir()
+
+    pd.DataFrame(
+        {
+            "Unnamed: 0": ["2024-01-02", "2024-01-03"],
+            "A035720": [100.0, 101.0],
+        }
+    ).to_csv(nested / "qw_ksdq_adj_c.csv", index=False)
+
+    job = IngestJob(DataCatalog.default(), raw_dir=raw_dir, parquet_dir=parquet_dir)
+
+    result = job.run(DatasetId.QW_KSDQ_ADJ_C)
+
+    assert result.rows == 2
+    assert (parquet_dir / "qw_ksdq_adj_c.parquet").exists()

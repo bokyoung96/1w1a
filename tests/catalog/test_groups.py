@@ -17,6 +17,15 @@ EXPECTED_RAW_STEMS = {
     "qw_foreign_ratio",
     "qw_gp_lfq0",
     "qw_institution",
+    "qw_ksdq150_yn",
+    "qw_ksdq_adj_c",
+    "qw_ksdq_adj_h",
+    "qw_ksdq_adj_l",
+    "qw_ksdq_adj_o",
+    "qw_ksdq_mkcap",
+    "qw_ksdq_mktcap_flt",
+    "qw_ksdq_v",
+    "qw_ksdq_wics_sec_big",
     "qw_k200_yn",
     "qw_liability_lfq0",
     "qw_mkt_typ",
@@ -40,10 +49,13 @@ def test_catalog_groups_cover_known_datasets() -> None:
     catalog = DataCatalog.default()
 
     assert DatasetId.QW_ADJ_C in catalog.ids(DatasetGroup.PRICE)
+    assert DatasetId.QW_KSDQ_ADJ_C in catalog.ids(DatasetGroup.PRICE)
+    assert DatasetId.QW_KSDQ150_YN in catalog.ids(DatasetGroup.FLAG)
     assert DatasetId.QW_OP_NFY1 in catalog.ids(DatasetGroup.ESTIMATE)
     assert DatasetId.QW_FOREIGN in catalog.ids(DatasetGroup.FLOW)
     assert DatasetId.QW_K200_YN in catalog.ids(DatasetGroup.FLAG)
     assert DatasetId.QW_WICS_SEC_BIG in catalog.ids(DatasetGroup.META)
+    assert DatasetId.QW_KSDQ_WICS_SEC_BIG in catalog.ids(DatasetGroup.META)
 
 
 def test_catalog_returns_grouped_specs() -> None:
