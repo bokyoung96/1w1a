@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_benchmarks.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Tests Reporting Analytics"
 location: "L198"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Tests_Reporting_Analytics
 ---
 
 # test_load_display_name_maps_reads_sector_and_stock_sheets()
@@ -15,4 +15,4 @@ tags:
 - [[_load_display_name_maps()]] - `calls` [INFERRED]
 - [[test_benchmarks.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Analytics

@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/construction/long_only.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Raw Ksdq Csv"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Strategies_Tests
+  - community/Raw_Ksdq_Csv
 ---
 
 # long_only.py
@@ -17,4 +17,4 @@ tags:
 - [[momentum.py_1]] - `imports_from` [EXTRACTED]
 - [[op_fwd.py_1]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv

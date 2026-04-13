@@ -1,11 +1,11 @@
 ---
 source_file: "raw/KOSPI200_1M.csv"
 type: "document"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # Kospi200 1M
@@ -43,4 +43,4 @@ tags:
 - [[test_universe.py]] - `references` [INFERRED]
 - [[universe.py]] - `references` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/document #graphify/INFERRED #community/Backtesting_Reporting_Frontend

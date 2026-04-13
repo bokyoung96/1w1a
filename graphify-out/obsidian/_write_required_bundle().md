@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_reader.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Backtesting Reporting Frontend"
 location: "L137"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # _write_required_bundle()
@@ -17,4 +17,4 @@ tags:
 - [[test_run_reader_loads_optional_artifacts_when_present()]] - `calls` [INFERRED]
 - [[test_run_reader_returns_none_for_missing_optional_artifacts()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

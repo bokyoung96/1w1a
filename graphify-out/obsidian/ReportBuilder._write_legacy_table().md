@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/builder.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Backtesting Reporting Tests"
 location: "L134"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Reporting_Test_Builder
+  - community/Backtesting_Reporting_Tests
 ---
 
 # ReportBuilder._write_legacy_table()
@@ -15,4 +15,4 @@ tags:
 - [[ReportBuilder]] - `contains` [EXTRACTED]
 - [[ReportBuilder.build_legacy()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

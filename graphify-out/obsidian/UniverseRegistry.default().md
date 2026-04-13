@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/universe.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Universe.Py"
 location: "L49"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Universe.Py
 ---
 
 # UniverseRegistry.default()
@@ -16,4 +16,4 @@ tags:
 - [[UniverseRegistry]] - `contains` [EXTRACTED]
 - [[UniverseSpec]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Backtesting_Universe.Py

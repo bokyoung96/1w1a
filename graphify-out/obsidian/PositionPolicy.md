@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/policy/base.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 location: "L43"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # PositionPolicy
@@ -16,4 +16,4 @@ tags:
 - [[PositionPolicy.apply()]] - `contains` [EXTRACTED]
 - [[base.py_1]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy

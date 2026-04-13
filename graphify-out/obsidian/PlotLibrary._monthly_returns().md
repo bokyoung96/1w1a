@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/plots.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Backtesting Reporting Tests"
 location: "L94"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Reporting_Test_Builder
+  - community/Backtesting_Reporting_Tests
 ---
 
 # PlotLibrary._monthly_returns()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[PlotLibrary]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

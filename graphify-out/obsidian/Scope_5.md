@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-12-portfolio-construction-and-staged-policy-design.md"
 type: "document"
-community: "Docs Superpowers Portfolio"
+community: "Docs Superpowers Policy"
 location: "L18"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Portfolio
+  - community/Docs_Superpowers_Policy
 ---
 
 # Scope
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[2026-04-12-portfolio-construction-and-staged-policy-design]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Portfolio
+#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Policy

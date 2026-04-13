@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/services/dashboard_payload.py"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Dashboard Backend Schemas"
 location: "L218"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Frontend
+  - community/Dashboard_Backend_Schemas
 ---
 
 # DashboardPayloadService._serialize_rolling_correlation()
@@ -18,4 +18,4 @@ tags:
 - [[RollingSeriesModel]] - `calls` [INFERRED]
 - [[serialize_value_points()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/INFERRED #community/Dashboard_Backend_Schemas

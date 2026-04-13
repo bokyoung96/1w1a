@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/cli.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Dashboard Frontend App"
 location: "L25"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Dashboard_Frontend_App
 ---
 
 # ReportCli
@@ -25,4 +25,4 @@ tags:
 - [[test_report_cli_builds_report_bundle()]] - `calls` [INFERRED]
 - [[test_report_cli_parses_run_ids()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Dashboard_Frontend_App

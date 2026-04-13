@@ -1,11 +1,11 @@
 ---
 source_file: "kis/tr_id/bid_ask_list.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # bid_ask_list.py
@@ -21,4 +21,4 @@ tags:
 - [[call.py]] - `imports_from` [EXTRACTED]
 - [[register.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

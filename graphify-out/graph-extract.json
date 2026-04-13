@@ -10554,7 +10554,7 @@
       "label": "test_registry_returns_kosdaq150_defaults()",
       "file_type": "code",
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L8",
+      "source_location": "L10",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -10565,7 +10565,18 @@
       "label": "test_registry_returns_legacy_k200_defaults()",
       "file_type": "code",
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L19",
+      "source_location": "L23",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "func_tests_data_test_universe_py_test_registry_default_benchmark_codes_exist_in_qw_bm_parquet",
+      "label": "test_registry_default_benchmark_codes_exist_in_qw_bm_parquet()",
+      "file_type": "code",
+      "source_file": "tests/data/test_universe.py",
+      "source_location": "L34",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -10576,7 +10587,7 @@
       "label": "test_registry_remaps_generic_dataset_ids_to_universe_specific_ids()",
       "file_type": "code",
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L30",
+      "source_location": "L43",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -10587,7 +10598,7 @@
       "label": "test_registry_rejects_unknown_universe()",
       "file_type": "code",
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L39",
+      "source_location": "L52",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -10598,7 +10609,7 @@
       "label": "test_top_level_package_exports_universe_types()",
       "file_type": "code",
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L46",
+      "source_location": "L59",
       "source_url": null,
       "captured_at": null,
       "author": null,
@@ -30373,7 +30384,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -30383,7 +30394,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -30393,7 +30404,17 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L5",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "file_tests_data_test_universe_py",
+      "target": "file_root_py",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/data/test_universe.py",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -30403,7 +30424,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L8",
+      "source_location": "L10",
       "weight": 1.0
     },
     {
@@ -30413,7 +30434,17 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L19",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "file_tests_data_test_universe_py",
+      "target": "func_tests_data_test_universe_py_test_registry_default_benchmark_codes_exist_in_qw_bm_parquet",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/data/test_universe.py",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -30423,7 +30454,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L30",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -30433,7 +30464,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L39",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
@@ -30443,7 +30474,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L46",
+      "source_location": "L59",
       "weight": 1.0
     },
     {
@@ -47933,7 +47964,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.82,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L9",
+      "source_location": "L11",
       "weight": 1.0
     },
     {
@@ -47943,7 +47974,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.82,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L10",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -47953,7 +47984,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.82,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L20",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -47963,7 +47994,27 @@
       "confidence": "INFERRED",
       "confidence_score": 0.82,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L21",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "func_tests_data_test_universe_py_test_registry_default_benchmark_codes_exist_in_qw_bm_parquet",
+      "target": "func_backtesting_catalog_catalog_py_datacatalog_default",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.82,
+      "source_file": "tests/data/test_universe.py",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "func_tests_data_test_universe_py_test_registry_default_benchmark_codes_exist_in_qw_bm_parquet",
+      "target": "func_backtesting_catalog_catalog_py_datacatalog_get",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.82,
+      "source_file": "tests/data/test_universe.py",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -47973,7 +48024,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.82,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L31",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -47983,7 +48034,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.82,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L32",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
@@ -47993,7 +48044,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.82,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L34",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -48003,7 +48054,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.82,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L40",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -48013,7 +48064,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.82,
       "source_file": "tests/data/test_universe.py",
-      "source_location": "L43",
+      "source_location": "L56",
       "weight": 1.0
     },
     {

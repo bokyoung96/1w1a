@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Performance"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Performance
 ---
 
 # 2026-04-03-performance-reporting-redesign-design.md
@@ -143,4 +143,4 @@ tags:
 - [[strategies()]] - `rationale_for` [INFERRED]
 - [[user()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Performance

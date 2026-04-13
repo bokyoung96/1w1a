@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/models.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Composers"
 location: "L42"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Composers
 ---
 
 # BenchmarkConfig.default_kospi200()
@@ -36,4 +36,4 @@ tags:
 - [[test_performance_snapshot_factory_uses_fixed_252_day_rolling_window()]] - `calls` [INFERRED]
 - [[test_tearsheet_composer_builds_pdf_first_context()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Composers

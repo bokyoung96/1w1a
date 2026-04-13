@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/lib/api.ts"
 type: "code"
-community: "Docs Superpowers Portfolio"
+community: "Dashboard Frontend Src"
 location: "L402"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Portfolio
+  - community/Dashboard_Frontend_Src
 ---
 
 # fetchSession()
@@ -15,4 +15,4 @@ tags:
 - [[2026-04-05-live-dashboard-single-command-launch]] - `rationale_for` [INFERRED]
 - [[api.ts]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Portfolio
+#graphify/code #graphify/EXTRACTED #community/Dashboard_Frontend_Src

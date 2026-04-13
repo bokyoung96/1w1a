@@ -2,7 +2,7 @@
 source_file: "tests/data/test_universe.py"
 type: "code"
 community: "Raw Ksdq Csv"
-location: "L46"
+location: "L59"
 tags:
   - graphify/code
   - graphify/EXTRACTED

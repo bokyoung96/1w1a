@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Breakout"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Breakout
 ---
 
 # 2026-04-12-52w-breakout-strategies-design.md
@@ -84,4 +84,4 @@ tags:
 - [[strategies()]] - `rationale_for` [INFERRED]
 - [[user()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Breakout

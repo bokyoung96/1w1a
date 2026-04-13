@@ -1,13 +1,13 @@
 ---
 type: community
 cohesion: 0.03
-members: 74
+members: 65
 ---
 
 # Docs Superpowers Strategy
 
 **Cohesion:** 0.03 - loosely connected
-**Members:** 74 nodes
+**Members:** 65 nodes
 
 ## Members
 - [[1w1a Stock Backtesting Design]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
@@ -43,16 +43,6 @@ members: 74
 - [[Rebalance schedule]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[Reference Patterns_1]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[Responsibilities]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
-- [[RunWriter]] - code - backtesting/reporting/writer.py
-- [[RunWriter._bucket_ledger()]] - code - backtesting/reporting/writer.py
-- [[RunWriter._drawdown()]] - code - backtesting/reporting/writer.py
-- [[RunWriter._latest_qty()]] - code - backtesting/reporting/writer.py
-- [[RunWriter._latest_weights()]] - code - backtesting/reporting/writer.py
-- [[RunWriter._monthly_returns()]] - code - backtesting/reporting/writer.py
-- [[RunWriter._plot_series()]] - code - backtesting/reporting/writer.py
-- [[RunWriter._run_dir()]] - code - backtesting/reporting/writer.py
-- [[RunWriter._write_json()]] - code - backtesting/reporting/writer.py
-- [[RunWriter.write()]] - code - backtesting/reporting/writer.py
 - [[Scheduling and Execution]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[Scope_1]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[Strategy Model]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
@@ -80,6 +70,7 @@ members: 74
 - [[`parquet`]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[`raw`]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[base.py_4]] - code - backtesting/strategy/base.py
+- [[from the repo root]] - document - README.md
 - [[test_threshold_trend_exposes_time_series_extension_point()]] - code - tests/strategy/test_timeseries.py
 - [[test_threshold_trend_goes_long_above_threshold()]] - code - tests/strategy/test_timeseries.py
 - [[test_timeseries.py]] - code - tests/strategy/test_timeseries.py
@@ -93,21 +84,30 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 58 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
-- 14 edges to [[_COMMUNITY_Raw Ksdq Csv]]
-- 13 edges to [[_COMMUNITY_Tests Test Run.Py Engine]]
-- 13 edges to [[_COMMUNITY_Backtesting Reporting Frontend]]
-- 8 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
-- 6 edges to [[_COMMUNITY_Backtesting Strategies Tests]]
+- 15 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 14 edges to [[_COMMUNITY_Docs Superpowers Kosdaq150]]
+- 10 edges to [[_COMMUNITY_Tests Test Run.Py Engine]]
+- 8 edges to [[_COMMUNITY_Raw Ksdq Csv]]
+- 7 edges to [[_COMMUNITY_Tests Reporting Analytics]]
+- 7 edges to [[_COMMUNITY_Docs Superpowers Analytics]]
 - 6 edges to [[_COMMUNITY_Docs Superpowers Plans]]
-- 6 edges to [[_COMMUNITY_Tests Reporting Analytics]]
-- 4 edges to [[_COMMUNITY_Docs Superpowers Portfolio]]
-- 2 edges to [[_COMMUNITY_Tests Reporting Test_Builder]]
-- 2 edges to [[_COMMUNITY_Dashboard Frontend App]]
+- 6 edges to [[_COMMUNITY_Docs Superpowers Policy]]
+- 6 edges to [[_COMMUNITY_Docs Superpowers Plans]]
+- 5 edges to [[_COMMUNITY_Backtesting Reporting Frontend]]
+- 5 edges to [[_COMMUNITY_Docs Superpowers Research]]
+- 4 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 3 edges to [[_COMMUNITY_Docs Superpowers Breakout]]
+- 2 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 2 edges to [[_COMMUNITY_Docs Superpowers Live]]
+- 1 edge to [[_COMMUNITY_Backtesting Reporting Tests]]
+- 1 edge to [[_COMMUNITY_Docs Superpowers Backtest]]
+- 1 edge to [[_COMMUNITY_Docs Superpowers Performance]]
+- 1 edge to [[_COMMUNITY_Dashboard Frontend App]]
+- 1 edge to [[_COMMUNITY_Docs Superpowers Live]]
 
 ## Top bridge nodes
-- [[2026-04-03-stock-backtesting-design]] - degree 143, connects to 11 communities
-- [[RunWriter.write()]] - degree 24, connects to 6 communities
+- [[2026-04-03-stock-backtesting-design]] - degree 143, connects to 20 communities
 - [[base.py_4]] - degree 9, connects to 4 communities
-- [[RunWriter]] - degree 14, connects to 3 communities
 - [[__init__.py_12]] - degree 4, connects to 3 communities
+- [[BaseStrategy]] - degree 5, connects to 2 communities
+- [[BaseStrategy.target_weights()]] - degree 3, connects to 2 communities

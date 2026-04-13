@@ -66,7 +66,7 @@ KOSDAQ150 universe example:
 python run.py --strategy momentum --universe kosdaq150 --start 2020-01-01 --end 2020-12-31 --top-n 20 --lookback 20 --schedule monthly --fill-mode next_open
 ```
 
-When `--universe kosdaq150` is set, the runner uses the `qw_ksdq_*` dataset family and defaults the benchmark metadata to KOSDAQ150 from `qw_BM`. You can still override benchmark metadata explicitly if needed.
+When `--universe kosdaq150` is set, the runner uses the `qw_ksdq_*` dataset family and defaults the benchmark metadata to `IKQ150`/`KOSDAQ150` from `qw_BM`. You can still override benchmark metadata explicitly if needed.
 
 ```powershell
 python run.py --strategy op_fwd_yield --start 2020-01-01 --end 2020-12-31 --top-n 20 --schedule monthly --fill-mode next_open

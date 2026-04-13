@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/register.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Plans"
 location: "L182"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Plans
 ---
 
 # task()
@@ -28,4 +28,4 @@ tags:
 - [[TRClient._request()]] - `calls` [INFERRED]
 - [[register.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

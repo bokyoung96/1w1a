@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/services/launch_resolution.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Plans"
 location: "L29"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Plans
 ---
 
 # LaunchPlan.selected_run_ids()
@@ -18,4 +18,4 @@ tags:
 - [[2026-04-13-kosdaq150-universe-integration]] - `rationale_for` [INFERRED]
 - [[LaunchPlan]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

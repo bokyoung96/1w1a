@@ -1,12 +1,12 @@
 ---
 source_file: "tests/test_report_cli.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Dashboard Frontend App"
 location: "L14"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Dashboard_Frontend_App
 ---
 
 # test_report_cli_parses_run_ids()
@@ -18,4 +18,4 @@ tags:
 - [[ReportCli.parser()]] - `calls` [INFERRED]
 - [[test_report_cli.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Dashboard_Frontend_App

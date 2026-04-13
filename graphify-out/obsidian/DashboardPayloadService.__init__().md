@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/services/dashboard_payload.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Backtesting Reporting Composers"
 location: "L45"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Backtesting_Reporting_Composers
 ---
 
 # DashboardPayloadService.__init__()
@@ -17,4 +17,4 @@ tags:
 - [[RunIndexService]] - `calls` [INFERRED]
 - [[RunReader]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Composers

@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/comparison_figures.py"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Backtesting Reporting Tests"
 location: "L172"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Frontend
+  - community/Backtesting_Reporting_Tests
 ---
 
 # ComparisonFigureBuilder._line()
@@ -18,4 +18,4 @@ tags:
 - [[TearsheetFigureBuilder._build_rolling()]] - `calls` [INFERRED]
 - [[series()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

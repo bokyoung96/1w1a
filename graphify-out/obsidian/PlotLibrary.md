@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/plots.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Backtesting Reporting Tests"
 location: "L23"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Reporting_Test_Builder
+  - community/Backtesting_Reporting_Tests
 ---
 
 # PlotLibrary
@@ -36,4 +36,4 @@ tags:
 - [[test_plot_library_writes_equity_plot()]] - `calls` [INFERRED]
 - [[test_plot_library_writes_html_fallback_when_image_export_fails()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

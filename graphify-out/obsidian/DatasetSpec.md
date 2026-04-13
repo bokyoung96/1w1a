@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/catalog/specs.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Docs Superpowers Plans"
 location: "L7"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Docs_Superpowers_Plans
 ---
 
 # DatasetSpec
@@ -19,4 +19,4 @@ tags:
 - [[specs.py]] - `contains` [EXTRACTED]
 - [[test_loader_expands_month_only_data_without_crossing_missing_months()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

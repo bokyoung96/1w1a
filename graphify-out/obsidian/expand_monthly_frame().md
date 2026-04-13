@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/data/policy.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Raw Ksdq Csv"
 location: "L5"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Raw_Ksdq_Csv
 ---
 
 # expand_monthly_frame()
@@ -19,4 +19,4 @@ tags:
 - [[test_expand_monthly_frame_preserves_integer_data_with_missing_days()]] - `calls` [INFERRED]
 - [[test_expand_monthly_frame_preserves_numeric_dtype()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv

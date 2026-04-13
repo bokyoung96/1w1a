@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_builder.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Backtesting Reporting Tests"
 location: "L10"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Reporting_Test_Builder
+  - community/Backtesting_Reporting_Tests
 ---
 
 # _sample_run()
@@ -23,4 +23,4 @@ tags:
 - [[test_report_builder_legacy_path_remains_available()]] - `calls` [INFERRED]
 - [[test_report_builder_uses_universe_specific_repositories()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

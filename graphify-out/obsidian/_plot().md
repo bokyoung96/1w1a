@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_builder.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Docs Superpowers Reporting"
 location: "L155"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Reporting_Test_Builder
+  - community/Docs_Superpowers_Reporting
 ---
 
 # _plot()
@@ -16,4 +16,4 @@ tags:
 - [[2026-04-03-performance-reporting-redesign-implementation]] - `rationale_for` [INFERRED]
 - [[test_builder.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

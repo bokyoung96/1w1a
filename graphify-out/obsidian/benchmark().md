@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/PerformanceStrip.tsx"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Kosdaq150"
 location: "L75"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Kosdaq150
 ---
 
 # benchmark()
@@ -32,4 +32,4 @@ tags:
 - [[PerformanceStrip.tsx]] - `contains` [EXTRACTED]
 - [[README]] - `rationale_for` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Kosdaq150

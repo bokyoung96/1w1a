@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/RunSelector.tsx"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Docs Superpowers Kosdaq150"
 location: "L9"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Docs_Superpowers_Kosdaq150
 ---
 
 # RunSelector()
@@ -16,4 +16,4 @@ tags:
 - [[2026-04-05-research-dashboard-refresh]] - `rationale_for` [INFERRED]
 - [[RunSelector.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Kosdaq150

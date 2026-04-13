@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-05-research-dashboard-refresh.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Kosdaq150"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Kosdaq150
 ---
 
 # 2026-04-05-research-dashboard-refresh.md
@@ -155,4 +155,4 @@ tags:
 - [[values()]] - `rationale_for` [INFERRED]
 - [[weightSeries()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Kosdaq150

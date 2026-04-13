@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/DiagnosticStrip.tsx"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Docs Superpowers Kosdaq150"
 location: "L13"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Frontend
+  - community/Docs_Superpowers_Kosdaq150
 ---
 
 # DiagnosticStrip()
@@ -16,4 +16,4 @@ tags:
 - [[2026-04-05-research-dashboard-refresh]] - `rationale_for` [INFERRED]
 - [[DiagnosticStrip.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Kosdaq150

@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/data/policy.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Raw Ksdq Csv"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Plans
+  - community/Raw_Ksdq_Csv
 ---
 
 # policy.py
@@ -16,4 +16,4 @@ tags:
 - [[expand_monthly_frame()]] - `contains` [EXTRACTED]
 - [[test_policy.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv

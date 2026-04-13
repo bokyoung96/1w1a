@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/builder.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Backtesting Reporting Tests"
 location: "L107"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Reporting_Test_Builder
+  - community/Backtesting_Reporting_Tests
 ---
 
 # ReportBuilder._build_comparison_bundle()
@@ -20,4 +20,4 @@ tags:
 - [[ReportBuilder._write_tables()]] - `calls` [INFERRED]
 - [[ReportBuilder.build()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

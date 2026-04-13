@@ -1,12 +1,12 @@
 ---
 source_file: "root.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Kosdaq150"
 location: "L20"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Kosdaq150
 ---
 
 # RootPaths.raw_path()
@@ -18,4 +18,4 @@ tags:
 - [[README]] - `rationale_for` [INFERRED]
 - [[RootPaths]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Kosdaq150

@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/cli.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Analytics"
 location: "L75"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Analytics
 ---
 
 # main()
@@ -36,4 +36,4 @@ tags:
 - [[ReportCli]] - `calls` [INFERRED]
 - [[cli.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Analytics

@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/strategies/composable.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Raw Ksdq Csv"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Strategies_Tests
+  - community/Raw_Ksdq_Csv
 ---
 
 # composable.py
@@ -25,4 +25,4 @@ tags:
 - [[op_fwd.py_1]] - `imports_from` [EXTRACTED]
 - [[pass_through.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv

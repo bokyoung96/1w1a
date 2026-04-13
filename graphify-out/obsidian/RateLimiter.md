@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tools.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Plans"
 location: "L32"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Plans
 ---
 
 # RateLimiter
@@ -18,4 +18,4 @@ tags:
 - [[TRBatchClient.call_batch()]] - `calls` [INFERRED]
 - [[tools.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans

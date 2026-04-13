@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md"
 type: "document"
-community: "Raw Ksdq Csv"
+community: "Docs Superpowers Kosdaq150"
 location: "L62"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Docs_Superpowers_Kosdaq150
 ---
 
 # tests/catalog/test_groups.py
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[2026-04-13-kosdaq150-universe-integration]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Kosdaq150

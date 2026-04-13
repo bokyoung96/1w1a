@@ -83,6 +83,7 @@ tags:
 - [[test_dashboard_returns_single_mode_payload()]] - `calls` [INFERRED]
 - [[test_dashboard_skips_non_finite_latest_holdings_values()]] - `calls` [INFERRED]
 - [[test_dashboard_skips_non_finite_sector_weights_values()]] - `calls` [INFERRED]
+- [[test_registry_default_benchmark_codes_exist_in_qw_bm_parquet()]] - `calls` [INFERRED]
 - [[test_registry_rejects_unknown_universe()]] - `calls` [INFERRED]
 - [[test_registry_remaps_generic_dataset_ids_to_universe_specific_ids()]] - `calls` [INFERRED]
 - [[test_registry_returns_kosdaq150_defaults()]] - `calls` [INFERRED]

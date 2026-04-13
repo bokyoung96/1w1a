@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/universe.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Universe.Py"
 location: "L24"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Universe.Py
 ---
 
 # UniverseSpec
@@ -19,4 +19,4 @@ tags:
 - [[UniverseSpec.resolve_dataset()]] - `contains` [EXTRACTED]
 - [[universe.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Universe.Py

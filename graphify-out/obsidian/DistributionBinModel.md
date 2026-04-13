@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/schemas.py"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Dashboard Backend Schemas"
 location: "L101"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Frontend
+  - community/Dashboard_Backend_Schemas
 ---
 
 # DistributionBinModel
@@ -15,4 +15,4 @@ tags:
 - [[schemas.py]] - `contains` [EXTRACTED]
 - [[serialize_distribution()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/EXTRACTED #community/Dashboard_Backend_Schemas

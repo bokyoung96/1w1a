@@ -1,11 +1,11 @@
 ---
 source_file: "raw/map.xlsx"
 type: "document"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # map.xlsx
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[Map]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/document #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

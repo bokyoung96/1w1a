@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_reader.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Backtesting Reporting Frontend"
 location: "L41"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # test_run_reader_loads_optional_artifacts_when_present()
@@ -18,4 +18,4 @@ tags:
 - [[series()]] - `calls` [INFERRED]
 - [[test_reader.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

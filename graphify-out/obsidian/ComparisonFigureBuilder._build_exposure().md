@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/comparison_figures.py"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Backtesting Reporting Tests"
 location: "L127"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Frontend
+  - community/Backtesting_Reporting_Tests
 ---
 
 # ComparisonFigureBuilder._build_exposure()
@@ -20,4 +20,4 @@ tags:
 - [[TearsheetFigureBuilder.build()]] - `calls` [INFERRED]
 - [[_largest_holding()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

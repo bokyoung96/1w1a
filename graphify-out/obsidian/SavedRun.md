@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/models.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Tests Reporting Analytics"
 location: "L11"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Reporting_Test_Builder
+  - community/Tests_Reporting_Analytics
 ---
 
 # SavedRun
@@ -27,4 +27,4 @@ tags:
 - [[test_performance_snapshot_factory_applies_korean_sector_and_stock_display_names()]] - `calls` [INFERRED]
 - [[test_report_builder_uses_universe_specific_repositories()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

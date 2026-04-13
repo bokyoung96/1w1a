@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/catalog/catalog.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Tests Test Run.Py Engine"
 location: "L37"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Tests_Test_Run.Py_Engine
 ---
 
 # DataCatalog.default()
@@ -58,6 +58,7 @@ tags:
 - [[test_loader_uses_semantic_key_for_kosdaq_close_data()]] - `calls` [INFERRED]
 - [[test_loader_uses_semantic_key_for_op_fwd_data()]] - `calls` [INFERRED]
 - [[test_loader_uses_semantic_key_for_volume_data()]] - `calls` [INFERRED]
+- [[test_registry_default_benchmark_codes_exist_in_qw_bm_parquet()]] - `calls` [INFERRED]
 - [[test_registry_rejects_unknown_universe()]] - `calls` [INFERRED]
 - [[test_registry_remaps_generic_dataset_ids_to_universe_specific_ids()]] - `calls` [INFERRED]
 - [[test_registry_returns_kosdaq150_defaults()]] - `calls` [INFERRED]
@@ -75,4 +76,4 @@ tags:
 - [[test_runner_uses_kosdaq_universe_specific_datasets()]] - `calls` [INFERRED]
 - [[test_runner_uses_warmup_history_but_trims_persisted_outputs()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Tests_Test_Run.Py_Engine

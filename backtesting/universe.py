@@ -64,7 +64,7 @@ class UniverseRegistry:
                     display_name="KOSDAQ150",
                     description="KOSDAQ150 price and membership dataset family.",
                     membership_dataset=DatasetId.QW_KSDQ150_YN,
-                    default_benchmark_code="KQ150",
+                    default_benchmark_code="IKQ150",
                     default_benchmark_name="KOSDAQ150",
                     default_benchmark_dataset="qw_BM",
                     dataset_aliases={

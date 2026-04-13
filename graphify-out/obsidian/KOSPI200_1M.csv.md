@@ -1,11 +1,11 @@
 ---
 source_file: "raw/KOSPI200_1M.csv"
 type: "document"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # KOSPI200_1M.csv
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[Kospi200 1M]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/document #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

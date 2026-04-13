@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/signals/momentum.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Kosdaq150"
 location: "L16"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Kosdaq150
 ---
 
 # MomentumSignalProducer.datasets()
@@ -19,4 +19,4 @@ tags:
 - [[MomentumSignalProducer]] - `contains` [EXTRACTED]
 - [[README]] - `rationale_for` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Kosdaq150

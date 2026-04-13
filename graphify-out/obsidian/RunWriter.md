@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/writer.py"
 type: "code"
-community: "Docs Superpowers Strategy"
+community: "Docs Superpowers Reporting"
 location: "L23"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Strategy
+  - community/Docs_Superpowers_Reporting
 ---
 
 # RunWriter
@@ -27,4 +27,4 @@ tags:
 - [[test_run_reader_round_trips_writer_bundle_layout()]] - `calls` [INFERRED]
 - [[writer.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Strategy
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

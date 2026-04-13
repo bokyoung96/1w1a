@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/construction/long_short.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 location: "L80"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # _leg_sizes()
@@ -16,4 +16,4 @@ tags:
 - [[SectorNeutralTopBottom.build()]] - `calls` [INFERRED]
 - [[long_short.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy

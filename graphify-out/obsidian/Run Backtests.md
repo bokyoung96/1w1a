@@ -1,12 +1,12 @@
 ---
 source_file: "README.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Kosdaq150"
 location: "L53"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Kosdaq150
 ---
 
 # Run Backtests
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[README]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Kosdaq150

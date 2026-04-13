@@ -1,74 +1,75 @@
 # Docs Superpowers Plans
 
-> 102 nodes · cohesion 0.03
+> 50 nodes · cohesion 0.06
 
 ## Key Concepts
 
-- **2026-04-03-stock-backtesting-implementation.md** (165 connections) — `docs/superpowers/plans/2026-04-03-stock-backtesting-implementation.md`
-- **test_schedule.py** (13 connections) — `tests/execution/test_schedule.py`
-- **SplitConfig** (12 connections) — `backtesting/validation/split.py`
-- **CustomSchedule.flags()** (12 connections) — `backtesting/execution/schedule.py`
-- **split_frame()** (12 connections) — `backtesting/validation/split.py`
-- **test_split.py** (11 connections) — `tests/validation/test_split.py`
-- **KISAuth** (9 connections) — `kis/config.py`
-- **RootPaths** (8 connections) — `root.py`
-- **test_policy.py** (8 connections) — `tests/data/test_policy.py`
-- **fill_prices()** (8 connections) — `backtesting/execution/fill.py`
-- **TRBatchClient.call_batch()** (8 connections) — `kis/tr_id/register.py`
-- **KISAuth.get_access_token()** (7 connections) — `kis/config.py`
-- **WeeklySchedule** (6 connections) — `backtesting/execution/schedule.py`
-- **schedule.py** (6 connections) — `backtesting/execution/schedule.py`
-- **expand_monthly_frame()** (6 connections) — `backtesting/data/policy.py`
-- **DailySchedule.flags()** (6 connections) — `backtesting/execution/schedule.py`
-- **KISAuth._load_token()** (6 connections) — `kis/config.py`
-- **DataTools.to_frame()** (6 connections) — `kis/tools.py`
-- **main()** (6 connections) — `kis/tr_id/call.py`
-- **DailySchedule** (5 connections) — `backtesting/execution/schedule.py`
-- **MonthlySchedule** (5 connections) — `backtesting/execution/schedule.py`
-- **TradeCost.total()** (5 connections) — `backtesting/execution/costs.py`
-- **BacktestRunner._schedule()** (5 connections) — `backtesting/run.py`
-- **RootPaths.raw_path()** (5 connections) — `root.py`
-- **TradeCost** (4 connections) — `backtesting/execution/costs.py`
-- *... and 77 more nodes in this community*
+- **2026-04-06-dashboard-analytics-refresh.md** (180 connections) — `docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md`
+- **2026-04-05-live-dashboard-single-command-launch.md** (114 connections) — `docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md`
+- **2026-04-07-dashboard-research-series-plan.md** (64 connections) — `docs/superpowers/plans/2026-04-07-dashboard-research-series-plan.md`
+- **DerivMinute.summary()** (25 connections) — `kis/tr_id/deriv_minute.py`
+- **PlotLibrary.equity()** (16 connections) — `backtesting/reporting/plots.py`
+- **task()** (15 connections) — `kis/tr_id/register.py`
+- **1w1a** (11 connections) — `README.md`
+- **React()** (9 connections) — `dashboard/frontend/src/test/setup.ts`
+- **dates()** (8 connections) — `dashboard/frontend/src/components/ResearchWorkspace.tsx`
+- **RunIndexService.list_runs()** (7 connections) — `dashboard/backend/services/run_index.py`
+- **RateLimiter.wait()** (6 connections) — `kis/tools.py`
+- **LaunchPlan.selected_run_ids()** (5 connections) — `dashboard/backend/services/launch_resolution.py`
+- **DashboardBaseModel** (4 connections) — `dashboard/backend/schemas.py`
+- **ResearchFigure()** (4 connections) — `dashboard/frontend/src/components/ResearchWorkspace.tsx`
+- **weightSeries()** (4 connections) — `dashboard/frontend/src/components/ResearchWorkspace.tsx`
+- **DashboardLaunchConfig** (3 connections) — `dashboard/strategies.py`
+- **formatNumberValue()** (3 connections) — `dashboard/frontend/src/components/ResearchDetailPanel.tsx`
+- **buildCumulativeContributionOption()** (3 connections) — `dashboard/frontend/src/components/ResearchWorkspace.tsx`
+- **buildNormalizedSectorWeightsOption()** (3 connections) — `dashboard/frontend/src/components/ResearchWorkspace.tsx`
+- **contributionSeries()** (3 connections) — `dashboard/frontend/src/components/ResearchWorkspace.tsx`
+- **formatNumberValue()** (3 connections) — `dashboard/frontend/src/components/ResearchWorkspace.tsx`
+- **runLabel()** (3 connections) — `dashboard/frontend/src/components/ResearchWorkspace.tsx`
+- **fetchDashboard()** (3 connections) — `dashboard/frontend/src/lib/api.ts`
+- **fetchRuns()** (3 connections) — `dashboard/frontend/src/lib/api.ts`
+- **formatPercent()** (3 connections) — `dashboard/frontend/src/lib/format.ts`
+- *... and 25 more nodes in this community*
 
 ## Relationships
 
-- [[Docs Superpowers Reporting]] (64 shared connections)
-- [[Raw Ksdq Csv]] (36 shared connections)
-- [[Tests Test Run.Py Engine]] (25 shared connections)
-- [[Tests Reporting Analytics]] (13 shared connections)
-- [[Backtesting Reporting Frontend]] (10 shared connections)
-- [[Docs Superpowers Strategy]] (6 shared connections)
-- [[Backtesting Strategies Tests]] (5 shared connections)
-- [[Backtesting Reporting Tests]] (5 shared connections)
-- [[Docs Superpowers Portfolio]] (5 shared connections)
-- [[Tests Dashboard Backend]] (5 shared connections)
-- [[Tests Reporting Test_Builder]] (4 shared connections)
+- [[Docs Superpowers Reporting]] (88 shared connections)
+- [[Docs Superpowers Kosdaq150]] (49 shared connections)
+- [[Tests Dashboard Backend]] (33 shared connections)
+- [[Dashboard Backend Schemas]] (29 shared connections)
+- [[Backtesting Reporting Frontend]] (29 shared connections)
+- [[Docs Superpowers Analytics]] (22 shared connections)
+- [[Docs Superpowers Research]] (19 shared connections)
+- [[Dashboard Frontend Src]] (18 shared connections)
+- [[Docs Superpowers Live]] (15 shared connections)
+- [[Docs Superpowers Plans]] (13 shared connections)
+- [[Tests Test Run.Py Engine]] (10 shared connections)
+- [[Backtesting Reporting Tests]] (10 shared connections)
 
 ## Source Files
 
-- `backtesting/data/policy.py`
-- `backtesting/execution/costs.py`
-- `backtesting/execution/fill.py`
-- `backtesting/execution/schedule.py`
-- `backtesting/run.py`
-- `backtesting/validation/split.py`
-- `docs/superpowers/plans/2026-04-03-stock-backtesting-implementation.md`
-- `docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md`
-- `kis/config.py`
+- `README.md`
+- `backtesting/reporting/plots.py`
+- `dashboard/backend/schemas.py`
+- `dashboard/backend/services/launch_resolution.py`
+- `dashboard/backend/services/run_index.py`
+- `dashboard/frontend/src/components/ResearchDetailPanel.tsx`
+- `dashboard/frontend/src/components/ResearchWorkspace.tsx`
+- `dashboard/frontend/src/lib/api.ts`
+- `dashboard/frontend/src/lib/format.ts`
+- `dashboard/frontend/src/test/setup.ts`
+- `dashboard/strategies.py`
+- `docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md`
+- `docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md`
+- `docs/superpowers/plans/2026-04-07-dashboard-research-series-plan.md`
 - `kis/tools.py`
-- `kis/tr_id/call.py`
+- `kis/tr_id/deriv_minute.py`
 - `kis/tr_id/register.py`
-- `root.py`
-- `tests/data/test_policy.py`
-- `tests/execution/test_schedule.py`
-- `tests/kis/test_root.py`
-- `tests/validation/test_split.py`
 
 ## Audit Trail
 
-- EXTRACTED: 179 (35%)
-- INFERRED: 335 (65%)
+- EXTRACTED: 71 (13%)
+- INFERRED: 458 (87%)
 - AMBIGUOUS: 0 (0%)
 
 ---

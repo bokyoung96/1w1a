@@ -1,12 +1,12 @@
 ---
 source_file: "README.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Strategy"
 location: "L132"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Strategy
 ---
 
 # from the repo root
@@ -15,4 +15,4 @@ tags:
 - [[2026-04-03-stock-backtesting-design]] - `references` [INFERRED]
 - [[README]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Strategy

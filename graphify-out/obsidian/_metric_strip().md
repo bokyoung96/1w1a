@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/composers.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Composers"
 location: "L226"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Composers
 ---
 
 # _metric_strip()
@@ -20,4 +20,4 @@ tags:
 - [[_format_metric_value()]] - `calls` [INFERRED]
 - [[composers.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Composers

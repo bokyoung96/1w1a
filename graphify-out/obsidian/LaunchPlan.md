@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/services/launch_resolution.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Tests Dashboard Backend"
 location: "L23"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Tests_Dashboard_Backend
 ---
 
 # LaunchPlan
@@ -18,4 +18,4 @@ tags:
 - [[LaunchResolutionService.resolve()]] - `calls` [INFERRED]
 - [[launch_resolution.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Tests_Dashboard_Backend

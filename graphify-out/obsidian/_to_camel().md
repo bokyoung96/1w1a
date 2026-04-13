@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/schemas.py"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Dashboard Backend Schemas"
 location: "L6"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Frontend
+  - community/Dashboard_Backend_Schemas
 ---
 
 # _to_camel()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[schemas.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/EXTRACTED #community/Dashboard_Backend_Schemas

@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/data/__init__.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Raw Ksdq Csv"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Strategies_Tests
+  - community/Raw_Ksdq_Csv
 ---
 
 # __init__.py
@@ -26,4 +26,4 @@ tags:
 - [[test_staged.py]] - `imports_from` [EXTRACTED]
 - [[test_strategy_contracts.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv

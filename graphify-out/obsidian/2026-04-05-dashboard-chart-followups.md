@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-05-dashboard-chart-followups.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Analytics"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Analytics
 ---
 
 # 2026-04-05-dashboard-chart-followups.md
@@ -59,4 +59,4 @@ tags:
 - [[series()_1]] - `rationale_for` [INFERRED]
 - [[task()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Analytics

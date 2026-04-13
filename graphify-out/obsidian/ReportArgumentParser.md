@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/cli.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Dashboard Frontend App"
 location: "L18"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Dashboard_Frontend_App
 ---
 
 # ReportArgumentParser
@@ -16,4 +16,4 @@ tags:
 - [[ReportCli.parser()]] - `calls` [INFERRED]
 - [[cli.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Dashboard_Frontend_App

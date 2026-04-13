@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/figures.py"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Backtesting Reporting Tests"
 location: "L130"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Frontend
+  - community/Backtesting_Reporting_Tests
 ---
 
 # TearsheetFigureBuilder._build_exposure()
@@ -16,4 +16,4 @@ tags:
 - [[TearsheetFigureBuilder]] - `contains` [EXTRACTED]
 - [[_top_holdings()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

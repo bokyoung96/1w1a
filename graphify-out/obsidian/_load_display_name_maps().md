@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/benchmarks.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Tests Reporting Analytics"
 location: "L286"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Tests_Reporting_Analytics
 ---
 
 # _load_display_name_maps()
@@ -18,4 +18,4 @@ tags:
 - [[default_repositories_for_universe()]] - `calls` [INFERRED]
 - [[test_load_display_name_maps_reads_sector_and_stock_sheets()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

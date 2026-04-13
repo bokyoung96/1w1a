@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/html.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Composers"
 location: "L18"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Composers
 ---
 
 # HtmlRenderer
@@ -34,4 +34,4 @@ tags:
 - [[test_html_renderer_uses_comparison_template()]] - `calls` [INFERRED]
 - [[test_html_renderer_uses_tearsheet_template()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Composers

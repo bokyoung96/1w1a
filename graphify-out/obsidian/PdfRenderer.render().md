@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/pdf.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Reporting"
 location: "L16"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Reporting
 ---
 
 # PdfRenderer.render()
@@ -33,4 +33,4 @@ tags:
 - [[PdfRenderer]] - `contains` [EXTRACTED]
 - [[PdfRenderer.render_with_status()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

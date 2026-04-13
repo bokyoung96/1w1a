@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/strategies/__init__.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # __init__.py
@@ -14,4 +14,4 @@ tags:
 - [[Shares Outstanding Outstanding]] - `references` [INFERRED]
 - [[test_registry.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy

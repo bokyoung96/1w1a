@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/strategies.py"
 type: "code"
-community: "Tests Dashboard Backend"
+community: "Docs Superpowers Kosdaq150"
 location: "L30"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Dashboard_Backend
+  - community/Docs_Superpowers_Kosdaq150
 ---
 
 # StrategyPreset
@@ -19,4 +19,4 @@ tags:
 - [[strategies.py]] - `contains` [EXTRACTED]
 - [[test_enabled_strategy_presets_filters_disabled_entries()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Dashboard_Backend
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Kosdaq150

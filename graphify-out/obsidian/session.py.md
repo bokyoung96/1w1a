@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/validation/session.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # session.py
@@ -16,4 +16,4 @@ tags:
 - [[Shares Outstanding Outstanding]] - `references` [INFERRED]
 - [[ValidationSession]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/figures.py"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Backtesting Reporting Tests"
 location: "L98"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Frontend
+  - community/Backtesting_Reporting_Tests
 ---
 
 # TearsheetFigureBuilder._build_calendar()
@@ -17,4 +17,4 @@ tags:
 - [[TearsheetFigureBuilder.build()]] - `calls` [INFERRED]
 - [[_monthly_returns()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

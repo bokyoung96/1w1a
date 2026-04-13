@@ -153,7 +153,7 @@ class UniverseSpec:
 기존 실행 경로를 의미적으로 표현하는 내부 호환용 universe. membership은 `qw_k200_yn`, benchmark 기본값은 KOSPI200.
 
 - `kosdaq150`
-membership은 `qw_ksdq150_yn`, benchmark 기본값은 `qw_BM` 내 코스닥150 코드, 가격/시총/섹터는 `qw_ksdq_*` 패밀리 사용.
+membership은 `qw_ksdq150_yn`, benchmark 기본값은 `qw_BM` 내 `IKQ150`/`KOSDAQ150`, 가격/시총/섹터는 `qw_ksdq_*` 패밀리 사용.
 
 `legacy_k200`는 외부에 강하게 노출하지 않아도 되지만, 구현 내부에서는 명시적 spec로 두는 편이 분기 로직을 단순하게 만든다.
 

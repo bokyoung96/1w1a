@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/signals/op_fwd.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 location: "L17"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # OpFwdYieldSignalProducer.build()
@@ -16,4 +16,4 @@ tags:
 - [[Options Div]] - `calls` [INFERRED]
 - [[SignalBundle]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy

@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Research"
 location: "L829"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Research
 ---
 
 # README.md
@@ -21,4 +21,4 @@ tags:
 - [[2026-04-06-dashboard-analytics-refresh]] - `references` [INFERRED]
 - [[2026-04-13-kosdaq150-universe-integration]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Research

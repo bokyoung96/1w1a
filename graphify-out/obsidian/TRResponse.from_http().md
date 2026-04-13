@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/protocol.py"
 type: "code"
-community: "Docs Superpowers Portfolio"
+community: "Kis Tr Id Protocol"
 location: "L34"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Portfolio
+  - community/Kis_Tr_Id_Protocol
 ---
 
 # TRResponse.from_http()
@@ -18,4 +18,4 @@ tags:
 - [[ResponseHeader]] - `calls` [INFERRED]
 - [[TRResponse]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Portfolio
+#graphify/code #graphify/INFERRED #community/Kis_Tr_Id_Protocol

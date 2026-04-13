@@ -129,28 +129,18 @@ def log(message: str) -> None:
 
 
 def prepare_output_paths(out_dir: Path) -> None:
-    for dirname in ("obsidian", "wiki"):
-        target = out_dir / dirname
-        if target.exists():
-            shutil.rmtree(target)
-        target.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
 
-    for filename in (
-        "graph.svg",
-        "graph.html",
-        "graph.json",
-        "graph.graphml",
-        "cypher.txt",
-        "GRAPH_REPORT.md",
-        "labels.json",
-        "summary.json",
-        "cost.json",
-        "manifest.json",
-        "graph-extract.json",
-    ):
-        path = out_dir / filename
-        if path.exists():
-            path.unlink()
+    for child in out_dir.iterdir():
+        if child.name in {"generate_graphify.py", "__pycache__"}:
+            continue
+        if child.is_dir():
+            shutil.rmtree(child)
+        else:
+            child.unlink()
+
+    for dirname in ("obsidian", "wiki"):
+        (out_dir / dirname).mkdir(parents=True, exist_ok=True)
 
 
 class GraphBuilder:

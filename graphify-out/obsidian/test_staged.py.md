@@ -1,11 +1,11 @@
 ---
 source_file: "tests/policy/test_staged.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # test_staged.py
@@ -27,4 +27,4 @@ tags:
 - [[test_staged_policy_resets_progress_on_sign_flip()]] - `contains` [EXTRACTED]
 - [[test_staged_policy_zero_reset_is_per_symbol_with_same_day_progression()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy

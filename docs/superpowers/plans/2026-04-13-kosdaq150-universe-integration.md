@@ -348,8 +348,8 @@ class UniverseRegistry:
                     display_name="Legacy KOSPI200",
                     description="Existing K200 membership path for backward compatibility.",
                     membership_dataset=DatasetId.QW_K200_YN,
-                    default_benchmark_code="IKS200",
-                    default_benchmark_name="KOSPI200",
+                    default_benchmark_code="IKQ150",
+                    default_benchmark_name="KOSDAQ150",
                     default_benchmark_dataset="qw_BM",
                     dataset_aliases={},
                 ),
@@ -358,8 +358,8 @@ class UniverseRegistry:
                     display_name="KOSDAQ150",
                     description="KOSDAQ150 price and membership dataset family.",
                     membership_dataset=DatasetId.QW_KSDQ150_YN,
-                    default_benchmark_code="KQ150",
-                    default_benchmark_name="KOSDAQ150",
+                    default_benchmark_code="IKS200",
+                    default_benchmark_name="KOSPI200",
                     default_benchmark_dataset="qw_BM",
                     dataset_aliases={
                         "close": DatasetId.QW_KSDQ_ADJ_C,
@@ -835,7 +835,7 @@ KOSDAQ150 universe example:
 python run.py --strategy momentum --universe kosdaq150 --start 2020-01-01 --end 2020-12-31 --top-n 20 --lookback 20 --schedule monthly --fill-mode next_open
 ```
 
-When `--universe kosdaq150` is set, the runner uses the `qw_ksdq_*` dataset family and defaults the benchmark metadata to KOSDAQ150 from `qw_BM`. You can still override benchmark metadata explicitly if needed.
+When `--universe kosdaq150` is set, the runner uses the `qw_ksdq_*` dataset family and defaults the benchmark metadata to `IKQ150`/`KOSDAQ150` from `qw_BM`. You can still override benchmark metadata explicitly if needed.
 ````
 
 - [ ] **Step 2: Run the high-signal verification suite**

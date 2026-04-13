@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/signals/momentum.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 location: "L19"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # MomentumSignalProducer.build()
@@ -15,4 +15,4 @@ tags:
 - [[MomentumSignalProducer]] - `contains` [EXTRACTED]
 - [[SignalBundle]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy

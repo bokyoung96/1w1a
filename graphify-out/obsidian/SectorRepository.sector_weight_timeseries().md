@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/benchmarks.py"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Tests Reporting Analytics"
 location: "L115"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Frontend
+  - community/Tests_Reporting_Analytics
 ---
 
 # SectorRepository.sector_weight_timeseries()
@@ -18,4 +18,4 @@ tags:
 - [[SectorRepository]] - `contains` [EXTRACTED]
 - [[SectorRepository._group_row_by_sector()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

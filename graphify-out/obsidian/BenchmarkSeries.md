@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/benchmarks.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Reporting"
 location: "L17"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Reporting
 ---
 
 # BenchmarkSeries
@@ -18,4 +18,4 @@ tags:
 - [[BenchmarkRepository.load_series()]] - `calls` [INFERRED]
 - [[benchmarks.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

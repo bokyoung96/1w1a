@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/PerformanceStrip.tsx"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Backtesting Reporting Frontend"
 location: "L98"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Reporting
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # summarySeries()
@@ -15,4 +15,4 @@ tags:
 - [[2026-04-05-research-dashboard-refresh]] - `rationale_for` [INFERRED]
 - [[PerformanceStrip.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

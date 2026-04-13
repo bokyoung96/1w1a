@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-05-dashboard-ux-followups.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Research"
 location: "L13"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Research
 ---
 
 # Task 1: Remove the sector attribution warning at the source
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[2026-04-05-dashboard-ux-followups]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Research

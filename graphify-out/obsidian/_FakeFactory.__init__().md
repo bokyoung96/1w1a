@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_builder.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Backtesting Reporting Tests"
 location: "L86"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Reporting_Test_Builder
+  - community/Backtesting_Reporting_Tests
 ---
 
 # _FakeFactory.__init__()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[_FakeFactory]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

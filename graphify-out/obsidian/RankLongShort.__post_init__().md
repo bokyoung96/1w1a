@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategy/cross.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 location: "L30"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # RankLongShort.__post_init__()
@@ -15,4 +15,4 @@ tags:
 - [[RankLongShort]] - `contains` [EXTRACTED]
 - [[validate_positive()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy

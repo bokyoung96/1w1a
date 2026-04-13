@@ -1,11 +1,11 @@
 ---
 source_file: "dashboard/backend/services/run_index.py"
 type: "code"
-community: "Tests Dashboard Backend"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Dashboard_Backend
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # run_index.py
@@ -21,4 +21,4 @@ tags:
 - [[test_dashboard_api.py]] - `imports_from` [EXTRACTED]
 - [[test_run_index_service.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Backend
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

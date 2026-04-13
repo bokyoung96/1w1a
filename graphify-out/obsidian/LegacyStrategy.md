@@ -1,12 +1,12 @@
 ---
 source_file: "tests/strategies/test_registry.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 location: "L181"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # LegacyStrategy
@@ -18,4 +18,4 @@ tags:
 - [[test_registered_strategy_preserves_legacy_extension_path()]] - `calls` [INFERRED]
 - [[test_registry.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy

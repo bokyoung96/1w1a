@@ -1,11 +1,11 @@
 ---
 source_file: "dashboard/frontend/src/components/PerformanceStrip.tsx"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Reporting
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # PerformanceStrip.tsx
@@ -40,4 +40,4 @@ tags:
 - [[strategySeries()]] - `contains` [EXTRACTED]
 - [[summarySeries()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

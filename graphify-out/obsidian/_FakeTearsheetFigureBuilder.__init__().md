@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_builder.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Backtesting Reporting Frontend"
 location: "L33"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Reporting_Test_Builder
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # _FakeTearsheetFigureBuilder.__init__()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[_FakeTearsheetFigureBuilder]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

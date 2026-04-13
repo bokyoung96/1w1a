@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/composable.py"
 type: "code"
-community: "Docs Superpowers Portfolio"
+community: "Docs Superpowers Policy"
 location: "L18"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Portfolio
+  - community/Docs_Superpowers_Policy
 ---
 
 # SignalProducer
@@ -17,4 +17,4 @@ tags:
 - [[SignalProducer.datasets()]] - `contains` [EXTRACTED]
 - [[composable.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Portfolio
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy

@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/plots.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Backtesting Reporting Tests"
 location: "L102"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Reporting_Test_Builder
+  - community/Backtesting_Reporting_Tests
 ---
 
 # PlotLibrary._monthly_heatmap_trace()
@@ -16,4 +16,4 @@ tags:
 - [[PlotLibrary]] - `contains` [EXTRACTED]
 - [[PlotLibrary.monthly_heatmap()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

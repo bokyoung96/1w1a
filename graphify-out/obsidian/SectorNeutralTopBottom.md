@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/construction/sector_neutral.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 location: "L14"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # SectorNeutralTopBottom
@@ -20,4 +20,4 @@ tags:
 - [[test_sector_neutral_top_bottom_skips_undersized_sector()]] - `calls` [INFERRED]
 - [[test_sector_neutral_top_bottom_validates_leg_sizes()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy

@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/ingest/report.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Analytics"
 location: "L33"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Analytics
 ---
 
 # IngestResult.to_dict()
@@ -23,4 +23,4 @@ tags:
 - [[test_performance_snapshot_factory_applies_korean_sector_and_stock_display_names()]] - `calls` [INFERRED]
 - [[test_performance_snapshot_factory_builds_analytics_snapshot()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

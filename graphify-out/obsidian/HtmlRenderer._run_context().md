@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/html.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Composers"
 location: "L89"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Composers
 ---
 
 # HtmlRenderer._run_context()
@@ -19,4 +19,4 @@ tags:
 - [[build_latest_qty_table()]] - `calls` [INFERRED]
 - [[build_latest_weights_table()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Composers

@@ -1,12 +1,12 @@
 ---
 source_file: "tests/dashboard/test_strategies.py"
 type: "code"
-community: "Tests Dashboard Backend"
+community: "Dashboard Backend Schemas"
 location: "L29"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Dashboard_Backend
+  - community/Dashboard_Backend_Schemas
 ---
 
 # test_default_launch_config_strategy_params_are_read_only()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[test_strategies.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Backend
+#graphify/code #graphify/EXTRACTED #community/Dashboard_Backend_Schemas

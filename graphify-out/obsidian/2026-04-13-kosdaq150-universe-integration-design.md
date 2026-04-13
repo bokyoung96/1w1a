@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Kosdaq150"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Kosdaq150
 ---
 
 # 2026-04-13-kosdaq150-universe-integration-design.md
@@ -108,4 +108,4 @@ tags:
 - [[data()]] - `rationale_for` [INFERRED]
 - [[strategies()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Kosdaq150

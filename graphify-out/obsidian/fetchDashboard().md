@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/lib/api.ts"
 type: "code"
-community: "Docs Superpowers Portfolio"
+community: "Docs Superpowers Plans"
 location: "L411"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Portfolio
+  - community/Docs_Superpowers_Plans
 ---
 
 # fetchDashboard()
@@ -16,4 +16,4 @@ tags:
 - [[2026-04-06-dashboard-analytics-refresh]] - `rationale_for` [INFERRED]
 - [[api.ts]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Portfolio
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

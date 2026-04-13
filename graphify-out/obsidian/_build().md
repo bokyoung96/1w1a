@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_cli.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Reporting"
 location: "L42"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Reporting
 ---
 
 # _build()
@@ -21,4 +21,4 @@ tags:
 - [[2026-04-13-kosdaq150-universe-integration]] - `rationale_for` [INFERRED]
 - [[test_cli.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/register.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Kosdaq150"
 location: "L72"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Kosdaq150
 ---
 
 # TRClient.call()
@@ -24,4 +24,4 @@ tags:
 - [[TRClient]] - `contains` [EXTRACTED]
 - [[TRClient._request()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Kosdaq150

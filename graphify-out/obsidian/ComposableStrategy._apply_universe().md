@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/composable.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Backtesting Reporting Tests"
 location: "L55"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Strategies_Tests
+  - community/Backtesting_Reporting_Tests
 ---
 
 # ComposableStrategy._apply_universe()
@@ -17,4 +17,4 @@ tags:
 - [[DataCatalog.get()]] - `calls` [INFERRED]
 - [[SignalBundle]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

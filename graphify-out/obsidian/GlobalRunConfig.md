@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/strategies.py"
 type: "code"
-community: "Tests Dashboard Backend"
+community: "Backtesting Reporting Frontend"
 location: "L11"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Dashboard_Backend
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # GlobalRunConfig
@@ -15,4 +15,4 @@ tags:
 - [[2026-04-05-live-dashboard-single-command-launch]] - `rationale_for` [INFERRED]
 - [[strategies.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Backend
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

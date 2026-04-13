@@ -1,11 +1,11 @@
 ---
 source_file: "dashboard/strategies.py"
 type: "code"
-community: "Tests Dashboard Backend"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Dashboard_Backend
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # strategies.py
@@ -26,4 +26,4 @@ tags:
 - [[test_run.py]] - `imports_from` [EXTRACTED]
 - [[test_strategies.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Backend
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

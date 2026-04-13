@@ -221,7 +221,7 @@ def test_dashboard_payload_uses_kosdaq150_defaults_when_run_is_kosdaq150(tmp_pat
     app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(
         tmp_path,
         benchmark_frame=pd.DataFrame(
-            {"IKS200": [200.0, 201.0], "KQ150": [300.0, 303.0]},
+            {"IKS200": [200.0, 201.0], "IKQ150": [300.0, 303.0]},
             index=pd.to_datetime(["2024-01-02", "2024-01-03"]),
         ),
         sector_frame=pd.DataFrame(
@@ -235,7 +235,7 @@ def test_dashboard_payload_uses_kosdaq150_defaults_when_run_is_kosdaq150(tmp_pat
     app.dependency_overrides.clear()
     assert response.status_code == 200
     payload = response.json()
-    assert payload["context"]["alpha_20260405_100000"]["benchmark"] == {"code": "KQ150", "name": "KOSDAQ150"}
+    assert payload["context"]["alpha_20260405_100000"]["benchmark"] == {"code": "IKQ150", "name": "KOSDAQ150"}
     assert payload["performance"]["benchmarks"] == [
         {
             "runId": "alpha_20260405_100000",

@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/policy/staged.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # staged.py
@@ -20,4 +20,4 @@ tags:
 - [[base.py_1]] - `imports_from` [EXTRACTED]
 - [[test_staged.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy

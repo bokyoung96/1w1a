@@ -22,9 +22,9 @@
 - [[App.tsx]] `INFERRED`
 - [[test_benchmarks.py]] `INFERRED`
 - [[run.py]] `INFERRED`
+- [[test_universe.py]] `INFERRED`
 - [[composers.py]] `INFERRED`
 - [[test_loader.py]] `INFERRED`
-- [[test_universe.py]] `INFERRED`
 - [[PerformanceStrip.tsx]] `INFERRED`
 - [[models.py]] `INFERRED`
 - [[universe.py]] `INFERRED`

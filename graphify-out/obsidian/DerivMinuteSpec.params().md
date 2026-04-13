@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/deriv_minute.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Kosdaq150"
 location: "L18"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Kosdaq150
 ---
 
 # DerivMinuteSpec.params()
@@ -22,4 +22,4 @@ tags:
 - [[README]] - `rationale_for` [INFERRED]
 - [[TimeTools.kst_hhmmss()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Kosdaq150

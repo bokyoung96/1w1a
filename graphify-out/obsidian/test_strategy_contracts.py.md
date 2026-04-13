@@ -1,11 +1,11 @@
 ---
 source_file: "tests/strategies/test_strategy_contracts.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Raw Ksdq Csv"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Strategies_Tests
+  - community/Raw_Ksdq_Csv
 ---
 
 # test_strategy_contracts.py
@@ -19,4 +19,4 @@ tags:
 - [[test_pass_through_policy_emits_base_weights_as_single_bucket()]] - `contains` [EXTRACTED]
 - [[test_pass_through_policy_preserves_empty_ledger_schema()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv

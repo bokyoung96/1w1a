@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/lib/api.ts"
 type: "code"
-community: "Docs Superpowers Portfolio"
+community: "Docs Superpowers Breakout"
 location: "L157"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Portfolio
+  - community/Docs_Superpowers_Breakout
 ---
 
 # strategies()
@@ -30,4 +30,4 @@ tags:
 - [[README]] - `rationale_for` [INFERRED]
 - [[api.ts]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Portfolio
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Breakout

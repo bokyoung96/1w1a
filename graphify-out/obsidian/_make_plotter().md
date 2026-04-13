@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_builder.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Backtesting Reporting Tests"
 location: "L154"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Reporting_Test_Builder
+  - community/Backtesting_Reporting_Tests
 ---
 
 # _make_plotter()
@@ -15,4 +15,4 @@ tags:
 - [[test_builder.py]] - `contains` [EXTRACTED]
 - [[test_report_builder_legacy_path_remains_available()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

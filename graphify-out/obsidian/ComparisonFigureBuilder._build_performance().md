@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/comparison_figures.py"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Backtesting Reporting Tests"
 location: "L75"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Frontend
+  - community/Backtesting_Reporting_Tests
 ---
 
 # ComparisonFigureBuilder._build_performance()
@@ -15,4 +15,4 @@ tags:
 - [[ComparisonFigureBuilder]] - `contains` [EXTRACTED]
 - [[ComparisonFigureBuilder.build()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

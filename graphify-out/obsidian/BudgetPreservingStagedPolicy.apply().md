@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/policy/staged.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 location: "L46"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # BudgetPreservingStagedPolicy.apply()
@@ -17,4 +17,4 @@ tags:
 - [[PositionPlan]] - `calls` [INFERRED]
 - [[series()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy

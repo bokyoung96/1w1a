@@ -1,58 +1,20 @@
 ---
 type: community
 cohesion: 0.02
-members: 245
+members: 180
 ---
 
 # Backtesting Reporting Frontend
 
 **Cohesion:** 0.02 - loosely connected
-**Members:** 245 nodes
+**Members:** 180 nodes
 
 ## Members
-- [[2026-04-06-dashboard-analytics-refresh]] - document - docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md
 - [[Assets Latest Quarter]] - document - raw/qw_asset_lfq0.csv
-- [[BenchmarkModel]] - code - dashboard/backend/schemas.py
-- [[CategoryPointModel]] - code - dashboard/backend/schemas.py
-- [[CategorySeriesModel]] - code - dashboard/backend/schemas.py
-- [[ComparisonFigureBuilder]] - code - backtesting/reporting/comparison_figures.py
-- [[ComparisonFigureBuilder.__init__()]] - code - backtesting/reporting/comparison_figures.py
-- [[ComparisonFigureBuilder._build_executive()]] - code - backtesting/reporting/comparison_figures.py
-- [[ComparisonFigureBuilder._build_exposure()]] - code - backtesting/reporting/comparison_figures.py
-- [[ComparisonFigureBuilder._build_performance()]] - code - backtesting/reporting/comparison_figures.py
-- [[ComparisonFigureBuilder._build_rolling()]] - code - backtesting/reporting/comparison_figures.py
-- [[ComparisonFigureBuilder._line()]] - code - backtesting/reporting/comparison_figures.py
-- [[ComparisonFigureBuilder.build()]] - code - backtesting/reporting/comparison_figures.py
+- [[BidAskList]] - code - kis/tr_id/bid_ask_list.py
 - [[ComparisonTableBuilder]] - code - backtesting/reporting/tables_comparison.py
 - [[ComparisonTableBuilder.build()]] - code - backtesting/reporting/tables_comparison.py
-- [[Dashboard Analytics Refresh Implementation Plan]] - document - docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md
-- [[DashboardBaseModel]] - code - dashboard/backend/schemas.py
-- [[DashboardContextModel]] - code - dashboard/backend/schemas.py
-- [[DashboardExposureModel]] - code - dashboard/backend/schemas.py
-- [[DashboardLaunchModel]] - code - dashboard/backend/schemas.py
-- [[DashboardMetricModel]] - code - dashboard/backend/schemas.py
-- [[DashboardPayloadModel]] - code - dashboard/backend/schemas.py
-- [[DashboardPayloadService]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPayloadService._read_run()]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPayloadService._resolve_benchmark()]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPayloadService._serialize_benchmark()]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPayloadService._serialize_context()]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPayloadService._serialize_launch()]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPayloadService._serialize_launch_benchmark_context()]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPayloadService._serialize_metrics()]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPayloadService._serialize_research()]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPayloadService._serialize_rolling_correlation()]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPayloadService._serialize_rolling_series()]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPayloadService._serialize_series()]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPayloadService._snapshot_factory_for_run()]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPayloadService.build()]] - code - dashboard/backend/services/dashboard_payload.py
-- [[DashboardPerformanceModel]] - code - dashboard/backend/schemas.py
-- [[DashboardResearchModel]] - code - dashboard/backend/schemas.py
-- [[DashboardRollingModel]] - code - dashboard/backend/schemas.py
-- [[DiagnosticStrip()]] - code - dashboard/frontend/src/components/DiagnosticStrip.tsx
 - [[DiagnosticStrip.tsx]] - code - dashboard/frontend/src/components/DiagnosticStrip.tsx
-- [[DistributionBinModel]] - code - dashboard/backend/schemas.py
-- [[DrawdownEpisodeModel]] - code - dashboard/backend/schemas.py
 - [[DrawdownStats]] - code - backtesting/reporting/analytics.py
 - [[EmptyState()]] - code - dashboard/frontend/src/components/EmptyState.tsx
 - [[EmptyState.tsx]] - code - dashboard/frontend/src/components/EmptyState.tsx
@@ -60,14 +22,12 @@ members: 245
 - [[ExposureBand()]] - code - dashboard/frontend/src/components/ExposureBand.tsx
 - [[ExposureBand.tsx]] - code - dashboard/frontend/src/components/ExposureBand.tsx
 - [[ExposureSnapshot]] - code - backtesting/reporting/analytics.py
-- [[File Map_2]] - document - docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md
 - [[Foreign Ownership Ratio]] - document - raw/qw_foreign_ratio.csv
-- [[HeatmapCellModel]] - code - dashboard/backend/schemas.py
-- [[HoldingModel]] - code - dashboard/backend/schemas.py
-- [[HoldingPerformanceModel]] - code - dashboard/backend/schemas.py
-- [[LaunchBenchmarkContextModel]] - code - dashboard/backend/schemas.py
-- [[LaunchStrategyBenchmarkModel]] - code - dashboard/backend/schemas.py
-- [[NamedSeriesModel]] - code - dashboard/backend/schemas.py
+- [[GlobalRunConfig]] - code - dashboard/strategies.py
+- [[KOSPI200_1M data shape]] - document - raw/KOSPI200_1M.csv
+- [[KOSPI200_1M.csv]] - document - raw/KOSPI200_1M.csv
+- [[Kospi200 1M]] - document - raw/KOSPI200_1M.csv
+- [[Map]] - document - raw/map.xlsx
 - [[Options Div]] - document - raw/options/qw_div.csv
 - [[Options Implied Vol]] - document - raw/options/qw_implied_vol.csv
 - [[PerformanceMetrics]] - code - backtesting/reporting/analytics.py
@@ -90,68 +50,52 @@ members: 245
 - [[PerformanceSnapshotFactory._merge_latest_holdings_returns()]] - code - backtesting/reporting/snapshots.py
 - [[PerformanceSnapshotFactory._rank_latest_holdings()]] - code - backtesting/reporting/snapshots.py
 - [[PerformanceSnapshotFactory.build()]] - code - backtesting/reporting/snapshots.py
-- [[React()]] - code - dashboard/frontend/src/test/setup.ts
-- [[ResearchFocusModel]] - code - dashboard/backend/schemas.py
+- [[PerformanceStrip.tsx]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[ResearchDetailPanel.tsx]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
 - [[ResearchSnapshot]] - code - backtesting/reporting/analytics.py
-- [[ResearchWorkspace.tsx]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
 - [[RollingMetrics]] - code - backtesting/reporting/analytics.py
-- [[RollingSeriesModel]] - code - dashboard/backend/schemas.py
 - [[RunSelector.test.tsx]] - code - dashboard/frontend/src/components/RunSelector.test.tsx
-- [[SectorRepository.sector_weight_timeseries()]] - code - backtesting/reporting/benchmarks.py
+- [[RunSelector.tsx]] - code - dashboard/frontend/src/components/RunSelector.tsx
 - [[SectorSnapshot]] - code - backtesting/reporting/analytics.py
-- [[Self-Review_4]] - document - docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md
-- [[SessionBootstrapModel]] - code - dashboard/backend/schemas.py
 - [[Shares Outstanding Outstanding]] - document - raw/qw_sha_out.csv
-- [[Task 1 Add failing backend payload tests for the new analytics contract]] - document - docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md
-- [[Task 2 Implement backend analytics helpers and snapshot calculations]] - document - docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md
-- [[Task 3 Wire the expanded dashboard API contract]] - document - docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md
-- [[Task 4 Add failing frontend tests for metadata, rolling risk, distributions, and exposure leaders]] - document - docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md
-- [[Task 5 Update frontend types and comparison-plane metadata rendering]] - document - docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md
-- [[Task 6 Implement research workspace chart refresh]] - document - docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md
-- [[Task 7 Implement exposure-band winners, losers, and sector snapshot]] - document - docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md
-- [[Task 8 Full verification and finish]] - document - docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md
-- [[TearsheetFigureBuilder]] - code - backtesting/reporting/figures.py
-- [[TearsheetFigureBuilder.__init__()]] - code - backtesting/reporting/figures.py
-- [[TearsheetFigureBuilder._build_calendar()]] - code - backtesting/reporting/figures.py
-- [[TearsheetFigureBuilder._build_executive()]] - code - backtesting/reporting/figures.py
-- [[TearsheetFigureBuilder._build_exposure()]] - code - backtesting/reporting/figures.py
-- [[TearsheetFigureBuilder._build_rolling()]] - code - backtesting/reporting/figures.py
-- [[TearsheetFigureBuilder._line()]] - code - backtesting/reporting/figures.py
-- [[TearsheetFigureBuilder.build()]] - code - backtesting/reporting/figures.py
 - [[TearsheetTableBuilder]] - code - backtesting/reporting/tables_single.py
 - [[TearsheetTableBuilder.build()]] - code - backtesting/reporting/tables_single.py
 - [[TopRail()]] - code - dashboard/frontend/src/components/TopRail.tsx
 - [[TopRail.tsx]] - code - dashboard/frontend/src/components/TopRail.tsx
-- [[ValuePointModel]] - code - dashboard/backend/schemas.py
 - [[Wics Sector Sector Large Cap Sector]] - document - raw/qw_wics_sec_big.csv
+- [[_FakeComparisonFigureBuilder]] - code - tests/reporting/test_builder.py
+- [[_FakeComparisonFigureBuilder.__init__()]] - code - tests/reporting/test_builder.py
+- [[_FakeComparisonFigureBuilder.build()]] - code - tests/reporting/test_builder.py
+- [[_FakeComparisonTableBuilder]] - code - tests/reporting/test_builder.py
+- [[_FakeComparisonTableBuilder.build()]] - code - tests/reporting/test_builder.py
+- [[_FakeTearsheetFigureBuilder]] - code - tests/reporting/test_builder.py
+- [[_FakeTearsheetFigureBuilder.__init__()]] - code - tests/reporting/test_builder.py
+- [[_FakeTearsheetFigureBuilder.build()]] - code - tests/reporting/test_builder.py
+- [[_FakeTearsheetTableBuilder]] - code - tests/reporting/test_builder.py
+- [[_FakeTearsheetTableBuilder.build()]] - code - tests/reporting/test_builder.py
 - [[__init__.py_3]] - code - backtesting/construction/__init__.py
-- [[__init__.py_5]] - code - backtesting/engine/__init__.py
 - [[__init__.py_9]] - code - backtesting/reporting/__init__.py
 - [[__init__.py_20]] - code - tests/__init__.py
-- [[_largest_holding()]] - code - backtesting/reporting/comparison_figures.py
-- [[_latest_abs_value()]] - code - dashboard/backend/serializers.py
+- [[_fake_resolver()]] - code - tests/reporting/test_builder.py
 - [[_metric_label()]] - code - backtesting/reporting/tables_single.py
 - [[_metric_order()]] - code - backtesting/reporting/tables_single.py
-- [[_monthly_returns()]] - code - backtesting/reporting/figures.py
 - [[_ordered_columns()]] - code - backtesting/reporting/tables_comparison.py
 - [[_ordered_columns()_1]] - code - backtesting/reporting/tables_single.py
 - [[_sample_snapshot()]] - code - tests/reporting/test_figures.py
 - [[_sample_snapshot()_1]] - code - tests/reporting/test_tables.py
 - [[_stub_plot_generation()]] - code - tests/reporting/test_reader.py
-- [[_to_camel()]] - code - dashboard/backend/schemas.py
-- [[_top_holdings()]] - code - backtesting/reporting/figures.py
 - [[_write_image_success()]] - code - tests/reporting/test_figures.py
 - [[_write_placeholder_plot()]] - code - tests/reporting/test_reader.py
+- [[_write_required_bundle()]] - code - tests/reporting/test_reader.py
 - [[analytics.py]] - code - backtesting/reporting/analytics.py
 - [[annualized_sharpe()]] - code - backtesting/reporting/analytics.py
-- [[binsByRun()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[buildDistributionOption()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[buildHeatmapOption()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[buildLineOption()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[buildReturnDrawdownOption()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[avgGain()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[avgLoss()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[benchmarkSeries()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[benchmarkSummary()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[bid_ask_list.py]] - code - kis/tr_id/bid_ask_list.py
+- [[buildCostSummary()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
 - [[buildSectorSnapshotOption()]] - code - dashboard/frontend/src/components/ExposureBand.tsx
-- [[buildSectorWeightHeatmapOption()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[buildYearlyExcessOption()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
 - [[build_benchmark_relative_table()]] - code - backtesting/reporting/tables_comparison.py
 - [[build_drawdown_episodes_table()]] - code - backtesting/reporting/tables_single.py
 - [[build_holdings_turnover_table()]] - code - backtesting/reporting/tables_comparison.py
@@ -165,33 +109,34 @@ members: 245
 - [[build_validation_appendix_table()]] - code - backtesting/reporting/tables_single.py
 - [[build_yearly_excess_returns()]] - code - backtesting/reporting/analytics.py
 - [[builder.py]] - code - backtesting/reporting/builder.py
-- [[categories()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[chartBase()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
 - [[chartOption()]] - code - dashboard/frontend/src/components/DiagnosticStrip.tsx
-- [[collectSectorNamesByRelevance()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[collectSectorSeries()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[chartOption()_1]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
 - [[comparison_figures.py]] - code - backtesting/reporting/comparison_figures.py
-- [[contributionSubtitle()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[computeValueDiffs()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
 - [[dashboard_payload.py]] - code - dashboard/backend/services/dashboard_payload.py
-- [[distributionBinLabel()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[distributionMidpoint()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[drawdownSeries()_2]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[equitySeries()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[drawdownOption()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[drawdownSeries()_1]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[fallbackEpisode()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
 - [[figures.py]] - code - backtesting/reporting/figures.py
-- [[format.ts]] - code - dashboard/frontend/src/lib/format.ts
-- [[formatMoney()]] - code - dashboard/frontend/src/lib/format.ts
-- [[formatPercent()]] - code - dashboard/frontend/src/lib/format.ts
-- [[formatPercentValue()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[hasDistributionData()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[hasHeatmapData()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[hasMonthlyDistributionData()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[hasSeriesData()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[heatmapRunId()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[holdings()]] - code - dashboard/frontend/src/components/ExposureBand.tsx
-- [[losers()]] - code - dashboard/frontend/src/components/ExposureBand.tsx
-- [[maxValue()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[flattenEpisodes()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[focusLabel()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[focusSummary()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[formatCostValue()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[formatLaunchMoney()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[formatLaunchText()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[formatMetricNumber()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[formatMetricPercent()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[formatRewardRisk()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[longestOpen()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[map data shape]] - document - raw/map.xlsx
+- [[map.xlsx]] - document - raw/map.xlsx
+- [[models.py]] - code - backtesting/reporting/models.py
 - [[monthly_return_series()]] - code - backtesting/reporting/analytics.py
-- [[pointsByDate()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[negativeDiffs()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[normalizeFocusLabel()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[openEpisodes()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[plots.py]] - code - backtesting/reporting/plots.py
+- [[positiveDiffs()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
 - [[qw_asset_lfq0 data shape]] - document - raw/qw_asset_lfq0.csv
 - [[qw_asset_lfq0.csv]] - document - raw/qw_asset_lfq0.csv
 - [[qw_div data shape]] - document - raw/options/qw_div.csv
@@ -210,51 +155,41 @@ members: 245
 - [[renderHoldingRows()]] - code - dashboard/frontend/src/components/ExposureBand.tsx
 - [[report.py_1]] - code - report.py
 - [[resolveRunIds()]] - code - dashboard/frontend/src/components/ExposureBand.tsx
-- [[rollingBetaSeries()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[rollingCorrelationSeries()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[rollingSharpeSeries()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
 - [[run()]] - code - dashboard/frontend/src/components/DiagnosticStrip.tsx
 - [[run()_1]] - code - dashboard/frontend/src/components/ExposureBand.tsx
-- [[sanitize_finite_number()]] - code - dashboard/backend/serializers.py
-- [[schemas.py]] - code - dashboard/backend/schemas.py
-- [[score()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[run()_2]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[run_index.py]] - code - dashboard/backend/services/run_index.py
 - [[selectedRuns()]] - code - dashboard/frontend/src/components/DiagnosticStrip.tsx
+- [[selectedRuns()_1]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
 - [[selectorScope()_1]] - code - dashboard/frontend/src/components/RunSelector.test.tsx
-- [[serialize_category_series()]] - code - dashboard/backend/serializers.py
-- [[serialize_distribution()]] - code - dashboard/backend/serializers.py
-- [[serialize_drawdown_episodes()]] - code - dashboard/backend/serializers.py
-- [[serialize_heatmap()]] - code - dashboard/backend/serializers.py
-- [[serialize_latest_holdings()]] - code - dashboard/backend/serializers.py
-- [[serialize_latest_holdings_performance()]] - code - dashboard/backend/serializers.py
-- [[serialize_named_series()]] - code - dashboard/backend/serializers.py
-- [[serialize_named_values()]] - code - dashboard/backend/serializers.py
-- [[serialize_value_points()]] - code - dashboard/backend/serializers.py
-- [[serializers.py]] - code - dashboard/backend/serializers.py
-- [[series()_2]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[seriesPoints()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[session.py]] - code - backtesting/validation/session.py
 - [[setup.ts]] - code - dashboard/frontend/src/test/setup.ts
 - [[snapshots.py]] - code - backtesting/reporting/snapshots.py
-- [[sources()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[strategies.py]] - code - dashboard/strategies.py
+- [[strategySeries()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[summarySeries()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
 - [[tables_comparison.py]] - code - backtesting/reporting/tables_comparison.py
 - [[tables_single.py]] - code - backtesting/reporting/tables_single.py
+- [[test_builder.py]] - code - tests/reporting/test_builder.py
 - [[test_comparison_figure_builder_writes_expected_page_assets()]] - code - tests/reporting/test_figures.py
 - [[test_comparison_table_builder_builds_ranked_comparison_tables()]] - code - tests/reporting/test_tables.py
 - [[test_figures.py]] - code - tests/reporting/test_figures.py
 - [[test_reader.py]] - code - tests/reporting/test_reader.py
 - [[test_report_cli.py]] - code - tests/test_report_cli.py
+- [[test_run_reader_loads_optional_artifacts_when_present()]] - code - tests/reporting/test_reader.py
+- [[test_run_reader_returns_none_for_missing_optional_artifacts()]] - code - tests/reporting/test_reader.py
 - [[test_tables.py]] - code - tests/reporting/test_tables.py
 - [[test_tearsheet_figure_builder_writes_expected_page_assets()]] - code - tests/reporting/test_figures.py
 - [[test_tearsheet_table_builder_builds_named_tables()]] - code - tests/reporting/test_tables.py
 - [[test_tr_id_imports.py]] - code - tests/kis/test_tr_id_imports.py
 - [[test_tr_id_modules_import_after_kis_migration()]] - code - tests/kis/test_tr_id_imports.py
+- [[types.py]] - code - backtesting/types.py
 - [[types.ts]] - code - dashboard/frontend/src/lib/types.ts
-- [[values()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[valuesByLabel()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[visibleRunIds()_1]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
-- [[visibleSectors()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[uniqueRuns()]] - code - dashboard/frontend/src/components/RunSelector.tsx
+- [[visibleRunIds()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
 - [[winners()]] - code - dashboard/frontend/src/components/ExposureBand.tsx
-- [[write_figure_asset()]] - code - backtesting/reporting/figures.py
 - [[writer.py]] - code - backtesting/reporting/writer.py
-- [[years()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
 
 ## Live Query (requires Dataview plugin)
 
@@ -264,22 +199,37 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 188 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
-- 137 edges to [[_COMMUNITY_Raw Ksdq Csv]]
-- 64 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
-- 47 edges to [[_COMMUNITY_Tests Dashboard Backend]]
-- 36 edges to [[_COMMUNITY_Tests Reporting Test_Builder]]
-- 34 edges to [[_COMMUNITY_Tests Reporting Analytics]]
-- 19 edges to [[_COMMUNITY_Tests Test Run.Py Engine]]
-- 17 edges to [[_COMMUNITY_Dashboard Frontend App]]
-- 13 edges to [[_COMMUNITY_Backtesting Strategies Tests]]
-- 13 edges to [[_COMMUNITY_Docs Superpowers Strategy]]
-- 13 edges to [[_COMMUNITY_Docs Superpowers Portfolio]]
-- 10 edges to [[_COMMUNITY_Docs Superpowers Plans]]
+- 144 edges to [[_COMMUNITY_Raw Ksdq Csv]]
+- 42 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
+- 37 edges to [[_COMMUNITY_Tests Reporting Analytics]]
+- 35 edges to [[_COMMUNITY_Tests Dashboard Backend]]
+- 29 edges to [[_COMMUNITY_Docs Superpowers Plans]]
+- 28 edges to [[_COMMUNITY_Docs Superpowers Kosdaq150]]
+- 24 edges to [[_COMMUNITY_Dashboard Frontend App]]
+- 23 edges to [[_COMMUNITY_Backtesting Reporting Composers]]
+- 19 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 17 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 16 edges to [[_COMMUNITY_Dashboard Backend Schemas]]
+- 14 edges to [[_COMMUNITY_Docs Superpowers Performance]]
+- 10 edges to [[_COMMUNITY_Tests Test Run.Py Engine]]
+- 8 edges to [[_COMMUNITY_Docs Superpowers Policy]]
+- 8 edges to [[_COMMUNITY_Dashboard Frontend Src]]
+- 7 edges to [[_COMMUNITY_Docs Superpowers Analytics]]
+- 6 edges to [[_COMMUNITY_Docs Superpowers Plans]]
+- 6 edges to [[_COMMUNITY_Dashboard Frontend Src]]
+- 5 edges to [[_COMMUNITY_Docs Superpowers Strategy]]
+- 5 edges to [[_COMMUNITY_Tests Reporting Test_Pdf]]
+- 4 edges to [[_COMMUNITY_Docs Superpowers Live]]
+- 4 edges to [[_COMMUNITY_Docs Superpowers Research]]
+- 3 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 3 edges to [[_COMMUNITY_Docs Superpowers Backtest]]
+- 2 edges to [[_COMMUNITY_Kis Tr Id Protocol]]
+- 2 edges to [[_COMMUNITY_Docs Superpowers Live]]
+- 2 edges to [[_COMMUNITY_Docs Superpowers Breakout]]
 
 ## Top bridge nodes
-- [[2026-04-06-dashboard-analytics-refresh]] - degree 180, connects to 12 communities
-- [[Shares Outstanding Outstanding]] - degree 75, connects to 11 communities
-- [[Equity Latest Quarter]] - degree 66, connects to 11 communities
-- [[Wics Sector Sector Large Cap Sector]] - degree 61, connects to 10 communities
-- [[Foreign Ownership Ratio]] - degree 52, connects to 10 communities
+- [[Foreign Ownership Ratio]] - degree 52, connects to 22 communities
+- [[Equity Latest Quarter]] - degree 66, connects to 21 communities
+- [[Assets Latest Quarter]] - degree 31, connects to 16 communities
+- [[Options Div]] - degree 44, connects to 15 communities
+- [[Shares Outstanding Outstanding]] - degree 75, connects to 14 communities

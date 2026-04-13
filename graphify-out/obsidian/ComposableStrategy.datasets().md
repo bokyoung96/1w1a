@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/composable.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Backtesting Reporting Tests"
 location: "L39"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Strategies_Tests
+  - community/Backtesting_Reporting_Tests
 ---
 
 # ComposableStrategy.datasets()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[ComposableStrategy]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

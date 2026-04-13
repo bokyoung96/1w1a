@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/models.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Composers"
 location: "L47"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Composers
 ---
 
 # ReportSpec
@@ -41,4 +41,4 @@ tags:
 - [[test_report_spec_rejects_tearsheet_with_multiple_runs()]] - `calls` [INFERRED]
 - [[test_tearsheet_composer_builds_pdf_first_context()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Composers

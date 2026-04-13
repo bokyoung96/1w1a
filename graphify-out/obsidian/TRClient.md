@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/register.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Plans"
 location: "L56"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Plans
 ---
 
 # TRClient
@@ -20,4 +20,4 @@ tags:
 - [[TRClient.close()]] - `contains` [EXTRACTED]
 - [[register.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans

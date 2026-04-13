@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/deriv_minute.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Plans"
 location: "L35"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Plans
 ---
 
 # DerivMinute.summary()
@@ -38,4 +38,4 @@ tags:
 - [[TimeTools.adjust_futures_timestamp()]] - `calls` [INFERRED]
 - [[TimeTools.select_completed_futures_candle()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/ResearchWorkspace.tsx"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Research"
 location: "L441"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Research
 ---
 
 # sectors()
@@ -20,4 +20,4 @@ tags:
 - [[2026-04-12-portfolio-construction-and-staged-policy-design]] - `rationale_for` [INFERRED]
 - [[ResearchWorkspace.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Research

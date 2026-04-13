@@ -1,21 +1,26 @@
 ---
 type: community
 cohesion: 0.04
-members: 135
+members: 131
 ---
 
 # Tests Dashboard Backend
 
 **Cohesion:** 0.04 - loosely connected
-**Members:** 135 nodes
+**Members:** 131 nodes
 
 ## Members
-- [[DashboardLaunchConfig]] - code - dashboard/strategies.py
 - [[DataCatalog.get()]] - code - backtesting/catalog/catalog.py
 - [[FakeRunner]] - code - tests/dashboard/test_run.py
 - [[FakeRunner.run()]] - code - tests/dashboard/test_run.py
-- [[GlobalRunConfig]] - code - dashboard/strategies.py
-- [[HtmlRenderer.__init__()]] - code - backtesting/reporting/html.py
+- [[KISAuth]] - code - kis/config.py
+- [[KISAuth.__init__()]] - code - kis/config.py
+- [[KISAuth._clear_token()]] - code - kis/config.py
+- [[KISAuth._load_token()]] - code - kis/config.py
+- [[KISAuth._save_token()]] - code - kis/config.py
+- [[KISAuth._should_refresh_token()]] - code - kis/config.py
+- [[KISAuth.get_access_token()]] - code - kis/config.py
+- [[LaunchPlan]] - code - dashboard/backend/services/launch_resolution.py
 - [[LaunchResolutionService]] - code - dashboard/backend/services/launch_resolution.py
 - [[LaunchResolutionService.__init__()]] - code - dashboard/backend/services/launch_resolution.py
 - [[LaunchResolutionService._archive_duplicate_runs()]] - code - dashboard/backend/services/launch_resolution.py
@@ -36,18 +41,11 @@ members: 135
 - [[RunIndexService]] - code - dashboard/backend/services/run_index.py
 - [[RunIndexService.__init__()]] - code - dashboard/backend/services/run_index.py
 - [[RunIndexService._config_signature()]] - code - dashboard/backend/services/run_index.py
-- [[RunIndexService._is_usable_run_dir()]] - code - dashboard/backend/services/run_index.py
-- [[RunIndexService._load_run_option()]] - code - dashboard/backend/services/run_index.py
 - [[RunIndexService._normalize_universe_id()]] - code - dashboard/backend/services/run_index.py
 - [[RunIndexService._normalize_value()]] - code - dashboard/backend/services/run_index.py
 - [[RunIndexService._parse_run_timestamp()]] - code - dashboard/backend/services/run_index.py
 - [[RunIndexService._sort_key()]] - code - dashboard/backend/services/run_index.py
-- [[RunIndexService.list_runs()]] - code - dashboard/backend/services/run_index.py
-- [[RunOptionModel]] - code - dashboard/backend/schemas.py
-- [[RunSummaryModel]] - code - dashboard/backend/schemas.py
-- [[StrategyPreset]] - code - dashboard/strategies.py
-- [[StrategyPreset.__post_init__()]] - code - dashboard/strategies.py
-- [[WarmupConfig]] - code - dashboard/strategies.py
+- [[UniverseSpec.resolve_dataset()]] - code - backtesting/universe.py
 - [[__init__.py_15]] - code - dashboard/backend/__init__.py
 - [[_build_payload_service()]] - code - tests/dashboard/backend/test_dashboard_api.py
 - [[_build_run_config()]] - code - dashboard/run.py
@@ -66,7 +64,6 @@ members: 135
 - [[build_frontend()]] - code - dashboard/run.py
 - [[build_parser()]] - code - dashboard/run.py
 - [[create_app()]] - code - dashboard/backend/main.py
-- [[enabled_strategy_presets()]] - code - dashboard/strategies.py
 - [[fake_rmtree()]] - code - tests/dashboard/test_run.py
 - [[fake_run()]] - code - tests/dashboard/test_run.py
 - [[get_dashboard()]] - code - dashboard/backend/api.py
@@ -81,9 +78,7 @@ members: 135
 - [[main.py]] - code - dashboard/backend/main.py
 - [[query()]] - code - dashboard/frontend/src/lib/api.ts
 - [[run.py_1]] - code - dashboard/run.py
-- [[run_index.py]] - code - dashboard/backend/services/run_index.py
 - [[serve_frontend()]] - code - dashboard/backend/main.py
-- [[strategies.py]] - code - dashboard/strategies.py
 - [[test_build_frontend_installs_dependencies_when_node_modules_are_missing()]] - code - tests/dashboard/test_run.py
 - [[test_build_frontend_reinstalls_when_lockfile_is_newer_than_install_marker()]] - code - tests/dashboard/test_run.py
 - [[test_build_frontend_retries_after_clearing_corrupt_node_modules()]] - code - tests/dashboard/test_run.py
@@ -111,9 +106,6 @@ members: 135
 - [[test_dashboard_returns_single_mode_payload()]] - code - tests/dashboard/backend/test_dashboard_api.py
 - [[test_dashboard_skips_non_finite_latest_holdings_values()]] - code - tests/dashboard/backend/test_dashboard_api.py
 - [[test_dashboard_skips_non_finite_sector_weights_values()]] - code - tests/dashboard/backend/test_dashboard_api.py
-- [[test_default_launch_config_enables_both_default_strategies()]] - code - tests/dashboard/test_strategies.py
-- [[test_default_launch_config_strategy_params_are_read_only()]] - code - tests/dashboard/test_strategies.py
-- [[test_enabled_strategy_presets_filters_disabled_entries()]] - code - tests/dashboard/test_strategies.py
 - [[test_launch_dashboard_passes_universe_id_to_backtest_runner()]] - code - tests/dashboard/test_run.py
 - [[test_launch_dashboard_reuses_matching_runs_and_executes_missing_presets()]] - code - tests/dashboard/test_run.py
 - [[test_launch_resolution.py]] - code - tests/dashboard/backend/test_launch_resolution.py
@@ -124,6 +116,11 @@ members: 135
 - [[test_list_runs_skips_malformed_json_and_invalid_numeric_values()]] - code - tests/dashboard/backend/test_run_index_service.py
 - [[test_list_runs_treats_legacy_k200_and_missing_universe_id_as_equivalent()]] - code - tests/dashboard/backend/test_run_index_service.py
 - [[test_list_runs_treats_universe_id_as_part_of_signature()]] - code - tests/dashboard/backend/test_run_index_service.py
+- [[test_registry_default_benchmark_codes_exist_in_qw_bm_parquet()]] - code - tests/data/test_universe.py
+- [[test_registry_rejects_unknown_universe()]] - code - tests/data/test_universe.py
+- [[test_registry_remaps_generic_dataset_ids_to_universe_specific_ids()]] - code - tests/data/test_universe.py
+- [[test_registry_returns_kosdaq150_defaults()]] - code - tests/data/test_universe.py
+- [[test_registry_returns_legacy_k200_defaults()]] - code - tests/data/test_universe.py
 - [[test_resolution_archives_legacy_and_new_schema_duplicates_together()]] - code - tests/dashboard/backend/test_launch_resolution.py
 - [[test_resolution_archives_older_duplicate_run()]] - code - tests/dashboard/backend/test_launch_resolution.py
 - [[test_resolution_does_not_match_archived_runs()]] - code - tests/dashboard/backend/test_launch_resolution.py
@@ -144,7 +141,6 @@ members: 135
 - [[test_run_index_service.py]] - code - tests/dashboard/backend/test_run_index_service.py
 - [[test_run_script_help_works_from_repo_root()]] - code - tests/dashboard/test_run.py
 - [[test_session_endpoint_returns_default_selected_run_ids()]] - code - tests/dashboard/backend/test_dashboard_api.py
-- [[test_strategies.py]] - code - tests/dashboard/test_strategies.py
 
 ## Live Query (requires Dataview plugin)
 
@@ -154,20 +150,32 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 58 edges to [[_COMMUNITY_Raw Ksdq Csv]]
-- 56 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
-- 47 edges to [[_COMMUNITY_Backtesting Reporting Frontend]]
-- 25 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
-- 12 edges to [[_COMMUNITY_Tests Test Run.Py Engine]]
+- 40 edges to [[_COMMUNITY_Docs Superpowers Kosdaq150]]
+- 35 edges to [[_COMMUNITY_Backtesting Reporting Frontend]]
+- 33 edges to [[_COMMUNITY_Docs Superpowers Plans]]
+- 27 edges to [[_COMMUNITY_Raw Ksdq Csv]]
+- 21 edges to [[_COMMUNITY_Tests Test Run.Py Engine]]
+- 13 edges to [[_COMMUNITY_Backtesting Reporting Composers]]
+- 11 edges to [[_COMMUNITY_Dashboard Backend Schemas]]
 - 8 edges to [[_COMMUNITY_Tests Reporting Analytics]]
-- 5 edges to [[_COMMUNITY_Docs Superpowers Plans]]
-- 4 edges to [[_COMMUNITY_Tests Reporting Test_Builder]]
-- 4 edges to [[_COMMUNITY_Backtesting Strategies Tests]]
-- 2 edges to [[_COMMUNITY_Docs Superpowers Portfolio]]
+- 7 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
+- 7 edges to [[_COMMUNITY_Docs Superpowers Plans]]
+- 2 edges to [[_COMMUNITY_Docs Superpowers Policy]]
+- 2 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 1 edge to [[_COMMUNITY_Kis Tr Id Protocol]]
+- 1 edge to [[_COMMUNITY_Dashboard Frontend App]]
+- 1 edge to [[_COMMUNITY_Backtesting Universe.Py]]
+- 1 edge to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 1 edge to [[_COMMUNITY_Docs Superpowers Performance]]
+- 1 edge to [[_COMMUNITY_Docs Superpowers Live]]
+- 1 edge to [[_COMMUNITY_Docs Superpowers Live]]
+- 1 edge to [[_COMMUNITY_Docs Superpowers Research]]
+- 1 edge to [[_COMMUNITY_Docs Superpowers Analytics]]
+- 1 edge to [[_COMMUNITY_Dashboard Frontend Src]]
 
 ## Top bridge nodes
-- [[DataCatalog.get()]] - degree 76, connects to 10 communities
-- [[LaunchResolutionService.resolve()]] - degree 46, connects to 5 communities
-- [[launch_resolution.py]] - degree 11, connects to 4 communities
-- [[test_dashboard_api.py]] - degree 44, connects to 3 communities
-- [[test_launch_resolution.py]] - degree 29, connects to 3 communities
+- [[LaunchResolutionService.resolve()]] - degree 46, connects to 13 communities
+- [[DataCatalog.get()]] - degree 77, connects to 11 communities
+- [[RunIndexService]] - degree 24, connects to 5 communities
+- [[_write_saved_run()]] - degree 29, connects to 4 communities
+- [[_build_payload_service()]] - degree 23, connects to 4 communities

@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/App.test.tsx"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Research"
 location: "L705"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Research
 ---
 
 # user()
@@ -24,4 +24,4 @@ tags:
 - [[2026-04-12-52w-breakout-strategies-design]] - `rationale_for` [INFERRED]
 - [[App.test.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Research

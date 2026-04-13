@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tools.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Plans"
 location: "L40"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Plans
 ---
 
 # RateLimiter.wait()
@@ -19,4 +19,4 @@ tags:
 - [[TRBatchClient.call_batch()]] - `calls` [INFERRED]
 - [[task()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

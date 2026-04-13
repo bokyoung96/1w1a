@@ -1,13 +1,13 @@
 ---
 type: community
 cohesion: 0.03
-members: 62
+members: 75
 ---
 
 # Dashboard Frontend App
 
 **Cohesion:** 0.03 - loosely connected
-**Members:** 62 nodes
+**Members:** 75 nodes
 
 ## Members
 - [[App()]] - code - dashboard/frontend/src/app/App.tsx
@@ -17,11 +17,19 @@ members: 62
 - [[Options Maturity]] - document - raw/options/qw_maturity.csv
 - [[Options Oi]] - document - raw/options/qw_oi.csv
 - [[Options Spot Ticker]] - document - raw/options/qw_spot_ticker.csv
+- [[ReportArgumentParser]] - code - backtesting/reporting/cli.py
+- [[ReportArgumentParser.parse_args()]] - code - backtesting/reporting/cli.py
+- [[ReportCli]] - code - backtesting/reporting/cli.py
+- [[ReportCli.parser()]] - code - backtesting/reporting/cli.py
+- [[ReportCli.run()]] - code - backtesting/reporting/cli.py
+- [[ReportKind]] - code - backtesting/reporting/models.py
+- [[ReportSpec.__post_init__()]] - code - backtesting/reporting/models.py
+- [[_validate_report_args()]] - code - backtesting/reporting/cli.py
 - [[availableRunIds()]] - code - dashboard/frontend/src/app/App.tsx
+- [[cli.py]] - code - backtesting/reporting/cli.py
 - [[comparisonPlane()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[createDashboard()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[drawdownSeries()]] - code - dashboard/frontend/src/components/App.test.tsx
-- [[exposureBand()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[findChartOption()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[findDailyDistributionOption()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[findDistributionChartOption()]] - code - dashboard/frontend/src/components/App.test.tsx
@@ -45,7 +53,6 @@ members: 62
 - [[normalizedRunIds()]] - code - dashboard/frontend/src/app/App.tsx
 - [[normalizedRuns()]] - code - dashboard/frontend/src/app/App.tsx
 - [[orderSelectedRunIds()]] - code - dashboard/frontend/src/app/App.tsx
-- [[output()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[promise()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[qw_c data shape]] - document - raw/options/qw_c.csv
 - [[qw_c.csv]] - document - raw/options/qw_c.csv
@@ -63,6 +70,11 @@ members: 62
 - [[selectorScope()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[seriesNames()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[techSeries()]] - code - dashboard/frontend/src/components/App.test.tsx
+- [[test_cli.py]] - code - tests/reporting/test_cli.py
+- [[test_cli_builds_report_spec_with_auto_kind_and_benchmark()]] - code - tests/reporting/test_cli.py
+- [[test_cli_parser_supports_kind_and_benchmark_options()]] - code - tests/reporting/test_cli.py
+- [[test_cli_rejects_invalid_kind_and_run_count_combination()]] - code - tests/reporting/test_cli.py
+- [[test_report_cli_parses_run_ids()]] - code - tests/test_report_cli.py
 - [[timeSeriesMatch()]] - code - dashboard/frontend/src/app/App.tsx
 - [[toggleRun()]] - code - dashboard/frontend/src/app/App.tsx
 - [[uniqueIds()]] - code - dashboard/frontend/src/app/App.tsx
@@ -70,6 +82,7 @@ members: 62
 - [[uniqueRunOptions()]] - code - dashboard/frontend/src/app/App.tsx
 - [[validBootstrapIds()]] - code - dashboard/frontend/src/app/App.tsx
 - [[valueSeries()]] - code - dashboard/frontend/src/components/App.test.tsx
+- [[weightOption()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[xAxis()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[yAxis()]] - code - dashboard/frontend/src/components/App.test.tsx
 
@@ -81,17 +94,27 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 21 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
-- 17 edges to [[_COMMUNITY_Backtesting Reporting Frontend]]
-- 13 edges to [[_COMMUNITY_Raw Ksdq Csv]]
-- 8 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
-- 2 edges to [[_COMMUNITY_Docs Superpowers Strategy]]
+- 24 edges to [[_COMMUNITY_Backtesting Reporting Frontend]]
+- 12 edges to [[_COMMUNITY_Raw Ksdq Csv]]
+- 7 edges to [[_COMMUNITY_Docs Superpowers Plans]]
+- 6 edges to [[_COMMUNITY_Docs Superpowers Kosdaq150]]
+- 5 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 5 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 4 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 3 edges to [[_COMMUNITY_Docs Superpowers Analytics]]
+- 3 edges to [[_COMMUNITY_Backtesting Reporting Composers]]
+- 2 edges to [[_COMMUNITY_Tests Test Run.Py Engine]]
+- 2 edges to [[_COMMUNITY_Docs Superpowers Live]]
+- 2 edges to [[_COMMUNITY_Docs Superpowers Research]]
+- 1 edge to [[_COMMUNITY_Backtesting Reporting Tests]]
+- 1 edge to [[_COMMUNITY_Tests Dashboard Backend]]
+- 1 edge to [[_COMMUNITY_Tests Reporting Test_Pdf]]
 - 1 edge to [[_COMMUNITY_Tests Reporting Analytics]]
-- 1 edge to [[_COMMUNITY_Docs Superpowers Portfolio]]
+- 1 edge to [[_COMMUNITY_Docs Superpowers Strategy]]
 
 ## Top bridge nodes
-- [[output()]] - degree 17, connects to 6 communities
-- [[App.test.tsx]] - degree 54, connects to 5 communities
-- [[Options Close]] - degree 8, connects to 3 communities
-- [[App.tsx]] - degree 33, connects to 2 communities
-- [[Options Spot Ticker]] - degree 7, connects to 2 communities
+- [[App.test.tsx]] - degree 54, connects to 8 communities
+- [[ReportCli]] - degree 12, connects to 5 communities
+- [[ReportArgumentParser.parse_args()]] - degree 11, connects to 5 communities
+- [[ReportCli.run()]] - degree 10, connects to 5 communities
+- [[test_cli.py]] - degree 16, connects to 3 communities

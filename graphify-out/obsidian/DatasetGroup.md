@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/catalog/enums.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Docs Superpowers Kosdaq150"
 location: "L5"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Docs_Superpowers_Kosdaq150
 ---
 
 # DatasetGroup
@@ -16,4 +16,4 @@ tags:
 - [[2026-04-13-kosdaq150-universe-integration]] - `rationale_for` [INFERRED]
 - [[enums.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Kosdaq150

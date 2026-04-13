@@ -961,6 +961,7 @@ MERGE (n:Code {id: 'func_tests_data_test_policy_py_test_expand_monthly_frame_pre
 MERGE (n:Code {id: 'file_tests_data_test_universe_py', label: 'test_universe.py'});
 MERGE (n:Code {id: 'func_tests_data_test_universe_py_test_registry_returns_kosdaq150_defaults', label: 'test_registry_returns_kosdaq150_defaults()'});
 MERGE (n:Code {id: 'func_tests_data_test_universe_py_test_registry_returns_legacy_k200_defaults', label: 'test_registry_returns_legacy_k200_defaults()'});
+MERGE (n:Code {id: 'func_tests_data_test_universe_py_test_registry_default_benchmark_codes_exist_in_qw_bm_parquet', label: 'test_registry_default_benchmark_codes_exist_in_qw_bm_parquet()'});
 MERGE (n:Code {id: 'func_tests_data_test_universe_py_test_registry_remaps_generic_dataset_ids_to_universe_specific_ids', label: 'test_registry_remaps_generic_dataset_ids_to_universe_specific_ids()'});
 MERGE (n:Code {id: 'func_tests_data_test_universe_py_test_registry_rejects_unknown_universe', label: 'test_registry_rejects_unknown_universe()'});
 MERGE (n:Code {id: 'func_tests_data_test_universe_py_test_top_level_package_exports_universe_types', label: 'test_top_level_package_exports_universe_types()'});
@@ -2011,6 +2012,7 @@ MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_default'}), (b {i
 MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_default'}), (b {id: 'func_tests_data_test_loader_py_test_loader_rejects_duplicate_semantic_frame_keys'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_default'}), (b {id: 'func_tests_data_test_universe_py_test_registry_returns_kosdaq150_defaults'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_default'}), (b {id: 'func_tests_data_test_universe_py_test_registry_returns_legacy_k200_defaults'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_default'}), (b {id: 'func_tests_data_test_universe_py_test_registry_default_benchmark_codes_exist_in_qw_bm_parquet'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_default'}), (b {id: 'func_tests_data_test_universe_py_test_registry_remaps_generic_dataset_ids_to_universe_specific_ids'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_default'}), (b {id: 'func_tests_data_test_universe_py_test_registry_rejects_unknown_universe'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_default'}), (b {id: 'func_tests_ingest_test_pipeline_py_test_ingest_writes_parquet_and_report'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
@@ -2127,6 +2129,7 @@ MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_get'}), (b {id: '
 MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_get'}), (b {id: 'func_tests_dashboard_backend_test_dashboard_api_py_test_dashboard_returns_controlled_error_for_unreadable_run_directory'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_get'}), (b {id: 'func_tests_data_test_universe_py_test_registry_returns_kosdaq150_defaults'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_get'}), (b {id: 'func_tests_data_test_universe_py_test_registry_returns_legacy_k200_defaults'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_get'}), (b {id: 'func_tests_data_test_universe_py_test_registry_default_benchmark_codes_exist_in_qw_bm_parquet'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_get'}), (b {id: 'func_tests_data_test_universe_py_test_registry_remaps_generic_dataset_ids_to_universe_specific_ids'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_get'}), (b {id: 'func_tests_data_test_universe_py_test_registry_rejects_unknown_universe'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_backtesting_catalog_catalog_py_datacatalog_ids'}), (b {id: 'func_backtesting_catalog_catalog_py_datacatalog_groups'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
@@ -5934,6 +5937,7 @@ MATCH (a {id: 'func_kis_tr_id_register_py_task'}), (b {id: 'file_docs_superpower
 MATCH (a {id: 'func_kis_tr_id_register_py_task'}), (b {id: 'file_docs_superpowers_plans_2026_04_07_dashboard_research_series_plan_md'}) MERGE (a)-[:RATIONALE_FOR {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_kis_tr_id_register_py_task'}), (b {id: 'file_docs_superpowers_plans_2026_04_13_kosdaq150_universe_integration_md'}) MERGE (a)-[:RATIONALE_FOR {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_root_py'}), (b {id: 'class_root_py_rootpaths'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
+MATCH (a {id: 'file_root_py'}), (b {id: 'file_tests_data_test_universe_py'}) MERGE (a)-[:IMPORTS_FROM {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_root_py'}), (b {id: 'file_tests_kis_test_root_py'}) MERGE (a)-[:IMPORTS_FROM {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'class_root_py_rootpaths'}), (b {id: 'func_root_py_rootpaths_config_path'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'class_root_py_rootpaths'}), (b {id: 'func_root_py_rootpaths_kis_path'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
@@ -6266,6 +6270,7 @@ MATCH (a {id: 'file_tests_data_test_policy_py'}), (b {id: 'dataset_raw_qw_mkt_ty
 MATCH (a {id: 'func_tests_data_test_policy_py_test_expand_monthly_frame_keeps_missing_gap'}), (b {id: 'file_docs_superpowers_plans_2026_04_03_stock_backtesting_implementation_md'}) MERGE (a)-[:RATIONALE_FOR {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'func_tests_data_test_universe_py_test_registry_returns_kosdaq150_defaults'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'func_tests_data_test_universe_py_test_registry_returns_legacy_k200_defaults'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
+MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'func_tests_data_test_universe_py_test_registry_default_benchmark_codes_exist_in_qw_bm_parquet'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'func_tests_data_test_universe_py_test_registry_remaps_generic_dataset_ids_to_universe_specific_ids'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'func_tests_data_test_universe_py_test_registry_rejects_unknown_universe'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'func_tests_data_test_universe_py_test_top_level_package_exports_universe_types'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);

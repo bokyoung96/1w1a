@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/services/dashboard_payload.py"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Dashboard Backend Schemas"
 location: "L44"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Frontend
+  - community/Dashboard_Backend_Schemas
 ---
 
 # DashboardPayloadService
@@ -31,4 +31,4 @@ tags:
 - [[dashboard_payload.py]] - `contains` [EXTRACTED]
 - [[get_dashboard_payload_service()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/EXTRACTED #community/Dashboard_Backend_Schemas

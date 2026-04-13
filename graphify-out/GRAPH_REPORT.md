@@ -1,28 +1,44 @@
 # Graph Report - /Users/bkchoi/Desktop/GitHub/1w1a  (2026-04-13)
 
 ## Corpus Check
-- 242 files · ~92,248 words
+- 242 files · ~92,309 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1884 nodes · 6102 edges · 25 communities detected
-- Extraction: 30% EXTRACTED · 70% INFERRED · 0% AMBIGUOUS · INFERRED: 4243 edges (avg confidence: 0.74)
+- 1885 nodes · 6106 edges · 41 communities detected
+- Extraction: 30% EXTRACTED · 70% INFERRED · 0% AMBIGUOUS · INFERRED: 4245 edges (avg confidence: 0.74)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Docs Superpowers Reporting|Docs Superpowers Reporting]]
-- [[_COMMUNITY_Backtesting Reporting Frontend|Backtesting Reporting Frontend]]
 - [[_COMMUNITY_Raw Ksdq Csv|Raw Ksdq Csv]]
+- [[_COMMUNITY_Backtesting Reporting Frontend|Backtesting Reporting Frontend]]
+- [[_COMMUNITY_Docs Superpowers Policy|Docs Superpowers Policy]]
 - [[_COMMUNITY_Tests Dashboard Backend|Tests Dashboard Backend]]
-- [[_COMMUNITY_Backtesting Reporting Tests|Backtesting Reporting Tests]]
-- [[_COMMUNITY_Backtesting Strategies Tests|Backtesting Strategies Tests]]
-- [[_COMMUNITY_Docs Superpowers Plans|Docs Superpowers Plans]]
 - [[_COMMUNITY_Tests Test Run.Py Engine|Tests Test Run.Py Engine]]
-- [[_COMMUNITY_Docs Superpowers Portfolio|Docs Superpowers Portfolio]]
-- [[_COMMUNITY_Docs Superpowers Strategy|Docs Superpowers Strategy]]
+- [[_COMMUNITY_Docs Superpowers Plans|Docs Superpowers Plans]]
+- [[_COMMUNITY_Docs Superpowers Kosdaq150|Docs Superpowers Kosdaq150]]
 - [[_COMMUNITY_Tests Reporting Analytics|Tests Reporting Analytics]]
-- [[_COMMUNITY_Tests Reporting Test_Builder|Tests Reporting Test_Builder]]
+- [[_COMMUNITY_Backtesting Reporting Tests|Backtesting Reporting Tests]]
 - [[_COMMUNITY_Dashboard Frontend App|Dashboard Frontend App]]
+- [[_COMMUNITY_Docs Superpowers Reporting|Docs Superpowers Reporting]]
+- [[_COMMUNITY_Docs Superpowers Strategy|Docs Superpowers Strategy]]
+- [[_COMMUNITY_Backtesting Reporting Composers|Backtesting Reporting Composers]]
+- [[_COMMUNITY_Dashboard Backend Schemas|Dashboard Backend Schemas]]
+- [[_COMMUNITY_Docs Superpowers Plans|Docs Superpowers Plans]]
+- [[_COMMUNITY_Docs Superpowers Backtest|Docs Superpowers Backtest]]
+- [[_COMMUNITY_Docs Superpowers Live|Docs Superpowers Live]]
+- [[_COMMUNITY_Docs Superpowers Analytics|Docs Superpowers Analytics]]
+- [[_COMMUNITY_Dashboard Frontend Src|Dashboard Frontend Src]]
+- [[_COMMUNITY_Docs Superpowers Research|Docs Superpowers Research]]
+- [[_COMMUNITY_Docs Superpowers Performance|Docs Superpowers Performance]]
+- [[_COMMUNITY_Docs Superpowers Reporting|Docs Superpowers Reporting]]
+- [[_COMMUNITY_Docs Superpowers Reporting|Docs Superpowers Reporting]]
+- [[_COMMUNITY_Dashboard Frontend Src|Dashboard Frontend Src]]
+- [[_COMMUNITY_Docs Superpowers Breakout|Docs Superpowers Breakout]]
+- [[_COMMUNITY_Docs Superpowers Live|Docs Superpowers Live]]
+- [[_COMMUNITY_Kis Tr Id Protocol|Kis Tr Id Protocol]]
+- [[_COMMUNITY_Tests Reporting Test_Pdf|Tests Reporting Test_Pdf]]
+- [[_COMMUNITY_Backtesting Universe.Py|Backtesting Universe.Py]]
 - [[_COMMUNITY_Raw Qw Bm.Xlsx|Raw Qw Bm.Xlsx]]
 - [[_COMMUNITY_Raw Qw V.Csv|Raw Qw V.Csv]]
 - [[_COMMUNITY_Backtesting Policy Init__|Backtesting Policy Init__]]
@@ -39,11 +55,11 @@
 ## God Nodes (most connected - your core abstractions)
 1. `Mkt Typ` - 87 edges
 2. `series()` - 82 edges
-3. `DataCatalog.get()` - 76 edges
+3. `DataCatalog.get()` - 77 edges
 4. `Shares Outstanding Outstanding` - 75 edges
 5. `Equity Latest Quarter` - 66 edges
 6. `Kosdaq Kosdaq Wics Sector Sector Large Cap Sector` - 65 edges
-7. `DataCatalog.default()` - 62 edges
+7. `DataCatalog.default()` - 63 edges
 8. `Wics Sector Sector Large Cap Sector` - 61 edges
 9. `BacktestEngine.run()` - 53 edges
 10. `Foreign Ownership Ratio` - 52 edges
@@ -68,103 +84,167 @@
 
 ## Communities
 
-### Community 0 - "Docs Superpowers Reporting"
-Cohesion: 0.01
-Nodes (409): BenchmarkRepository, RunReader, LaunchPlan, Symbols, RateLimiter, TimeTools, BidAskList, BidAskListSpec (+401 more)
+### Community 0 - "Raw Ksdq Csv"
+Cohesion: 0.03
+Nodes (82): SymbolType, DerivMinute, Symbols, Kosdaq Ksdq150 Membership Flag, Kosdaq Kosdaq Adjusted Close, Kosdaq Kosdaq Adjusted High, Kosdaq Kosdaq Adjusted Low, Kosdaq Kosdaq Adjusted Open (+74 more)
 
 ### Community 1 - "Backtesting Reporting Frontend"
 Cohesion: 0.02
-Nodes (164): DrawdownStats, ExposureSnapshot, PerformanceMetrics, ResearchSnapshot, RollingMetrics, SectorSnapshot, ComparisonFigureBuilder, TearsheetFigureBuilder (+156 more)
+Nodes (88): DrawdownStats, ExposureSnapshot, PerformanceMetrics, ResearchSnapshot, RollingMetrics, SectorSnapshot, PerformanceSnapshot, PerformanceSnapshotFactory (+80 more)
 
-### Community 2 - "Raw Ksdq Csv"
+### Community 2 - "Docs Superpowers Policy"
 Cohesion: 0.03
-Nodes (130): DataCatalog, DatasetGroup, DatasetId, DatasetGroups, DatasetSpec, IngestJob, UniverseRegistry, UniverseSpec (+122 more)
+Nodes (124): ConstructionResult, LongOnlyTopN, LongShortTopBottom, SectorNeutralTopBottom, MarketData, PositionPolicy, PassThroughPolicy, BucketDefinition (+116 more)
 
 ### Community 3 - "Tests Dashboard Backend"
 Cohesion: 0.04
-Nodes (114): RunOptionModel, RunSummaryModel, LaunchResolutionService, ResolvedRun, RunIndexService, DashboardLaunchConfig, GlobalRunConfig, StrategyPreset (+106 more)
+Nodes (115): LaunchPlan, LaunchResolutionService, ResolvedRun, RunIndexService, KISAuth, FakeRunner, DataCatalog.get(), UniverseSpec.resolve_dataset() (+107 more)
 
-### Community 4 - "Backtesting Reporting Tests"
+### Community 4 - "Tests Test Run.Py Engine"
+Cohesion: 0.05
+Nodes (102): DataCatalog, DatasetGroups, DataLoader, LoadRequest, ParquetStore, BacktestEngine, BacktestResult, CostModel (+94 more)
+
+### Community 5 - "Docs Superpowers Plans"
+Cohesion: 0.03
+Nodes (89): DatasetSpec, TradeCost, CustomSchedule, DailySchedule, MonthlySchedule, RebalanceSchedule, WeeklySchedule, SplitConfig (+81 more)
+
+### Community 6 - "Docs Superpowers Kosdaq150"
 Cohesion: 0.04
-Nodes (117): IngestResult, BenchmarkSeries, ReportArgumentParser, ReportCli, ComparisonComposer, ComparisonRenderContext, CoverContext, MetricStripItem (+109 more)
+Nodes (80): DatasetGroup, DatasetId, BenchmarkConfig, StrategyPreset, WarmupConfig, BidAskListSpec, DerivMinuteSpec, 1w1a (+72 more)
 
-### Community 5 - "Backtesting Strategies Tests"
+### Community 7 - "Tests Reporting Analytics"
+Cohesion: 0.05
+Nodes (70): IngestResult, SectorRepository, SavedRun, Breakout52WeekStaged, RankLongOnly, RankLongShort, quantile_returns(), rank_ic() (+62 more)
+
+### Community 8 - "Backtesting Reporting Tests"
+Cohesion: 0.05
+Nodes (65): ReportBuilder, ComparisonFigureBuilder, TearsheetFigureBuilder, ReportBundle, PlotExportError, PlotLibrary, ComposableStrategy, _FakeFactory (+57 more)
+
+### Community 9 - "Dashboard Frontend App"
+Cohesion: 0.03
+Nodes (27): ReportArgumentParser, ReportCli, ReportKind, Options Close, Options Maturity, Options Oi, Options Spot Ticker, ReportArgumentParser.parse_args() (+19 more)
+
+### Community 10 - "Docs Superpowers Reporting"
+Cohesion: 0.06
+Nodes (63): File Structure, Performance Reporting PDF Polish Implementation Plan, Placeholder Scan, Self-Review, Spec Coverage, Task 1: Add A PDF-First Render Context In The Composer, Task 2: Rebuild The Tearsheet Template Around Cover And Executive Spread, Task 3: Rebuild The Comparison Template With A Dense Executive Spread (+55 more)
+
+### Community 11 - "Docs Superpowers Strategy"
+Cohesion: 0.03
+Nodes (59): BaseStrategy, CrossSectionalStrategy, TimeSeriesStrategy, ThresholdTrend, 1w1a Stock Backtesting Design, Analytics, API Shape, `BacktestEngine` (+51 more)
+
+### Community 12 - "Backtesting Reporting Composers"
+Cohesion: 0.07
+Nodes (60): ComparisonComposer, ComparisonRenderContext, CoverContext, MetricStripItem, PageContext, SectionContext, TableContext, TearsheetComposer (+52 more)
+
+### Community 13 - "Dashboard Backend Schemas"
+Cohesion: 0.07
+Nodes (55): BenchmarkModel, CategoryPointModel, CategorySeriesModel, DashboardContextModel, DashboardExposureModel, DashboardLaunchModel, DashboardMetricModel, DashboardPayloadModel (+47 more)
+
+### Community 14 - "Docs Superpowers Plans"
+Cohesion: 0.06
+Nodes (46): DashboardBaseModel, DashboardLaunchConfig, File Structure, Live Dashboard Single-Command Launch Implementation Plan, Task 1: Add Launch Config Surface, Task 2: Resolve Saved Runs Against Desired Config, Task 3: Build Single-Command Launcher, Task 4: Expose Bootstrap State And Serve The SPA From FastAPI (+38 more)
+
+### Community 15 - "Docs Superpowers Backtest"
 Cohesion: 0.04
-Nodes (82): ConstructionResult, LongOnlyTopN, LongShortTopBottom, SectorNeutralTopBottom, MarketData, PositionPolicy, PassThroughPolicy, BucketDefinition (+74 more)
+Nodes (48): 1w1a Backtest Reporting Design, Appendix, CLI Shape, Comparison report, Core Objects, Cover, Data Dependencies, Design Principles (+40 more)
 
-### Community 6 - "Docs Superpowers Plans"
-Cohesion: 0.03
-Nodes (90): TradeCost, CustomSchedule, DailySchedule, MonthlySchedule, RebalanceSchedule, WeeklySchedule, SplitConfig, SplitResult (+82 more)
+### Community 16 - "Docs Superpowers Live"
+Cohesion: 0.05
+Nodes (43): Architecture, Backend, Backend API Shape, Backend Responsibility, Boundary Rule, Chosen Direction, Color, Components (+35 more)
 
-### Community 7 - "Tests Test Run.Py Engine"
+### Community 17 - "Docs Superpowers Analytics"
 Cohesion: 0.06
-Nodes (82): DataLoader, LoadRequest, ParquetStore, BacktestEngine, BacktestResult, CostModel, PositionPlan, BacktestRunner (+74 more)
+Nodes (38): Symbols, Dashboard Chart Followups Implementation Plan, Task 1: Red tests for the new chart shapes, Task 2: Implement the new chart transforms, Task 3: Verify and finish, tests/dashboard/test_run.py, 1. Payload Expansion, 2. Snapshot Calculations (+30 more)
 
-### Community 8 - "Docs Superpowers Portfolio"
-Cohesion: 0.02
-Nodes (63): ConstructionRule, SignalProducer, ResponseHeader, TRName, TRResponse, TRSpec, TRRegistry, 1w1a Portfolio Construction And Staged Policy Design (+55 more)
-
-### Community 9 - "Docs Superpowers Strategy"
-Cohesion: 0.03
-Nodes (67): RunWriter, BaseStrategy, CrossSectionalStrategy, TimeSeriesStrategy, ThresholdTrend, 1w1a Stock Backtesting Design, Analytics, API Shape (+59 more)
-
-### Community 10 - "Tests Reporting Analytics"
+### Community 18 - "Dashboard Frontend Src"
 Cohesion: 0.06
-Nodes (62): SectorRepository, Breakout52WeekStaged, RankLongOnly, RankLongShort, quantile_returns(), rank_ic(), summarize_perf(), IngestResult.from_frame() (+54 more)
+Nodes (10): buildLineOption(), buildYearlyExcessOption(), distributionMidpoint(), equitySeries(), hasDistributionData(), hasSeriesData(), score(), sources() (+2 more)
 
-### Community 11 - "Tests Reporting Test_Builder"
+### Community 19 - "Docs Superpowers Research"
 Cohesion: 0.06
-Nodes (51): ReportBuilder, SavedRun, PlotExportError, PlotLibrary, _FakeComparisonFigureBuilder, _FakeComparisonTableBuilder, _FakeFactory, _FakeTearsheetFigureBuilder (+43 more)
+Nodes (33): Dashboard UX Followups Implementation Plan, Task 1: Remove the sector attribution warning at the source, Task 2: Make research figures clearer and resilient when data is sparse, Task 3: Add explicit sector filters for research charts, Task 4: Verify, commit, merge, and clean up, backtesting/run.py, dashboard/run.py, dashboard/strategies.py (+25 more)
 
-### Community 12 - "Dashboard Frontend App"
-Cohesion: 0.03
-Nodes (16): Options Close, Options Maturity, Options Oi, Options Spot Ticker, availableRunIds(), createDashboard(), exposureBand(), findChartOption() (+8 more)
+### Community 20 - "Docs Superpowers Performance"
+Cohesion: 0.06
+Nodes (33): 1. Single-Run Tear Sheet, 2. Multi-Run Comparison Report, Analytics Requirements, Analytics Tests, Benchmark Policy, Builder Tests, Core Domain Objects, Data Sources (+25 more)
 
-### Community 13 - "Raw Qw Bm.Xlsx"
+### Community 21 - "Docs Superpowers Reporting"
+Cohesion: 0.08
+Nodes (32): RunWriter, 1w1a Backtest Reporting Implementation Plan, Existing files to modify, File Map, New package files, New test files, Placeholder scan, Self-Review (+24 more)
+
+### Community 22 - "Docs Superpowers Reporting"
+Cohesion: 0.09
+Nodes (25): BenchmarkRepository, BenchmarkSeries, Build Reports, Execution Handoff, Existing Files To Reuse Without Changing Responsibilities, File Structure, Modified Files, New Files (+17 more)
+
+### Community 23 - "Dashboard Frontend Src"
+Cohesion: 0.08
+Nodes (2): candidate(), fetchSession()
+
+### Community 24 - "Docs Superpowers Breakout"
+Cohesion: 0.09
+Nodes (22): 1. `breakout_52w_simple`, 2. `breakout_52w_staged`, 52-Week Breakout Strategies Design, Backtest And Output Requirements, Cleanup, Cleanup coverage, Git And Merge Requirements, Goal (+14 more)
+
+### Community 25 - "Docs Superpowers Live"
+Cohesion: 0.11
+Nodes (17): Backend, Config Signature Shape, Data Flow, Default Strategy Set, Failure Handling, Frontend, Goal, Launcher (+9 more)
+
+### Community 26 - "Kis Tr Id Protocol"
+Cohesion: 0.2
+Nodes (8): ResponseHeader, TRName, TRResponse, TRSpec, TRRegistry, TRResponse.from_http(), TRRegistry._coerce_name(), TRRegistry.get()
+
+### Community 27 - "Tests Reporting Test_Pdf"
+Cohesion: 0.33
+Nodes (9): PdfRenderer, _FakeHtml, _FakeWeasyPrint, PdfRenderer.render_with_status(), _FakeHtml.write_pdf(), test_pdf_renderer_injects_print_layout_override_for_composed_reports(), test_pdf_renderer_keeps_html_when_pdf_export_fails(), test_pdf_renderer_writes_pdf_from_composed_report() (+1 more)
+
+### Community 28 - "Backtesting Universe.Py"
+Cohesion: 0.4
+Nodes (3): UniverseRegistry, UniverseSpec, UniverseRegistry.default()
+
+### Community 29 - "Raw Qw Bm.Xlsx"
 Cohesion: 0.67
 Nodes (2): Benchmark, qw_BM data shape
 
-### Community 14 - "Raw Qw V.Csv"
+### Community 30 - "Raw Qw V.Csv"
 Cohesion: 0.67
 Nodes (2): Volume, qw_v data shape
 
-### Community 15 - "Backtesting Policy Init__"
+### Community 31 - "Backtesting Policy Init__"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 16 - "Backtesting Signals Init__"
+### Community 32 - "Backtesting Signals Init__"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 17 - "Dashboard   Init  .Py"
+### Community 33 - "Dashboard   Init  .Py"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 18 - "Dashboard Backend Services"
+### Community 34 - "Dashboard Backend Services"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 19 - "Dashboard Frontend Vite"
+### Community 35 - "Dashboard Frontend Vite"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 20 - "Dashboard Frontend Vite"
+### Community 36 - "Dashboard Frontend Vite"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 21 - "Dashboard Frontend Vite"
+### Community 37 - "Dashboard Frontend Vite"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 22 - "Kis Tr Id Init__"
+### Community 38 - "Kis Tr Id Init__"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 23 - "Tests Conftest.Py"
+### Community 39 - "Tests Conftest.Py"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 24 - "Dashboard Backend Requirements"
+### Community 40 - "Dashboard Backend Requirements"
 Cohesion: 1.0
 Nodes (0): 
 
@@ -195,17 +275,17 @@ Nodes (0):
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `series()` connect `Tests Reporting Analytics` to `Docs Superpowers Reporting`, `Backtesting Reporting Frontend`, `Raw Ksdq Csv`, `Tests Dashboard Backend`, `Backtesting Reporting Tests`, `Backtesting Strategies Tests`, `Docs Superpowers Plans`, `Tests Test Run.Py Engine`, `Docs Superpowers Portfolio`, `Docs Superpowers Strategy`, `Tests Reporting Test_Builder`, `Dashboard Frontend App`?**
+- **Why does `series()` connect `Tests Reporting Analytics` to `Raw Ksdq Csv`, `Backtesting Reporting Frontend`, `Docs Superpowers Policy`, `Tests Dashboard Backend`, `Tests Test Run.Py Engine`, `Docs Superpowers Plans`, `Docs Superpowers Kosdaq150`, `Backtesting Reporting Tests`, `Dashboard Frontend App`, `Docs Superpowers Reporting`, `Docs Superpowers Strategy`, `Backtesting Reporting Composers`, `Docs Superpowers Plans`, `Docs Superpowers Backtest`, `Docs Superpowers Live`, `Docs Superpowers Analytics`, `Docs Superpowers Research`, `Docs Superpowers Performance`, `Docs Superpowers Reporting`, `Docs Superpowers Reporting`?**
   _High betweenness centrality (0.052) - this node is a cross-community bridge._
-- **Why does `Equity Latest Quarter` connect `Backtesting Reporting Frontend` to `Docs Superpowers Reporting`, `Raw Ksdq Csv`, `Tests Dashboard Backend`, `Backtesting Reporting Tests`, `Docs Superpowers Plans`, `Tests Test Run.Py Engine`, `Docs Superpowers Portfolio`, `Docs Superpowers Strategy`, `Tests Reporting Analytics`, `Tests Reporting Test_Builder`, `Dashboard Frontend App`?**
+- **Why does `Equity Latest Quarter` connect `Backtesting Reporting Frontend` to `Raw Ksdq Csv`, `Tests Dashboard Backend`, `Tests Test Run.Py Engine`, `Docs Superpowers Plans`, `Docs Superpowers Kosdaq150`, `Tests Reporting Analytics`, `Backtesting Reporting Tests`, `Dashboard Frontend App`, `Docs Superpowers Reporting`, `Docs Superpowers Strategy`, `Backtesting Reporting Composers`, `Dashboard Backend Schemas`, `Docs Superpowers Plans`, `Docs Superpowers Backtest`, `Docs Superpowers Live`, `Dashboard Frontend Src`, `Docs Superpowers Performance`, `Docs Superpowers Reporting`, `Docs Superpowers Reporting`, `Dashboard Frontend Src`, `Tests Reporting Test_Pdf`?**
   _High betweenness centrality (0.051) - this node is a cross-community bridge._
-- **Why does `Foreign Ownership Ratio` connect `Backtesting Reporting Frontend` to `Docs Superpowers Reporting`, `Raw Ksdq Csv`, `Tests Dashboard Backend`, `Backtesting Reporting Tests`, `Docs Superpowers Plans`, `Tests Test Run.Py Engine`, `Docs Superpowers Portfolio`, `Docs Superpowers Strategy`, `Tests Reporting Analytics`, `Dashboard Frontend App`?**
+- **Why does `Foreign Ownership Ratio` connect `Backtesting Reporting Frontend` to `Raw Ksdq Csv`, `Docs Superpowers Policy`, `Tests Dashboard Backend`, `Docs Superpowers Plans`, `Docs Superpowers Kosdaq150`, `Tests Reporting Analytics`, `Dashboard Frontend App`, `Docs Superpowers Reporting`, `Docs Superpowers Strategy`, `Backtesting Reporting Composers`, `Dashboard Backend Schemas`, `Docs Superpowers Plans`, `Docs Superpowers Backtest`, `Docs Superpowers Live`, `Docs Superpowers Analytics`, `Dashboard Frontend Src`, `Docs Superpowers Research`, `Docs Superpowers Performance`, `Docs Superpowers Reporting`, `Dashboard Frontend Src`, `Docs Superpowers Breakout`, `Docs Superpowers Live`?**
   _High betweenness centrality (0.043) - this node is a cross-community bridge._
 - **Are the 85 inferred relationships involving `Mkt Typ` (e.g. with `factor.py` and `catalog.py`) actually correct?**
   _`Mkt Typ` has 85 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 81 inferred relationships involving `series()` (e.g. with `quantile_returns()` and `rank_ic()`) actually correct?**
   _`series()` has 81 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 75 inferred relationships involving `DataCatalog.get()` (e.g. with `DataLoader.load()` and `IngestJob.run()`) actually correct?**
-  _`DataCatalog.get()` has 75 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 76 inferred relationships involving `DataCatalog.get()` (e.g. with `DataLoader.load()` and `IngestJob.run()`) actually correct?**
+  _`DataCatalog.get()` has 76 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 73 inferred relationships involving `Shares Outstanding Outstanding` (e.g. with `__init__.py` and `perf.py`) actually correct?**
   _`Shares Outstanding Outstanding` has 73 INFERRED edges - model-reasoned connections that need verification._

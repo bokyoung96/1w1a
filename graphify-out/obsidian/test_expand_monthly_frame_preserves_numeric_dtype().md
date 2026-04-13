@@ -1,12 +1,12 @@
 ---
 source_file: "tests/data/test_policy.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Raw Ksdq Csv"
 location: "L25"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Raw_Ksdq_Csv
 ---
 
 # test_expand_monthly_frame_preserves_numeric_dtype()
@@ -16,4 +16,4 @@ tags:
 - [[series()]] - `calls` [INFERRED]
 - [[test_policy.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv

@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/ResearchWorkspace.tsx"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Dashboard Frontend Src"
 location: "L112"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Frontend
+  - community/Dashboard_Frontend_Src
 ---
 
 # chartBase()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[ResearchWorkspace.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/EXTRACTED #community/Dashboard_Frontend_Src

@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Plans"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Plans
 ---
 
 # 2026-04-05-live-dashboard-single-command-launch.md
@@ -126,4 +126,4 @@ tags:
 - [[test_session_endpoint_returns_default_selected_run_ids()]] - `rationale_for` [INFERRED]
 - [[value()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Plans

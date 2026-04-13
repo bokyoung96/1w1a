@@ -1,41 +1,28 @@
 ---
 type: community
 cohesion: 0.03
-members: 216
+members: 184
 ---
 
 # Raw Ksdq Csv
 
 **Cohesion:** 0.03 - loosely connected
-**Members:** 216 nodes
+**Members:** 184 nodes
 
 ## Members
-- [[2026-04-13-kosdaq150-universe-integration]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
 - [[Adjusted Close]] - document - raw/qw_adj_c.csv
 - [[Adjusted High]] - document - raw/qw_adj_h.csv
 - [[Adjusted Low]] - document - raw/qw_adj_l.csv
 - [[Adjusted Open]] - document - raw/qw_adj_o.csv
-- [[DataCatalog]] - code - backtesting/catalog/catalog.py
-- [[DataCatalog.default()]] - code - backtesting/catalog/catalog.py
-- [[DataCatalog.group()]] - code - backtesting/catalog/catalog.py
-- [[DataCatalog.groups()]] - code - backtesting/catalog/catalog.py
-- [[DataCatalog.ids()]] - code - backtesting/catalog/catalog.py
-- [[DatasetGroup]] - code - backtesting/catalog/enums.py
-- [[DatasetGroups]] - code - backtesting/catalog/groups.py
-- [[DatasetGroups.get()]] - code - backtesting/catalog/groups.py
-- [[DatasetId]] - code - backtesting/catalog/enums.py
-- [[DatasetSpec]] - code - backtesting/catalog/specs.py
+- [[DerivMinute]] - code - kis/tr_id/deriv_minute.py
 - [[Earnings Per Share Following Quarter]] - document - raw/qw_eps_nfq2.csv
 - [[Earnings Per Share Next Fiscal Year]] - document - raw/qw_eps_nfy1.csv
 - [[Earnings Per Share Next Quarter]] - document - raw/qw_eps_nfq1.csv
 - [[ErrorState()]] - code - dashboard/frontend/src/components/ErrorState.tsx
 - [[ErrorState.tsx]] - code - dashboard/frontend/src/components/ErrorState.tsx
-- [[File Structure_3]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
 - [[Foreign Ownership]] - document - raw/qw_foreign.csv
 - [[Gross Profit Latest Quarter]] - document - raw/qw_gp_lfq0.csv
-- [[IngestJob]] - code - backtesting/ingest/pipeline.py
 - [[Institutional Trading]] - document - raw/qw_institution.csv
-- [[KOSDAQ150 Universe Integration Implementation Plan]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
 - [[Kosdaq Kosdaq Adjusted Close]] - document - raw/ksdq/qw_ksdq_adj_c.csv
 - [[Kosdaq Kosdaq Adjusted High]] - document - raw/ksdq/qw_ksdq_adj_h.csv
 - [[Kosdaq Kosdaq Adjusted Low]] - document - raw/ksdq/qw_ksdq_adj_l.csv
@@ -47,7 +34,6 @@ members: 216
 - [[Kosdaq Ksdq150 Membership Flag]] - document - raw/ksdq/qw_ksdq150_yn.csv
 - [[Kospi200 Membership Flag]] - document - raw/qw_k200_yn.csv
 - [[Liabilities Latest Quarter]] - document - raw/qw_liability_lfq0.csv
-- [[Map]] - document - raw/map.xlsx
 - [[Market Cap]] - document - raw/qw_mktcap.csv
 - [[Market Cap Free Float]] - document - raw/qw_mktcap_flt.csv
 - [[Mkt Typ]] - document - raw/qw_mkt_typ.csv
@@ -59,61 +45,56 @@ members: 216
 - [[Operating Profit Next Quarter]] - document - raw/qw_op_nfq1.csv
 - [[Options Strike Price]] - document - raw/options/qw_strike_price.csv
 - [[Retail Trading]] - document - raw/qw_retail.csv
-- [[Run Backtests_1]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
-- [[RunSelector()]] - code - dashboard/frontend/src/components/RunSelector.tsx
-- [[RunSelector.tsx]] - code - dashboard/frontend/src/components/RunSelector.tsx
-- [[SectorRepository.default()]] - code - backtesting/reporting/benchmarks.py
-- [[Self-Review_5]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
 - [[SymbolType]] - code - kis/symbols/loader.py
 - [[Symbols_1]] - document - kis/symbols/symbols.xlsx
-- [[Task 1 Register KOSDAQ150 Datasets And Fix Nested Raw Ingest]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
-- [[Task 2 Create UniverseSpec And UniverseRegistry]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
-- [[Task 3 Make BacktestRunner And CLI Universe-Aware]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
-- [[Task 4 Propagate `universe_id` Through Dashboard Presets And Saved-Run Signatures]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
-- [[Task 5 Document The New Universe And Run Full Verification]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
 - [[Trading Restriction Ban List]] - document - raw/qw_trs_ban.csv
-- [[UniverseRegistry]] - code - backtesting/universe.py
-- [[UniverseRegistry.default()]] - code - backtesting/universe.py
-- [[UniverseRegistry.get()]] - code - backtesting/universe.py
-- [[UniverseSpec]] - code - backtesting/universe.py
-- [[UniverseSpec.__post_init__()]] - code - backtesting/universe.py
-- [[UniverseSpec.resolve_dataset()]] - code - backtesting/universe.py
 - [[__init__.py_1]] - code - backtesting/analytics/__init__.py
 - [[__init__.py_2]] - code - backtesting/catalog/__init__.py
+- [[__init__.py_4]] - code - backtesting/data/__init__.py
+- [[__init__.py_5]] - code - backtesting/engine/__init__.py
 - [[__init__.py_6]] - code - backtesting/execution/__init__.py
 - [[__init__.py_7]] - code - backtesting/ingest/__init__.py
 - [[__init__.py]] - code - backtesting/__init__.py
 - [[__init__.py_17]] - code - kis/__init__.py
 - [[__init__.py_18]] - code - kis/symbols/__init__.py
 - [[_build_parser()]] - code - backtesting/run.py
+- [[_fail_if_engine_runs()]] - code - tests/test_run.py
 - [[_fake_load_default_frame()]] - code - tests/reporting/test_benchmarks.py
-- [[_load_default_frame()]] - code - backtesting/reporting/benchmarks.py
-- [[_load_display_name_maps()]] - code - backtesting/reporting/benchmarks.py
+- [[_leg_sizes()_1]] - code - backtesting/construction/sector_neutral.py
 - [[_load_generate_module()]] - code - tests/test_graphify_generate.py
 - [[_read_quantwise_benchmark_frame()]] - code - backtesting/reporting/benchmarks.py
-- [[_spec()]] - code - backtesting/catalog/catalog.py
-- [[backtestinguniverse.py]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
+- [[_stub_plot_generation()_1]] - code - tests/test_run.py
+- [[_write_placeholder_plot()_1]] - code - tests/test_run.py
+- [[base.py]] - code - backtesting/construction/base.py
+- [[base.py_1]] - code - backtesting/policy/base.py
+- [[base.py_2]] - code - backtesting/signals/base.py
+- [[base.py_3]] - code - backtesting/strategies/base.py
 - [[benchmarks.py]] - code - backtesting/reporting/benchmarks.py
-- [[bid_ask_list.py]] - code - kis/tr_id/bid_ask_list.py
 - [[breakout_simple.py]] - code - backtesting/strategies/breakout_simple.py
 - [[breakout_staged.py]] - code - backtesting/strategies/breakout_staged.py
 - [[call.py]] - code - kis/tr_id/call.py
 - [[catalog.py]] - code - backtesting/catalog/catalog.py
+- [[composable.py]] - code - backtesting/strategies/composable.py
 - [[config.py]] - code - kis/config.py
 - [[core.py]] - code - backtesting/engine/core.py
-- [[default_repositories_for_universe()]] - code - backtesting/reporting/benchmarks.py
 - [[deriv_minute.py]] - code - kis/tr_id/deriv_minute.py
 - [[enums.py]] - code - backtesting/catalog/enums.py
-- [[find_raw_path()]] - code - backtesting/ingest/io.py
+- [[expand_monthly_frame()]] - code - backtesting/data/policy.py
 - [[groups.py]] - code - backtesting/catalog/groups.py
 - [[io.py]] - code - backtesting/ingest/io.py
+- [[list_strategies()]] - code - backtesting/strategies/registry.py
 - [[loader.py]] - code - backtesting/data/loader.py
 - [[loader.py_1]] - code - kis/symbols/loader.py
-- [[map data shape]] - document - raw/map.xlsx
-- [[map.xlsx]] - document - raw/map.xlsx
+- [[long_only.py]] - code - backtesting/construction/long_only.py
 - [[momentum.py]] - code - backtesting/signals/momentum.py
+- [[momentum.py_1]] - code - backtesting/strategies/momentum.py
 - [[op_fwd.py]] - code - backtesting/signals/op_fwd.py
+- [[op_fwd.py_1]] - code - backtesting/strategies/op_fwd.py
+- [[pass_through.py]] - code - backtesting/policy/pass_through.py
+- [[pdf.py]] - code - backtesting/reporting/pdf.py
 - [[pipeline.py]] - code - backtesting/ingest/pipeline.py
+- [[policy.py]] - code - backtesting/data/policy.py
+- [[portfolio.py]] - code - backtesting/validation/portfolio.py
 - [[qw_adj_c data shape]] - document - raw/qw_adj_c.csv
 - [[qw_adj_c.csv]] - document - raw/qw_adj_c.csv
 - [[qw_adj_h data shape]] - document - raw/qw_adj_h.csv
@@ -181,50 +162,37 @@ members: 216
 - [[qw_trs_ban data shape]] - document - raw/qw_trs_ban.csv
 - [[qw_trs_ban.csv]] - document - raw/qw_trs_ban.csv
 - [[register.py]] - code - kis/tr_id/register.py
+- [[register_strategy()]] - code - backtesting/strategies/registry.py
+- [[registry.py]] - code - backtesting/strategies/registry.py
 - [[run.py]] - code - backtesting/run.py
-- [[session.py]] - code - backtesting/validation/session.py
+- [[run.py_2]] - code - run.py
+- [[sector_neutral.py]] - code - backtesting/construction/sector_neutral.py
 - [[specs.py]] - code - backtesting/catalog/specs.py
 - [[store.py]] - code - backtesting/data/store.py
 - [[symbols data shape]] - document - kis/symbols/symbols.xlsx
 - [[symbols.xlsx]] - document - kis/symbols/symbols.xlsx
 - [[test_benchmarks.py]] - code - tests/reporting/test_benchmarks.py
-- [[test_catalog_covers_all_stock_raw_stems()]] - code - tests/catalog/test_groups.py
-- [[test_catalog_exposes_group_view()]] - code - tests/catalog/test_groups.py
-- [[test_catalog_groups_cover_known_datasets()]] - code - tests/catalog/test_groups.py
-- [[test_catalog_returns_grouped_specs()]] - code - tests/catalog/test_groups.py
-- [[test_catalog_returns_known_spec()]] - code - tests/catalog/test_specs.py
-- [[test_default_sector_repository_for_kosdaq150_uses_kosdaq_family()]] - code - tests/reporting/test_benchmarks.py
+- [[test_expand_monthly_frame_keeps_missing_gap()]] - code - tests/data/test_policy.py
+- [[test_expand_monthly_frame_preserves_integer_data_with_missing_days()]] - code - tests/data/test_policy.py
+- [[test_expand_monthly_frame_preserves_numeric_dtype()]] - code - tests/data/test_policy.py
 - [[test_graphify_generate.py]] - code - tests/test_graphify_generate.py
 - [[test_groups.py]] - code - tests/catalog/test_groups.py
-- [[test_ingest_accepts_unnamed_date_column()]] - code - tests/ingest/test_pipeline.py
-- [[test_ingest_creates_missing_parquet_directory()]] - code - tests/ingest/test_pipeline.py
-- [[test_ingest_finds_nested_raw_dataset()]] - code - tests/ingest/test_pipeline.py
-- [[test_ingest_prefers_csv_when_csv_and_xlsx_exist()]] - code - tests/ingest/test_pipeline.py
-- [[test_ingest_reads_xlsx_sources()]] - code - tests/ingest/test_pipeline.py
-- [[test_ingest_rejects_ambiguous_nested_raw_dataset()]] - code - tests/ingest/test_pipeline.py
-- [[test_ingest_rejects_duplicate_dates()]] - code - tests/ingest/test_pipeline.py
-- [[test_ingest_rejects_duplicate_days_with_different_times()]] - code - tests/ingest/test_pipeline.py
-- [[test_ingest_writes_parquet_and_report()]] - code - tests/ingest/test_pipeline.py
-- [[test_load_display_name_maps_reads_sector_and_stock_sheets()]] - code - tests/reporting/test_benchmarks.py
 - [[test_loader.py]] - code - tests/data/test_loader.py
 - [[test_pipeline.py]] - code - tests/ingest/test_pipeline.py
+- [[test_policy.py]] - code - tests/data/test_policy.py
 - [[test_prepare_output_paths_cleans_stale_generated_files()]] - code - tests/test_graphify_generate.py
 - [[test_public_package_exports_import_cleanly()]] - code - tests/test_smoke.py
 - [[test_read_quantwise_benchmark_frame_extracts_codes_and_dates()]] - code - tests/reporting/test_benchmarks.py
-- [[test_registry_rejects_unknown_universe()]] - code - tests/data/test_universe.py
-- [[test_registry_remaps_generic_dataset_ids_to_universe_specific_ids()]] - code - tests/data/test_universe.py
-- [[test_registry_returns_kosdaq150_defaults()]] - code - tests/data/test_universe.py
-- [[test_registry_returns_legacy_k200_defaults()]] - code - tests/data/test_universe.py
+- [[test_registry_lists_default_strategies()]] - code - tests/strategies/test_registry.py
 - [[test_reporting_exports_import_cleanly()]] - code - tests/test_smoke.py
+- [[test_root_run_delegates_to_backtesting_main()]] - code - tests/test_run.py
+- [[test_run.py_1]] - code - tests/test_run.py
 - [[test_smoke.py]] - code - tests/test_smoke.py
 - [[test_specs.py]] - code - tests/catalog/test_specs.py
+- [[test_strategy_contracts.py]] - code - tests/strategies/test_strategy_contracts.py
 - [[test_top_level_package_exports_universe_types()]] - code - tests/data/test_universe.py
 - [[test_universe.py]] - code - tests/data/test_universe.py
-- [[testscatalogtest_groups.py]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
-- [[testsdatatest_universe.py]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
 - [[tools.py]] - code - kis/tools.py
-- [[types.py]] - code - backtesting/types.py
-- [[uniqueRuns()]] - code - dashboard/frontend/src/components/RunSelector.tsx
 - [[universe.py]] - code - backtesting/universe.py
 
 ## Live Query (requires Dataview plugin)
@@ -235,22 +203,34 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 137 edges to [[_COMMUNITY_Backtesting Reporting Frontend]]
-- 134 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
-- 106 edges to [[_COMMUNITY_Tests Test Run.Py Engine]]
-- 58 edges to [[_COMMUNITY_Tests Dashboard Backend]]
-- 56 edges to [[_COMMUNITY_Backtesting Strategies Tests]]
-- 48 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
-- 36 edges to [[_COMMUNITY_Docs Superpowers Plans]]
-- 23 edges to [[_COMMUNITY_Tests Reporting Analytics]]
-- 15 edges to [[_COMMUNITY_Docs Superpowers Portfolio]]
-- 14 edges to [[_COMMUNITY_Docs Superpowers Strategy]]
-- 13 edges to [[_COMMUNITY_Dashboard Frontend App]]
-- 10 edges to [[_COMMUNITY_Tests Reporting Test_Builder]]
+- 144 edges to [[_COMMUNITY_Backtesting Reporting Frontend]]
+- 58 edges to [[_COMMUNITY_Tests Test Run.Py Engine]]
+- 48 edges to [[_COMMUNITY_Docs Superpowers Policy]]
+- 27 edges to [[_COMMUNITY_Tests Dashboard Backend]]
+- 26 edges to [[_COMMUNITY_Docs Superpowers Kosdaq150]]
+- 22 edges to [[_COMMUNITY_Docs Superpowers Plans]]
+- 21 edges to [[_COMMUNITY_Tests Reporting Analytics]]
+- 12 edges to [[_COMMUNITY_Dashboard Frontend App]]
+- 10 edges to [[_COMMUNITY_Dashboard Frontend Src]]
+- 8 edges to [[_COMMUNITY_Backtesting Reporting Composers]]
+- 8 edges to [[_COMMUNITY_Docs Superpowers Strategy]]
+- 7 edges to [[_COMMUNITY_Tests Reporting Test_Pdf]]
+- 5 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 4 edges to [[_COMMUNITY_Docs Superpowers Analytics]]
+- 4 edges to [[_COMMUNITY_Docs Superpowers Plans]]
+- 4 edges to [[_COMMUNITY_Kis Tr Id Protocol]]
+- 3 edges to [[_COMMUNITY_Docs Superpowers Live]]
+- 3 edges to [[_COMMUNITY_Dashboard Backend Schemas]]
+- 3 edges to [[_COMMUNITY_Docs Superpowers Performance]]
+- 2 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
+- 2 edges to [[_COMMUNITY_Backtesting Universe.Py]]
+- 2 edges to [[_COMMUNITY_Dashboard Frontend Src]]
+- 2 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 2 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
 
 ## Top bridge nodes
-- [[2026-04-13-kosdaq150-universe-integration]] - degree 178, connects to 12 communities
-- [[Mkt Typ]] - degree 87, connects to 12 communities
-- [[Kosdaq Kosdaq Wics Sector Sector Large Cap Sector]] - degree 65, connects to 11 communities
-- [[Options Strike Price]] - degree 45, connects to 11 communities
-- [[Map]] - degree 44, connects to 8 communities
+- [[Kosdaq Kosdaq Wics Sector Sector Large Cap Sector]] - degree 65, connects to 14 communities
+- [[Mkt Typ]] - degree 87, connects to 13 communities
+- [[Options Strike Price]] - degree 45, connects to 13 communities
+- [[Kospi200 Membership Flag]] - degree 26, connects to 8 communities
+- [[Earnings Per Share Next Fiscal Year]] - degree 20, connects to 7 communities

@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Analytics"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Analytics
 ---
 
 # 2026-04-06-dashboard-analytics-refresh-design.md
@@ -108,4 +108,4 @@ tags:
 - [[winners()]] - `rationale_for` [INFERRED]
 - [[years()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Analytics

@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/reader.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Backtesting Reporting Composers"
 location: "L9"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Backtesting_Reporting_Composers
 ---
 
 # RunReader
@@ -28,4 +28,4 @@ tags:
 - [[test_run_reader_returns_none_for_missing_optional_artifacts()]] - `calls` [INFERRED]
 - [[test_run_reader_round_trips_writer_bundle_layout()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Composers

@@ -1,12 +1,12 @@
 ---
 source_file: "tests/strategies/test_registry.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 location: "L21"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # test_momentum_strategy_builds_weights()
@@ -19,4 +19,4 @@ tags:
 - [[build_strategy()]] - `calls` [INFERRED]
 - [[test_registry.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy

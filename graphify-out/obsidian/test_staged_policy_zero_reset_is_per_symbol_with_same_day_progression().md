@@ -1,12 +1,12 @@
 ---
 source_file: "tests/policy/test_staged.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 location: "L148"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # test_staged_policy_zero_reset_is_per_symbol_with_same_day_progression()
@@ -22,4 +22,4 @@ tags:
 - [[test_staged.py]] - `contains` [EXTRACTED]
 - [[validate_position_plan()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy

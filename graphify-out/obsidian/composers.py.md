@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/reporting/composers.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Composers"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Composers
 ---
 
 # composers.py
@@ -41,4 +41,4 @@ tags:
 - [[html.py]] - `imports_from` [EXTRACTED]
 - [[test_html.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Composers

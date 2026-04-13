@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-07-dashboard-research-series-plan.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Plans"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Plans
 ---
 
 # 2026-04-07-dashboard-research-series-plan.md
@@ -76,4 +76,4 @@ tags:
 - [[weightOption()]] - `rationale_for` [INFERRED]
 - [[weightSeries()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Plans

@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/deriv_minute.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Raw Ksdq Csv"
 location: "L33"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Reporting
+  - community/Raw_Ksdq_Csv
 ---
 
 # DerivMinute
@@ -15,4 +15,4 @@ tags:
 - [[DerivMinute.summary()]] - `contains` [EXTRACTED]
 - [[deriv_minute.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv

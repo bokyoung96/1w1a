@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/register.py"
 type: "code"
-community: "Docs Superpowers Portfolio"
+community: "Kis Tr Id Protocol"
 location: "L40"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Portfolio
+  - community/Kis_Tr_Id_Protocol
 ---
 
 # TRRegistry._coerce_name()
@@ -16,4 +16,4 @@ tags:
 - [[TRRegistry]] - `contains` [EXTRACTED]
 - [[TRRegistry.get()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Portfolio
+#graphify/code #graphify/INFERRED #community/Kis_Tr_Id_Protocol

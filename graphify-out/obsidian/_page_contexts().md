@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/composers.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Composers"
 location: "L297"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Composers
 ---
 
 # _page_contexts()
@@ -19,4 +19,4 @@ tags:
 - [[TearsheetComposer.compose()]] - `calls` [INFERRED]
 - [[composers.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Composers

@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md"
 type: "document"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Reporting"
 location: "L925"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Reporting
 ---
 
 # Build Reports
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[2026-04-03-performance-reporting-redesign-implementation]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

@@ -1,11 +1,11 @@
 ---
 source_file: "tests/reporting/test_cli.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Dashboard Frontend App"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Dashboard_Frontend_App
 ---
 
 # test_cli.py
@@ -28,4 +28,4 @@ tags:
 - [[test_cli_parser_supports_kind_and_benchmark_options()]] - `contains` [EXTRACTED]
 - [[test_cli_rejects_invalid_kind_and_run_count_combination()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Dashboard_Frontend_App

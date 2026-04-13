@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/plots.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Backtesting Reporting Tests"
 location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Reporting_Test_Builder
+  - community/Backtesting_Reporting_Tests
 ---
 
 # PlotExportError
@@ -17,4 +17,4 @@ tags:
 - [[plots.py]] - `contains` [EXTRACTED]
 - [[write_figure_asset()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/execution/costs.py"
 type: "code"
-community: "Tests Test Run.Py Engine"
+community: "Docs Superpowers Breakout"
 location: "L21"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Test_Run.Py_Engine
+  - community/Docs_Superpowers_Breakout
 ---
 
 # CostModel.calc()
@@ -33,4 +33,4 @@ tags:
 - [[test_cost_model_does_not_apply_sell_tax_on_buy()]] - `calls` [INFERRED]
 - [[test_cost_model_rejects_invalid_side()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Test_Run.Py_Engine
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Breakout

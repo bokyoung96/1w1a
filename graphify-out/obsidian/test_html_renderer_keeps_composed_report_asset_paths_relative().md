@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_html.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Composers"
 location: "L140"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Composers
 ---
 
 # test_html_renderer_keeps_composed_report_asset_paths_relative()
@@ -20,4 +20,4 @@ tags:
 - [[_write_asset()]] - `calls` [INFERRED]
 - [[test_html.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Composers

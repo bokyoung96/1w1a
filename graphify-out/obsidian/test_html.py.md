@@ -1,11 +1,11 @@
 ---
 source_file: "tests/reporting/test_html.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Composers"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Composers
 ---
 
 # test_html.py
@@ -34,4 +34,4 @@ tags:
 - [[test_html_renderer_uses_tearsheet_template()]] - `contains` [EXTRACTED]
 - [[test_tearsheet_composer_builds_pdf_first_context()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Composers

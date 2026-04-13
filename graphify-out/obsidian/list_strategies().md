@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/registry.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Raw Ksdq Csv"
 location: "L35"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Strategies_Tests
+  - community/Raw_Ksdq_Csv
 ---
 
 # list_strategies()
@@ -16,4 +16,4 @@ tags:
 - [[registry.py]] - `contains` [EXTRACTED]
 - [[test_registry_lists_default_strategies()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv

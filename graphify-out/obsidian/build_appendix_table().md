@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/tables.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Backtesting Reporting Tests"
 location: "L49"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Reporting_Test_Builder
+  - community/Backtesting_Reporting_Tests
 ---
 
 # build_appendix_table()
@@ -17,4 +17,4 @@ tags:
 - [[ReportBuilder.build_legacy()]] - `calls` [INFERRED]
 - [[tables.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

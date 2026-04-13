@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/figures.py"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Backtesting Reporting Tests"
 location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Frontend
+  - community/Backtesting_Reporting_Tests
 ---
 
 # TearsheetFigureBuilder
@@ -25,4 +25,4 @@ tags:
 - [[figures.py]] - `contains` [EXTRACTED]
 - [[test_tearsheet_figure_builder_writes_expected_page_assets()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

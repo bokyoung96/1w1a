@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/breakout_simple.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 location: "L17"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # Breakout52WeekSignalProducer
@@ -17,4 +17,4 @@ tags:
 - [[Breakout52WeekSimple.__post_init__()]] - `calls` [INFERRED]
 - [[breakout_simple.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy

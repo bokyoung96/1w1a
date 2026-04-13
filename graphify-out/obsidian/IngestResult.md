@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/ingest/report.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Analytics"
 location: "L10"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Analytics
 ---
 
 # IngestResult
@@ -19,4 +19,4 @@ tags:
 - [[IngestResult.write_json()]] - `contains` [EXTRACTED]
 - [[report.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Analytics

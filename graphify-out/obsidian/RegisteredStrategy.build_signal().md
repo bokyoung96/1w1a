@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/base.py"
 type: "code"
-community: "Backtesting Strategies Tests"
+community: "Docs Superpowers Policy"
 location: "L22"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Strategies_Tests
+  - community/Docs_Superpowers_Policy
 ---
 
 # RegisteredStrategy.build_signal()
@@ -17,4 +17,4 @@ tags:
 - [[RegisteredStrategy.build_plan()]] - `calls` [INFERRED]
 - [[test_momentum_strategy_avoids_future_warning_on_pct_change()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy

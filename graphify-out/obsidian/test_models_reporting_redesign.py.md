@@ -1,11 +1,11 @@
 ---
 source_file: "tests/reporting/test_models_reporting_redesign.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Composers"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Composers
 ---
 
 # test_models_reporting_redesign.py
@@ -25,4 +25,4 @@ tags:
 - [[test_report_spec_rejects_invalid_kind_values()]] - `contains` [EXTRACTED]
 - [[test_report_spec_rejects_tearsheet_with_multiple_runs()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Composers

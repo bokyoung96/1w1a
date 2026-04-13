@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Live"
 location: "L158"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Live
 ---
 
 # Non-Goals
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[2026-04-05-live-dashboard-single-command-launch-design]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Live

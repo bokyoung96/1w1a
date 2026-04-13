@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/reporting/models.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # models.py
@@ -39,4 +39,4 @@ tags:
 - [[test_plots.py]] - `imports_from` [EXTRACTED]
 - [[test_snapshots.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

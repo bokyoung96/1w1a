@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/strategies.py"
 type: "code"
-community: "Tests Dashboard Backend"
+community: "Dashboard Backend Schemas"
 location: "L64"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Dashboard_Backend
+  - community/Dashboard_Backend_Schemas
 ---
 
 # enabled_strategy_presets()
@@ -18,4 +18,4 @@ tags:
 - [[strategies.py]] - `contains` [EXTRACTED]
 - [[test_enabled_strategy_presets_filters_disabled_entries()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Dashboard_Backend
+#graphify/code #graphify/INFERRED #community/Dashboard_Backend_Schemas

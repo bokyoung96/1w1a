@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/protocol.py"
 type: "code"
-community: "Docs Superpowers Portfolio"
+community: "Kis Tr Id Protocol"
 location: "L11"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Portfolio
+  - community/Kis_Tr_Id_Protocol
 ---
 
 # TRName
@@ -15,4 +15,4 @@ tags:
 - [[TRRegistry._coerce_name()]] - `calls` [INFERRED]
 - [[protocol.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Portfolio
+#graphify/code #graphify/EXTRACTED #community/Kis_Tr_Id_Protocol

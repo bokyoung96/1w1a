@@ -27,9 +27,9 @@
 - [[api.ts]] `INFERRED`
 - [[App.tsx]] `INFERRED`
 - [[test_benchmarks.py]] `INFERRED`
+- [[test_universe.py]] `INFERRED`
 - [[composers.py]] `INFERRED`
 - [[test_loader.py]] `INFERRED`
-- [[test_universe.py]] `INFERRED`
 
 ---
 

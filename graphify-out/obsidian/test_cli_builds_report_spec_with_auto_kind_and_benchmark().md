@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_cli.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Dashboard Frontend App"
 location: "L35"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Dashboard_Frontend_App
 ---
 
 # test_cli_builds_report_spec_with_auto_kind_and_benchmark()
@@ -16,4 +16,4 @@ tags:
 - [[ReportCli]] - `calls` [INFERRED]
 - [[test_cli.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Dashboard_Frontend_App

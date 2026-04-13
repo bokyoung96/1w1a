@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/benchmarks.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Reporting"
 location: "L40"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Reporting
 ---
 
 # BenchmarkRepository.load_returns()
@@ -17,4 +17,4 @@ tags:
 - [[BenchmarkRepository.load_series()]] - `calls` [INFERRED]
 - [[test_benchmark_repository_load_returns_uses_kospi200_price_path()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

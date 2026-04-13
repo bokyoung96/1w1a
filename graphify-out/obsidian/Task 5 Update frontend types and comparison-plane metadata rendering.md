@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md"
 type: "document"
-community: "Backtesting Reporting Frontend"
+community: "Docs Superpowers Plans"
 location: "L605"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Frontend
+  - community/Docs_Superpowers_Plans
 ---
 
 # Task 5: Update frontend types and comparison-plane metadata rendering
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[2026-04-06-dashboard-analytics-refresh]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend
+#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Plans

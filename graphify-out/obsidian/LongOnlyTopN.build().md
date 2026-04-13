@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/construction/long_only.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Backtesting Reporting Tests"
 location: "L21"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Reporting_Test_Builder
+  - community/Backtesting_Reporting_Tests
 ---
 
 # LongOnlyTopN.build()
@@ -39,4 +39,4 @@ tags:
 - [[test_tearsheet_figure_builder_writes_expected_page_assets()]] - `calls` [INFERRED]
 - [[test_tearsheet_table_builder_builds_named_tables()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

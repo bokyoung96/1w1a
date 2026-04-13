@@ -1,11 +1,11 @@
 ---
 source_file: "tests/reporting/test_plots.py"
 type: "code"
-community: "Tests Reporting Test_Builder"
+community: "Backtesting Reporting Tests"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Reporting_Test_Builder
+  - community/Backtesting_Reporting_Tests
 ---
 
 # test_plots.py
@@ -31,4 +31,4 @@ tags:
 - [[test_plot_library_writes_equity_plot()]] - `contains` [EXTRACTED]
 - [[test_plot_library_writes_html_fallback_when_image_export_fails()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Test_Builder
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

@@ -1,11 +1,11 @@
 ---
 source_file: "tests/reporting/test_pdf.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Test_Pdf"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Test_Pdf
 ---
 
 # test_pdf.py
@@ -30,4 +30,4 @@ tags:
 - [[test_pdf_renderer_writes_pdf_from_composed_report()]] - `contains` [EXTRACTED]
 - [[test_pdf_renderer_writes_pdf_when_export_succeeds()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Test_Pdf

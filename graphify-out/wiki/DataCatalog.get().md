@@ -1,6 +1,6 @@
 # DataCatalog.get()
 
-> God node · 76 connections · `backtesting/catalog/catalog.py`
+> God node · 77 connections · `backtesting/catalog/catalog.py`
 
 **Community:** [[Tests Dashboard Backend]]
 

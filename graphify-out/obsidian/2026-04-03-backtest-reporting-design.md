@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-03-backtest-reporting-design.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Docs Superpowers Backtest"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Docs_Superpowers_Backtest
 ---
 
 # 2026-04-03-backtest-reporting-design.md
@@ -133,4 +133,4 @@ tags:
 - [[sources()]] - `rationale_for` [INFERRED]
 - [[strategies()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Backtest

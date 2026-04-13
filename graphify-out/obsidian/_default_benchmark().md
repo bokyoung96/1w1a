@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/snapshots.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Composers"
 location: "L27"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Composers
 ---
 
 # _default_benchmark()
@@ -15,4 +15,4 @@ tags:
 - [[BenchmarkConfig.default_kospi200()]] - `calls` [INFERRED]
 - [[snapshots.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Composers

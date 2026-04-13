@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-06-dashboard-analytics-refresh.md"
 type: "document"
-community: "Backtesting Reporting Frontend"
+community: "Docs Superpowers Plans"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Frontend
+  - community/Docs_Superpowers_Plans
 ---
 
 # 2026-04-06-dashboard-analytics-refresh.md
@@ -192,4 +192,4 @@ tags:
 - [[yAxis()]] - `rationale_for` [INFERRED]
 - [[years()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Backtesting_Reporting_Frontend
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Plans

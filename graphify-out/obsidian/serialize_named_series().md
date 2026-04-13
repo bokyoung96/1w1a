@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/serializers.py"
 type: "code"
-community: "Backtesting Reporting Frontend"
+community: "Dashboard Backend Schemas"
 location: "L45"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Frontend
+  - community/Dashboard_Backend_Schemas
 ---
 
 # serialize_named_series()
@@ -21,4 +21,4 @@ tags:
 - [[serialize_value_points()]] - `calls` [INFERRED]
 - [[serializers.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend
+#graphify/code #graphify/INFERRED #community/Dashboard_Backend_Schemas
