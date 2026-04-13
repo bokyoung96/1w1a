@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 
 import pandas as pd
@@ -18,6 +18,7 @@ from .ingest import IngestJob
 from .policy.base import PositionPlan
 from .reporting import RunWriter
 from .strategies import build_strategy, list_strategies
+from .universe import UniverseRegistry, UniverseSpec
 from .validation import validate_position_plan
 
 
@@ -37,9 +38,10 @@ class RunConfig:
     slippage: float = 0.0
     use_k200: bool = True
     allow_fractional: bool = True
-    benchmark_code: str = "IKS200"
-    benchmark_name: str = "KOSPI200"
-    benchmark_dataset: str = "qw_BM"
+    universe_id: str | None = None
+    benchmark_code: str | None = None
+    benchmark_name: str | None = None
+    benchmark_dataset: str | None = None
     warmup_days: int = 0
 
 
@@ -60,8 +62,10 @@ class BacktestRunner:
         raw_dir: Path | None = None,
         parquet_dir: Path | None = None,
         result_dir: Path | None = None,
+        universe_registry: UniverseRegistry | None = None,
     ) -> None:
         self.catalog = catalog or DataCatalog.default()
+        self.universe_registry = universe_registry or UniverseRegistry.default()
         self.raw_dir = raw_dir or ROOT.raw_path
         self.parquet_dir = parquet_dir or ROOT.parquet_path
         self.result_dir = result_dir or (ROOT.results_path / "backtests")
@@ -77,23 +81,21 @@ class BacktestRunner:
             lookback=config.lookback,
         )
 
-        dataset_ids = [DatasetId.QW_ADJ_C, *strategy.datasets]
-        if config.fill_mode == "next_open":
-            dataset_ids.append(DatasetId.QW_ADJ_O)
-        if config.use_k200:
-            dataset_ids.append(DatasetId.QW_K200_YN)
-        dataset_ids = list(dict.fromkeys(dataset_ids))
+        universe_spec = self._resolve_universe_spec(config)
+        effective_config = self._resolve_effective_config(config, universe_spec)
+        dataset_ids = self._resolve_dataset_ids(strategy.datasets, effective_config, universe_spec)
 
         self._ensure_parquet(dataset_ids)
 
         market = self.loader.load(
             LoadRequest(
                 datasets=dataset_ids,
-                start=self._resolve_load_start(config.start, config.warmup_days),
-                end=config.end,
+                start=self._resolve_load_start(effective_config.start, effective_config.warmup_days),
+                end=effective_config.end,
+                universe_id=effective_config.universe_id,
             )
         )
-        market.universe = self._universe(market, config.use_k200)
+        market.universe = self._universe(market, universe_spec)
 
         plan = strategy.build_plan(market)
         validate_position_plan(plan)
@@ -105,32 +107,32 @@ class BacktestRunner:
 
         engine = BacktestEngine(
             cost=CostModel(
-                fee=config.fee,
-                sell_tax=config.sell_tax,
-                slippage=config.slippage,
+                fee=effective_config.fee,
+                sell_tax=effective_config.sell_tax,
+                slippage=effective_config.slippage,
             )
         )
         result = engine.run(
             close=close,
             open=market.frames.get("open"),
             weights=weights,
-            capital=config.capital,
+            capital=effective_config.capital,
             tradable=tradable,
-            schedule=self._schedule(config.schedule),
-            fill_mode=config.fill_mode,
-            allow_fractional=config.allow_fractional,
+            schedule=self._schedule(effective_config.schedule),
+            fill_mode=effective_config.fill_mode,
+            allow_fractional=effective_config.allow_fractional,
         )
-        result = self._trim_result_to_display_range(result, start=config.start, end=config.end)
-        plan = self._trim_plan_to_display_range(plan, start=config.start, end=config.end)
+        result = self._trim_result_to_display_range(result, start=effective_config.start, end=effective_config.end)
+        plan = self._trim_plan_to_display_range(plan, start=effective_config.start, end=effective_config.end)
         if result.equity.empty:
             raise ValueError(
-                f"no backtest rows remain after trimming to display range {config.start}..{config.end}"
+                f"no backtest rows remain after trimming to display range {effective_config.start}..{effective_config.end}"
             )
 
         summary = summarize_perf(result.returns)
         summary["final_equity"] = float(result.equity.iloc[-1])
         summary["avg_turnover"] = float(result.turnover.mean())
-        report = RunReport(config=config, summary=summary, result=result, position_plan=plan)
+        report = RunReport(config=effective_config, summary=summary, result=result, position_plan=plan)
         report.output_dir = self.writer.write(report)
         return report
 
@@ -141,13 +143,54 @@ class BacktestRunner:
             if not path.exists():
                 self.ingest.run(dataset_id)
 
+    def _resolve_universe_spec(self, config: RunConfig) -> UniverseSpec | None:
+        if config.universe_id is not None:
+            return self.universe_registry.get(config.universe_id)
+        if config.use_k200:
+            return self.universe_registry.get("legacy_k200")
+        return None
+
     @staticmethod
-    def _universe(market, use_k200: bool) -> pd.DataFrame | None:
-        if not use_k200:
+    def _resolve_effective_config(config: RunConfig, universe_spec: UniverseSpec | None) -> RunConfig:
+        if universe_spec is None:
+            return replace(
+                config,
+                benchmark_code=config.benchmark_code or "IKS200",
+                benchmark_name=config.benchmark_name or "KOSPI200",
+                benchmark_dataset=config.benchmark_dataset or "qw_BM",
+            )
+        return replace(
+            config,
+            universe_id=config.universe_id or universe_spec.id,
+            benchmark_code=config.benchmark_code or universe_spec.default_benchmark_code,
+            benchmark_name=config.benchmark_name or universe_spec.default_benchmark_name,
+            benchmark_dataset=config.benchmark_dataset or universe_spec.default_benchmark_dataset,
+        )
+
+    def _resolve_dataset_ids(
+        self,
+        strategy_datasets: tuple[DatasetId, ...],
+        config: RunConfig,
+        universe_spec: UniverseSpec | None,
+    ) -> list[DatasetId]:
+        dataset_ids = [DatasetId.QW_ADJ_C, *strategy_datasets]
+        if config.fill_mode == "next_open":
+            dataset_ids.append(DatasetId.QW_ADJ_O)
+        if universe_spec is not None and universe_spec.membership_dataset is not None:
+            dataset_ids.append(universe_spec.membership_dataset)
+        if universe_spec is not None:
+            dataset_ids = [universe_spec.resolve_dataset(dataset_id) for dataset_id in dataset_ids]
+        return list(dict.fromkeys(dataset_ids))
+
+    @staticmethod
+    def _universe(market, universe_spec: UniverseSpec | None) -> pd.DataFrame | None:
+        if universe_spec is None:
             return None
-        if "k200_yn" not in market.frames:
+        membership_key = "k200_yn" if universe_spec.membership_dataset is DatasetId.QW_K200_YN else "universe_membership"
+        membership = market.frames.get(membership_key)
+        if membership is None:
             return None
-        return market.frames["k200_yn"].fillna(0).astype(bool)
+        return membership.fillna(0).astype(bool)
 
     @staticmethod
     def _schedule(name: str):
@@ -210,6 +253,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--sell-tax", type=float, default=0.0)
     parser.add_argument("--slippage", type=float, default=0.0)
     parser.add_argument("--out-root")
+    parser.add_argument("--universe", choices=("kosdaq150",), dest="universe_id")
     parser.add_argument("--no-k200", action="store_true")
     parser.add_argument("--no-fractional", action="store_true")
     return parser
@@ -230,6 +274,7 @@ def main() -> None:
         fee=args.fee,
         sell_tax=args.sell_tax,
         slippage=args.slippage,
+        universe_id=args.universe_id,
         use_k200=not args.no_k200,
         allow_fractional=not args.no_fractional,
     )

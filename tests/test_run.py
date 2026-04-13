@@ -7,9 +7,10 @@ from pandas.testing import assert_frame_equal
 import run as root_run
 from backtesting.catalog import DataCatalog
 from backtesting.data import ParquetStore
+from backtesting.engine import BacktestResult
 from backtesting.policy.base import BUCKET_LEDGER_COLUMNS, PositionPlan
 from backtesting.reporting.writer import RunWriter, _EMPTY_PNG
-from backtesting.run import BacktestRunner, RunConfig, main as backtesting_main
+from backtesting.run import BacktestRunner, RunConfig, RunReport, main as backtesting_main
 
 
 @pytest.fixture(autouse=True)
@@ -527,3 +528,79 @@ def test_runner_raises_clear_error_when_trimmed_display_range_is_empty(tmp_path:
 
 def test_root_run_delegates_to_backtesting_main() -> None:
     assert root_run.main is backtesting_main
+
+
+def test_runner_uses_kosdaq_universe_specific_datasets(tmp_path: Path) -> None:
+    parquet_dir = tmp_path / "parquet"
+    raw_dir = tmp_path / "raw"
+    result_dir = tmp_path / "results"
+    parquet_dir.mkdir()
+    raw_dir.mkdir()
+    store = ParquetStore(parquet_dir)
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+
+    store.write("qw_adj_c", pd.DataFrame({"A": [1.0, 1.0, 1.0]}, index=index))
+    store.write("qw_ksdq_adj_c", pd.DataFrame({"A": [10.0, 11.0, 12.0]}, index=index))
+    store.write("qw_ksdq150_yn", pd.DataFrame({"A": [1, 1, 1], "B": [0, 0, 0]}, index=index))
+
+    runner = BacktestRunner(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+        result_dir=result_dir,
+    )
+    report = runner.run(
+        RunConfig(
+            strategy="momentum",
+            start="2024-01-02",
+            end="2024-01-04",
+            lookback=1,
+            schedule="daily",
+            fill_mode="close",
+            universe_id="kosdaq150",
+        )
+    )
+
+    assert report.config.universe_id == "kosdaq150"
+    assert report.config.benchmark_name == "KOSDAQ150"
+    assert report.result.equity.index[-1].isoformat() == "2024-01-04T00:00:00"
+
+
+def test_run_parser_accepts_universe_argument(monkeypatch: pytest.MonkeyPatch) -> None:
+    observed: dict[str, object] = {}
+
+    class StubRunner:
+        def __init__(self, result_dir=None):
+            pass
+
+        def run(self, config):
+            observed["config"] = config
+            index = pd.to_datetime(["2024-01-02"])
+            result = BacktestResult(
+                equity=pd.Series([1.0], index=index),
+                returns=pd.Series([0.0], index=index),
+                weights=pd.DataFrame({"A": [1.0]}, index=index),
+                qty=pd.DataFrame({"A": [1.0]}, index=index),
+                turnover=pd.Series([0.0], index=index),
+            )
+            return RunReport(config=config, summary={"final_equity": 1.0, "avg_turnover": 0.0}, result=result)
+
+    monkeypatch.setattr("backtesting.run.BacktestRunner", StubRunner)
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "run.py",
+            "--strategy",
+            "momentum",
+            "--start",
+            "2024-01-02",
+            "--end",
+            "2024-01-02",
+            "--universe",
+            "kosdaq150",
+        ],
+    )
+
+    backtesting_main()
+
+    assert observed["config"].universe_id == "kosdaq150"
