@@ -96,6 +96,52 @@ def test_resolution_marks_strategy_missing_when_warmup_changes(tmp_path: Path) -
     assert [item.strategy_name for item in plan.missing_presets] == ["momentum"]
 
 
+def test_resolution_marks_strategy_missing_when_universe_changes(tmp_path: Path) -> None:
+    _write_matching_default_runs(tmp_path)
+    altered = replace(
+        DEFAULT_LAUNCH_CONFIG,
+        strategies=(
+            replace(DEFAULT_LAUNCH_CONFIG.strategies[0], universe_id="kosdaq150"),
+            DEFAULT_LAUNCH_CONFIG.strategies[1],
+        ),
+    )
+
+    plan = LaunchResolutionService(tmp_path).resolve(altered)
+
+    assert plan.selected_run_ids == ["op_fwd_yield_20260405_110000"]
+    assert [item.strategy_name for item in plan.missing_presets] == ["momentum"]
+
+
+def test_resolution_reuses_legacy_saved_run_when_universe_id_is_legacy_k200(tmp_path: Path) -> None:
+    payload = _saved_config("momentum")
+    payload["universe_id"] = "legacy_k200"
+    _write_saved_run(tmp_path, "momentum_20260405_100000", config=payload)
+
+    plan = LaunchResolutionService(tmp_path).resolve(DEFAULT_LAUNCH_CONFIG)
+
+    assert plan.selected_run_ids == ["momentum_20260405_100000"]
+    assert [item.strategy_name for item in plan.missing_presets] == ["op_fwd_yield"]
+
+
+def test_resolution_reuses_saved_kosdaq150_run_when_use_k200_is_normalized(tmp_path: Path) -> None:
+    payload = _saved_config("op_fwd_yield")
+    payload["universe_id"] = "kosdaq150"
+    payload["use_k200"] = False
+    _write_saved_run(tmp_path, "op_fwd_yield_20260405_110000", config=payload)
+    altered = replace(
+        DEFAULT_LAUNCH_CONFIG,
+        strategies=(
+            DEFAULT_LAUNCH_CONFIG.strategies[0],
+            replace(DEFAULT_LAUNCH_CONFIG.strategies[1], universe_id="kosdaq150"),
+        ),
+    )
+
+    plan = LaunchResolutionService(tmp_path).resolve(altered)
+
+    assert plan.selected_run_ids == ["op_fwd_yield_20260405_110000"]
+    assert [item.strategy_name for item in plan.missing_presets] == ["momentum"]
+
+
 def test_resolution_reuses_legacy_saved_run_when_only_compat_fields_are_missing(tmp_path: Path) -> None:
     payload = asdict(DEFAULT_LAUNCH_CONFIG.global_config)
     payload["strategy"] = "op_fwd_yield"

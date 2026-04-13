@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 from .benchmarks import BenchmarkRepository, SectorRepository
+from .benchmarks import default_repositories_for_universe
 from .comparison_figures import ComparisonFigureBuilder
 from .models import ComparisonBundle, ReportBundle, ReportKind, ReportSpec, SavedRun, TearsheetBundle
 from .figures import TearsheetFigureBuilder
@@ -69,11 +70,17 @@ class ReportBuilder:
         )
 
     def _build_snapshots(self, runs: list[SavedRun], spec: ReportSpec) -> list[object]:
-        factory = PerformanceSnapshotFactory(
-            benchmark_repo=BenchmarkRepository.default(),
-            sector_repo=SectorRepository.default(),
-        )
-        return [factory.build(run, spec.benchmark) for run in runs]
+        snapshots: list[object] = []
+        for run in runs:
+            benchmark_repo, sector_repo = default_repositories_for_universe(
+                str(run.config.get("universe_id")) if run.config.get("universe_id") is not None else None
+            )
+            factory = PerformanceSnapshotFactory(
+                benchmark_repo=benchmark_repo,
+                sector_repo=sector_repo,
+            )
+            snapshots.append(factory.build(run, spec.benchmark))
+        return snapshots
 
     def _build_tearsheet_bundle(
         self,

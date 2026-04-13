@@ -31,6 +31,7 @@ from .strategies import (
     list_strategies,
     register_strategy,
 )
+from .universe import UniverseRegistry, UniverseSpec
 from .validation import SplitConfig, SplitResult, ValidationSession, split_frame
 
 __all__ = (
@@ -68,6 +69,8 @@ __all__ = (
     "SplitResult",
     "ThresholdTrend",
     "TimeSeriesStrategy",
+    "UniverseRegistry",
+    "UniverseSpec",
     "TradeCost",
     "ValidationSession",
     "WeeklySchedule",

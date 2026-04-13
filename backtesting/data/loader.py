@@ -14,6 +14,7 @@ class LoadRequest:
     end: str
     universe: pd.DataFrame | None = None
     benchmark: pd.Series | None = None
+    universe_id: str | None = None
     price_mode: str = "adj"
 
 
@@ -43,6 +44,15 @@ class DataLoader:
         DatasetId.QW_INSTITUTION: "inst_flow",
         DatasetId.QW_MKTCAP: "market_cap",
         DatasetId.QW_K200_YN: "k200_yn",
+        DatasetId.QW_KSDQ_ADJ_C: "close",
+        DatasetId.QW_KSDQ_ADJ_O: "open",
+        DatasetId.QW_KSDQ_ADJ_H: "high",
+        DatasetId.QW_KSDQ_ADJ_L: "low",
+        DatasetId.QW_KSDQ_V: "volume",
+        DatasetId.QW_KSDQ_MKCAP: "market_cap",
+        DatasetId.QW_KSDQ_MKTCAP_FLT: "float_market_cap",
+        DatasetId.QW_KSDQ150_YN: "universe_membership",
+        DatasetId.QW_KSDQ_WICS_SEC_BIG: "sector_big",
         DatasetId.QW_LIABILITY_LFQ0: "liability",
         DatasetId.QW_MKTCAP_FLT: "float_market_cap",
         DatasetId.QW_MKT_TYP: "market_type",
@@ -72,6 +82,8 @@ class DataLoader:
             spec = self.catalog.get(dataset_id)
             frame = self._load_frame(spec, request)
             key = self.FRAME_KEYS.get(dataset_id, spec.stem)
+            if key in frames:
+                raise ValueError(f"duplicate semantic frame key: {key}")
             frames[key] = frame
         return MarketData(
             frames=frames,

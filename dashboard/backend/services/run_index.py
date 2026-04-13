@@ -118,12 +118,19 @@ class RunIndexService:
                 "benchmark_name": config.get("benchmark_name", benchmark.name),
                 "benchmark_dataset": config.get("benchmark_dataset", benchmark.dataset),
                 "warmup_days": config.get("warmup_days", 0),
+                "universe_id": RunIndexService._normalize_universe_id(config.get("universe_id")),
             }.items()
             if key != "name"
         }
         if not relevant:
             return None
         return json.dumps(RunIndexService._normalize_value(relevant), sort_keys=True, separators=(",", ":"))
+
+    @staticmethod
+    def _normalize_universe_id(value: object) -> object:
+        if value in (None, "legacy_k200"):
+            return None
+        return value
 
     @staticmethod
     def _normalize_value(value: Any) -> Any:

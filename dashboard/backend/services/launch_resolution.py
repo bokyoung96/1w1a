@@ -119,6 +119,11 @@ class LaunchResolutionService:
     def _build_signature(config: DashboardLaunchConfig, preset: StrategyPreset) -> dict[str, Any]:
         signature = asdict(config.global_config)
         signature["strategy"] = preset.strategy_name
+        signature["universe_id"] = LaunchResolutionService._normalize_universe_id(preset.universe_id)
+        signature["use_k200"] = LaunchResolutionService._normalize_use_k200(
+            signature["use_k200"],
+            preset.universe_id,
+        )
         signature.update(dict(preset.params))
         signature["benchmark_code"] = preset.benchmark.code
         signature["benchmark_name"] = preset.benchmark.name
@@ -134,10 +139,13 @@ class LaunchResolutionService:
             "benchmark_name": benchmark.name,
             "benchmark_dataset": benchmark.dataset,
             "warmup_days": 0,
+            "universe_id": None,
         }
         return LaunchResolutionService._normalize_value(
             {
-                key: saved_config.get(key, compat_defaults.get(key))
+                key: LaunchResolutionService._normalize_universe_id(
+                    saved_config.get(key, compat_defaults.get(key))
+                )
                 for key in desired_signature
             }
         )
@@ -152,12 +160,25 @@ class LaunchResolutionService:
                 "benchmark_name": saved_config.get("benchmark_name", benchmark.name),
                 "benchmark_dataset": saved_config.get("benchmark_dataset", benchmark.dataset),
                 "warmup_days": saved_config.get("warmup_days", 0),
+                "universe_id": LaunchResolutionService._normalize_universe_id(saved_config.get("universe_id")),
             }.items()
             if key not in {"name"}
         }
         if not relevant_config:
             return None
         return json.dumps(self._normalize_value(relevant_config), sort_keys=True, separators=(",", ":"))
+
+    @staticmethod
+    def _normalize_universe_id(value: Any) -> Any:
+        if value in (None, "legacy_k200"):
+            return None
+        return value
+
+    @staticmethod
+    def _normalize_use_k200(use_k200: Any, universe_id: Any) -> Any:
+        if universe_id not in (None, "legacy_k200"):
+            return False
+        return use_k200
 
     @staticmethod
     def _archive_run_dir(runs_root: Path, run_id: str) -> None:

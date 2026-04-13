@@ -34,6 +34,7 @@ class StrategyPreset:
     params: Mapping[str, object] = field(default_factory=dict)
     benchmark: BenchmarkConfig = field(default_factory=BenchmarkConfig.default_kospi200)
     warmup: WarmupConfig = field(default_factory=WarmupConfig)
+    universe_id: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "params", MappingProxyType(dict(self.params)))

@@ -7,9 +7,10 @@ from pandas.testing import assert_frame_equal
 import run as root_run
 from backtesting.catalog import DataCatalog
 from backtesting.data import ParquetStore
+from backtesting.engine import BacktestResult
 from backtesting.policy.base import BUCKET_LEDGER_COLUMNS, PositionPlan
 from backtesting.reporting.writer import RunWriter, _EMPTY_PNG
-from backtesting.run import BacktestRunner, RunConfig, main as backtesting_main
+from backtesting.run import BacktestRunner, RunConfig, RunReport, main as backtesting_main
 
 
 @pytest.fixture(autouse=True)
@@ -51,6 +52,9 @@ def test_runner_executes_momentum_strategy(tmp_path: Path) -> None:
     )
 
     assert report.summary["final_equity"] > 0.0
+    assert report.config.use_k200 is True
+    assert report.config.universe_id is None
+    assert report.config.benchmark_name == "KOSPI200"
     assert report.result.weights.loc["2024-01-04", "A"] == 1.0
     assert report.output_dir is not None
     assert (report.output_dir / "config.json").exists()
@@ -63,6 +67,42 @@ def test_runner_executes_momentum_strategy(tmp_path: Path) -> None:
     assert (report.output_dir / "validation.json").exists()
     assert (report.output_dir / "split.json").exists()
     assert (report.output_dir / "factor.json").exists()
+
+
+def test_runner_persists_implicit_legacy_universe_as_none(tmp_path: Path) -> None:
+    parquet_dir = tmp_path / "parquet"
+    raw_dir = tmp_path / "raw"
+    result_dir = tmp_path / "results"
+    parquet_dir.mkdir()
+    raw_dir.mkdir()
+    store = ParquetStore(parquet_dir)
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+    store.write("qw_adj_c", pd.DataFrame({"A": [10.0, 11.0, 12.0], "B": [10.0, 10.0, 9.0]}, index=index))
+    store.write("qw_adj_o", pd.DataFrame({"A": [10.0, 11.0, 12.0], "B": [10.0, 10.0, 9.0]}, index=index))
+    store.write("qw_k200_yn", pd.DataFrame({"A": [1, 1, 1], "B": [1, 1, 1]}, index=index))
+
+    runner = BacktestRunner(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+        result_dir=result_dir,
+    )
+    report = runner.run(
+        RunConfig(
+            strategy="momentum",
+            start="2024-01-02",
+            end="2024-01-04",
+            top_n=1,
+            lookback=1,
+            schedule="daily",
+            fill_mode="close",
+        )
+    )
+
+    assert report.config.universe_id is None
+    assert report.output_dir is not None
+    persisted_config = pd.read_json(report.output_dir / "config.json", typ="series")
+    assert persisted_config["universe_id"] is None
 
 
 def test_runner_executes_op_fwd_strategy(tmp_path: Path) -> None:
@@ -131,6 +171,9 @@ def test_runner_executes_breakout_52w_simple_strategy(tmp_path: Path) -> None:
     )
 
     assert report.summary["final_equity"] > 0.0
+    assert report.config.use_k200 is False
+    assert report.config.universe_id is None
+    assert report.config.benchmark_name == "KOSPI200"
     assert report.result.weights.to_numpy().sum() > 0.0
     assert report.result.weights.iloc[-1]["A"] == 1.0
     assert report.output_dir is not None
@@ -527,3 +570,156 @@ def test_runner_raises_clear_error_when_trimmed_display_range_is_empty(tmp_path:
 
 def test_root_run_delegates_to_backtesting_main() -> None:
     assert root_run.main is backtesting_main
+
+
+def test_runner_uses_kosdaq_universe_specific_datasets(tmp_path: Path) -> None:
+    parquet_dir = tmp_path / "parquet"
+    raw_dir = tmp_path / "raw"
+    result_dir = tmp_path / "results"
+    parquet_dir.mkdir()
+    raw_dir.mkdir()
+    store = ParquetStore(parquet_dir)
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+
+    store.write("qw_adj_c", pd.DataFrame({"A": [1.0, 1.0, 1.0]}, index=index))
+    store.write("qw_ksdq_adj_c", pd.DataFrame({"A": [10.0, 11.0, 12.0]}, index=index))
+    store.write("qw_ksdq150_yn", pd.DataFrame({"A": [1, 1, 1], "B": [0, 0, 0]}, index=index))
+
+    runner = BacktestRunner(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+        result_dir=result_dir,
+    )
+    report = runner.run(
+        RunConfig(
+            strategy="momentum",
+            start="2024-01-02",
+            end="2024-01-04",
+            lookback=1,
+            schedule="daily",
+            fill_mode="close",
+            universe_id="kosdaq150",
+        )
+    )
+
+    assert report.config.universe_id == "kosdaq150"
+    assert report.config.use_k200 is False
+    assert report.config.benchmark_name == "KOSDAQ150"
+    assert report.result.equity.index[-1].isoformat() == "2024-01-04T00:00:00"
+
+
+def test_runner_uses_kosdaq_default_next_open_path(tmp_path: Path) -> None:
+    parquet_dir = tmp_path / "parquet"
+    raw_dir = tmp_path / "raw"
+    result_dir = tmp_path / "results"
+    parquet_dir.mkdir()
+    raw_dir.mkdir()
+    store = ParquetStore(parquet_dir)
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+
+    store.write("qw_ksdq_adj_c", pd.DataFrame({"A": [10.0, 11.0, 12.0], "B": [9.0, 9.0, 9.0]}, index=index))
+    store.write("qw_ksdq_adj_o", pd.DataFrame({"A": [9.5, 10.5, 11.5], "B": [9.0, 9.0, 9.0]}, index=index))
+    store.write("qw_ksdq150_yn", pd.DataFrame({"A": [1, 1, 1], "B": [0, 0, 0]}, index=index))
+
+    runner = BacktestRunner(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+        result_dir=result_dir,
+    )
+    report = runner.run(
+        RunConfig(
+            strategy="momentum",
+            start="2024-01-02",
+            end="2024-01-04",
+            lookback=1,
+            schedule="daily",
+            universe_id="kosdaq150",
+        )
+    )
+
+    assert report.config.universe_id == "kosdaq150"
+    assert report.config.use_k200 is False
+    assert report.config.benchmark_name == "KOSDAQ150"
+    assert report.result.equity.index[-1].isoformat() == "2024-01-04T00:00:00"
+
+
+def test_runner_uses_kosdaq_market_cap_remap_for_op_fwd_strategy(tmp_path: Path) -> None:
+    parquet_dir = tmp_path / "parquet"
+    raw_dir = tmp_path / "raw"
+    result_dir = tmp_path / "results"
+    parquet_dir.mkdir()
+    raw_dir.mkdir()
+    store = ParquetStore(parquet_dir)
+    daily = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+    monthly = pd.to_datetime(["2024-01-31"])
+
+    store.write("qw_ksdq_adj_c", pd.DataFrame({"A": [10.0, 10.5, 11.0], "B": [10.0, 10.0, 10.0]}, index=daily))
+    store.write("qw_ksdq_mkcap", pd.DataFrame({"A": [100.0, 100.0, 100.0], "B": [10.0, 10.0, 10.0]}, index=daily))
+    store.write("qw_op_nfy1", pd.DataFrame({"A": [20.0], "B": [5.0]}, index=monthly))
+    store.write("qw_ksdq150_yn", pd.DataFrame({"A": [1, 1, 1], "B": [1, 1, 1]}, index=daily))
+
+    runner = BacktestRunner(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+        result_dir=result_dir,
+    )
+    report = runner.run(
+        RunConfig(
+            strategy="op_fwd_yield",
+            start="2024-01-02",
+            end="2024-01-04",
+            top_n=1,
+            schedule="daily",
+            fill_mode="close",
+            universe_id="kosdaq150",
+        )
+    )
+
+    assert report.config.universe_id == "kosdaq150"
+    assert report.config.use_k200 is False
+    assert report.config.benchmark_name == "KOSDAQ150"
+    assert report.summary["final_equity"] > 0.0
+    assert report.result.weights.iloc[-1]["B"] == 1.0
+
+
+def test_run_parser_accepts_universe_argument(monkeypatch: pytest.MonkeyPatch) -> None:
+    observed: dict[str, object] = {}
+
+    class StubRunner:
+        def __init__(self, result_dir=None):
+            pass
+
+        def run(self, config):
+            observed["config"] = config
+            index = pd.to_datetime(["2024-01-02"])
+            result = BacktestResult(
+                equity=pd.Series([1.0], index=index),
+                returns=pd.Series([0.0], index=index),
+                weights=pd.DataFrame({"A": [1.0]}, index=index),
+                qty=pd.DataFrame({"A": [1.0]}, index=index),
+                turnover=pd.Series([0.0], index=index),
+            )
+            return RunReport(config=config, summary={"final_equity": 1.0, "avg_turnover": 0.0}, result=result)
+
+    monkeypatch.setattr("backtesting.run.BacktestRunner", StubRunner)
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "run.py",
+            "--strategy",
+            "momentum",
+            "--start",
+            "2024-01-02",
+            "--end",
+            "2024-01-02",
+            "--universe",
+            "kosdaq150",
+        ],
+    )
+
+    backtesting_main()
+
+    assert observed["config"].universe_id == "kosdaq150"

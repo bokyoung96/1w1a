@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 import time
+from dataclasses import replace
 from pathlib import Path
 
 from dashboard.run import build_frontend, build_parser, launch_dashboard
@@ -50,6 +51,43 @@ def test_launch_dashboard_reuses_matching_runs_and_executes_missing_presets(tmp_
     assert observed_configs[0].benchmark_name == DEFAULT_LAUNCH_CONFIG.strategies[1].benchmark.name
     assert observed_configs[0].warmup_days == DEFAULT_LAUNCH_CONFIG.strategies[1].warmup.extra_days
     assert captured_defaults["run_ids"] == ["momentum_20260405_100000", "op_fwd_yield_20260405_120000"]
+
+
+def test_launch_dashboard_passes_universe_id_to_backtest_runner(tmp_path: Path, monkeypatch) -> None:
+    observed_configs = []
+    kosdaq_preset = replace(DEFAULT_LAUNCH_CONFIG.strategies[1], universe_id="kosdaq150")
+    launch_config = replace(DEFAULT_LAUNCH_CONFIG, strategies=(DEFAULT_LAUNCH_CONFIG.strategies[0], kosdaq_preset))
+
+    class FakeRunner:
+        def run(self, config):
+            observed_configs.append(config)
+            return type("Report", (), {"output_dir": tmp_path / f"{config.strategy}_20260405_120000"})()
+
+    monkeypatch.setattr("dashboard.run.build_frontend", lambda frontend_dir: None)
+    monkeypatch.setattr("dashboard.run.DEFAULT_LAUNCH_CONFIG", launch_config)
+    monkeypatch.setattr("dashboard.run.BacktestRunner", lambda result_dir=None: FakeRunner())
+    monkeypatch.setattr(
+        "dashboard.run.create_app",
+        lambda default_selected_run_ids, frontend_dist=None: object(),
+    )
+    monkeypatch.setattr("dashboard.run.uvicorn.run", lambda app, host, port: None)
+    monkeypatch.setattr(
+        "dashboard.run.LaunchResolutionService.resolve",
+        lambda self, config: type(
+            "Plan",
+            (),
+            {
+                "resolved_runs": (type("ResolvedRun", (), {"run_id": "momentum_20260405_100000", "strategy_name": "momentum"})(),),
+                "missing_presets": (config.strategies[1],),
+                "selected_run_ids": ["momentum_20260405_100000"],
+            },
+        )(),
+    )
+
+    launch_dashboard(runs_root=tmp_path, host="127.0.0.1", port=8000)
+
+    assert observed_configs[0].universe_id == "kosdaq150"
+    assert observed_configs[0].use_k200 is False
 
 
 def test_build_frontend_runs_npm_build_without_install_when_lockfile_matches(tmp_path: Path, monkeypatch) -> None:

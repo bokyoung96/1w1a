@@ -64,6 +64,7 @@ def launch_dashboard(
 
 def _build_run_config(preset: StrategyPreset) -> RunConfig:
     config = DEFAULT_LAUNCH_CONFIG.global_config
+    use_k200 = config.use_k200 if preset.universe_id in (None, "legacy_k200") else False
     return RunConfig(
         start=config.start,
         end=config.end,
@@ -75,8 +76,9 @@ def _build_run_config(preset: StrategyPreset) -> RunConfig:
         fee=config.fee,
         sell_tax=config.sell_tax,
         slippage=config.slippage,
-        use_k200=config.use_k200,
+        use_k200=use_k200,
         allow_fractional=config.allow_fractional,
+        universe_id=preset.universe_id,
         benchmark_code=preset.benchmark.code,
         benchmark_name=preset.benchmark.name,
         benchmark_dataset=preset.benchmark.dataset,
