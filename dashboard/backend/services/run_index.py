@@ -118,6 +118,7 @@ class RunIndexService:
                 "benchmark_name": config.get("benchmark_name", benchmark.name),
                 "benchmark_dataset": config.get("benchmark_dataset", benchmark.dataset),
                 "warmup_days": config.get("warmup_days", 0),
+                "universe_id": config.get("universe_id"),
             }.items()
             if key != "name"
         }

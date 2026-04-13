@@ -119,6 +119,7 @@ class LaunchResolutionService:
     def _build_signature(config: DashboardLaunchConfig, preset: StrategyPreset) -> dict[str, Any]:
         signature = asdict(config.global_config)
         signature["strategy"] = preset.strategy_name
+        signature["universe_id"] = preset.universe_id
         signature.update(dict(preset.params))
         signature["benchmark_code"] = preset.benchmark.code
         signature["benchmark_name"] = preset.benchmark.name
@@ -134,6 +135,7 @@ class LaunchResolutionService:
             "benchmark_name": benchmark.name,
             "benchmark_dataset": benchmark.dataset,
             "warmup_days": 0,
+            "universe_id": None,
         }
         return LaunchResolutionService._normalize_value(
             {
@@ -152,6 +154,7 @@ class LaunchResolutionService:
                 "benchmark_name": saved_config.get("benchmark_name", benchmark.name),
                 "benchmark_dataset": saved_config.get("benchmark_dataset", benchmark.dataset),
                 "warmup_days": saved_config.get("warmup_days", 0),
+                "universe_id": saved_config.get("universe_id"),
             }.items()
             if key not in {"name"}
         }

@@ -134,6 +134,23 @@ def test_list_runs_dedupes_legacy_and_new_schema_copies_of_same_config(tmp_path:
     assert [run.run_id for run in runs] == ["op_fwd_yield_20260405_090000"]
 
 
+def test_list_runs_treats_universe_id_as_part_of_signature(tmp_path: Path) -> None:
+    _write_run(tmp_path, "momentum_20260405_090000", name="Momentum", strategy="momentum", final_equity=121.0)
+    _write_run(tmp_path, "momentum_20260405_100000", name="Momentum KOSDAQ", strategy="momentum", final_equity=122.0)
+
+    first = tmp_path / "momentum_20260405_090000" / "config.json"
+    second = tmp_path / "momentum_20260405_100000" / "config.json"
+    first_payload = json.loads(first.read_text(encoding="utf-8"))
+    second_payload = json.loads(second.read_text(encoding="utf-8"))
+    second_payload["universe_id"] = "kosdaq150"
+    first.write_text(json.dumps(first_payload), encoding="utf-8")
+    second.write_text(json.dumps(second_payload), encoding="utf-8")
+
+    runs = RunIndexService(tmp_path).list_runs()
+
+    assert [run.run_id for run in runs] == ["momentum_20260405_100000", "momentum_20260405_090000"]
+
+
 def test_list_runs_skips_malformed_json_and_invalid_numeric_values(tmp_path: Path) -> None:
     valid_dir = tmp_path / "valid_run_20260405_120000"
     _write_run(valid_dir.parent, valid_dir.name, name="Momentum", strategy="momentum", final_equity=111.0)

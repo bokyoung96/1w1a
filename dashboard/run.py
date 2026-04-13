@@ -77,6 +77,7 @@ def _build_run_config(preset: StrategyPreset) -> RunConfig:
         slippage=config.slippage,
         use_k200=config.use_k200,
         allow_fractional=config.allow_fractional,
+        universe_id=preset.universe_id,
         benchmark_code=preset.benchmark.code,
         benchmark_name=preset.benchmark.name,
         benchmark_dataset=preset.benchmark.dataset,

@@ -96,6 +96,22 @@ def test_resolution_marks_strategy_missing_when_warmup_changes(tmp_path: Path) -
     assert [item.strategy_name for item in plan.missing_presets] == ["momentum"]
 
 
+def test_resolution_marks_strategy_missing_when_universe_changes(tmp_path: Path) -> None:
+    _write_matching_default_runs(tmp_path)
+    altered = replace(
+        DEFAULT_LAUNCH_CONFIG,
+        strategies=(
+            replace(DEFAULT_LAUNCH_CONFIG.strategies[0], universe_id="kosdaq150"),
+            DEFAULT_LAUNCH_CONFIG.strategies[1],
+        ),
+    )
+
+    plan = LaunchResolutionService(tmp_path).resolve(altered)
+
+    assert plan.selected_run_ids == ["op_fwd_yield_20260405_110000"]
+    assert [item.strategy_name for item in plan.missing_presets] == ["momentum"]
+
+
 def test_resolution_reuses_legacy_saved_run_when_only_compat_fields_are_missing(tmp_path: Path) -> None:
     payload = asdict(DEFAULT_LAUNCH_CONFIG.global_config)
     payload["strategy"] = "op_fwd_yield"
