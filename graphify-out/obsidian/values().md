@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/ResearchWorkspace.tsx"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Backtesting Reporting Frontend"
 location: "L383"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # values()
@@ -29,4 +29,4 @@ tags:
 - [[test_comparison_figure_builder_writes_expected_page_assets()]] - `calls` [INFERRED]
 - [[test_tearsheet_figure_builder_writes_expected_page_assets()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

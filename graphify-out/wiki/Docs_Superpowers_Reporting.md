@@ -1,60 +1,78 @@
 # Docs Superpowers Reporting
 
-> 24 nodes · cohesion 0.09
+> 458 nodes · cohesion 0.01
 
 ## Key Concepts
 
+- **2026-04-05-research-dashboard-refresh.md** (143 connections) — `docs/superpowers/plans/2026-04-05-research-dashboard-refresh.md`
+- **2026-04-03-performance-reporting-redesign-design.md** (131 connections) — `docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md`
 - **2026-04-03-backtest-reporting-implementation.md** (129 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
+- **2026-04-03-backtest-reporting-design.md** (121 connections) — `docs/superpowers/specs/2026-04-03-backtest-reporting-design.md`
+- **2026-04-05-live-dashboard-design.md** (121 connections) — `docs/superpowers/specs/2026-04-05-live-dashboard-design.md`
+- **2026-04-05-live-dashboard-single-command-launch.md** (114 connections) — `docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md`
+- **2026-04-06-dashboard-analytics-refresh-design.md** (96 connections) — `docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md`
+- **2026-04-13-kosdaq150-universe-integration-design.md** (96 connections) — `docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md`
+- **2026-04-05-research-dashboard-refresh-design.md** (88 connections) — `docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md`
+- **README.md** (87 connections) — `README.md`
+- **2026-04-04-performance-reporting-pdf-polish-design.md** (86 connections) — `docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md`
+- **2026-04-05-live-dashboard-single-command-launch-design.md** (74 connections) — `docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md`
+- **2026-04-12-52w-breakout-strategies-design.md** (72 connections) — `docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md`
+- **2026-04-07-dashboard-research-series-plan.md** (64 connections) — `docs/superpowers/plans/2026-04-07-dashboard-research-series-plan.md`
+- **2026-04-05-dashboard-ux-followups.md** (59 connections) — `docs/superpowers/plans/2026-04-05-dashboard-ux-followups.md`
+- **2026-04-07-dashboard-research-series-design.md** (59 connections) — `docs/superpowers/specs/2026-04-07-dashboard-research-series-design.md`
+- **2026-04-06-dashboard-metadata-detail-redesign.md** (50 connections) — `docs/superpowers/specs/2026-04-06-dashboard-metadata-detail-redesign.md`
+- **2026-04-05-dashboard-chart-followups.md** (47 connections) — `docs/superpowers/plans/2026-04-05-dashboard-chart-followups.md`
+- **2026-04-06-dashboard-metadata-detail.md** (47 connections) — `docs/superpowers/plans/2026-04-06-dashboard-metadata-detail.md`
+- **2026-04-07-dashboard-drawdown-weight-design.md** (43 connections) — `docs/superpowers/specs/2026-04-07-dashboard-drawdown-weight-design.md`
+- **ParquetStore.read()** (32 connections) — `backtesting/data/store.py`
 - **RunReader.read()** (31 connections) — `backtesting/reporting/reader.py`
-- **point()** (15 connections) — `dashboard/frontend/src/components/ResearchWorkspace.tsx`
-- **backtesting/__init__.py** (3 connections) — `docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md`
-- **RunReader._read_optional_json()** (3 connections) — `backtesting/reporting/reader.py`
-- **RunReader._read_series()** (3 connections) — `backtesting/reporting/reader.py`
-- **1w1a Backtest Reporting Implementation Plan** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Existing files to modify** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **File Map** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **New package files** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **New test files** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Placeholder scan** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Self-Review** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Spec coverage** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Task 1: Add Typed Report Models and Run Reader** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Task 2: Build Summary Table Helpers** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Task 3: Add Plotly Figure Builders** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Task 4: Assemble Report Bundles** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Task 5: Render HTML Reports** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Task 6: Add PDF Export with HTML Fallback** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Task 7: Wire a Report CLI** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Task 8: Extend Run Bundles for Future Report Sections** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Task 9: End-to-End HTML and PDF Smoke Coverage** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- **Type consistency** (1 connections) — `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
+- **PerformanceStrip.tsx** (28 connections) — `dashboard/frontend/src/components/PerformanceStrip.tsx`
+- **ResearchDetailPanel.tsx** (27 connections) — `dashboard/frontend/src/components/ResearchDetailPanel.tsx`
+- **Goal** (26 connections) — `docs/superpowers/specs/2026-04-06-dashboard-metadata-detail-redesign.md`
+- *... and 433 more nodes in this community*
 
 ## Relationships
 
-- [[Docs Superpowers Plans]] (63 shared connections)
-- [[Docs Superpowers Reporting]] (22 shared connections)
-- [[Backtesting Reporting Tests]] (19 shared connections)
-- [[Docs Superpowers Live]] (8 shared connections)
-- [[Tests Test Run.Py Engine]] (7 shared connections)
-- [[Docs Superpowers Breakout]] (5 shared connections)
-- [[Tests Dashboard Test_Run]] (4 shared connections)
-- [[Backtesting Reporting Composers]] (4 shared connections)
-- [[Docs Superpowers Research]] (4 shared connections)
-- [[Raw Ksdq Csv]] (3 shared connections)
-- [[Docs Superpowers Strategy]] (3 shared connections)
-- [[Docs Superpowers Analytics]] (3 shared connections)
+- [[Backtesting Reporting Frontend]] (188 shared connections)
+- [[Backtesting Reporting Tests]] (183 shared connections)
+- [[Raw Ksdq Csv]] (134 shared connections)
+- [[Tests Test Run.Py Engine]] (70 shared connections)
+- [[Docs Superpowers Plans]] (64 shared connections)
+- [[Docs Superpowers Strategy]] (58 shared connections)
+- [[Tests Dashboard Backend]] (56 shared connections)
+- [[Docs Superpowers Portfolio]] (56 shared connections)
+- [[Tests Reporting Test_Builder]] (45 shared connections)
+- [[Dashboard Frontend App]] (21 shared connections)
+- [[Tests Reporting Analytics]] (15 shared connections)
+- [[Backtesting Strategies Tests]] (5 shared connections)
 
 ## Source Files
 
+- `README.md`
+- `backtesting/data/store.py`
+- `backtesting/reporting/benchmarks.py`
+- `backtesting/reporting/cli.py`
 - `backtesting/reporting/reader.py`
+- `dashboard/backend/services/dashboard_payload.py`
+- `dashboard/backend/services/launch_resolution.py`
+- `dashboard/frontend/src/components/App.test.tsx`
+- `dashboard/frontend/src/components/PerformanceStrip.tsx`
+- `dashboard/frontend/src/components/ResearchDetailPanel.tsx`
 - `dashboard/frontend/src/components/ResearchWorkspace.tsx`
+- `dashboard/frontend/src/components/RunSelector.test.tsx`
 - `docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md`
-- `docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md`
+- `docs/superpowers/plans/2026-04-03-stock-backtesting-implementation.md`
+- `docs/superpowers/plans/2026-04-05-dashboard-chart-followups.md`
+- `docs/superpowers/plans/2026-04-05-dashboard-ux-followups.md`
+- `docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md`
+- `docs/superpowers/plans/2026-04-05-research-dashboard-refresh.md`
+- `docs/superpowers/plans/2026-04-06-dashboard-metadata-detail.md`
+- `docs/superpowers/plans/2026-04-07-dashboard-research-series-plan.md`
 
 ## Audit Trail
 
-- EXTRACTED: 41 (20%)
-- INFERRED: 161 (80%)
+- EXTRACTED: 821 (28%)
+- INFERRED: 2126 (72%)
 - AMBIGUOUS: 0 (0%)
 
 ---

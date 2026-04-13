@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/registry.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L24"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # build_strategy()
@@ -24,4 +24,4 @@ tags:
 - [[test_op_fwd_yield_strategy_builds_weights()]] - `calls` [INFERRED]
 - [[test_registered_strategy_avoids_future_warning_when_masking_universe()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests

@@ -1,67 +1,74 @@
 # Docs Superpowers Plans
 
-> 33 nodes · cohesion 0.07
+> 102 nodes · cohesion 0.03
 
 ## Key Concepts
 
-- **2026-04-03-performance-reporting-redesign-implementation.md** (159 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **2026-04-05-dashboard-ux-followups.md** (59 connections) — `docs/superpowers/plans/2026-04-05-dashboard-ux-followups.md`
-- **main()** (23 connections) — `backtesting/reporting/cli.py`
-- **BenchmarkRepository.default()** (22 connections) — `backtesting/reporting/benchmarks.py`
-- **series()** (19 connections) — `dashboard/frontend/src/components/PerformanceStrip.tsx`
-- **README.md** (8 connections) — `docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md`
-- **visible()** (8 connections) — `dashboard/frontend/src/components/ResearchWorkspace.tsx`
-- **DatasetId** (7 connections) — `backtesting/catalog/enums.py`
-- **sectors()** (7 connections) — `dashboard/frontend/src/components/ResearchWorkspace.tsx`
-- **_plot()** (3 connections) — `tests/reporting/test_builder.py`
-- **Build Reports** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **Execution Handoff** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **Existing Files To Reuse Without Changing Responsibilities** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **File Structure** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **Modified Files** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **New Files** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **Performance Reporting Redesign Implementation Plan** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **Placeholder Scan** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **Self-Review** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **Spec Coverage** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **Task 1: Introduce Report Modes And Snapshot-Oriented Domain Models** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **Task 2: Add Benchmark And Sector Repositories** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **Task 3: Build Analytics Snapshots For Metrics, Rolling Stats, Drawdowns, And Sector Exposures** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **Task 4: Replace Flat Plots With Page-Level Subplot Figure Builders** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- **Task 5: Add Report-Specific Table Builders, Composers, Templates, And Styles** (1 connections) — `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- *... and 8 more nodes in this community*
+- **2026-04-03-stock-backtesting-implementation.md** (165 connections) — `docs/superpowers/plans/2026-04-03-stock-backtesting-implementation.md`
+- **test_schedule.py** (13 connections) — `tests/execution/test_schedule.py`
+- **SplitConfig** (12 connections) — `backtesting/validation/split.py`
+- **CustomSchedule.flags()** (12 connections) — `backtesting/execution/schedule.py`
+- **split_frame()** (12 connections) — `backtesting/validation/split.py`
+- **test_split.py** (11 connections) — `tests/validation/test_split.py`
+- **KISAuth** (9 connections) — `kis/config.py`
+- **RootPaths** (8 connections) — `root.py`
+- **test_policy.py** (8 connections) — `tests/data/test_policy.py`
+- **fill_prices()** (8 connections) — `backtesting/execution/fill.py`
+- **TRBatchClient.call_batch()** (8 connections) — `kis/tr_id/register.py`
+- **KISAuth.get_access_token()** (7 connections) — `kis/config.py`
+- **WeeklySchedule** (6 connections) — `backtesting/execution/schedule.py`
+- **schedule.py** (6 connections) — `backtesting/execution/schedule.py`
+- **expand_monthly_frame()** (6 connections) — `backtesting/data/policy.py`
+- **DailySchedule.flags()** (6 connections) — `backtesting/execution/schedule.py`
+- **KISAuth._load_token()** (6 connections) — `kis/config.py`
+- **DataTools.to_frame()** (6 connections) — `kis/tools.py`
+- **main()** (6 connections) — `kis/tr_id/call.py`
+- **DailySchedule** (5 connections) — `backtesting/execution/schedule.py`
+- **MonthlySchedule** (5 connections) — `backtesting/execution/schedule.py`
+- **TradeCost.total()** (5 connections) — `backtesting/execution/costs.py`
+- **BacktestRunner._schedule()** (5 connections) — `backtesting/run.py`
+- **RootPaths.raw_path()** (5 connections) — `root.py`
+- **TradeCost** (4 connections) — `backtesting/execution/costs.py`
+- *... and 77 more nodes in this community*
 
 ## Relationships
 
-- [[Docs Superpowers Plans]] (92 shared connections)
-- [[Docs Superpowers Reporting]] (33 shared connections)
-- [[Backtesting Reporting Tests]] (30 shared connections)
-- [[Raw Ksdq Csv]] (12 shared connections)
-- [[Docs Superpowers Live]] (12 shared connections)
-- [[Backtesting Reporting Composers]] (12 shared connections)
-- [[Tests Test Run.Py Engine]] (10 shared connections)
-- [[Docs Superpowers Breakout]] (9 shared connections)
-- [[Docs Superpowers Research]] (9 shared connections)
-- [[Docs Superpowers Policy]] (8 shared connections)
-- [[Docs Superpowers Strategy]] (7 shared connections)
-- [[Docs Superpowers Analytics]] (7 shared connections)
+- [[Docs Superpowers Reporting]] (64 shared connections)
+- [[Raw Ksdq Csv]] (36 shared connections)
+- [[Tests Test Run.Py Engine]] (25 shared connections)
+- [[Tests Reporting Analytics]] (13 shared connections)
+- [[Backtesting Reporting Frontend]] (10 shared connections)
+- [[Docs Superpowers Strategy]] (6 shared connections)
+- [[Backtesting Strategies Tests]] (5 shared connections)
+- [[Backtesting Reporting Tests]] (5 shared connections)
+- [[Docs Superpowers Portfolio]] (5 shared connections)
+- [[Tests Dashboard Backend]] (5 shared connections)
+- [[Tests Reporting Test_Builder]] (4 shared connections)
 
 ## Source Files
 
-- `backtesting/catalog/enums.py`
-- `backtesting/reporting/benchmarks.py`
-- `backtesting/reporting/cli.py`
-- `dashboard/frontend/src/components/PerformanceStrip.tsx`
-- `dashboard/frontend/src/components/ResearchWorkspace.tsx`
-- `docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md`
-- `docs/superpowers/plans/2026-04-05-dashboard-ux-followups.md`
+- `backtesting/data/policy.py`
+- `backtesting/execution/costs.py`
+- `backtesting/execution/fill.py`
+- `backtesting/execution/schedule.py`
+- `backtesting/run.py`
+- `backtesting/validation/split.py`
+- `docs/superpowers/plans/2026-04-03-stock-backtesting-implementation.md`
 - `docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md`
-- `tests/reporting/test_builder.py`
+- `kis/config.py`
+- `kis/tools.py`
+- `kis/tr_id/call.py`
+- `kis/tr_id/register.py`
+- `root.py`
+- `tests/data/test_policy.py`
+- `tests/execution/test_schedule.py`
+- `tests/kis/test_root.py`
+- `tests/validation/test_split.py`
 
 ## Audit Trail
 
-- EXTRACTED: 54 (16%)
-- INFERRED: 284 (84%)
+- EXTRACTED: 179 (35%)
+- INFERRED: 335 (65%)
 - AMBIGUOUS: 0 (0%)
 
 ---

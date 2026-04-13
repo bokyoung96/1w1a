@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/PerformanceStrip.tsx"
 type: "code"
-community: "Dashboard Frontend Src"
+community: "Docs Superpowers Reporting"
 location: "L32"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Dashboard_Frontend_Src
+  - community/Docs_Superpowers_Reporting
 ---
 
 # formatLaunchText()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[PerformanceStrip.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Dashboard_Frontend_Src
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

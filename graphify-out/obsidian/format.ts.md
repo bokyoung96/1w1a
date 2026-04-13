@@ -1,11 +1,11 @@
 ---
 source_file: "dashboard/frontend/src/lib/format.ts"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Plans
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # format.ts
@@ -14,4 +14,4 @@ tags:
 - [[formatMoney()]] - `contains` [EXTRACTED]
 - [[formatPercent()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

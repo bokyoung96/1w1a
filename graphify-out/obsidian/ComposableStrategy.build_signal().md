@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/composable.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L42"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # ComposableStrategy.build_signal()
@@ -15,4 +15,4 @@ tags:
 - [[ComposableStrategy]] - `contains` [EXTRACTED]
 - [[LongOnlyTopN.build()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

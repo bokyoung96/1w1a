@@ -1,11 +1,11 @@
 ---
 source_file: "raw/options/qw_spot_ticker.csv"
 type: "document"
-community: "Raw Ksdq Csv"
+community: "Dashboard Frontend App"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Dashboard_Frontend_App
 ---
 
 # qw_spot_ticker data shape
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[Options Spot Ticker]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/document #graphify/EXTRACTED #community/Dashboard_Frontend_App

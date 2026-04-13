@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/policy/staged.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L18"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # StagedRuleSet
@@ -22,4 +22,4 @@ tags:
 - [[test_staged_policy_resets_progress_on_sign_flip()]] - `calls` [INFERRED]
 - [[test_staged_policy_zero_reset_is_per_symbol_with_same_day_progression()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests

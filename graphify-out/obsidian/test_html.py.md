@@ -1,11 +1,11 @@
 ---
 source_file: "tests/reporting/test_html.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Tests"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Tests
 ---
 
 # test_html.py
@@ -34,4 +34,4 @@ tags:
 - [[test_html_renderer_uses_tearsheet_template()]] - `contains` [EXTRACTED]
 - [[test_tearsheet_composer_builds_pdf_first_context()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

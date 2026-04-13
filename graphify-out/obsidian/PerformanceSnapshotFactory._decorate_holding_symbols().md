@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/snapshots.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Frontend"
 location: "L321"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # PerformanceSnapshotFactory._decorate_holding_symbols()
@@ -17,4 +17,4 @@ tags:
 - [[PerformanceSnapshotFactory._build_exposure()]] - `calls` [INFERRED]
 - [[SectorRepository.display_symbol()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

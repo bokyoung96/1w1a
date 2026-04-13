@@ -1,11 +1,11 @@
 ---
 source_file: "raw/qw_foreign_ratio.csv"
 type: "document"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # Foreign Ownership Ratio
@@ -64,4 +64,4 @@ tags:
 - [[test_tr_id_imports.py]] - `references` [INFERRED]
 - [[types.ts]] - `references` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/document #graphify/INFERRED #community/Backtesting_Reporting_Frontend

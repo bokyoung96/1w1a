@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/ingest/report.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Analytics"
 location: "L21"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Analytics
 ---
 
 # IngestResult.from_frame()
@@ -27,4 +27,4 @@ tags:
 - [[test_sector_repository_exposes_latest_row_and_counts_without_internal_access()]] - `calls` [INFERRED]
 - [[test_sector_repository_latest_sector_weights_maps_latest_date()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

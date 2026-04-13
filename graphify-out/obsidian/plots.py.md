@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/reporting/plots.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Tests Reporting Test_Builder"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Tests_Reporting_Test_Builder
 ---
 
 # plots.py
@@ -21,4 +21,4 @@ tags:
 - [[models.py]] - `imports_from` [EXTRACTED]
 - [[test_plots.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Test_Builder

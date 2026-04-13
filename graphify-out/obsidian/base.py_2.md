@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/signals/base.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # base.py
@@ -21,4 +21,4 @@ tags:
 - [[test_staged.py]] - `imports_from` [EXTRACTED]
 - [[test_strategy_contracts.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

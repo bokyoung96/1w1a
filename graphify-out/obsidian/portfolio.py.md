@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/validation/portfolio.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # portfolio.py
@@ -15,4 +15,4 @@ tags:
 - [[base.py_1]] - `imports_from` [EXTRACTED]
 - [[validate_position_plan()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

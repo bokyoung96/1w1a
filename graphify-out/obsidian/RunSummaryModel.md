@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/schemas.py"
 type: "code"
-community: "Dashboard Backend Schemas"
+community: "Tests Dashboard Backend"
 location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Dashboard_Backend_Schemas
+  - community/Tests_Dashboard_Backend
 ---
 
 # RunSummaryModel
@@ -15,4 +15,4 @@ tags:
 - [[RunIndexService._load_run_option()]] - `calls` [INFERRED]
 - [[schemas.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Dashboard_Backend_Schemas
+#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Backend

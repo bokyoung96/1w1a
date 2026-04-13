@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/construction/long_only.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L14"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # LongOnlyTopN
@@ -19,4 +19,4 @@ tags:
 - [[OpFwdYieldTopN.__post_init__()]] - `calls` [INFERRED]
 - [[long_only.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

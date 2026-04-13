@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/snapshots.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Frontend"
 location: "L50"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # PerformanceSnapshotFactory.__init__()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[PerformanceSnapshotFactory]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

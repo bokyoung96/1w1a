@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/strategies.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Tests Dashboard Backend"
 location: "L11"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Tests_Dashboard_Backend
 ---
 
 # GlobalRunConfig
@@ -15,4 +15,4 @@ tags:
 - [[2026-04-05-live-dashboard-single-command-launch]] - `rationale_for` [INFERRED]
 - [[strategies.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Backend

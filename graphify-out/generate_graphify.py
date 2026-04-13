@@ -5,6 +5,7 @@ import ast
 import json
 import os
 import re
+import shutil
 import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
@@ -125,6 +126,31 @@ def log(message: str) -> None:
     OUT.mkdir(exist_ok=True)
     with LOG.open("a", encoding="utf-8") as handle:
         handle.write(message + "\n")
+
+
+def prepare_output_paths(out_dir: Path) -> None:
+    for dirname in ("obsidian", "wiki"):
+        target = out_dir / dirname
+        if target.exists():
+            shutil.rmtree(target)
+        target.mkdir(parents=True, exist_ok=True)
+
+    for filename in (
+        "graph.svg",
+        "graph.html",
+        "graph.json",
+        "graph.graphml",
+        "cypher.txt",
+        "GRAPH_REPORT.md",
+        "labels.json",
+        "summary.json",
+        "cost.json",
+        "manifest.json",
+        "graph-extract.json",
+    ):
+        path = out_dir / filename
+        if path.exists():
+            path.unlink()
 
 
 class GraphBuilder:
@@ -587,6 +613,7 @@ def guarded_export(name: str, fn) -> None:
 
 def main() -> None:
     OUT.mkdir(exist_ok=True)
+    prepare_output_paths(OUT)
     LOG.write_text("", encoding="utf-8")
     log("start")
     builder = GraphBuilder()

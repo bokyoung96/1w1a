@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/models.py"
 type: "code"
-community: "Docs Superpowers Kosdaq150"
+community: "Backtesting Reporting Tests"
 location: "L36"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Kosdaq150
+  - community/Backtesting_Reporting_Tests
 ---
 
 # BenchmarkConfig
@@ -23,4 +23,4 @@ tags:
 - [[models.py]] - `contains` [EXTRACTED]
 - [[test_resolution_marks_strategy_missing_when_benchmark_metadata_changes()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Kosdaq150
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

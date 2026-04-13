@@ -1,12 +1,12 @@
 ---
 source_file: "tests/policy/test_staged.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L14"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # test_staged_policy_releases_budget_over_multiple_buckets_and_handles_signed_base_weights()
@@ -23,4 +23,4 @@ tags:
 - [[test_staged.py]] - `contains` [EXTRACTED]
 - [[validate_position_plan()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests

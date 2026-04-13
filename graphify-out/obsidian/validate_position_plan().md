@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/validation/portfolio.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L8"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # validate_position_plan()
@@ -23,4 +23,4 @@ tags:
 - [[test_validate_position_plan_rejects_bucket_sum_mismatch()]] - `calls` [INFERRED]
 - [[test_validate_position_plan_rejects_symbol_swapped_bucket_weights()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests

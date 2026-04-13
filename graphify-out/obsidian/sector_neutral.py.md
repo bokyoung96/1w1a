@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/construction/sector_neutral.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Strategies Tests"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Strategies_Tests
 ---
 
 # sector_neutral.py
@@ -19,4 +19,4 @@ tags:
 - [[base.py]] - `imports_from` [EXTRACTED]
 - [[test_rules.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

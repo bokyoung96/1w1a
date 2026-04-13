@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/ResearchWorkspace.tsx"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 location: "L377"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # dates()
@@ -21,4 +21,4 @@ tags:
 - [[2026-04-12-portfolio-construction-and-staged-policy-design]] - `rationale_for` [INFERRED]
 - [[ResearchWorkspace.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

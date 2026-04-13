@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/run.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Plans"
 location: "L200"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Plans
 ---
 
 # BacktestRunner._schedule()
@@ -18,4 +18,4 @@ tags:
 - [[MonthlySchedule]] - `calls` [INFERRED]
 - [[WeeklySchedule]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

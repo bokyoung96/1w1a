@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/strategies.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Tests Dashboard Backend"
 location: "L44"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Tests_Dashboard_Backend
 ---
 
 # DashboardLaunchConfig
@@ -16,4 +16,4 @@ tags:
 - [[2026-04-13-kosdaq150-universe-integration]] - `rationale_for` [INFERRED]
 - [[strategies.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Tests_Dashboard_Backend

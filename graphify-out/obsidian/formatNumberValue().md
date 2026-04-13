@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/ResearchDetailPanel.tsx"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 location: "L42"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # formatNumberValue()
@@ -16,4 +16,4 @@ tags:
 - [[2026-04-07-dashboard-research-series-plan]] - `rationale_for` [INFERRED]
 - [[ResearchDetailPanel.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

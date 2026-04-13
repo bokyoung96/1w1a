@@ -60,6 +60,7 @@ tags:
 - [[test_cross.py]] - `references` [INFERRED]
 - [[test_dashboard_api.py]] - `references` [INFERRED]
 - [[test_figures.py]] - `references` [INFERRED]
+- [[test_graphify_generate.py]] - `references` [INFERRED]
 - [[test_groups.py]] - `references` [INFERRED]
 - [[test_html.py]] - `references` [INFERRED]
 - [[test_loader.py]] - `references` [INFERRED]

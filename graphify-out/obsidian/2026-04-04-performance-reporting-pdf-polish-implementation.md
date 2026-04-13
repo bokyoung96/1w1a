@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-04-performance-reporting-pdf-polish-implementation.md"
 type: "document"
-community: "Docs Superpowers Reporting"
+community: "Backtesting Reporting Tests"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Backtesting_Reporting_Tests
 ---
 
 # 2026-04-04-performance-reporting-pdf-polish-implementation.md
@@ -121,4 +121,4 @@ tags:
 - [[test_pdf_renderer_writes_pdf_from_composed_report()]] - `rationale_for` [INFERRED]
 - [[value()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/document #graphify/INFERRED #community/Backtesting_Reporting_Tests

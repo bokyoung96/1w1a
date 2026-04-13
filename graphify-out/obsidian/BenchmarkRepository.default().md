@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/benchmarks.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 location: "L32"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # BenchmarkRepository.default()
@@ -35,4 +35,4 @@ tags:
 - [[README]] - `rationale_for` [INFERRED]
 - [[_load_default_frame()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

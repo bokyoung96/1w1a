@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_html.py"
 type: "code"
-community: "Backtesting Reporting Composers"
+community: "Backtesting Reporting Tests"
 location: "L10"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Composers
+  - community/Backtesting_Reporting_Tests
 ---
 
 # _write_asset()
@@ -22,4 +22,4 @@ tags:
 - [[test_html_renderer_uses_tearsheet_template()]] - `calls` [INFERRED]
 - [[test_tearsheet_composer_builds_pdf_first_context()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Composers
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

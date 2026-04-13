@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/snapshots.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Frontend"
 location: "L49"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # PerformanceSnapshotFactory
@@ -41,4 +41,4 @@ tags:
 - [[test_performance_snapshot_factory_derives_latest_holdings_when_optional_table_missing()]] - `calls` [INFERRED]
 - [[test_performance_snapshot_factory_uses_fixed_252_day_rolling_window()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

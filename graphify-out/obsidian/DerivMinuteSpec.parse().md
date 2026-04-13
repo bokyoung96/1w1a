@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/deriv_minute.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 location: "L29"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # DerivMinuteSpec.parse()
@@ -24,4 +24,4 @@ tags:
 - [[DerivMinuteSpec]] - `contains` [EXTRACTED]
 - [[TRResponse.from_http()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

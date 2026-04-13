@@ -1,8 +1,8 @@
 # Shares Outstanding Outstanding
 
-> God node · 74 connections · `raw/qw_sha_out.csv`
+> God node · 75 connections · `raw/qw_sha_out.csv`
 
-**Community:** [[Raw Ksdq Csv]]
+**Community:** [[Backtesting Reporting Frontend]]
 
 ## Connections by Relation
 

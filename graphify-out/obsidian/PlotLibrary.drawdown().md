@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/plots.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Tests Reporting Test_Builder"
 location: "L35"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Tests_Reporting_Test_Builder
 ---
 
 # PlotLibrary.drawdown()
@@ -38,4 +38,4 @@ tags:
 - [[test_plot_library_preserves_flat_plot_contract()]] - `calls` [INFERRED]
 - [[test_plot_library_writes_all_expected_plots()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Test_Builder

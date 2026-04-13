@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/policy/staged.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L29"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # BudgetPreservingStagedPolicy.__post_init__()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[BudgetPreservingStagedPolicy]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

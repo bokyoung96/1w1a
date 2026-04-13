@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/catalog/catalog.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Raw Ksdq Csv"
 location: "L108"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Raw_Ksdq_Csv
 ---
 
 # DataCatalog.group()
@@ -26,4 +26,4 @@ tags:
 - [[test_catalog_returns_grouped_specs()]] - `calls` [INFERRED]
 - [[values()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv

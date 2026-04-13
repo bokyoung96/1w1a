@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/ResearchWorkspace.tsx"
 type: "code"
-community: "Dashboard Frontend Src"
+community: "Backtesting Reporting Frontend"
 location: "L672"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Dashboard_Frontend_Src
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # rollingSharpeSeries()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[ResearchWorkspace.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Dashboard_Frontend_Src
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

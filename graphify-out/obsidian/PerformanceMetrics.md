@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/analytics.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Frontend"
 location: "L14"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # PerformanceMetrics
@@ -19,4 +19,4 @@ tags:
 - [[_sample_snapshot()_1]] - `calls` [INFERRED]
 - [[analytics.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

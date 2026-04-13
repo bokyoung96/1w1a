@@ -1,39 +1,473 @@
 ---
 type: community
-cohesion: 0.09
-members: 24
+cohesion: 0.01
+members: 458
 ---
 
 # Docs Superpowers Reporting
 
-**Cohesion:** 0.09 - loosely connected
-**Members:** 24 nodes
+**Cohesion:** 0.01 - loosely connected
+**Members:** 458 nodes
 
 ## Members
+- [[1. Payload Expansion]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[1. Primary Output Standard]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[1. Single-Run Tear Sheet]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[1. Strategy Preset Model]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[1. `breakout_52w_simple`]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[1w1a_1]] - document - docs/superpowers/plans/2026-04-03-stock-backtesting-implementation.md
+- [[1w1a]] - document - README.md
+- [[1w1a Backtest Reporting Design]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
 - [[1w1a Backtest Reporting Implementation Plan]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[2. Execution Pipeline]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[2. Multi-Run Comparison Report]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[2. Snapshot Calculations]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[2. Visual Direction]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[2. `breakout_52w_staged`]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[2026-04-03-backtest-reporting-design]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
 - [[2026-04-03-backtest-reporting-implementation]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[2026-04-03-performance-reporting-redesign-design]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[2026-04-04-performance-reporting-pdf-polish-design]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[2026-04-05-dashboard-chart-followups]] - document - docs/superpowers/plans/2026-04-05-dashboard-chart-followups.md
+- [[2026-04-05-dashboard-ux-followups]] - document - docs/superpowers/plans/2026-04-05-dashboard-ux-followups.md
+- [[2026-04-05-live-dashboard-design]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[2026-04-05-live-dashboard-single-command-launch-design]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[2026-04-05-live-dashboard-single-command-launch]] - document - docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md
+- [[2026-04-05-research-dashboard-refresh-design]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[2026-04-05-research-dashboard-refresh]] - document - docs/superpowers/plans/2026-04-05-research-dashboard-refresh.md
+- [[2026-04-06-dashboard-analytics-refresh-design]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[2026-04-06-dashboard-metadata-detail-redesign]] - document - docs/superpowers/specs/2026-04-06-dashboard-metadata-detail-redesign.md
+- [[2026-04-06-dashboard-metadata-detail]] - document - docs/superpowers/plans/2026-04-06-dashboard-metadata-detail.md
+- [[2026-04-07-dashboard-drawdown-weight-design]] - document - docs/superpowers/specs/2026-04-07-dashboard-drawdown-weight-design.md
+- [[2026-04-07-dashboard-research-series-design]] - document - docs/superpowers/specs/2026-04-07-dashboard-research-series-design.md
+- [[2026-04-07-dashboard-research-series-plan]] - document - docs/superpowers/plans/2026-04-07-dashboard-research-series-plan.md
+- [[2026-04-12-52w-breakout-strategies-design]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[2026-04-13-kosdaq150-universe-integration-design]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[3. Cover Strategy]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[3. Frontend Layout]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[3. Snapshot  Payload Layer]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[4. Executive Density Starts On Page 2]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[4. Frontend Layout]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[5. Table Philosophy]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[52-Week Breakout Strategies Design]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[API Design]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Analytical Interior Pages]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Analytics Coverage]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Analytics Requirements]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Analytics Tests]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Appendix]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Architecture]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Architecture_1]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Architecture_2]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Architecture_4]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Backend]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Backend_1]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Backend_2]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Backend API Shape]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Backend Responsibility]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Backtest And Output Requirements]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Backtest Execution Flow]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Backward Compatibility]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Benchmark Behavior]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Benchmark Policy]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[BenchmarkRepository]] - code - backtesting/reporting/benchmarks.py
+- [[BenchmarkRepository.__init__()]] - code - backtesting/reporting/benchmarks.py
+- [[BenchmarkRepository.default()]] - code - backtesting/reporting/benchmarks.py
+- [[BenchmarkRepository.from_frame()]] - code - backtesting/reporting/benchmarks.py
+- [[BidAskList]] - code - kis/tr_id/bid_ask_list.py
+- [[BidAskList.summary()]] - code - kis/tr_id/bid_ask_list.py
+- [[BidAskListSpec]] - code - kis/tr_id/bid_ask_list.py
+- [[BidAskListSpec.params()]] - code - kis/tr_id/bid_ask_list.py
+- [[BidAskListSpec.parse()]] - code - kis/tr_id/bid_ask_list.py
+- [[Boundary Rule]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Build Reports]] - document - README.md
+- [[Builder Tests]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[CLI]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[CLI Shape]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Catalog]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Chosen Direction]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Cleanup]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Cleanup coverage]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Color]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Comparison Plane]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Comparison Report Structure]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Comparison report]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Components_1]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Config Signature Shape]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Context]] - document - docs/superpowers/specs/2026-04-07-dashboard-research-series-design.md
+- [[Core Behavior]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Core Domain Objects]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Core Objects]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Cover]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Cover Page]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Current State]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Dashboard_1]] - document - docs/superpowers/plans/2026-04-05-research-dashboard-refresh.md
+- [[Dashboard_2]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Dashboard]] - document - README.md
+- [[Dashboard Analytics Refresh Design]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Dashboard Chart Followups Implementation Plan]] - document - docs/superpowers/plans/2026-04-05-dashboard-chart-followups.md
+- [[Dashboard Integration]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Dashboard Metadata & Detail Panel Implementation Plan]] - document - docs/superpowers/plans/2026-04-06-dashboard-metadata-detail.md
+- [[Dashboard UX Followups Implementation Plan]] - document - docs/superpowers/plans/2026-04-05-dashboard-ux-followups.md
+- [[DashboardPayloadService.__init__()]] - code - dashboard/backend/services/dashboard_payload.py
+- [[Data Dependencies]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Data Flow]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Data Flow_1]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Data Flow_2]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Data Inventory]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Data Model]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Data Sources]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Dataset Layer]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Default Strategy Set]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[DerivMinute]] - code - kis/tr_id/deriv_minute.py
+- [[DerivMinute.summary()]] - code - kis/tr_id/deriv_minute.py
+- [[DerivMinuteSpec]] - code - kis/tr_id/deriv_minute.py
+- [[DerivMinuteSpec.params()]] - code - kis/tr_id/deriv_minute.py
+- [[DerivMinuteSpec.parse()]] - code - kis/tr_id/deriv_minute.py
+- [[Derived Data]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Design]] - document - docs/superpowers/specs/2026-04-07-dashboard-drawdown-weight-design.md
+- [[Design_1]] - document - docs/superpowers/specs/2026-04-07-dashboard-research-series-design.md
+- [[Design Principles]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Design Summary]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Document Architecture]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Document Composers]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Documentation]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Duplicate Run Hygiene]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Empty State]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Error Handling]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Error Handling_1]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Error Handling_2]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Error Handling_3]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Executive Summary]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Executive Summary Spread]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Existing]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
 - [[Existing files to modify]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[Explicit Rule]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Exposure Band]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[External Reference Direction]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Factor Section]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Failure Handling]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Failure Handling_1]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Figure And Table Balance]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Figure Builders]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
 - [[File Map]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[File Structure_2]] - document - docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md
+- [[Frontend]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Frontend_1]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Frontend_2]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Frontend Responsibility]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Git And Merge Requirements]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Goal]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Goal_1]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Goal_3]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Goal_4]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Goal_5]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Goal_6]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Goal_7]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Goal_8]] - document - docs/superpowers/specs/2026-04-06-dashboard-metadata-detail-redesign.md
+- [[Goal_9]] - document - docs/superpowers/specs/2026-04-07-dashboard-drawdown-weight-design.md
+- [[Goal_10]] - document - docs/superpowers/specs/2026-04-07-dashboard-research-series-design.md
+- [[Goal_11]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Goal_13]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[HTML and PDF Pipeline]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Hard UI Constraints]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[IS  OOS]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[If PDF conversion fails]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[If a section is unavailable]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[If one run bundle is malformed in a comparison report]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Implementation Notes]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Implementation Notes_1]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Implementation Recommendation]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Implementation Shape]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[In scope]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[In scope_2]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Integration tests]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[KOSDAQ150 Universe Integration Design]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Latest Holdings Winners And Losers]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Launch Metadata Visibility]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[LaunchPlan]] - code - dashboard/backend/services/launch_resolution.py
+- [[LaunchPlan.selected_run_ids()]] - code - dashboard/backend/services/launch_resolution.py
+- [[Launcher]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Live Dashboard Design]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Live Dashboard Single-Command Launch Design]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Live Dashboard Single-Command Launch Implementation Plan]] - document - docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md
+- [[Loader And Runner]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Main Areas]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Manual Validation]] - document - README.md
+- [[Manual Verification]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Matching Rules]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Missing Benchmark Or Sector Data]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Motion]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Multi-Run Comparison Layout]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Multi-Run Mode Emphasis]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Must-Have Charts]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Must-Have Metrics]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[New]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
 - [[New package files]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[New strategy files]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
 - [[New test files]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[Nice-To-Have If Cheap]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Non-Goals]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Non-Goals_1]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Non-Goals_2]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Non-Goals_3]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Object-Oriented Architecture]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Out Of Scope]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Out of scope]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Out of scope for phase 1]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Output Model]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[PDF Page Layouts]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Package Layout]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Page-Level Layout Rules]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[ParquetStore.read()]] - code - backtesting/data/store.py
+- [[Partial Data Failure]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Performance]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Performance Reporting PDF Polish Design]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Performance Reporting Redesign Design]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[PerformanceStrip()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[PerformanceStrip.tsx]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
 - [[Placeholder scan]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[Plotting Approach]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Positions]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Product Direction]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Product Shape]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Python API]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Quick Start]] - document - README.md
+- [[README_1]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
+- [[README]] - document - README.md
+- [[RUNS()]] - code - dashboard/frontend/src/components/App.test.tsx
+- [[RateLimiter]] - code - kis/tools.py
+- [[RateLimiter.__init__()]] - code - kis/tools.py
+- [[RateLimiter.wait()]] - code - kis/tools.py
+- [[Recommended Stack]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Reference Direction]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Reference Patterns]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Registry surface]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Regression Tests]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Rejected Alternatives]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Renderer Tests]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Renderers]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Rendering Architecture]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Repo Integration Plan]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Report Modes]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Report Sections]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Report bundle]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[ReportCli.__init__()]] - code - backtesting/reporting/cli.py
+- [[Required Run Data]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Required coverage]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Requirements]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Requirements_1]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Research Dashboard Refresh Design]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Research Dashboard Refresh Implementation Plan]] - document - docs/superpowers/plans/2026-04-05-research-dashboard-refresh.md
+- [[Research Series Implementation Plan]] - document - docs/superpowers/plans/2026-04-07-dashboard-research-series-plan.md
+- [[Research Workspace]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Research Workspace_1]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[ResearchDetailPanel()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[ResearchDetailPanel.tsx]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[ResearchFigure()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[ResearchWorkspace()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[Responsibility Boundaries]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Return Distribution Readability]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Reuse policy]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Risks]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Risks To Watch]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Rolling Risk Coverage]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Run Backtests]] - document - README.md
+- [[Run bundle]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[RunReader]] - code - backtesting/reporting/reader.py
+- [[RunReader._read_optional_frame()]] - code - backtesting/reporting/reader.py
 - [[RunReader._read_optional_json()]] - code - backtesting/reporting/reader.py
+- [[RunReader._read_optional_parquet()]] - code - backtesting/reporting/reader.py
+- [[RunReader._read_optional_series()]] - code - backtesting/reporting/reader.py
 - [[RunReader._read_series()]] - code - backtesting/reporting/reader.py
 - [[RunReader.read()]] - code - backtesting/reporting/reader.py
+- [[Runtime Architecture]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Scope]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Scope_2]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Scope_3]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Scope_4]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Scope_6]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Scope & Changes]] - document - docs/superpowers/specs/2026-04-06-dashboard-metadata-detail-redesign.md
+- [[Scope Boundaries]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Sector Analytics Preservation]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
 - [[Self-Review]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[Shared signal logic]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Single Vs Multi Recomposition]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Single-Run Mode Emphasis]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Single-Run Tear Sheet Layout]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Single-run report]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Smoke tests]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Spacing And Surface Rules]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
 - [[Spec coverage]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[Strategy Definitions]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Strategy-Specific Benchmarks]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Styling]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Success Criteria]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Success Criteria_1]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Success Criteria_3]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Success Criteria_4]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Surface Treatment]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Symbols]] - code - kis/symbols/loader.py
+- [[Symbols._normalize_symbol()]] - code - kis/symbols/loader.py
+- [[Symbols.load()]] - code - kis/symbols/loader.py
+- [[System Shape]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[TRClient]] - code - kis/tr_id/register.py
+- [[TRClient.__enter__()]] - code - kis/tr_id/register.py
+- [[TRClient.__exit__()]] - code - kis/tr_id/register.py
+- [[TRClient._request()]] - code - kis/tr_id/register.py
+- [[TRClient.call()]] - code - kis/tr_id/register.py
+- [[TRClient.close()]] - code - kis/tr_id/register.py
+- [[Table Builders]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Task 1 Add Launch Config Surface]] - document - docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md
 - [[Task 1 Add Typed Report Models and Run Reader]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[Task 1 Compact research detail metrics strip]] - document - docs/superpowers/plans/2026-04-07-dashboard-research-series-plan.md
+- [[Task 1 Hero Metadata Grid + Focus Copy]] - document - docs/superpowers/plans/2026-04-06-dashboard-metadata-detail.md
+- [[Task 1 Red tests for the new chart shapes]] - document - docs/superpowers/plans/2026-04-05-dashboard-chart-followups.md
+- [[Task 1 Remove the sector attribution warning at the source]] - document - docs/superpowers/plans/2026-04-05-dashboard-ux-followups.md
+- [[Task 1 Warmup-Aware Presets And Duplicate Run Hygiene]] - document - docs/superpowers/plans/2026-04-05-research-dashboard-refresh.md
 - [[Task 2 Build Summary Table Helpers]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[Task 2 Implement the new chart transforms]] - document - docs/superpowers/plans/2026-04-05-dashboard-chart-followups.md
+- [[Task 2 Make research figures clearer and resilient when data is sparse]] - document - docs/superpowers/plans/2026-04-05-dashboard-ux-followups.md
+- [[Task 2 Research Analytics Payload And Benchmark-Aware Snapshots]] - document - docs/superpowers/plans/2026-04-05-research-dashboard-refresh.md
+- [[Task 2 Resolve Saved Runs Against Desired Config]] - document - docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md
+- [[Task 2 Strategy sector trends charts in ResearchWorkspace]] - document - docs/superpowers/plans/2026-04-07-dashboard-research-series-plan.md
 - [[Task 3 Add Plotly Figure Builders]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[Task 3 Add explicit sector filters for research charts]] - document - docs/superpowers/plans/2026-04-05-dashboard-ux-followups.md
+- [[Task 3 Build Single-Command Launcher]] - document - docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md
+- [[Task 3 Frontend Research Workspace, Benchmark Overlays, And Drill-Down]] - document - docs/superpowers/plans/2026-04-05-research-dashboard-refresh.md
+- [[Task 3 Update component testsassertions]] - document - docs/superpowers/plans/2026-04-07-dashboard-research-series-plan.md
+- [[Task 3 Verify and finish]] - document - docs/superpowers/plans/2026-04-05-dashboard-chart-followups.md
 - [[Task 4 Assemble Report Bundles]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[Task 4 Documentation, Refactoring, And End-To-End Verification]] - document - docs/superpowers/plans/2026-04-05-research-dashboard-refresh.md
+- [[Task 4 Expose Bootstrap State And Serve The SPA From FastAPI]] - document - docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md
+- [[Task 4 Verify, commit, merge, and clean up]] - document - docs/superpowers/plans/2026-04-05-dashboard-ux-followups.md
+- [[Task 5 Hydrate The Frontend From Bootstrap State]] - document - docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md
 - [[Task 5 Render HTML Reports]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
 - [[Task 6 Add PDF Export with HTML Fallback]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[Task 6 Document The One-Command Flow]] - document - docs/superpowers/plans/2026-04-05-live-dashboard-single-command-launch.md
 - [[Task 7 Wire a Report CLI]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
 - [[Task 8 Extend Run Bundles for Future Report Sections]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
 - [[Task 9 End-to-End HTML and PDF Smoke Coverage]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[Tearsheet Structure]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Template And CSS Impact]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Testing]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Testing & Verification]] - document - docs/superpowers/specs/2026-04-07-dashboard-research-series-design.md
+- [[Testing Requirements]] - document - docs/superpowers/specs/2026-04-12-52w-breakout-strategies-design.md
+- [[Testing Strategy]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Testing Strategy_1]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Testing Strategy_2]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Testing Strategy_3]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Testing Strategy_4]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Testing Strategy_6]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[The parquet directory must already be populated by the ingest step]] - document - README.md
+- [[TimeTools]] - code - kis/tools.py
+- [[TimeTools.adjust_futures_timestamp()]] - code - kis/tools.py
+- [[TimeTools.kst_hhmmss()]] - code - kis/tools.py
+- [[TimeTools.now_kst()]] - code - kis/tools.py
+- [[TimeTools.select_completed_futures_candle()]] - code - kis/tools.py
+- [[Trading  Risk]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
 - [[Type consistency]] - document - docs/superpowers/plans/2026-04-03-backtest-reporting-implementation.md
+- [[Typography]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Typography System]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[UX Model]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Unit tests]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Universe Layer]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[Universe Registry]] - document - docs/superpowers/specs/2026-04-13-kosdaq150-universe-integration-design.md
+- [[User Experience]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-single-command-launch-design.md
+- [[Validated Design Decisions]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Validation]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Verification]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[Verification Expectations]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Visual Direction]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Visual Thesis]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Warmup-Aware Backtests]] - document - docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md
+- [[Web vs PDF Behavior]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Why]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Why A Second Design Pass Is Needed]] - document - docs/superpowers/specs/2026-04-04-performance-reporting-pdf-polish-design.md
+- [[Why A Separate Surface]] - document - docs/superpowers/specs/2026-04-05-live-dashboard-design.md
+- [[Why The Current Output Fails]] - document - docs/superpowers/specs/2026-04-03-performance-reporting-redesign-design.md
+- [[Why This Layer Exists]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[Yearly Excess Returns Reliability]] - document - docs/superpowers/specs/2026-04-06-dashboard-analytics-refresh-design.md
+- [[_write_required_bundle()]] - code - tests/reporting/test_reader.py
+- [[`HtmlRenderer`]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[`PdfRenderer`]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[`PlotLibrary`]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[`ReportBuilder`]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[`ReportBundle`]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[`ReportSpec`]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[`RunReader`]] - document - docs/superpowers/specs/2026-04-03-backtest-reporting-design.md
+- [[avgGain()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[avgLoss()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
 - [[backtesting__init__.py]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
+- [[backtestingrun.py]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
+- [[before calling `loader.load(...)`.]] - document - README.md
+- [[benchmark()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[benchmarkSeries()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[benchmarkSummary()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[buildCostSummary()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[buildCumulativeContributionOption()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[buildNormalizedSectorWeightsOption()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[chartOption()_1]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[color()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[computeValueDiffs()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[contributionSeries()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[dashboardbackendserviceslaunch_resolution.py]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
+- [[dashboardbackendservicesrun_index.py]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
+- [[dashboardrun.py]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
+- [[dashboardstrategies.py]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
+- [[data()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[dates()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[drawdownOption()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[drawdownSeries()_1]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[fallbackEpisode()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[flattenEpisodes()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[focusLabel()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[focusSummary()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[formatCostValue()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[formatLaunchMoney()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[formatLaunchText()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[formatMetricNumber()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[formatMetricPercent()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[formatNumberValue()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[formatNumberValue()_1]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[formatRewardRisk()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[from the repo root]] - document - README.md
+- [[label()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[labels()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[lines()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[longestOpen()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[names()]] - code - dashboard/frontend/src/components/App.test.tsx
+- [[negativeDiffs()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[next()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[normalizeFocusLabel()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[openEpisodes()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[option()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[point()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[positiveDiffs()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[run()_2]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[runLabel()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[sectors()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[selectedRuns()_1]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[selector()]] - code - dashboard/frontend/src/components/App.test.tsx
+- [[selector()_1]] - code - dashboard/frontend/src/components/RunSelector.test.tsx
+- [[series()_1]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[seriesPoints()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[strategySectorTrends()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[strategySeries()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[summarySeries()]] - code - dashboard/frontend/src/components/PerformanceStrip.tsx
+- [[task()]] - code - kis/tr_id/register.py
+- [[test_run_reader_loads_optional_artifacts_when_present()]] - code - tests/reporting/test_reader.py
+- [[test_run_reader_returns_none_for_missing_optional_artifacts()]] - code - tests/reporting/test_reader.py
+- [[testsdashboardbackendtest_launch_resolution.py]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
+- [[testsdashboardbackendtest_run_index_service.py]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
+- [[testsdashboardtest_run.py]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
+- [[teststest_run.py]] - document - docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md
+- [[user()]] - code - dashboard/frontend/src/components/App.test.tsx
+- [[value()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[visible()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
+- [[visibleRunIds()]] - code - dashboard/frontend/src/components/ResearchDetailPanel.tsx
+- [[weightOption()]] - code - dashboard/frontend/src/components/App.test.tsx
+- [[weightSeries()]] - code - dashboard/frontend/src/components/ResearchWorkspace.tsx
 
 ## Live Query (requires Dataview plugin)
 
@@ -43,33 +477,22 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 26 edges to [[_COMMUNITY_Docs Superpowers Plans]]
-- 18 edges to [[_COMMUNITY_Docs Superpowers Plans]]
-- 15 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
-- 13 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
-- 10 edges to [[_COMMUNITY_Docs Superpowers Plans]]
-- 9 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
-- 9 edges to [[_COMMUNITY_Docs Superpowers Plans]]
-- 7 edges to [[_COMMUNITY_Tests Test Run.Py Engine]]
-- 5 edges to [[_COMMUNITY_Docs Superpowers Live]]
-- 5 edges to [[_COMMUNITY_Docs Superpowers Breakout]]
-- 4 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
-- 4 edges to [[_COMMUNITY_Tests Dashboard Test_Run]]
-- 4 edges to [[_COMMUNITY_Backtesting Reporting Composers]]
-- 4 edges to [[_COMMUNITY_Docs Superpowers Research]]
-- 3 edges to [[_COMMUNITY_Docs Superpowers Strategy]]
-- 3 edges to [[_COMMUNITY_Docs Superpowers Live]]
-- 3 edges to [[_COMMUNITY_Docs Superpowers Analytics]]
-- 3 edges to [[_COMMUNITY_Raw Ksdq Csv]]
-- 2 edges to [[_COMMUNITY_Docs Superpowers Performance]]
-- 2 edges to [[_COMMUNITY_Docs Superpowers Policy]]
-- 1 edge to [[_COMMUNITY_Tests Dashboard Backend]]
-- 1 edge to [[_COMMUNITY_Dashboard Frontend Src]]
-- 1 edge to [[_COMMUNITY_Docs Superpowers Kosdaq150]]
+- 188 edges to [[_COMMUNITY_Backtesting Reporting Frontend]]
+- 183 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
+- 134 edges to [[_COMMUNITY_Raw Ksdq Csv]]
+- 70 edges to [[_COMMUNITY_Tests Test Run.Py Engine]]
+- 64 edges to [[_COMMUNITY_Docs Superpowers Plans]]
+- 58 edges to [[_COMMUNITY_Docs Superpowers Strategy]]
+- 56 edges to [[_COMMUNITY_Tests Dashboard Backend]]
+- 56 edges to [[_COMMUNITY_Docs Superpowers Portfolio]]
+- 45 edges to [[_COMMUNITY_Tests Reporting Test_Builder]]
+- 21 edges to [[_COMMUNITY_Dashboard Frontend App]]
+- 15 edges to [[_COMMUNITY_Tests Reporting Analytics]]
+- 5 edges to [[_COMMUNITY_Backtesting Strategies Tests]]
 
 ## Top bridge nodes
-- [[2026-04-03-backtest-reporting-implementation]] - degree 129, connects to 22 communities
-- [[RunReader.read()]] - degree 31, connects to 15 communities
-- [[point()]] - degree 15, connects to 10 communities
-- [[backtesting__init__.py]] - degree 3, connects to 1 community
-- [[RunReader._read_optional_json()]] - degree 3, connects to 1 community
+- [[2026-04-05-research-dashboard-refresh]] - degree 143, connects to 12 communities
+- [[2026-04-03-performance-reporting-redesign-design]] - degree 131, connects to 11 communities
+- [[2026-04-03-backtest-reporting-implementation]] - degree 129, connects to 11 communities
+- [[2026-04-05-live-dashboard-design]] - degree 121, connects to 11 communities
+- [[2026-04-05-research-dashboard-refresh-design]] - degree 88, connects to 11 communities

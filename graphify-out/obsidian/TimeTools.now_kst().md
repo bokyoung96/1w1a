@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tools.py"
 type: "code"
-community: "Kis Tools.Py"
+community: "Docs Superpowers Reporting"
 location: "L57"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Kis_Tools.Py
+  - community/Docs_Superpowers_Reporting
 ---
 
 # TimeTools.now_kst()
@@ -15,4 +15,4 @@ tags:
 - [[TimeTools]] - `contains` [EXTRACTED]
 - [[TimeTools.kst_hhmmss()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Kis_Tools.Py
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

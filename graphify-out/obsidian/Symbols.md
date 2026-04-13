@@ -1,12 +1,12 @@
 ---
 source_file: "kis/symbols/loader.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Docs Superpowers Reporting"
 location: "L21"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Docs_Superpowers_Reporting
 ---
 
 # Symbols
@@ -18,4 +18,4 @@ tags:
 - [[Symbols.load()]] - `contains` [EXTRACTED]
 - [[loader.py_1]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

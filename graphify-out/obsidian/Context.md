@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-07-dashboard-research-series-design.md"
 type: "document"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 location: "L13"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # Context
@@ -27,4 +27,4 @@ tags:
 - [[2026-04-12-52w-breakout-strategies-design]] - `references` [INFERRED]
 - [[2026-04-12-portfolio-construction-and-staged-policy-design]] - `references` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting

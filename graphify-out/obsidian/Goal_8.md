@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-06-dashboard-metadata-detail-redesign.md"
 type: "document"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 location: "L7"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # Goal
@@ -39,4 +39,4 @@ tags:
 - [[2026-04-13-kosdaq150-universe-integration-design]] - `references` [INFERRED]
 - [[2026-04-13-kosdaq150-universe-integration]] - `references` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting

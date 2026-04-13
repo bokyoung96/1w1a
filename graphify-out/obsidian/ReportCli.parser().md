@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/cli.py"
 type: "code"
-community: "Tests Dashboard Test_Run"
+community: "Backtesting Reporting Tests"
 location: "L34"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Dashboard_Test_Run
+  - community/Backtesting_Reporting_Tests
 ---
 
 # ReportCli.parser()
@@ -23,4 +23,4 @@ tags:
 - [[test_cli_rejects_invalid_kind_and_run_count_combination()]] - `calls` [INFERRED]
 - [[test_report_cli_parses_run_ids()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Dashboard_Test_Run
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

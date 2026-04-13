@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/protocol.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Docs Superpowers Portfolio"
 location: "L59"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Docs_Superpowers_Portfolio
 ---
 
 # TRSpec.parse()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[TRSpec]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Portfolio

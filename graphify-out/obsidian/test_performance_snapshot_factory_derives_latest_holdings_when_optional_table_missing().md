@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_snapshots.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Analytics"
 location: "L59"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Analytics
 ---
 
 # test_performance_snapshot_factory_derives_latest_holdings_when_optional_table_missing()
@@ -22,4 +22,4 @@ tags:
 - [[_toy_run()]] - `calls` [INFERRED]
 - [[test_snapshots.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

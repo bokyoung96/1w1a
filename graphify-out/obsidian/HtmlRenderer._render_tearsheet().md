@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/html.py"
 type: "code"
-community: "Backtesting Reporting Composers"
+community: "Backtesting Reporting Tests"
 location: "L36"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Composers
+  - community/Backtesting_Reporting_Tests
 ---
 
 # HtmlRenderer._render_tearsheet()
@@ -19,4 +19,4 @@ tags:
 - [[HtmlRenderer.render()]] - `calls` [INFERRED]
 - [[TearsheetComposer]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Composers
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

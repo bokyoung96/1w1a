@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/execution/schedule.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Plans"
 location: "L28"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Plans
 ---
 
 # DailySchedule.flags()
@@ -19,4 +19,4 @@ tags:
 - [[DailySchedule]] - `contains` [EXTRACTED]
 - [[series()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

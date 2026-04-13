@@ -1,11 +1,11 @@
 ---
 source_file: "tests/analytics/test_factor.py"
 type: "code"
-community: "Tests Analytics Test_Factor"
+community: "Tests Reporting Analytics"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Analytics_Test_Factor
+  - community/Tests_Reporting_Analytics
 ---
 
 # test_factor.py
@@ -24,4 +24,4 @@ tags:
 - [[test_rank_ic_returns_empty_series_without_shared_columns()]] - `contains` [EXTRACTED]
 - [[test_rank_ic_uses_common_overlap_and_returns_nan_when_empty()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Analytics_Test_Factor
+#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Analytics

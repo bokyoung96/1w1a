@@ -1,11 +1,11 @@
 ---
 source_file: "raw/options/qw_spot_ticker.csv"
 type: "document"
-community: "Raw Ksdq Csv"
+community: "Dashboard Frontend App"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Dashboard_Frontend_App
 ---
 
 # Options Spot Ticker
@@ -19,4 +19,4 @@ tags:
 - [[test_benchmarks.py]] - `references` [INFERRED]
 - [[test_cli.py]] - `references` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/document #graphify/INFERRED #community/Dashboard_Frontend_App

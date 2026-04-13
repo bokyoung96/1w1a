@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/registry.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L35"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # list_strategies()
@@ -16,4 +16,4 @@ tags:
 - [[registry.py]] - `contains` [EXTRACTED]
 - [[test_registry_lists_default_strategies()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests

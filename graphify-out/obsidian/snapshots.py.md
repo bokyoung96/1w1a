@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/reporting/snapshots.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # snapshots.py
@@ -38,4 +38,4 @@ tags:
 - [[test_snapshots.py]] - `imports_from` [EXTRACTED]
 - [[test_tables.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

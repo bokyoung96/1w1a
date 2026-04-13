@@ -1,12 +1,12 @@
 ---
 source_file: "tests/strategy/test_cross.py"
 type: "code"
-community: "Docs Superpowers Strategy"
+community: "Tests Reporting Analytics"
 location: "L32"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Strategy
+  - community/Tests_Reporting_Analytics
 ---
 
 # test_rank_long_short_avoids_overlap_in_small_universe()
@@ -17,4 +17,4 @@ tags:
 - [[series()]] - `calls` [INFERRED]
 - [[test_cross.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Strategy
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

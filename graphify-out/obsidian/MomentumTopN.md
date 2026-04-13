@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/momentum.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L12"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # MomentumTopN
@@ -15,4 +15,4 @@ tags:
 - [[MomentumTopN.__post_init__()]] - `contains` [EXTRACTED]
 - [[momentum.py_1]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

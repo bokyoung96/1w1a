@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-07-dashboard-drawdown-weight-design.md"
 type: "document"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # 2026-04-07-dashboard-drawdown-weight-design.md
@@ -55,4 +55,4 @@ tags:
 - [[labels()]] - `rationale_for` [INFERRED]
 - [[value()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting

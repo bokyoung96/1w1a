@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/analytics.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Frontend"
 location: "L69"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # annualized_sharpe()
@@ -19,4 +19,4 @@ tags:
 - [[analytics.py]] - `contains` [EXTRACTED]
 - [[test_performance_snapshot_factory_uses_fixed_252_day_rolling_window()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/execution/costs.py"
 type: "code"
-community: "Docs Superpowers Breakout"
+community: "Docs Superpowers Plans"
 location: "L5"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Breakout
+  - community/Docs_Superpowers_Plans
 ---
 
 # TradeCost
@@ -17,4 +17,4 @@ tags:
 - [[TradeCost.total()]] - `contains` [EXTRACTED]
 - [[costs.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Breakout
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans

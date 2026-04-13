@@ -1,12 +1,12 @@
 ---
 source_file: "tests/strategies/test_strategy_contracts.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L11"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # test_pass_through_policy_emits_base_weights_as_single_bucket()
@@ -19,4 +19,4 @@ tags:
 - [[SignalBundle]] - `calls` [INFERRED]
 - [[test_strategy_contracts.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests

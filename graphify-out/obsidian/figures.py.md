@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/reporting/figures.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # figures.py
@@ -24,4 +24,4 @@ tags:
 - [[test_figures.py]] - `imports_from` [EXTRACTED]
 - [[write_figure_asset()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

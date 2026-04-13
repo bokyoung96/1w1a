@@ -1,11 +1,11 @@
 ---
 source_file: "dashboard/frontend/src/components/PerformanceStrip.tsx"
 type: "code"
-community: "Dashboard Frontend Src"
+community: "Docs Superpowers Reporting"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Dashboard_Frontend_Src
+  - community/Docs_Superpowers_Reporting
 ---
 
 # PerformanceStrip.tsx
@@ -40,4 +40,4 @@ tags:
 - [[strategySeries()]] - `contains` [EXTRACTED]
 - [[summarySeries()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Dashboard_Frontend_Src
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

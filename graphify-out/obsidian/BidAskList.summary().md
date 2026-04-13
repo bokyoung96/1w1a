@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/bid_ask_list.py"
 type: "code"
-community: "Docs Superpowers Breakout"
+community: "Docs Superpowers Reporting"
 location: "L28"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Breakout
+  - community/Docs_Superpowers_Reporting
 ---
 
 # BidAskList.summary()
@@ -37,4 +37,4 @@ tags:
 - [[README]] - `rationale_for` [INFERRED]
 - [[main()_3]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Breakout
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

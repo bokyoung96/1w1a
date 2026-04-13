@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-12-portfolio-construction-and-staged-policy-design.md"
 type: "document"
-community: "Docs Superpowers Policy"
+community: "Docs Superpowers Portfolio"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Docs_Superpowers_Portfolio
 ---
 
 # 2026-04-12-portfolio-construction-and-staged-policy-design.md
@@ -138,4 +138,4 @@ tags:
 - [[sources()]] - `rationale_for` [INFERRED]
 - [[strategies()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Portfolio

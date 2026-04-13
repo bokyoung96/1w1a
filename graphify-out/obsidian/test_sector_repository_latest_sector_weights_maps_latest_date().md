@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_benchmarks.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Analytics"
 location: "L46"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Analytics
 ---
 
 # test_sector_repository_latest_sector_weights_maps_latest_date()
@@ -17,4 +17,4 @@ tags:
 - [[series()]] - `calls` [INFERRED]
 - [[test_benchmarks.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

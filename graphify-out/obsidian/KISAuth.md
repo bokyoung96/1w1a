@@ -1,12 +1,12 @@
 ---
 source_file: "kis/config.py"
 type: "code"
-community: "Tests Dashboard Backend"
+community: "Docs Superpowers Plans"
 location: "L62"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Dashboard_Backend
+  - community/Docs_Superpowers_Plans
 ---
 
 # KISAuth
@@ -22,4 +22,4 @@ tags:
 - [[TRClient.__init__()]] - `calls` [INFERRED]
 - [[config.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Backend
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans

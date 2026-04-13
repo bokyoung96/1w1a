@@ -2,7 +2,7 @@
 
 > God node · 82 connections · `dashboard/frontend/src/components/App.test.tsx`
 
-**Community:** [[Backtesting Reporting Tests]]
+**Community:** [[Tests Reporting Analytics]]
 
 ## Connections by Relation
 

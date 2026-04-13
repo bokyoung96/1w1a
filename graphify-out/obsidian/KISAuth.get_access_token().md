@@ -1,12 +1,12 @@
 ---
 source_file: "kis/config.py"
 type: "code"
-community: "Tests Dashboard Backend"
+community: "Docs Superpowers Plans"
 location: "L117"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Dashboard_Backend
+  - community/Docs_Superpowers_Plans
 ---
 
 # KISAuth.get_access_token()
@@ -20,4 +20,4 @@ tags:
 - [[TRBatchClient.call_batch()]] - `calls` [INFERRED]
 - [[TRClient._request()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Dashboard_Backend
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

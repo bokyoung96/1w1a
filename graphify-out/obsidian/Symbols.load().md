@@ -1,12 +1,12 @@
 ---
 source_file: "kis/symbols/loader.py"
 type: "code"
-community: "Docs Superpowers Live"
+community: "Docs Superpowers Reporting"
 location: "L23"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Live
+  - community/Docs_Superpowers_Reporting
 ---
 
 # Symbols.load()
@@ -36,4 +36,4 @@ tags:
 - [[Symbols]] - `contains` [EXTRACTED]
 - [[Symbols._normalize_symbol()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Live
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategy/base.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L23"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # validate_positive()
@@ -18,4 +18,4 @@ tags:
 - [[SectorNeutralTopBottom.__post_init__()]] - `calls` [INFERRED]
 - [[base.py_4]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests

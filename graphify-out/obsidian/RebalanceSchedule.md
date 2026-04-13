@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/execution/schedule.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Plans"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Plans
 ---
 
 # RebalanceSchedule
@@ -16,4 +16,4 @@ tags:
 - [[RebalanceSchedule.flags()]] - `contains` [EXTRACTED]
 - [[schedule.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans

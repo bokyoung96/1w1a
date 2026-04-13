@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/App.test.tsx"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Dashboard Frontend App"
 location: "L885"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Dashboard_Frontend_App
 ---
 
 # output()
@@ -30,4 +30,4 @@ tags:
 - [[App.test.tsx]] - `contains` [EXTRACTED]
 - [[README]] - `rationale_for` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Dashboard_Frontend_App

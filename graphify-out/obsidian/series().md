@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/App.test.tsx"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Analytics"
 location: "L513"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Analytics
 ---
 
 # series()
@@ -95,4 +95,4 @@ tags:
 - [[test_validation_session_returns_stable_unique_warnings()]] - `calls` [INFERRED]
 - [[validate_position_plan()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

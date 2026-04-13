@@ -1,12 +1,12 @@
 ---
 source_file: "tests/kis/test_root.py"
 type: "code"
-community: "Tests Dashboard Backend"
+community: "Docs Superpowers Plans"
 location: "L6"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Dashboard_Backend
+  - community/Docs_Superpowers_Plans
 ---
 
 # test_root_exposes_repo_paths()
@@ -16,4 +16,4 @@ tags:
 - [[LaunchResolutionService.resolve()]] - `calls` [INFERRED]
 - [[test_root.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Dashboard_Backend
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

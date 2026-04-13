@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/reporting/tables.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Test_Builder"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Test_Builder
 ---
 
 # tables.py
@@ -21,4 +21,4 @@ tags:
 - [[build_summary_table()]] - `contains` [EXTRACTED]
 - [[models.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Test_Builder

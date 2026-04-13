@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/construction/long_short.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L20"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # LongShortTopBottom.__post_init__()
@@ -15,4 +15,4 @@ tags:
 - [[LongShortTopBottom]] - `contains` [EXTRACTED]
 - [[validate_positive()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

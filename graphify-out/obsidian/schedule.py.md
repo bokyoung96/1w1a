@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/execution/schedule.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Plans"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Plans
 ---
 
 # schedule.py
@@ -18,4 +18,4 @@ tags:
 - [[WeeklySchedule]] - `contains` [EXTRACTED]
 - [[test_schedule.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans

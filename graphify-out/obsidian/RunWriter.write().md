@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/writer.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Strategy"
 location: "L26"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Strategy
 ---
 
 # RunWriter.write()
@@ -37,4 +37,4 @@ tags:
 - [[RunWriter._write_json()]] - `calls` [INFERRED]
 - [[_monthly_returns()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Strategy

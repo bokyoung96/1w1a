@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/analytics/factor.py"
 type: "code"
-community: "Tests Analytics Test_Factor"
+community: "Tests Reporting Analytics"
 location: "L60"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Analytics_Test_Factor
+  - community/Tests_Reporting_Analytics
 ---
 
 # rank_ic()
@@ -19,4 +19,4 @@ tags:
 - [[test_rank_ic_returns_empty_series_without_shared_columns()]] - `calls` [INFERRED]
 - [[test_rank_ic_uses_common_overlap_and_returns_nan_when_empty()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Analytics_Test_Factor
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

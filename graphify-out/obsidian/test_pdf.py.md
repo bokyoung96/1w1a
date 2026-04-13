@@ -1,11 +1,11 @@
 ---
 source_file: "tests/reporting/test_pdf.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Tests"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Tests
 ---
 
 # test_pdf.py
@@ -30,4 +30,4 @@ tags:
 - [[test_pdf_renderer_writes_pdf_from_composed_report()]] - `contains` [EXTRACTED]
 - [[test_pdf_renderer_writes_pdf_when_export_succeeds()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

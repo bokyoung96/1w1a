@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/breakout_staged.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Analytics"
 location: "L22"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Analytics
 ---
 
 # Breakout52WeekStaged.datasets()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[Breakout52WeekStaged]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Analytics

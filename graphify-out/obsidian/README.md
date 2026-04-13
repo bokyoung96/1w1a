@@ -1,11 +1,11 @@
 ---
 source_file: "README.md"
 type: "document"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # README.md
@@ -99,4 +99,4 @@ tags:
 - [[strategies()]] - `rationale_for` [INFERRED]
 - [[visible()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting

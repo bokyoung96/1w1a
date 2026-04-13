@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/register.py"
 type: "code"
-community: "Tests Dashboard Backend"
+community: "Docs Superpowers Reporting"
 location: "L79"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Dashboard_Backend
+  - community/Docs_Superpowers_Reporting
 ---
 
 # TRClient.__enter__()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[TRClient]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Backend
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

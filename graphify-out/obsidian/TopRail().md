@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/TopRail.tsx"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 location: "L5"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # TopRail()
@@ -15,4 +15,4 @@ tags:
 - [[2026-04-06-dashboard-analytics-refresh]] - `rationale_for` [INFERRED]
 - [[TopRail.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

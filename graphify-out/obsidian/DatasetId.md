@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/catalog/enums.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Raw Ksdq Csv"
 location: "L16"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Raw_Ksdq_Csv
 ---
 
 # DatasetId
@@ -20,4 +20,4 @@ tags:
 - [[README]] - `rationale_for` [INFERRED]
 - [[enums.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv

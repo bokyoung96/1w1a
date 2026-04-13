@@ -1,6 +1,6 @@
 # Kosdaq Kosdaq Wics Sector Sector Large Cap Sector
 
-> God node · 64 connections · `raw/ksdq/qw_ksdq_wics_sec_big.csv`
+> God node · 65 connections · `raw/ksdq/qw_ksdq_wics_sec_big.csv`
 
 **Community:** [[Raw Ksdq Csv]]
 

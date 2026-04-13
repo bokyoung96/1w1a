@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/ingest/report.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Tests"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Tests
 ---
 
 # report.py
@@ -15,4 +15,4 @@ tags:
 - [[Mkt Typ]] - `references` [INFERRED]
 - [[Shares Outstanding Outstanding]] - `references` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

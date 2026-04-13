@@ -1,13 +1,13 @@
 ---
 type: community
-cohesion: 0.04
-members: 59
+cohesion: 0.03
+members: 62
 ---
 
 # Dashboard Frontend App
 
-**Cohesion:** 0.04 - loosely connected
-**Members:** 59 nodes
+**Cohesion:** 0.03 - loosely connected
+**Members:** 62 nodes
 
 ## Members
 - [[App()]] - code - dashboard/frontend/src/app/App.tsx
@@ -16,6 +16,7 @@ members: 59
 - [[Options Close]] - document - raw/options/qw_c.csv
 - [[Options Maturity]] - document - raw/options/qw_maturity.csv
 - [[Options Oi]] - document - raw/options/qw_oi.csv
+- [[Options Spot Ticker]] - document - raw/options/qw_spot_ticker.csv
 - [[availableRunIds()]] - code - dashboard/frontend/src/app/App.tsx
 - [[comparisonPlane()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[createDashboard()]] - code - dashboard/frontend/src/components/App.test.tsx
@@ -44,6 +45,7 @@ members: 59
 - [[normalizedRunIds()]] - code - dashboard/frontend/src/app/App.tsx
 - [[normalizedRuns()]] - code - dashboard/frontend/src/app/App.tsx
 - [[orderSelectedRunIds()]] - code - dashboard/frontend/src/app/App.tsx
+- [[output()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[promise()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[qw_c data shape]] - document - raw/options/qw_c.csv
 - [[qw_c.csv]] - document - raw/options/qw_c.csv
@@ -51,6 +53,8 @@ members: 59
 - [[qw_maturity.csv]] - document - raw/options/qw_maturity.csv
 - [[qw_oi data shape]] - document - raw/options/qw_oi.csv
 - [[qw_oi.csv]] - document - raw/options/qw_oi.csv
+- [[qw_spot_ticker data shape]] - document - raw/options/qw_spot_ticker.csv
+- [[qw_spot_ticker.csv]] - document - raw/options/qw_spot_ticker.csv
 - [[requestRunIds()]] - code - dashboard/frontend/src/app/App.tsx
 - [[resolveInitialRunIds()]] - code - dashboard/frontend/src/app/App.tsx
 - [[rollingOption()]] - code - dashboard/frontend/src/components/App.test.tsx
@@ -66,7 +70,6 @@ members: 59
 - [[uniqueRunOptions()]] - code - dashboard/frontend/src/app/App.tsx
 - [[validBootstrapIds()]] - code - dashboard/frontend/src/app/App.tsx
 - [[valueSeries()]] - code - dashboard/frontend/src/components/App.test.tsx
-- [[weightOption()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[xAxis()]] - code - dashboard/frontend/src/components/App.test.tsx
 - [[yAxis()]] - code - dashboard/frontend/src/components/App.test.tsx
 
@@ -78,19 +81,17 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 27 edges to [[_COMMUNITY_Raw Ksdq Csv]]
-- 8 edges to [[_COMMUNITY_Docs Superpowers Plans]]
-- 4 edges to [[_COMMUNITY_Docs Superpowers Plans]]
-- 3 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
-- 1 edge to [[_COMMUNITY_Backtesting Reporting Tests]]
-- 1 edge to [[_COMMUNITY_Docs Superpowers Live]]
-- 1 edge to [[_COMMUNITY_Docs Superpowers Live]]
-- 1 edge to [[_COMMUNITY_Docs Superpowers Plans]]
-- 1 edge to [[_COMMUNITY_Docs Superpowers Strategy]]
+- 21 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 17 edges to [[_COMMUNITY_Backtesting Reporting Frontend]]
+- 13 edges to [[_COMMUNITY_Raw Ksdq Csv]]
+- 8 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
+- 2 edges to [[_COMMUNITY_Docs Superpowers Strategy]]
+- 1 edge to [[_COMMUNITY_Tests Reporting Analytics]]
+- 1 edge to [[_COMMUNITY_Docs Superpowers Portfolio]]
 
 ## Top bridge nodes
+- [[output()]] - degree 17, connects to 6 communities
 - [[App.test.tsx]] - degree 54, connects to 5 communities
-- [[Options Close]] - degree 8, connects to 4 communities
-- [[exposureBand()]] - degree 4, connects to 3 communities
-- [[App.tsx]] - degree 33, connects to 1 community
-- [[Options Maturity]] - degree 5, connects to 1 community
+- [[Options Close]] - degree 8, connects to 3 communities
+- [[App.tsx]] - degree 33, connects to 2 communities
+- [[Options Spot Ticker]] - degree 7, connects to 2 communities

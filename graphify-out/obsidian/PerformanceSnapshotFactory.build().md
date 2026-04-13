@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/snapshots.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Frontend"
 location: "L54"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # PerformanceSnapshotFactory.build()
@@ -24,4 +24,4 @@ tags:
 - [[PerformanceSnapshotFactory._build_sectors()]] - `calls` [INFERRED]
 - [[PerformanceSnapshotFactory._equity_from_returns()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

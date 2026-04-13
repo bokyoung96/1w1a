@@ -1,11 +1,11 @@
 ---
 source_file: "dashboard/strategies.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Tests Dashboard Backend"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Tests_Dashboard_Backend
 ---
 
 # strategies.py
@@ -26,4 +26,4 @@ tags:
 - [[test_run.py]] - `imports_from` [EXTRACTED]
 - [[test_strategies.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Backend

@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-05-research-dashboard-refresh-design.md"
 type: "document"
-community: "Docs Superpowers Research"
+community: "Docs Superpowers Reporting"
 location: "L1"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Research
+  - community/Docs_Superpowers_Reporting
 ---
 
 # Research Dashboard Refresh Design
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[2026-04-05-research-dashboard-refresh-design]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Research
+#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

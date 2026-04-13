@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/test/setup.ts"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Backtesting Reporting Frontend"
 location: "L11"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # React()
@@ -22,4 +22,4 @@ tags:
 - [[2026-04-07-dashboard-research-series-plan]] - `rationale_for` [INFERRED]
 - [[setup.ts]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

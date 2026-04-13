@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/reporting/pdf.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Tests"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Tests
 ---
 
 # pdf.py
@@ -19,4 +19,4 @@ tags:
 - [[Wics Sector Sector Large Cap Sector]] - `references` [INFERRED]
 - [[test_pdf.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

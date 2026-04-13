@@ -1,11 +1,11 @@
 ---
 source_file: "raw/options/qw_implied_vol.csv"
 type: "document"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # Options Implied Vol
@@ -35,4 +35,4 @@ tags:
 - [[types.ts]] - `references` [INFERRED]
 - [[universe.py]] - `references` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/document #graphify/INFERRED #community/Backtesting_Reporting_Frontend

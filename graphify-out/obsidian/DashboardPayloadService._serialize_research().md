@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/services/dashboard_payload.py"
 type: "code"
-community: "Dashboard Backend Schemas"
+community: "Backtesting Reporting Frontend"
 location: "L232"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Dashboard_Backend_Schemas
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # DashboardPayloadService._serialize_research()
@@ -22,4 +22,4 @@ tags:
 - [[serialize_heatmap()]] - `calls` [INFERRED]
 - [[serialize_named_series()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Dashboard_Backend_Schemas
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

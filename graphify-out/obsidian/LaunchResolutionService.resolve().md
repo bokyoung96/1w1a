@@ -32,6 +32,7 @@ tags:
 - [[LaunchResolutionService._find_matching_run()]] - `calls` [INFERRED]
 - [[ResolvedRun]] - `calls` [INFERRED]
 - [[RunIndexService]] - `calls` [INFERRED]
+- [[_load_generate_module()]] - `calls` [INFERRED]
 - [[build_parser()]] - `calls` [INFERRED]
 - [[create_app()]] - `calls` [INFERRED]
 - [[enabled_strategy_presets()]] - `calls` [INFERRED]

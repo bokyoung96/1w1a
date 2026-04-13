@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/construction/sector_neutral.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Strategies Tests"
 location: "L120"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Strategies_Tests
 ---
 
 # _leg_sizes()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[sector_neutral.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

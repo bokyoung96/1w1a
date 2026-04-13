@@ -2,7 +2,7 @@
 
 > God node · 52 connections · `raw/qw_foreign_ratio.csv`
 
-**Community:** [[Raw Ksdq Csv]]
+**Community:** [[Backtesting Reporting Frontend]]
 
 ## Connections by Relation
 

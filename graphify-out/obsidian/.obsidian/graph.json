@@ -1,280 +1,140 @@
 {
   "colorGroups": [
     {
-      "query": "tag:#community/Raw_Ksdq_Csv",
+      "query": "tag:#community/Docs_Superpowers_Reporting",
       "color": {
         "a": 1,
         "rgb": 5142951
       }
     },
     {
-      "query": "tag:#community/Docs_Superpowers_Policy",
+      "query": "tag:#community/Backtesting_Reporting_Frontend",
       "color": {
         "a": 1,
         "rgb": 15896107
       }
     },
     {
-      "query": "tag:#community/Backtesting_Reporting_Tests",
+      "query": "tag:#community/Raw_Ksdq_Csv",
       "color": {
         "a": 1,
         "rgb": 14767961
-      }
-    },
-    {
-      "query": "tag:#community/Tests_Test_Run.Py_Engine",
-      "color": {
-        "a": 1,
-        "rgb": 7780274
       }
     },
     {
       "query": "tag:#community/Tests_Dashboard_Backend",
       "color": {
         "a": 1,
-        "rgb": 5873999
+        "rgb": 7780274
       }
     },
     {
       "query": "tag:#community/Backtesting_Reporting_Tests",
       "color": {
         "a": 1,
+        "rgb": 5873999
+      }
+    },
+    {
+      "query": "tag:#community/Backtesting_Strategies_Tests",
+      "color": {
+        "a": 1,
         "rgb": 15583560
+      }
+    },
+    {
+      "query": "tag:#community/Docs_Superpowers_Plans",
+      "color": {
+        "a": 1,
+        "rgb": 11565729
+      }
+    },
+    {
+      "query": "tag:#community/Tests_Test_Run.Py_Engine",
+      "color": {
+        "a": 1,
+        "rgb": 16752039
+      }
+    },
+    {
+      "query": "tag:#community/Docs_Superpowers_Portfolio",
+      "color": {
+        "a": 1,
+        "rgb": 10253663
       }
     },
     {
       "query": "tag:#community/Docs_Superpowers_Strategy",
       "color": {
         "a": 1,
-        "rgb": 11565729
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Plans",
-      "color": {
-        "a": 1,
-        "rgb": 16752039
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Reporting",
-      "color": {
-        "a": 1,
-        "rgb": 10253663
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Plans",
-      "color": {
-        "a": 1,
         "rgb": 12234924
       }
     },
     {
-      "query": "tag:#community/Dashboard_Backend_Schemas",
+      "query": "tag:#community/Tests_Reporting_Analytics",
       "color": {
         "a": 1,
         "rgb": 5142951
+      }
+    },
+    {
+      "query": "tag:#community/Tests_Reporting_Test_Builder",
+      "color": {
+        "a": 1,
+        "rgb": 15896107
       }
     },
     {
       "query": "tag:#community/Dashboard_Frontend_App",
       "color": {
         "a": 1,
-        "rgb": 15896107
-      }
-    },
-    {
-      "query": "tag:#community/Backtesting_Reporting_Composers",
-      "color": {
-        "a": 1,
         "rgb": 14767961
-      }
-    },
-    {
-      "query": "tag:#community/Dashboard_Frontend_Src",
-      "color": {
-        "a": 1,
-        "rgb": 7780274
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Reporting",
-      "color": {
-        "a": 1,
-        "rgb": 5873999
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Live",
-      "color": {
-        "a": 1,
-        "rgb": 15583560
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Plans",
-      "color": {
-        "a": 1,
-        "rgb": 11565729
-      }
-    },
-    {
-      "query": "tag:#community/Tests_Dashboard_Test_Run",
-      "color": {
-        "a": 1,
-        "rgb": 16752039
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Performance",
-      "color": {
-        "a": 1,
-        "rgb": 10253663
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Plans",
-      "color": {
-        "a": 1,
-        "rgb": 12234924
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Kosdaq150",
-      "color": {
-        "a": 1,
-        "rgb": 5142951
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Analytics",
-      "color": {
-        "a": 1,
-        "rgb": 15896107
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Breakout",
-      "color": {
-        "a": 1,
-        "rgb": 14767961
-      }
-    },
-    {
-      "query": "tag:#community/Dashboard_Frontend_Src",
-      "color": {
-        "a": 1,
-        "rgb": 7780274
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Reporting",
-      "color": {
-        "a": 1,
-        "rgb": 5873999
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Research",
-      "color": {
-        "a": 1,
-        "rgb": 15583560
-      }
-    },
-    {
-      "query": "tag:#community/Docs_Superpowers_Live",
-      "color": {
-        "a": 1,
-        "rgb": 11565729
-      }
-    },
-    {
-      "query": "tag:#community/Backtesting_Reporting_Tables_Single",
-      "color": {
-        "a": 1,
-        "rgb": 16752039
-      }
-    },
-    {
-      "query": "tag:#community/Dashboard_Frontend_Src",
-      "color": {
-        "a": 1,
-        "rgb": 10253663
-      }
-    },
-    {
-      "query": "tag:#community/Tests_Validation_Test_Split",
-      "color": {
-        "a": 1,
-        "rgb": 12234924
-      }
-    },
-    {
-      "query": "tag:#community/Tests_Analytics_Test_Factor",
-      "color": {
-        "a": 1,
-        "rgb": 5142951
-      }
-    },
-    {
-      "query": "tag:#community/Kis_Tools.Py_Tr_Id",
-      "color": {
-        "a": 1,
-        "rgb": 15896107
-      }
-    },
-    {
-      "query": "tag:#community/Backtesting_Universe.Py",
-      "color": {
-        "a": 1,
-        "rgb": 14767961
-      }
-    },
-    {
-      "query": "tag:#community/Kis_Tools.Py",
-      "color": {
-        "a": 1,
-        "rgb": 7780274
       }
     },
     {
       "query": "tag:#community/Raw_Qw_Bm.Xlsx",
       "color": {
         "a": 1,
-        "rgb": 5873999
+        "rgb": 7780274
       }
     },
     {
       "query": "tag:#community/Raw_Qw_V.Csv",
       "color": {
         "a": 1,
-        "rgb": 15583560
+        "rgb": 5873999
       }
     },
     {
       "query": "tag:#community/Backtesting_Policy_Init__",
       "color": {
         "a": 1,
-        "rgb": 11565729
+        "rgb": 15583560
       }
     },
     {
       "query": "tag:#community/Backtesting_Signals_Init__",
       "color": {
         "a": 1,
-        "rgb": 16752039
+        "rgb": 11565729
       }
     },
     {
       "query": "tag:#community/Dashboard___Init__.Py",
       "color": {
         "a": 1,
-        "rgb": 10253663
+        "rgb": 16752039
       }
     },
     {
       "query": "tag:#community/Dashboard_Backend_Services",
+      "color": {
+        "a": 1,
+        "rgb": 10253663
+      }
+    },
+    {
+      "query": "tag:#community/Dashboard_Frontend_Vite",
       "color": {
         "a": 1,
         "rgb": 12234924
@@ -295,31 +155,24 @@
       }
     },
     {
-      "query": "tag:#community/Dashboard_Frontend_Vite",
+      "query": "tag:#community/Kis_Tr_Id_Init__",
       "color": {
         "a": 1,
         "rgb": 14767961
       }
     },
     {
-      "query": "tag:#community/Kis_Tr_Id_Init__",
+      "query": "tag:#community/Tests_Conftest.Py",
       "color": {
         "a": 1,
         "rgb": 7780274
       }
     },
     {
-      "query": "tag:#community/Tests_Conftest.Py",
-      "color": {
-        "a": 1,
-        "rgb": 5873999
-      }
-    },
-    {
       "query": "tag:#community/Dashboard_Backend_Requirements",
       "color": {
         "a": 1,
-        "rgb": 15583560
+        "rgb": 5873999
       }
     }
   ]

@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_tables.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Frontend"
 location: "L17"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # _sample_snapshot()
@@ -22,4 +22,4 @@ tags:
 - [[series()]] - `calls` [INFERRED]
 - [[test_tables.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

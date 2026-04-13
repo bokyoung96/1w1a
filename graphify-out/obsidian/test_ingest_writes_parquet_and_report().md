@@ -1,12 +1,12 @@
 ---
 source_file: "tests/ingest/test_pipeline.py"
 type: "code"
-community: "Tests Test Run.Py Engine"
+community: "Raw Ksdq Csv"
 location: "L11"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Test_Run.Py_Engine
+  - community/Raw_Ksdq_Csv
 ---
 
 # test_ingest_writes_parquet_and_report()
@@ -19,4 +19,4 @@ tags:
 - [[IngestResult.to_dict()]] - `calls` [INFERRED]
 - [[test_pipeline.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Test_Run.Py_Engine
+#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv

@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/validation/split.py"
 type: "code"
-community: "Tests Validation Test_Split"
+community: "Docs Superpowers Plans"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Validation_Test_Split
+  - community/Docs_Superpowers_Plans
 ---
 
 # split.py
@@ -15,4 +15,4 @@ tags:
 - [[SplitResult]] - `contains` [EXTRACTED]
 - [[split_frame()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Validation_Test_Split
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans

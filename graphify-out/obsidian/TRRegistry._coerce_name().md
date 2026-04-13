@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/register.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Docs Superpowers Portfolio"
 location: "L40"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Docs_Superpowers_Portfolio
 ---
 
 # TRRegistry._coerce_name()
@@ -16,4 +16,4 @@ tags:
 - [[TRRegistry]] - `contains` [EXTRACTED]
 - [[TRRegistry.get()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Portfolio

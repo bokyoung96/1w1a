@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/base.py"
 type: "code"
-community: "Docs Superpowers Strategy"
+community: "Tests Reporting Analytics"
 location: "L25"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Strategy
+  - community/Tests_Reporting_Analytics
 ---
 
 # RegisteredStrategy.target_weights()
@@ -24,4 +24,4 @@ tags:
 - [[test_rank_long_short_ignores_nan_names_when_selection_exceeds_valid_count()]] - `calls` [INFERRED]
 - [[test_threshold_trend_goes_long_above_threshold()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Strategy
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

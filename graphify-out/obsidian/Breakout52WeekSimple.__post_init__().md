@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/breakout_simple.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L90"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # Breakout52WeekSimple.__post_init__()
@@ -17,4 +17,4 @@ tags:
 - [[PassThroughPolicy]] - `calls` [INFERRED]
 - [[_Breakout52WeekConstructionRule]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests

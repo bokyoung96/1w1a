@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/policy/pass_through.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L15"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # PassThroughPolicy
@@ -20,4 +20,4 @@ tags:
 - [[test_pass_through_policy_emits_base_weights_as_single_bucket()]] - `calls` [INFERRED]
 - [[test_pass_through_policy_preserves_empty_ledger_schema()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests

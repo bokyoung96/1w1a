@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/ResearchDetailPanel.tsx"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 location: "L33"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # label()
@@ -31,4 +31,4 @@ tags:
 - [[2026-04-13-kosdaq150-universe-integration]] - `rationale_for` [INFERRED]
 - [[ResearchDetailPanel.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

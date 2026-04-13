@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/tables_single.py"
 type: "code"
-community: "Backtesting Reporting Tables_Single"
+community: "Backtesting Reporting Frontend"
 location: "L139"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tables_Single
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # _metric_label()
@@ -16,4 +16,4 @@ tags:
 - [[TearsheetTableBuilder.build()]] - `calls` [INFERRED]
 - [[tables_single.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tables_Single
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

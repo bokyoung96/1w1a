@@ -1,11 +1,11 @@
 ---
 source_file: "tests/execution/test_schedule.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Plans"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Plans
 ---
 
 # test_schedule.py
@@ -25,4 +25,4 @@ tags:
 - [[test_weekly_schedule_marks_last_available_date_when_cutoff_weekday_missing()]] - `contains` [EXTRACTED]
 - [[test_weekly_schedule_marks_rebalance_dates()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans

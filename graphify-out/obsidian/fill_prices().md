@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/execution/fill.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Plans"
 location: "L4"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Plans
 ---
 
 # fill_prices()
@@ -21,4 +21,4 @@ tags:
 - [[test_fill_prices_returns_close_for_close_mode()]] - `calls` [INFERRED]
 - [[test_fill_prices_uses_next_open_for_next_open_mode()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

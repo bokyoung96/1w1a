@@ -2,7 +2,7 @@
 
 > God node · 61 connections · `raw/qw_wics_sec_big.csv`
 
-**Community:** [[Raw Ksdq Csv]]
+**Community:** [[Backtesting Reporting Frontend]]
 
 ## Connections by Relation
 

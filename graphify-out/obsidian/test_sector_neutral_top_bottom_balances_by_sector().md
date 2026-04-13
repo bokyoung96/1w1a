@@ -1,12 +1,12 @@
 ---
 source_file: "tests/construction/test_rules.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L30"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # test_sector_neutral_top_bottom_balances_by_sector()
@@ -17,4 +17,4 @@ tags:
 - [[SignalBundle]] - `calls` [INFERRED]
 - [[test_rules.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests

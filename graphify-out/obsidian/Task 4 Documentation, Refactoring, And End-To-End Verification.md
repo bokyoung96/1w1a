@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-05-research-dashboard-refresh.md"
 type: "document"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 location: "L415"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # Task 4: Documentation, Refactoring, And End-To-End Verification
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[2026-04-05-research-dashboard-refresh]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Plans
+#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

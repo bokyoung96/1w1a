@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/register.py"
 type: "code"
-community: "Kis Tools.Py Tr_Id"
+community: "Docs Superpowers Plans"
 location: "L118"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Kis_Tools.Py_Tr_Id
+  - community/Docs_Superpowers_Plans
 ---
 
 # TRBatchClient.call_batch()
@@ -21,4 +21,4 @@ tags:
 - [[TRClient._request()]] - `calls` [INFERRED]
 - [[main()_3]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Kis_Tools.Py_Tr_Id
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

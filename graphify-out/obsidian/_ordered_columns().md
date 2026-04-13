@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/tables_comparison.py"
 type: "code"
-community: "Backtesting Reporting Tables_Single"
+community: "Backtesting Reporting Frontend"
 location: "L109"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tables_Single
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # _ordered_columns()
@@ -22,4 +22,4 @@ tags:
 - [[build_validation_appendix_table()]] - `calls` [INFERRED]
 - [[tables_comparison.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tables_Single
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

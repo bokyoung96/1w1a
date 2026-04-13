@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/ExposureBand.tsx"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Backtesting Reporting Frontend"
 location: "L109"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Reporting
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # holdings()
@@ -23,4 +23,4 @@ tags:
 - [[2026-04-06-dashboard-analytics-refresh]] - `rationale_for` [INFERRED]
 - [[ExposureBand.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

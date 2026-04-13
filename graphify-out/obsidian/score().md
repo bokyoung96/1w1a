@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/ResearchWorkspace.tsx"
 type: "code"
-community: "Dashboard Frontend Src"
+community: "Backtesting Reporting Frontend"
 location: "L627"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Dashboard_Frontend_Src
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # score()
@@ -15,4 +15,4 @@ tags:
 - [[2026-04-12-portfolio-construction-and-staged-policy-design]] - `rationale_for` [INFERRED]
 - [[ResearchWorkspace.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Dashboard_Frontend_Src
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

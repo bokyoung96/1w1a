@@ -1,12 +1,12 @@
 ---
 source_file: "kis/config.py"
 type: "code"
-community: "Tests Dashboard Backend"
+community: "Docs Superpowers Plans"
 location: "L71"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Dashboard_Backend
+  - community/Docs_Superpowers_Plans
 ---
 
 # KISAuth._load_token()
@@ -19,4 +19,4 @@ tags:
 - [[KISAuth._clear_token()]] - `calls` [INFERRED]
 - [[KISAuth._should_refresh_token()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Dashboard_Backend
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

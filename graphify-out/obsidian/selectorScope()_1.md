@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/RunSelector.test.tsx"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 location: "L162"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # selectorScope()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[RunSelector.test.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

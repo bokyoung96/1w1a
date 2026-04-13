@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md"
 type: "document"
-community: "Docs Superpowers Plans"
+community: "Backtesting Reporting Tests"
 location: "L355"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Plans
+  - community/Backtesting_Reporting_Tests
 ---
 
 # Task 3: Build Analytics Snapshots For Metrics, Rolling Stats, Drawdowns, And Sector Exposures
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[2026-04-03-performance-reporting-redesign-implementation]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Plans
+#graphify/document #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

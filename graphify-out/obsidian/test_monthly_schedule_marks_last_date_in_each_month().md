@@ -1,12 +1,12 @@
 ---
 source_file: "tests/execution/test_schedule.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Plans"
 location: "L51"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Plans
 ---
 
 # test_monthly_schedule_marks_last_date_in_each_month()
@@ -16,4 +16,4 @@ tags:
 - [[MonthlySchedule]] - `calls` [INFERRED]
 - [[test_schedule.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

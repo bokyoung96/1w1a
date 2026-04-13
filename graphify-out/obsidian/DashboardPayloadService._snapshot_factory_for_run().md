@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/services/dashboard_payload.py"
 type: "code"
-community: "Dashboard Backend Schemas"
+community: "Backtesting Reporting Frontend"
 location: "L265"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Dashboard_Backend_Schemas
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # DashboardPayloadService._snapshot_factory_for_run()
@@ -18,4 +18,4 @@ tags:
 - [[PerformanceSnapshotFactory]] - `calls` [INFERRED]
 - [[default_repositories_for_universe()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Dashboard_Backend_Schemas
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

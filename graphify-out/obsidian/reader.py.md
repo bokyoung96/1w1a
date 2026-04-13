@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/reporting/reader.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # reader.py
@@ -17,4 +17,4 @@ tags:
 - [[models.py]] - `imports_from` [EXTRACTED]
 - [[test_reader.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

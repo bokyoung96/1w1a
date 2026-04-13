@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_pdf.py"
 type: "code"
-community: "Docs Superpowers Reporting"
+community: "Backtesting Reporting Tests"
 location: "L35"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Reporting
+  - community/Backtesting_Reporting_Tests
 ---
 
 # _FakeHtml
@@ -16,4 +16,4 @@ tags:
 - [[_FakeHtml.write_pdf()]] - `contains` [EXTRACTED]
 - [[test_pdf.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

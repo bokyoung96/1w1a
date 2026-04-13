@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/execution/costs.py"
 type: "code"
-community: "Docs Superpowers Breakout"
+community: "Docs Superpowers Plans"
 location: "L11"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Breakout
+  - community/Docs_Superpowers_Plans
 ---
 
 # TradeCost.total()
@@ -18,4 +18,4 @@ tags:
 - [[2026-04-12-portfolio-construction-and-staged-policy-design]] - `rationale_for` [INFERRED]
 - [[TradeCost]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Breakout
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

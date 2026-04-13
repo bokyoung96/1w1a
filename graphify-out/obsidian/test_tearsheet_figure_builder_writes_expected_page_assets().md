@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_figures.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Frontend"
 location: "L93"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # test_tearsheet_figure_builder_writes_expected_page_assets()
@@ -18,4 +18,4 @@ tags:
 - [[test_figures.py]] - `contains` [EXTRACTED]
 - [[values()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

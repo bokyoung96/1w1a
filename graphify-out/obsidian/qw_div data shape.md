@@ -1,11 +1,11 @@
 ---
 source_file: "raw/options/qw_div.csv"
 type: "document"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # qw_div data shape
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[Options Div]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/document #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

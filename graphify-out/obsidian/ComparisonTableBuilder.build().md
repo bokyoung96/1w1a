@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/tables_comparison.py"
 type: "code"
-community: "Backtesting Reporting Tables_Single"
+community: "Backtesting Reporting Frontend"
 location: "L24"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tables_Single
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # ComparisonTableBuilder.build()
@@ -18,4 +18,4 @@ tags:
 - [[build_ranked_summary_table()]] - `calls` [INFERRED]
 - [[build_sector_comparison_table()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tables_Single
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

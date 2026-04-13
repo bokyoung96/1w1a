@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/analytics.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Backtesting Reporting Frontend"
 location: "L86"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # build_monthly_heatmap()
@@ -19,4 +19,4 @@ tags:
 - [[analytics.py]] - `contains` [EXTRACTED]
 - [[monthly_return_series()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_models_reporting_redesign.py"
 type: "code"
-community: "Backtesting Reporting Composers"
+community: "Backtesting Reporting Tests"
 location: "L15"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Composers
+  - community/Backtesting_Reporting_Tests
 ---
 
 # test_report_spec_defaults_to_comparison_for_multiple_runs()
@@ -16,4 +16,4 @@ tags:
 - [[ReportSpec]] - `calls` [INFERRED]
 - [[test_models_reporting_redesign.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Composers
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

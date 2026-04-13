@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategy/base.py"
 type: "code"
-community: "Docs Superpowers Strategy"
+community: "Tests Reporting Analytics"
 location: "L7"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Strategy
+  - community/Tests_Reporting_Analytics
 ---
 
 # BaseStrategy.zeros_like()
@@ -17,4 +17,4 @@ tags:
 - [[RankLongShort.target_weights()]] - `calls` [INFERRED]
 - [[series()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Strategy
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

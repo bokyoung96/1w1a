@@ -20,6 +20,7 @@ tags:
 - [[qw_ksdq_mkcap data shape]] - `references` [EXTRACTED]
 - [[qw_ksdq_mkcap.csv]] - `contains` [EXTRACTED]
 - [[test_benchmarks.py]] - `references` [INFERRED]
+- [[test_graphify_generate.py]] - `references` [INFERRED]
 - [[test_groups.py]] - `references` [INFERRED]
 - [[test_loader.py]] - `references` [INFERRED]
 - [[test_pipeline.py]] - `references` [INFERRED]

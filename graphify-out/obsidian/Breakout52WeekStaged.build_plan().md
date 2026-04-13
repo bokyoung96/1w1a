@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/breakout_staged.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Analytics"
 location: "L28"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Analytics
 ---
 
 # Breakout52WeekStaged.build_plan()
@@ -17,4 +17,4 @@ tags:
 - [[RegisteredStrategy.build_signal()]] - `calls` [INFERRED]
 - [[series()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

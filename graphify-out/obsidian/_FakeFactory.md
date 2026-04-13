@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_builder.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Test_Builder"
 location: "L28"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Test_Builder
 ---
 
 # _FakeFactory
@@ -18,4 +18,4 @@ tags:
 - [[test_report_builder_creates_comparison_bundle_for_multiple_runs()]] - `calls` [INFERRED]
 - [[test_report_builder_creates_tearsheet_bundle_and_persists_tables()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Test_Builder

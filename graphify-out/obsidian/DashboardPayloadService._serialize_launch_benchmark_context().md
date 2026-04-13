@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/services/dashboard_payload.py"
 type: "code"
-community: "Dashboard Backend Schemas"
+community: "Backtesting Reporting Frontend"
 location: "L121"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Dashboard_Backend_Schemas
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # DashboardPayloadService._serialize_launch_benchmark_context()
@@ -20,4 +20,4 @@ tags:
 - [[LaunchStrategyBenchmarkModel]] - `calls` [INFERRED]
 - [[enabled_strategy_presets()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Dashboard_Backend_Schemas
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

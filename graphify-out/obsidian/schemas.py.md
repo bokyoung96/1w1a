@@ -1,11 +1,11 @@
 ---
 source_file: "dashboard/backend/schemas.py"
 type: "code"
-community: "Dashboard Backend Schemas"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Dashboard_Backend_Schemas
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # schemas.py
@@ -50,4 +50,4 @@ tags:
 - [[run_index.py]] - `imports_from` [EXTRACTED]
 - [[serializers.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Dashboard_Backend_Schemas
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

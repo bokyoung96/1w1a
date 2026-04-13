@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tools.py"
 type: "code"
-community: "Kis Tools.Py Tr_Id"
+community: "Docs Superpowers Plans"
 location: "L13"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Kis_Tools.Py_Tr_Id
+  - community/Docs_Superpowers_Plans
 ---
 
 # DataTools.to_frame()
@@ -19,4 +19,4 @@ tags:
 - [[build_monthly_heatmap()]] - `calls` [INFERRED]
 - [[main()_3]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Kis_Tools.Py_Tr_Id
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/data/store.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 location: "L16"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # ParquetStore.read()
@@ -45,4 +45,4 @@ tags:
 - [[test_run_reader_returns_none_for_missing_optional_artifacts()]] - `calls` [INFERRED]
 - [[test_run_reader_round_trips_writer_bundle_layout()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

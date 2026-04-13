@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/snapshots.py"
 type: "code"
-community: "Docs Superpowers Analytics"
+community: "Backtesting Reporting Frontend"
 location: "L32"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Analytics
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # PerformanceSnapshot
@@ -23,4 +23,4 @@ tags:
 - [[_sample_snapshot()_1]] - `calls` [INFERRED]
 - [[snapshots.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Analytics
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

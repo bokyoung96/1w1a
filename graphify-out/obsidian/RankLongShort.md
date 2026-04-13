@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategy/cross.py"
 type: "code"
-community: "Docs Superpowers Strategy"
+community: "Tests Reporting Analytics"
 location: "L26"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Strategy
+  - community/Tests_Reporting_Analytics
 ---
 
 # RankLongShort
@@ -22,4 +22,4 @@ tags:
 - [[test_rank_long_short_ignores_nan_names_when_selection_exceeds_valid_count()]] - `calls` [INFERRED]
 - [[test_rank_long_short_validates_leg_sizes()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Strategy
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

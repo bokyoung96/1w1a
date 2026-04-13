@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/schemas.py"
 type: "code"
-community: "Dashboard Backend Schemas"
+community: "Backtesting Reporting Frontend"
 location: "L59"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Dashboard_Backend_Schemas
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # ValuePointModel
@@ -16,4 +16,4 @@ tags:
 - [[schemas.py]] - `contains` [EXTRACTED]
 - [[serialize_value_points()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Dashboard_Backend_Schemas
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

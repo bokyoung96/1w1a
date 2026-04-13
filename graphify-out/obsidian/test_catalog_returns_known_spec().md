@@ -1,12 +1,12 @@
 ---
 source_file: "tests/catalog/test_specs.py"
 type: "code"
-community: "Tests Test Run.Py Engine"
+community: "Raw Ksdq Csv"
 location: "L4"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Test_Run.Py_Engine
+  - community/Raw_Ksdq_Csv
 ---
 
 # test_catalog_returns_known_spec()
@@ -17,4 +17,4 @@ tags:
 - [[DataCatalog.get()]] - `calls` [INFERRED]
 - [[test_specs.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Test_Run.Py_Engine
+#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv

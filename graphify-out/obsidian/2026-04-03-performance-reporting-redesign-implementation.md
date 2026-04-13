@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-03-performance-reporting-redesign-implementation.md"
 type: "document"
-community: "Docs Superpowers Plans"
+community: "Backtesting Reporting Tests"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Backtesting_Reporting_Tests
 ---
 
 # 2026-04-03-performance-reporting-redesign-implementation.md
@@ -171,4 +171,4 @@ tags:
 - [[value()]] - `rationale_for` [INFERRED]
 - [[values()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/document #graphify/INFERRED #community/Backtesting_Reporting_Tests

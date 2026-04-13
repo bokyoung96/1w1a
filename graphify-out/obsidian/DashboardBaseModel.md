@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/backend/schemas.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Backtesting Reporting Frontend"
 location: "L11"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # DashboardBaseModel
@@ -17,4 +17,4 @@ tags:
 - [[2026-04-06-dashboard-analytics-refresh]] - `rationale_for` [INFERRED]
 - [[schemas.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

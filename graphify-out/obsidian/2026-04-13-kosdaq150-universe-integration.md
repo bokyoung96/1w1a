@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-13-kosdaq150-universe-integration.md"
 type: "document"
-community: "Docs Superpowers Plans"
+community: "Raw Ksdq Csv"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Raw_Ksdq_Csv
 ---
 
 # 2026-04-13-kosdaq150-universe-integration.md
@@ -190,4 +190,4 @@ tags:
 - [[value()]] - `rationale_for` [INFERRED]
 - [[values()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/document #graphify/INFERRED #community/Raw_Ksdq_Csv

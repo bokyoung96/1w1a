@@ -1,11 +1,11 @@
 ---
 source_file: "raw/qw_sha_out.csv"
 type: "document"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # Shares Outstanding Outstanding
@@ -65,6 +65,7 @@ tags:
 - [[test_dashboard_api.py]] - `references` [INFERRED]
 - [[test_factor.py]] - `references` [INFERRED]
 - [[test_figures.py]] - `references` [INFERRED]
+- [[test_graphify_generate.py]] - `references` [INFERRED]
 - [[test_groups.py]] - `references` [INFERRED]
 - [[test_html.py]] - `references` [INFERRED]
 - [[test_loader.py]] - `references` [INFERRED]
@@ -86,4 +87,4 @@ tags:
 - [[types.ts]] - `references` [INFERRED]
 - [[writer.py]] - `references` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/document #graphify/INFERRED #community/Backtesting_Reporting_Frontend

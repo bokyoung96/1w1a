@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/lib/api.ts"
 type: "code"
-community: "Dashboard Frontend Src"
+community: "Docs Superpowers Portfolio"
 location: "L47"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Dashboard_Frontend_Src
+  - community/Docs_Superpowers_Portfolio
 ---
 
 # candidate()
@@ -15,4 +15,4 @@ tags:
 - [[2026-04-12-portfolio-construction-and-staged-policy-design]] - `rationale_for` [INFERRED]
 - [[api.ts]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Dashboard_Frontend_Src
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Portfolio

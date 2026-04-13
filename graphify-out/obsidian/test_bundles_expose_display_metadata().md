@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_models_reporting_redesign.py"
 type: "code"
-community: "Backtesting Reporting Composers"
+community: "Backtesting Reporting Tests"
 location: "L76"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Composers
+  - community/Backtesting_Reporting_Tests
 ---
 
 # test_bundles_expose_display_metadata()
@@ -17,4 +17,4 @@ tags:
 - [[TearsheetBundle]] - `calls` [INFERRED]
 - [[test_models_reporting_redesign.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Composers
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

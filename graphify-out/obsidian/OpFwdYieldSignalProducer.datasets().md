@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/signals/op_fwd.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Backtesting Strategies Tests"
 location: "L14"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Backtesting_Strategies_Tests
 ---
 
 # OpFwdYieldSignalProducer.datasets()
@@ -19,4 +19,4 @@ tags:
 - [[OpFwdYieldSignalProducer]] - `contains` [EXTRACTED]
 - [[README]] - `rationale_for` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests

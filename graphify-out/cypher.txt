@@ -1153,6 +1153,9 @@ MERGE (n:Code {id: 'func_tests_strategy_test_cross_py_test_cross_strategies_expo
 MERGE (n:Code {id: 'file_tests_strategy_test_timeseries_py', label: 'test_timeseries.py'});
 MERGE (n:Code {id: 'func_tests_strategy_test_timeseries_py_test_threshold_trend_goes_long_above_threshold', label: 'test_threshold_trend_goes_long_above_threshold()'});
 MERGE (n:Code {id: 'func_tests_strategy_test_timeseries_py_test_threshold_trend_exposes_time_series_extension_point', label: 'test_threshold_trend_exposes_time_series_extension_point()'});
+MERGE (n:Code {id: 'file_tests_test_graphify_generate_py', label: 'test_graphify_generate.py'});
+MERGE (n:Code {id: 'func_tests_test_graphify_generate_py_load_generate_module', label: '_load_generate_module()'});
+MERGE (n:Code {id: 'func_tests_test_graphify_generate_py_test_prepare_output_paths_cleans_stale_generated_files', label: 'test_prepare_output_paths_cleans_stale_generated_files()'});
 MERGE (n:Code {id: 'file_tests_test_report_cli_py', label: 'test_report_cli.py'});
 MERGE (n:Code {id: 'func_tests_test_report_cli_py_test_report_cli_parses_run_ids', label: 'test_report_cli_parses_run_ids()'});
 MERGE (n:Code {id: 'func_tests_test_report_cli_py_test_report_cli_builds_report_bundle', label: 'test_report_cli_builds_report_bundle()'});
@@ -1740,9 +1743,6 @@ MERGE (n:Document {id: 'sheet_kis_symbols_symbols_xlsx_workbook', label: 'symbol
 MERGE (n:Document {id: 'file_raw_kospi200_1m_csv', label: 'KOSPI200_1M.csv'});
 MERGE (n:Document {id: 'dataset_raw_kospi200_1m_csv', label: 'Kospi200 1M'});
 MERGE (n:Document {id: 'sheet_raw_kospi200_1m_csv_workbook', label: 'KOSPI200_1M data shape'});
-MERGE (n:Document {id: 'file_raw_ksdq_qw_ksdq_v_csv', label: 'qw__ksdq_v.csv'});
-MERGE (n:Document {id: 'dataset_raw_ksdq_qw_ksdq_v_csv', label: 'Kosdaq Kosdaq Volume'});
-MERGE (n:Document {id: 'sheet_raw_ksdq_qw_ksdq_v_csv_workbook', label: 'qw__ksdq_v data shape'});
 MERGE (n:Document {id: 'file_raw_ksdq_qw_ksdq150_yn_csv', label: 'qw_ksdq150_yn.csv'});
 MERGE (n:Document {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv', label: 'Kosdaq Ksdq150 Membership Flag'});
 MERGE (n:Document {id: 'sheet_raw_ksdq_qw_ksdq150_yn_csv_workbook', label: 'qw_ksdq150_yn data shape'});
@@ -1764,6 +1764,9 @@ MERGE (n:Document {id: 'sheet_raw_ksdq_qw_ksdq_mkcap_csv_workbook', label: 'qw_k
 MERGE (n:Document {id: 'file_raw_ksdq_qw_ksdq_mktcap_flt_csv', label: 'qw_ksdq_mktcap_flt.csv'});
 MERGE (n:Document {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv', label: 'Kosdaq Kosdaq Market Cap Free Float'});
 MERGE (n:Document {id: 'sheet_raw_ksdq_qw_ksdq_mktcap_flt_csv_workbook', label: 'qw_ksdq_mktcap_flt data shape'});
+MERGE (n:Document {id: 'file_raw_ksdq_qw_ksdq_v_csv', label: 'qw_ksdq_v.csv'});
+MERGE (n:Document {id: 'dataset_raw_ksdq_qw_ksdq_v_csv', label: 'Kosdaq Kosdaq Volume'});
+MERGE (n:Document {id: 'sheet_raw_ksdq_qw_ksdq_v_csv_workbook', label: 'qw_ksdq_v data shape'});
 MERGE (n:Document {id: 'file_raw_ksdq_qw_ksdq_wics_sec_big_csv', label: 'qw_ksdq_wics_sec_big.csv'});
 MERGE (n:Document {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv', label: 'Kosdaq Kosdaq Wics Sector Sector Large Cap Sector'});
 MERGE (n:Document {id: 'sheet_raw_ksdq_qw_ksdq_wics_sec_big_csv_workbook', label: 'qw_ksdq_wics_sec_big data shape'});
@@ -1934,7 +1937,6 @@ MATCH (a {id: 'file_backtesting_catalog_init_py'}), (b {id: 'file_tests_reportin
 MATCH (a {id: 'file_backtesting_catalog_init_py'}), (b {id: 'file_tests_test_run_py'}) MERGE (a)-[:IMPORTS_FROM {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'class_backtesting_catalog_catalog_py_datacatalog'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'func_backtesting_catalog_catalog_py_spec'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
-MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_h_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -1942,6 +1944,7 @@ MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'dataset_raw_ksdq
 MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_o_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mkcap_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'dataset_raw_options_qw_implied_vol_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_catalog_py'}), (b {id: 'dataset_raw_options_qw_strike_price_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -2150,7 +2153,6 @@ MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'class_backtesting_
 MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'class_backtesting_catalog_enums_py_datasetid'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'file_backtesting_catalog_groups_py'}) MERGE (a)-[:IMPORTS_FROM {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'file_backtesting_catalog_specs_py'}) MERGE (a)-[:IMPORTS_FROM {confidence: 'EXTRACTED'}]->(b);
-MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_h_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -2158,6 +2160,7 @@ MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'dataset_raw_ksdq_q
 MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_o_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mkcap_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'dataset_raw_options_qw_strike_price_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_catalog_enums_py'}), (b {id: 'dataset_raw_qw_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -2312,7 +2315,6 @@ MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'class_backtesting_da
 MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'class_backtesting_data_loader_py_marketdata'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'class_backtesting_data_loader_py_dataloader'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'file_tests_data_test_loader_py'}) MERGE (a)-[:IMPORTS_FROM {confidence: 'EXTRACTED'}]->(b);
-MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_h_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -2320,6 +2322,7 @@ MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_
 MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_o_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mkcap_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'dataset_raw_options_qw_implied_vol_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_data_loader_py'}), (b {id: 'dataset_raw_options_qw_strike_price_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -3013,7 +3016,6 @@ MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'file_dashbo
 MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'file_tests_dashboard_backend_test_dashboard_api_py'}) MERGE (a)-[:IMPORTS_FROM {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'file_tests_reporting_test_benchmarks_py'}) MERGE (a)-[:IMPORTS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'file_tests_reporting_test_snapshots_py'}) MERGE (a)-[:IMPORTS_FROM {confidence: 'EXTRACTED'}]->(b);
-MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_h_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -3021,6 +3023,7 @@ MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'dataset_raw
 MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_o_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mkcap_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'dataset_raw_map_xlsx'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_reporting_benchmarks_py'}), (b {id: 'dataset_raw_options_qw_div_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -4341,7 +4344,6 @@ MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'class_backtesting_unive
 MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'file_dashboard_backend_services_dashboard_payload_py'}) MERGE (a)-[:IMPORTS_FROM {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'file_tests_data_test_universe_py'}) MERGE (a)-[:IMPORTS_FROM {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'dataset_raw_kospi200_1m_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
-MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_h_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -4349,6 +4351,7 @@ MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksd
 MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_o_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mkcap_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'dataset_raw_map_xlsx'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_backtesting_universe_py'}), (b {id: 'dataset_raw_options_qw_implied_vol_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -4740,6 +4743,7 @@ MATCH (a {id: 'func_dashboard_backend_services_launch_resolution_py_launchresolu
 MATCH (a {id: 'func_dashboard_backend_services_launch_resolution_py_launchresolutionservice_resolve'}), (b {id: 'func_tests_dashboard_backend_test_launch_resolution_py_test_resolution_ignores_non_dict_saved_config'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_dashboard_backend_services_launch_resolution_py_launchresolutionservice_resolve'}), (b {id: 'func_tests_dashboard_test_run_py_test_run_script_help_works_from_repo_root'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_dashboard_backend_services_launch_resolution_py_launchresolutionservice_resolve'}), (b {id: 'func_tests_kis_test_root_py_test_root_exposes_repo_paths'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'func_dashboard_backend_services_launch_resolution_py_launchresolutionservice_resolve'}), (b {id: 'func_tests_test_graphify_generate_py_load_generate_module'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_dashboard_backend_services_launch_resolution_py_launchresolutionservice_resolve'}), (b {id: 'file_docs_superpowers_plans_2026_04_03_backtest_reporting_implementation_md'}) MERGE (a)-[:RATIONALE_FOR {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_dashboard_backend_services_launch_resolution_py_launchresolutionservice_resolve'}), (b {id: 'file_docs_superpowers_plans_2026_04_03_performance_reporting_redesign_implementation_md'}) MERGE (a)-[:RATIONALE_FOR {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'func_dashboard_backend_services_launch_resolution_py_launchresolutionservice_resolve'}), (b {id: 'file_docs_superpowers_plans_2026_04_05_live_dashboard_single_command_launch_md'}) MERGE (a)-[:RATIONALE_FOR {confidence: 'INFERRED'}]->(b);
@@ -5969,7 +5973,6 @@ MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'func_tests_catalog
 MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'func_tests_catalog_test_groups_py_test_catalog_returns_grouped_specs'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'func_tests_catalog_test_groups_py_test_catalog_covers_all_stock_raw_stems'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'func_tests_catalog_test_groups_py_test_catalog_exposes_group_view'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
-MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_h_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -5977,6 +5980,7 @@ MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'dataset_raw_ksdq_q
 MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_o_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mkcap_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'dataset_raw_options_qw_strike_price_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_catalog_test_groups_py'}), (b {id: 'dataset_raw_qw_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -6231,7 +6235,6 @@ MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'func_tests_data_test_
 MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'func_tests_data_test_loader_py_test_loader_uses_semantic_key_for_op_fwd_data'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'func_tests_data_test_loader_py_test_loader_uses_semantic_key_for_kosdaq_close_data'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'func_tests_data_test_loader_py_test_loader_rejects_duplicate_semantic_frame_keys'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
-MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_h_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -6239,6 +6242,7 @@ MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_k
 MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_o_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mkcap_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'dataset_raw_options_qw_implied_vol_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_loader_py'}), (b {id: 'dataset_raw_options_qw_strike_price_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -6266,7 +6270,6 @@ MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'func_tests_data_tes
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'func_tests_data_test_universe_py_test_registry_rejects_unknown_universe'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'func_tests_data_test_universe_py_test_top_level_package_exports_universe_types'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'dataset_raw_kospi200_1m_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
-MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_h_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -6274,6 +6277,7 @@ MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'dataset_raw_ksdq_qw
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_o_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mkcap_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'dataset_raw_map_xlsx'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_data_test_universe_py'}), (b {id: 'dataset_raw_qw_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -6329,7 +6333,6 @@ MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'func_tests_ingest
 MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'func_tests_ingest_test_pipeline_py_test_ingest_accepts_unnamed_date_column'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'func_tests_ingest_test_pipeline_py_test_ingest_finds_nested_raw_dataset'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'func_tests_ingest_test_pipeline_py_test_ingest_rejects_ambiguous_nested_raw_dataset'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
-MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_h_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -6337,6 +6340,7 @@ MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'dataset_raw_ksdq_
 MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_o_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mkcap_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'dataset_raw_qw_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_ingest_test_pipeline_py'}), (b {id: 'dataset_raw_qw_adj_h_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -6371,7 +6375,6 @@ MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'func_tests_r
 MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'func_tests_reporting_test_benchmarks_py_test_default_sector_repository_for_kosdaq150_uses_kosdaq_family'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'func_tests_reporting_test_benchmarks_py_fake_load_default_frame'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'dataset_raw_kospi200_1m_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
-MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_h_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -6379,6 +6382,7 @@ MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'dataset_raw_
 MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_o_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mkcap_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'dataset_raw_map_xlsx'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_reporting_test_benchmarks_py'}), (b {id: 'dataset_raw_options_qw_spot_ticker_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -6672,6 +6676,19 @@ MATCH (a {id: 'file_tests_strategy_test_cross_py'}), (b {id: 'dataset_raw_qw_wic
 MATCH (a {id: 'func_tests_strategy_test_cross_py_test_rank_long_only_selects_top_names'}), (b {id: 'file_docs_superpowers_plans_2026_04_03_stock_backtesting_implementation_md'}) MERGE (a)-[:RATIONALE_FOR {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_strategy_test_timeseries_py'}), (b {id: 'func_tests_strategy_test_timeseries_py_test_threshold_trend_goes_long_above_threshold'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_strategy_test_timeseries_py'}), (b {id: 'func_tests_strategy_test_timeseries_py_test_threshold_trend_exposes_time_series_extension_point'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
+MATCH (a {id: 'file_tests_test_graphify_generate_py'}), (b {id: 'func_tests_test_graphify_generate_py_load_generate_module'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
+MATCH (a {id: 'file_tests_test_graphify_generate_py'}), (b {id: 'func_tests_test_graphify_generate_py_test_prepare_output_paths_cleans_stale_generated_files'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
+MATCH (a {id: 'file_tests_test_graphify_generate_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_test_graphify_generate_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_test_graphify_generate_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_h_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_test_graphify_generate_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_l_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_test_graphify_generate_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_o_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_test_graphify_generate_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mkcap_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_test_graphify_generate_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_test_graphify_generate_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_test_graphify_generate_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_test_graphify_generate_py'}), (b {id: 'dataset_raw_qw_sha_out_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'func_tests_test_graphify_generate_py_load_generate_module'}), (b {id: 'func_tests_test_graphify_generate_py_test_prepare_output_paths_cleans_stale_generated_files'}) MERGE (a)-[:CALLS {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_test_report_cli_py'}), (b {id: 'func_tests_test_report_cli_py_test_report_cli_parses_run_ids'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_test_report_cli_py'}), (b {id: 'func_tests_test_report_cli_py_test_report_cli_builds_report_bundle'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_test_report_cli_py'}), (b {id: 'func_tests_test_report_cli_py_build_report'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
@@ -6698,7 +6715,6 @@ MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'func_tests_test_run_py_test_r
 MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'func_tests_test_run_py_write_placeholder_plot'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'func_tests_test_run_py_fail_if_engine_runs'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'dataset_raw_kospi200_1m_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
-MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_c_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_h_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -6706,6 +6722,7 @@ MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_
 MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_o_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mkcap_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
+MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'dataset_raw_map_xlsx'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
 MATCH (a {id: 'file_tests_test_run_py'}), (b {id: 'dataset_raw_options_qw_strike_price_csv'}) MERGE (a)-[:REFERENCES {confidence: 'INFERRED'}]->(b);
@@ -7876,8 +7893,6 @@ MATCH (a {id: 'file_kis_symbols_symbols_xlsx'}), (b {id: 'dataset_kis_symbols_sy
 MATCH (a {id: 'dataset_kis_symbols_symbols_xlsx'}), (b {id: 'sheet_kis_symbols_symbols_xlsx_workbook'}) MERGE (a)-[:REFERENCES {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_raw_kospi200_1m_csv'}), (b {id: 'dataset_raw_kospi200_1m_csv'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'dataset_raw_kospi200_1m_csv'}), (b {id: 'sheet_raw_kospi200_1m_csv_workbook'}) MERGE (a)-[:REFERENCES {confidence: 'EXTRACTED'}]->(b);
-MATCH (a {id: 'file_raw_ksdq_qw_ksdq_v_csv'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
-MATCH (a {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}), (b {id: 'sheet_raw_ksdq_qw_ksdq_v_csv_workbook'}) MERGE (a)-[:REFERENCES {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_raw_ksdq_qw_ksdq150_yn_csv'}), (b {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'dataset_raw_ksdq_qw_ksdq150_yn_csv'}), (b {id: 'sheet_raw_ksdq_qw_ksdq150_yn_csv_workbook'}) MERGE (a)-[:REFERENCES {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_raw_ksdq_qw_ksdq_adj_c_csv'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_adj_c_csv'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
@@ -7892,6 +7907,8 @@ MATCH (a {id: 'file_raw_ksdq_qw_ksdq_mkcap_csv'}), (b {id: 'dataset_raw_ksdq_qw_
 MATCH (a {id: 'dataset_raw_ksdq_qw_ksdq_mkcap_csv'}), (b {id: 'sheet_raw_ksdq_qw_ksdq_mkcap_csv_workbook'}) MERGE (a)-[:REFERENCES {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_raw_ksdq_qw_ksdq_mktcap_flt_csv'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'dataset_raw_ksdq_qw_ksdq_mktcap_flt_csv'}), (b {id: 'sheet_raw_ksdq_qw_ksdq_mktcap_flt_csv_workbook'}) MERGE (a)-[:REFERENCES {confidence: 'EXTRACTED'}]->(b);
+MATCH (a {id: 'file_raw_ksdq_qw_ksdq_v_csv'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
+MATCH (a {id: 'dataset_raw_ksdq_qw_ksdq_v_csv'}), (b {id: 'sheet_raw_ksdq_qw_ksdq_v_csv_workbook'}) MERGE (a)-[:REFERENCES {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_raw_ksdq_qw_ksdq_wics_sec_big_csv'}), (b {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv'}), (b {id: 'sheet_raw_ksdq_qw_ksdq_wics_sec_big_csv_workbook'}) MERGE (a)-[:REFERENCES {confidence: 'EXTRACTED'}]->(b);
 MATCH (a {id: 'file_raw_map_xlsx'}), (b {id: 'dataset_raw_map_xlsx'}) MERGE (a)-[:CONTAINS {confidence: 'EXTRACTED'}]->(b);

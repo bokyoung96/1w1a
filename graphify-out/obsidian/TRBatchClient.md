@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/register.py"
 type: "code"
-community: "Kis Tools.Py Tr_Id"
+community: "Docs Superpowers Plans"
 location: "L117"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Kis_Tools.Py_Tr_Id
+  - community/Docs_Superpowers_Plans
 ---
 
 # TRBatchClient
@@ -17,4 +17,4 @@ tags:
 - [[main()_3]] - `calls` [INFERRED]
 - [[register.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Kis_Tools.Py_Tr_Id
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans

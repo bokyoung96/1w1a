@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/models.py"
 type: "code"
-community: "Tests Dashboard Test_Run"
+community: "Backtesting Reporting Tests"
 location: "L30"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Dashboard_Test_Run
+  - community/Backtesting_Reporting_Tests
 ---
 
 # ReportKind
@@ -17,4 +17,4 @@ tags:
 - [[ReportSpec.__post_init__()]] - `calls` [INFERRED]
 - [[models.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Dashboard_Test_Run
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

@@ -2,7 +2,7 @@
 
 > God node · 66 connections · `raw/qw_equity_lfq0.csv`
 
-**Community:** [[Raw Ksdq Csv]]
+**Community:** [[Backtesting Reporting Frontend]]
 
 ## Connections by Relation
 

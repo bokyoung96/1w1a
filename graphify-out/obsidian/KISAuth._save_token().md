@@ -1,12 +1,12 @@
 ---
 source_file: "kis/config.py"
 type: "code"
-community: "Tests Dashboard Backend"
+community: "Docs Superpowers Plans"
 location: "L106"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Dashboard_Backend
+  - community/Docs_Superpowers_Plans
 ---
 
 # KISAuth._save_token()
@@ -15,4 +15,4 @@ tags:
 - [[KISAuth]] - `contains` [EXTRACTED]
 - [[KISAuth.get_access_token()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Backend
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans

@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/writer.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Strategy"
 location: "L129"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Strategy
 ---
 
 # RunWriter._plot_series()
@@ -16,4 +16,4 @@ tags:
 - [[RunWriter.write()]] - `calls` [INFERRED]
 - [[TRClient.close()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Strategy

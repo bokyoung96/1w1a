@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tools.py"
 type: "code"
-community: "Kis Tools.Py"
+community: "Docs Superpowers Reporting"
 location: "L53"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Kis_Tools.Py
+  - community/Docs_Superpowers_Reporting
 ---
 
 # TimeTools
@@ -19,4 +19,4 @@ tags:
 - [[TimeTools.select_completed_futures_candle()]] - `contains` [EXTRACTED]
 - [[tools.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Kis_Tools.Py
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

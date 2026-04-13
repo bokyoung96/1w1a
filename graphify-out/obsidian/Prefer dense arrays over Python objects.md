@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-12-portfolio-construction-and-staged-policy-design.md"
 type: "document"
-community: "Docs Superpowers Policy"
+community: "Docs Superpowers Portfolio"
 location: "L374"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Docs_Superpowers_Portfolio
 ---
 
 # Prefer dense arrays over Python objects
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[2026-04-12-portfolio-construction-and-staged-policy-design]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Portfolio

@@ -1,11 +1,11 @@
 ---
 source_file: "tests/reporting/test_tables.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # test_tables.py
@@ -26,4 +26,4 @@ tags:
 - [[test_comparison_table_builder_builds_ranked_comparison_tables()]] - `contains` [EXTRACTED]
 - [[test_tearsheet_table_builder_builds_named_tables()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

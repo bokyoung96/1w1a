@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/ExposureBand.tsx"
 type: "code"
-community: "Docs Superpowers Analytics"
+community: "Backtesting Reporting Frontend"
 location: "L202"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Analytics
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # winners()
@@ -17,4 +17,4 @@ tags:
 - [[2026-04-06-dashboard-analytics-refresh]] - `rationale_for` [INFERRED]
 - [[ExposureBand.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Analytics
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

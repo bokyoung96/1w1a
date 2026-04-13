@@ -1,12 +1,12 @@
 ---
 source_file: "tests/dashboard/test_run.py"
 type: "code"
-community: "Tests Dashboard Test_Run"
+community: "Tests Dashboard Backend"
 location: "L201"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Dashboard_Test_Run
+  - community/Tests_Dashboard_Backend
 ---
 
 # test_run_script_help_works_from_repo_root()
@@ -16,4 +16,4 @@ tags:
 - [[LaunchResolutionService.resolve()]] - `calls` [INFERRED]
 - [[test_run.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Dashboard_Test_Run
+#graphify/code #graphify/INFERRED #community/Tests_Dashboard_Backend

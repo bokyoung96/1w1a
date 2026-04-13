@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/execution/schedule.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Docs Superpowers Plans"
 location: "L41"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Docs_Superpowers_Plans
 ---
 
 # CustomSchedule
@@ -17,4 +17,4 @@ tags:
 - [[schedule.py]] - `contains` [EXTRACTED]
 - [[test_custom_schedule_marks_only_configured_dates()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans

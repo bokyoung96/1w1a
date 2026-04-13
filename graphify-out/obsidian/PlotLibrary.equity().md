@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/plots.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Tests Reporting Test_Builder"
 location: "L28"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Tests_Reporting_Test_Builder
 ---
 
 # PlotLibrary.equity()
@@ -29,4 +29,4 @@ tags:
 - [[PlotLibrary._write_png()]] - `calls` [INFERRED]
 - [[README]] - `rationale_for` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Test_Builder

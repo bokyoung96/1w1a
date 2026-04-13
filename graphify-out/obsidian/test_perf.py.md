@@ -1,11 +1,11 @@
 ---
 source_file: "tests/analytics/test_perf.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Analytics"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Analytics
 ---
 
 # test_perf.py
@@ -17,4 +17,4 @@ tags:
 - [[test_summarize_perf_marks_short_samples_undefined()]] - `contains` [EXTRACTED]
 - [[test_summarize_perf_reports_core_metrics()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Analytics

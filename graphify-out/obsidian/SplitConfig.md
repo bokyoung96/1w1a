@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/validation/split.py"
 type: "code"
-community: "Tests Validation Test_Split"
+community: "Docs Superpowers Plans"
 location: "L9"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Validation_Test_Split
+  - community/Docs_Superpowers_Plans
 ---
 
 # SplitConfig
@@ -25,4 +25,4 @@ tags:
 - [[test_split_frame_rejects_unsorted_index()]] - `calls` [INFERRED]
 - [[test_split_frame_returns_is_and_oos_slices()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Validation_Test_Split
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

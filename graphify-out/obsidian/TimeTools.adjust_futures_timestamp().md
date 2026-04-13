@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tools.py"
 type: "code"
-community: "Kis Tools.Py"
+community: "Docs Superpowers Reporting"
 location: "L73"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Kis_Tools.Py
+  - community/Docs_Superpowers_Reporting
 ---
 
 # TimeTools.adjust_futures_timestamp()
@@ -15,4 +15,4 @@ tags:
 - [[DerivMinute.summary()]] - `calls` [INFERRED]
 - [[TimeTools]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Kis_Tools.Py
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/protocol.py"
 type: "code"
-community: "Tests Dashboard Backend"
+community: "Docs Superpowers Portfolio"
 location: "L34"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Dashboard_Backend
+  - community/Docs_Superpowers_Portfolio
 ---
 
 # TRResponse.from_http()
@@ -18,4 +18,4 @@ tags:
 - [[ResponseHeader]] - `calls` [INFERRED]
 - [[TRResponse]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Dashboard_Backend
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Portfolio

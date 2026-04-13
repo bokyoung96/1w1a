@@ -1,12 +1,12 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-05-dashboard-ux-followups.md"
 type: "document"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 location: "L37"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # Task 3: Add explicit sector filters for research charts
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[2026-04-05-dashboard-ux-followups]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Plans
+#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

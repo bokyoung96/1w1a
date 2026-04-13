@@ -1,11 +1,11 @@
 ---
 source_file: "raw/KOSPI200_1M.csv"
 type: "document"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Tests"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Tests
 ---
 
 # Kospi200 1M
@@ -43,4 +43,4 @@ tags:
 - [[test_universe.py]] - `references` [INFERRED]
 - [[universe.py]] - `references` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/document #graphify/INFERRED #community/Backtesting_Reporting_Tests

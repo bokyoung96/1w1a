@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/lib/api.ts"
 type: "code"
-community: "Dashboard Frontend Src"
+community: "Docs Superpowers Portfolio"
 location: "L93"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Dashboard_Frontend_Src
+  - community/Docs_Superpowers_Portfolio
 ---
 
 # normalizeBenchmarkOption()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[api.ts]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Dashboard_Frontend_Src
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Portfolio

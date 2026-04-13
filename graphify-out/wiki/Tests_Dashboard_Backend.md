@@ -1,11 +1,11 @@
 # Tests Dashboard Backend
 
-> 113 nodes · cohesion 0.05
+> 135 nodes · cohesion 0.04
 
 ## Key Concepts
 
 - **DataCatalog.get()** (76 connections) — `backtesting/catalog/catalog.py`
-- **LaunchResolutionService.resolve()** (45 connections) — `dashboard/backend/services/launch_resolution.py`
+- **LaunchResolutionService.resolve()** (46 connections) — `dashboard/backend/services/launch_resolution.py`
 - **test_dashboard_api.py** (44 connections) — `tests/dashboard/backend/test_dashboard_api.py`
 - **LaunchResolutionService** (36 connections) — `dashboard/backend/services/launch_resolution.py`
 - **test_launch_resolution.py** (29 connections) — `tests/dashboard/backend/test_launch_resolution.py`
@@ -13,61 +13,60 @@
 - **RunIndexService** (24 connections) — `dashboard/backend/services/run_index.py`
 - **_build_payload_service()** (23 connections) — `tests/dashboard/backend/test_dashboard_api.py`
 - **test_run_index_service.py** (17 connections) — `tests/dashboard/backend/test_run_index_service.py`
+- **test_run.py** (16 connections) — `tests/dashboard/test_run.py`
 - **list_runs()** (16 connections) — `dashboard/backend/api.py`
+- **run.py** (15 connections) — `dashboard/run.py`
+- **strategies.py** (14 connections) — `dashboard/strategies.py`
+- **launch_dashboard()** (13 connections) — `dashboard/run.py`
 - **_write_matching_run()** (12 connections) — `tests/dashboard/backend/test_launch_resolution.py`
+- **launch_resolution.py** (11 connections) — `dashboard/backend/services/launch_resolution.py`
 - **create_app()** (11 connections) — `dashboard/backend/main.py`
+- **build_frontend()** (11 connections) — `dashboard/run.py`
 - **_write_run()** (11 connections) — `tests/dashboard/backend/test_run_index_service.py`
-- **KISAuth** (9 connections) — `kis/config.py`
 - **api.py** (9 connections) — `dashboard/backend/api.py`
+- **run_index.py** (9 connections) — `dashboard/backend/services/run_index.py`
 - **_write_matching_default_runs()** (9 connections) — `tests/dashboard/backend/test_launch_resolution.py`
 - **main.py** (8 connections) — `dashboard/backend/main.py`
 - **_saved_config()** (8 connections) — `tests/dashboard/backend/test_launch_resolution.py`
-- **TRClient** (7 connections) — `kis/tr_id/register.py`
 - **LaunchResolutionService._archive_duplicate_runs()** (7 connections) — `dashboard/backend/services/launch_resolution.py`
-- **LaunchResolutionService._build_saved_signature()** (7 connections) — `dashboard/backend/services/launch_resolution.py`
-- **LaunchResolutionService._normalize_value()** (7 connections) — `dashboard/backend/services/launch_resolution.py`
-- **RunIndexService._config_signature()** (7 connections) — `dashboard/backend/services/run_index.py`
-- **KISAuth.get_access_token()** (7 connections) — `kis/config.py`
-- **LaunchResolutionService._build_signature()** (6 connections) — `dashboard/backend/services/launch_resolution.py`
-- *... and 88 more nodes in this community*
+- *... and 110 more nodes in this community*
 
 ## Relationships
 
-- [[Docs Superpowers Plans]] (66 shared connections)
-- [[Raw Ksdq Csv]] (47 shared connections)
-- [[Backtesting Reporting Tests]] (19 shared connections)
-- [[Tests Test Run.Py Engine]] (16 shared connections)
-- [[Dashboard Backend Schemas]] (10 shared connections)
-- [[Backtesting Reporting Composers]] (9 shared connections)
-- [[Tests Dashboard Test_Run]] (6 shared connections)
-- [[Docs Superpowers Policy]] (3 shared connections)
-- [[Docs Superpowers Reporting]] (2 shared connections)
-- [[Backtesting Reporting Tables_Single]] (2 shared connections)
-- [[Kis Tools.Py Tr_Id]] (2 shared connections)
-- [[Docs Superpowers Live]] (2 shared connections)
+- [[Raw Ksdq Csv]] (58 shared connections)
+- [[Docs Superpowers Reporting]] (56 shared connections)
+- [[Backtesting Reporting Frontend]] (47 shared connections)
+- [[Backtesting Reporting Tests]] (25 shared connections)
+- [[Tests Test Run.Py Engine]] (12 shared connections)
+- [[Tests Reporting Analytics]] (8 shared connections)
+- [[Docs Superpowers Plans]] (5 shared connections)
+- [[Tests Reporting Test_Builder]] (4 shared connections)
+- [[Backtesting Strategies Tests]] (4 shared connections)
+- [[Docs Superpowers Portfolio]] (2 shared connections)
 
 ## Source Files
 
 - `backtesting/catalog/catalog.py`
+- `backtesting/reporting/html.py`
 - `dashboard/backend/__init__.py`
 - `dashboard/backend/api.py`
 - `dashboard/backend/main.py`
+- `dashboard/backend/schemas.py`
 - `dashboard/backend/services/launch_resolution.py`
 - `dashboard/backend/services/run_index.py`
 - `dashboard/frontend/src/lib/api.ts`
-- `kis/config.py`
-- `kis/tr_id/protocol.py`
-- `kis/tr_id/register.py`
-- `root.py`
+- `dashboard/run.py`
+- `dashboard/strategies.py`
 - `tests/dashboard/backend/test_dashboard_api.py`
 - `tests/dashboard/backend/test_launch_resolution.py`
 - `tests/dashboard/backend/test_run_index_service.py`
-- `tests/kis/test_root.py`
+- `tests/dashboard/test_run.py`
+- `tests/dashboard/test_strategies.py`
 
 ## Audit Trail
 
-- EXTRACTED: 227 (29%)
-- INFERRED: 556 (71%)
+- EXTRACTED: 280 (31%)
+- INFERRED: 631 (69%)
 - AMBIGUOUS: 0 (0%)
 
 ---

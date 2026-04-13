@@ -1,12 +1,12 @@
 ---
 source_file: "tests/reporting/test_models_reporting_redesign.py"
 type: "code"
-community: "Backtesting Reporting Composers"
+community: "Backtesting Reporting Tests"
 location: "L48"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Composers
+  - community/Backtesting_Reporting_Tests
 ---
 
 # test_report_spec_rejects_comparison_with_one_run()
@@ -15,4 +15,4 @@ tags:
 - [[ReportSpec]] - `calls` [INFERRED]
 - [[test_models_reporting_redesign.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Composers
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

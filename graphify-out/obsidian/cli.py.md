@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/reporting/cli.py"
 type: "code"
-community: "Tests Dashboard Test_Run"
+community: "Backtesting Reporting Tests"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Dashboard_Test_Run
+  - community/Backtesting_Reporting_Tests
 ---
 
 # cli.py
@@ -20,4 +20,4 @@ tags:
 - [[main()]] - `contains` [EXTRACTED]
 - [[test_cli.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Test_Run
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests

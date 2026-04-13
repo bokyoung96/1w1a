@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/bid_ask_list.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 location: "L12"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # BidAskListSpec
@@ -16,4 +16,4 @@ tags:
 - [[BidAskListSpec.parse()]] - `contains` [EXTRACTED]
 - [[bid_ask_list.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/specs/2026-04-06-dashboard-metadata-detail-redesign.md"
 type: "document"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # 2026-04-06-dashboard-metadata-detail-redesign.md
@@ -62,4 +62,4 @@ tags:
 - [[values()]] - `rationale_for` [INFERRED]
 - [[visible()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting

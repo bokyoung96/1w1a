@@ -1,12 +1,12 @@
 ---
 source_file: "tests/catalog/test_groups.py"
 type: "code"
-community: "Tests Test Run.Py Engine"
+community: "Raw Ksdq Csv"
 location: "L76"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Test_Run.Py_Engine
+  - community/Raw_Ksdq_Csv
 ---
 
 # test_catalog_exposes_group_view()
@@ -17,4 +17,4 @@ tags:
 - [[DataCatalog.groups()]] - `calls` [INFERRED]
 - [[test_groups.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Test_Run.Py_Engine
+#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv

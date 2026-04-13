@@ -1,12 +1,12 @@
 ---
 source_file: "README.md"
 type: "document"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 location: "L22"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # The parquet directory must already be populated by the ingest step
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[README]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Plans
+#graphify/document #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/strategies/registry.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # registry.py
@@ -22,4 +22,4 @@ tags:
 - [[op_fwd.py_1]] - `imports_from` [EXTRACTED]
 - [[register_strategy()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

@@ -1,12 +1,12 @@
 ---
 source_file: "tests/dashboard/test_run.py"
 type: "code"
-community: "Tests Dashboard Test_Run"
+community: "Tests Dashboard Backend"
 location: "L21"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Dashboard_Test_Run
+  - community/Tests_Dashboard_Backend
 ---
 
 # FakeRunner.run()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[FakeRunner]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Test_Run
+#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Backend

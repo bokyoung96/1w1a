@@ -1,11 +1,11 @@
 ---
 source_file: "dashboard/frontend/src/lib/api.ts"
 type: "code"
-community: "Dashboard Frontend Src"
+community: "Docs Superpowers Portfolio"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Dashboard_Frontend_Src
+  - community/Docs_Superpowers_Portfolio
 ---
 
 # api.ts
@@ -47,4 +47,4 @@ tags:
 - [[query()]] - `contains` [EXTRACTED]
 - [[strategies()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Dashboard_Frontend_Src
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Portfolio

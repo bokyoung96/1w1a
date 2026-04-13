@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/ResearchWorkspace.tsx"
 type: "code"
-community: "Docs Superpowers Research"
+community: "Docs Superpowers Reporting"
 location: "L246"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Research
+  - community/Docs_Superpowers_Reporting
 ---
 
 # lines()
@@ -17,4 +17,4 @@ tags:
 - [[2026-04-06-dashboard-analytics-refresh]] - `rationale_for` [INFERRED]
 - [[ResearchWorkspace.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Research
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Reporting

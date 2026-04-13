@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tr_id/deriv_minute.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 location: "L14"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # DerivMinuteSpec
@@ -16,4 +16,4 @@ tags:
 - [[DerivMinuteSpec.parse()]] - `contains` [EXTRACTED]
 - [[deriv_minute.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

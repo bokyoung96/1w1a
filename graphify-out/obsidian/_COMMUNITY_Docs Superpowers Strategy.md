@@ -1,13 +1,13 @@
 ---
 type: community
 cohesion: 0.03
-members: 80
+members: 74
 ---
 
 # Docs Superpowers Strategy
 
 **Cohesion:** 0.03 - loosely connected
-**Members:** 80 nodes
+**Members:** 74 nodes
 
 ## Members
 - [[1w1a Stock Backtesting Design]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
@@ -16,7 +16,6 @@ members: 80
 - [[Analytics]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[BaseStrategy]] - code - backtesting/strategy/base.py
 - [[BaseStrategy.target_weights()]] - code - backtesting/strategy/base.py
-- [[BaseStrategy.zeros_like()]] - code - backtesting/strategy/base.py
 - [[Benchmark-aware metrics]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[Components]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[Core Types]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
@@ -41,14 +40,19 @@ members: 80
 - [[Phase 1 Deliverables]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[Primary mode]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[Quantity model]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
-- [[RankLongOnly]] - code - backtesting/strategy/cross.py
-- [[RankLongOnly.target_weights()]] - code - backtesting/strategy/cross.py
-- [[RankLongShort]] - code - backtesting/strategy/cross.py
-- [[RankLongShort.target_weights()]] - code - backtesting/strategy/cross.py
 - [[Rebalance schedule]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[Reference Patterns_1]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
-- [[RegisteredStrategy.target_weights()]] - code - backtesting/strategies/base.py
 - [[Responsibilities]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
+- [[RunWriter]] - code - backtesting/reporting/writer.py
+- [[RunWriter._bucket_ledger()]] - code - backtesting/reporting/writer.py
+- [[RunWriter._drawdown()]] - code - backtesting/reporting/writer.py
+- [[RunWriter._latest_qty()]] - code - backtesting/reporting/writer.py
+- [[RunWriter._latest_weights()]] - code - backtesting/reporting/writer.py
+- [[RunWriter._monthly_returns()]] - code - backtesting/reporting/writer.py
+- [[RunWriter._plot_series()]] - code - backtesting/reporting/writer.py
+- [[RunWriter._run_dir()]] - code - backtesting/reporting/writer.py
+- [[RunWriter._write_json()]] - code - backtesting/reporting/writer.py
+- [[RunWriter.write()]] - code - backtesting/reporting/writer.py
 - [[Scheduling and Execution]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[Scope_1]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[Strategy Model]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
@@ -62,6 +66,7 @@ members: 80
 - [[Trading filters]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[Validation_1]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[Validation report contents]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
+- [[__init__.py_12]] - code - backtesting/strategy/__init__.py
 - [[`BacktestEngine`]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[`DataCatalog`]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[`DatasetId`]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
@@ -75,17 +80,6 @@ members: 80
 - [[`parquet`]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[`raw`]] - document - docs/superpowers/specs/2026-04-03-stock-backtesting-design.md
 - [[base.py_4]] - code - backtesting/strategy/base.py
-- [[cross.py]] - code - backtesting/strategy/cross.py
-- [[from the repo root]] - document - README.md
-- [[test_cross.py]] - code - tests/strategy/test_cross.py
-- [[test_cross_strategies_expose_cross_sectional_extension_point()]] - code - tests/strategy/test_cross.py
-- [[test_rank_long_only_ignores_nan_names_when_selection_exceeds_valid_count()]] - code - tests/strategy/test_cross.py
-- [[test_rank_long_only_selects_top_names()]] - code - tests/strategy/test_cross.py
-- [[test_rank_long_only_validates_top_n()]] - code - tests/strategy/test_cross.py
-- [[test_rank_long_short_avoids_overlap_in_small_universe()]] - code - tests/strategy/test_cross.py
-- [[test_rank_long_short_balances_long_and_short_legs()]] - code - tests/strategy/test_cross.py
-- [[test_rank_long_short_ignores_nan_names_when_selection_exceeds_valid_count()]] - code - tests/strategy/test_cross.py
-- [[test_rank_long_short_validates_leg_sizes()]] - code - tests/strategy/test_cross.py
 - [[test_threshold_trend_exposes_time_series_extension_point()]] - code - tests/strategy/test_timeseries.py
 - [[test_threshold_trend_goes_long_above_threshold()]] - code - tests/strategy/test_timeseries.py
 - [[test_timeseries.py]] - code - tests/strategy/test_timeseries.py
@@ -99,31 +93,21 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 20 edges to [[_COMMUNITY_Docs Superpowers Plans]]
-- 17 edges to [[_COMMUNITY_Raw Ksdq Csv]]
-- 15 edges to [[_COMMUNITY_Docs Superpowers Plans]]
-- 12 edges to [[_COMMUNITY_Docs Superpowers Policy]]
-- 10 edges to [[_COMMUNITY_Tests Test Run.Py Engine]]
-- 9 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
-- 7 edges to [[_COMMUNITY_Docs Superpowers Plans]]
-- 5 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
-- 4 edges to [[_COMMUNITY_Docs Superpowers Breakout]]
-- 4 edges to [[_COMMUNITY_Docs Superpowers Live]]
-- 3 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
-- 3 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
-- 3 edges to [[_COMMUNITY_Docs Superpowers Plans]]
-- 2 edges to [[_COMMUNITY_Docs Superpowers Research]]
-- 2 edges to [[_COMMUNITY_Docs Superpowers Kosdaq150]]
-- 1 edge to [[_COMMUNITY_Tests Validation Test_Split]]
-- 1 edge to [[_COMMUNITY_Docs Superpowers Reporting]]
-- 1 edge to [[_COMMUNITY_Docs Superpowers Performance]]
-- 1 edge to [[_COMMUNITY_Dashboard Frontend App]]
-- 1 edge to [[_COMMUNITY_Docs Superpowers Live]]
-- 1 edge to [[_COMMUNITY_Docs Superpowers Analytics]]
+- 58 edges to [[_COMMUNITY_Docs Superpowers Reporting]]
+- 14 edges to [[_COMMUNITY_Raw Ksdq Csv]]
+- 13 edges to [[_COMMUNITY_Tests Test Run.Py Engine]]
+- 13 edges to [[_COMMUNITY_Backtesting Reporting Frontend]]
+- 8 edges to [[_COMMUNITY_Backtesting Reporting Tests]]
+- 6 edges to [[_COMMUNITY_Backtesting Strategies Tests]]
+- 6 edges to [[_COMMUNITY_Docs Superpowers Plans]]
+- 6 edges to [[_COMMUNITY_Tests Reporting Analytics]]
+- 4 edges to [[_COMMUNITY_Docs Superpowers Portfolio]]
+- 2 edges to [[_COMMUNITY_Tests Reporting Test_Builder]]
+- 2 edges to [[_COMMUNITY_Dashboard Frontend App]]
 
 ## Top bridge nodes
-- [[2026-04-03-stock-backtesting-design]] - degree 143, connects to 21 communities
-- [[RegisteredStrategy.target_weights()]] - degree 11, connects to 3 communities
-- [[RankLongOnly]] - degree 9, connects to 2 communities
-- [[RankLongShort]] - degree 9, connects to 2 communities
-- [[base.py_4]] - degree 9, connects to 2 communities
+- [[2026-04-03-stock-backtesting-design]] - degree 143, connects to 11 communities
+- [[RunWriter.write()]] - degree 24, connects to 6 communities
+- [[base.py_4]] - degree 9, connects to 4 communities
+- [[RunWriter]] - degree 14, connects to 3 communities
+- [[__init__.py_12]] - degree 4, connects to 3 communities

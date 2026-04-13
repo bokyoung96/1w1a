@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/strategies.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Tests Dashboard Backend"
 location: "L39"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Plans
+  - community/Tests_Dashboard_Backend
 ---
 
 # StrategyPreset.__post_init__()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[StrategyPreset]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/EXTRACTED #community/Tests_Dashboard_Backend

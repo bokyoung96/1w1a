@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/tables.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Test_Builder"
 location: "L43"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Test_Builder
 ---
 
 # build_latest_qty_table()
@@ -18,4 +18,4 @@ tags:
 - [[_build_latest_table()]] - `calls` [INFERRED]
 - [[tables.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Test_Builder

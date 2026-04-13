@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/base.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L28"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # RegisteredStrategy.build_plan()
@@ -28,4 +28,4 @@ tags:
 - [[test_op_fwd_yield_strategy_builds_plan()]] - `calls` [INFERRED]
 - [[test_registered_strategy_preserves_legacy_extension_path()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests

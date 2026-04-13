@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/base.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # RegisteredStrategy
@@ -19,4 +19,4 @@ tags:
 - [[RegisteredStrategy.target_weights()]] - `contains` [EXTRACTED]
 - [[base.py_3]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

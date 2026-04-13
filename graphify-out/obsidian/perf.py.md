@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/analytics/perf.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Analytics"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Analytics
 ---
 
 # perf.py
@@ -16,4 +16,4 @@ tags:
 - [[summarize_perf()]] - `contains` [EXTRACTED]
 - [[test_perf.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Analytics

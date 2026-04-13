@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/construction/__init__.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Raw_Ksdq_Csv
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # __init__.py
@@ -14,4 +14,4 @@ tags:
 - [[Kosdaq Kosdaq Wics Sector Sector Large Cap Sector]] - `references` [INFERRED]
 - [[Wics Sector Sector Large Cap Sector]] - `references` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Frontend

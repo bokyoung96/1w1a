@@ -1,11 +1,11 @@
 ---
 source_file: "tests/strategy/test_cross.py"
 type: "code"
-community: "Docs Superpowers Strategy"
+community: "Tests Reporting Analytics"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Strategy
+  - community/Tests_Reporting_Analytics
 ---
 
 # test_cross.py
@@ -24,4 +24,4 @@ tags:
 - [[test_rank_long_short_ignores_nan_names_when_selection_exceeds_valid_count()]] - `contains` [EXTRACTED]
 - [[test_rank_long_short_validates_leg_sizes()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Strategy
+#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Analytics

@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/catalog/catalog.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Raw Ksdq Csv"
 location: "L8"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Raw_Ksdq_Csv
 ---
 
 # _spec()
@@ -19,4 +19,4 @@ tags:
 - [[DatasetSpec]] - `calls` [INFERRED]
 - [[catalog.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv

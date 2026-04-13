@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/benchmarks.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Analytics"
 location: "L129"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Analytics
 ---
 
 # SectorRepository.sector_contribution_timeseries()
@@ -21,4 +21,4 @@ tags:
 - [[test_sector_contribution_timeseries_avoids_pct_change_future_warning()]] - `calls` [INFERRED]
 - [[test_sector_contribution_timeseries_matches_net_portfolio_return()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

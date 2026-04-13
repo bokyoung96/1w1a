@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/composable.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Docs Superpowers Portfolio"
 location: "L27"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Docs_Superpowers_Portfolio
 ---
 
 # ConstructionRule
@@ -16,4 +16,4 @@ tags:
 - [[ConstructionRule.build()]] - `contains` [EXTRACTED]
 - [[composable.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Portfolio

@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategy/cross.py"
 type: "code"
-community: "Docs Superpowers Strategy"
+community: "Tests Reporting Analytics"
 location: "L9"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Strategy
+  - community/Tests_Reporting_Analytics
 ---
 
 # RankLongOnly
@@ -22,4 +22,4 @@ tags:
 - [[test_rank_long_only_selects_top_names()]] - `calls` [INFERRED]
 - [[test_rank_long_only_validates_top_n()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Strategy
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

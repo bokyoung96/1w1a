@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategies/op_fwd.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L15"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # OpFwdYieldTopN.__post_init__()
@@ -16,4 +16,4 @@ tags:
 - [[OpFwdYieldSignalProducer]] - `calls` [INFERRED]
 - [[OpFwdYieldTopN]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Backtesting_Strategies_Tests

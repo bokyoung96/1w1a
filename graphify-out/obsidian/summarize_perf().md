@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/analytics/perf.py"
 type: "code"
-community: "Backtesting Reporting Tests"
+community: "Tests Reporting Analytics"
 location: "L8"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Backtesting_Reporting_Tests
+  - community/Tests_Reporting_Analytics
 ---
 
 # summarize_perf()
@@ -20,4 +20,4 @@ tags:
 - [[test_summarize_perf_marks_short_samples_undefined()]] - `calls` [INFERRED]
 - [[test_summarize_perf_reports_core_metrics()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

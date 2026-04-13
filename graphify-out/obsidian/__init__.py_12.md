@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/strategy/__init__.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Docs Superpowers Strategy"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Docs_Superpowers_Strategy
 ---
 
 # __init__.py
@@ -16,4 +16,4 @@ tags:
 - [[test_cross.py]] - `imports_from` [EXTRACTED]
 - [[test_timeseries.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Strategy

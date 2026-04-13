@@ -1,11 +1,11 @@
 ---
 source_file: "dashboard/frontend/src/components/ResearchDetailPanel.tsx"
 type: "code"
-community: "Dashboard Frontend Src"
+community: "Docs Superpowers Reporting"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Dashboard_Frontend_Src
+  - community/Docs_Superpowers_Reporting
 ---
 
 # ResearchDetailPanel.tsx
@@ -39,4 +39,4 @@ tags:
 - [[seriesPoints()]] - `contains` [EXTRACTED]
 - [[visibleRunIds()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Dashboard_Frontend_Src
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

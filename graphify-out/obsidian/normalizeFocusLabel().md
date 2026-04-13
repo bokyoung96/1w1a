@@ -1,12 +1,12 @@
 ---
 source_file: "dashboard/frontend/src/components/PerformanceStrip.tsx"
 type: "code"
-community: "Dashboard Frontend Src"
+community: "Docs Superpowers Reporting"
 location: "L28"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Dashboard_Frontend_Src
+  - community/Docs_Superpowers_Reporting
 ---
 
 # normalizeFocusLabel()
@@ -15,4 +15,4 @@ tags:
 - [[2026-04-06-dashboard-metadata-detail]] - `rationale_for` [INFERRED]
 - [[PerformanceStrip.tsx]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Dashboard_Frontend_Src
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

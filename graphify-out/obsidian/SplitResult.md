@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/validation/split.py"
 type: "code"
-community: "Tests Validation Test_Split"
+community: "Docs Superpowers Plans"
 location: "L17"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Validation_Test_Split
+  - community/Docs_Superpowers_Plans
 ---
 
 # SplitResult
@@ -16,4 +16,4 @@ tags:
 - [[split.py]] - `contains` [EXTRACTED]
 - [[split_frame()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Validation_Test_Split
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

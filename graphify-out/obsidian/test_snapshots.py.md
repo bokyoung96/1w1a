@@ -1,11 +1,11 @@
 ---
 source_file: "tests/reporting/test_snapshots.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Tests Reporting Analytics"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Tests_Reporting_Analytics
 ---
 
 # test_snapshots.py
@@ -39,4 +39,4 @@ tags:
 - [[test_performance_snapshot_factory_derives_latest_holdings_when_optional_table_missing()]] - `contains` [EXTRACTED]
 - [[test_performance_snapshot_factory_uses_fixed_252_day_rolling_window()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Analytics

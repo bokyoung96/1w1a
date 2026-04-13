@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/reporting/html.py"
 type: "code"
-community: "Docs Superpowers Plans"
+community: "Backtesting Reporting Tests"
 location: "L29"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Backtesting_Reporting_Tests
 ---
 
 # HtmlRenderer.render()
@@ -42,4 +42,4 @@ tags:
 - [[test_html_renderer_uses_tearsheet_template()]] - `calls` [INFERRED]
 - [[test_pdf_renderer_keeps_html_when_pdf_export_fails()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/code #graphify/INFERRED #community/Backtesting_Reporting_Tests

@@ -1,12 +1,12 @@
 ---
 source_file: "tests/catalog/test_groups.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Raw Ksdq Csv"
 location: "L61"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Docs_Superpowers_Policy
+  - community/Raw_Ksdq_Csv
 ---
 
 # test_catalog_returns_grouped_specs()
@@ -17,4 +17,4 @@ tags:
 - [[TRRegistry.all()]] - `calls` [INFERRED]
 - [[test_groups.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/INFERRED #community/Raw_Ksdq_Csv

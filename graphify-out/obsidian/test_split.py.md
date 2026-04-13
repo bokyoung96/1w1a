@@ -1,11 +1,11 @@
 ---
 source_file: "tests/validation/test_split.py"
 type: "code"
-community: "Tests Validation Test_Split"
+community: "Docs Superpowers Plans"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tests_Validation_Test_Split
+  - community/Docs_Superpowers_Plans
 ---
 
 # test_split.py
@@ -23,4 +23,4 @@ tags:
 - [[test_split_frame_rejects_unsorted_index()]] - `contains` [EXTRACTED]
 - [[test_split_frame_returns_is_and_oos_slices()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tests_Validation_Test_Split
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans

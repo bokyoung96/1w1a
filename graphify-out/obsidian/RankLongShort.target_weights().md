@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/strategy/cross.py"
 type: "code"
-community: "Docs Superpowers Strategy"
+community: "Tests Reporting Analytics"
 location: "L34"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Strategy
+  - community/Tests_Reporting_Analytics
 ---
 
 # RankLongShort.target_weights()
@@ -15,4 +15,4 @@ tags:
 - [[BaseStrategy.zeros_like()]] - `calls` [INFERRED]
 - [[RankLongShort]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Strategy
+#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Analytics

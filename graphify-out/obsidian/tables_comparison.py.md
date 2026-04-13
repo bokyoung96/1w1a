@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/reporting/tables_comparison.py"
 type: "code"
-community: "Backtesting Reporting Tables_Single"
+community: "Backtesting Reporting Frontend"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Backtesting_Reporting_Tables_Single
+  - community/Backtesting_Reporting_Frontend
 ---
 
 # tables_comparison.py
@@ -26,4 +26,4 @@ tags:
 - [[snapshots.py]] - `imports_from` [EXTRACTED]
 - [[test_tables.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Tables_Single
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Reporting_Frontend

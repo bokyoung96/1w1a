@@ -1,11 +1,11 @@
 ---
 source_file: "docs/superpowers/plans/2026-04-05-dashboard-ux-followups.md"
 type: "document"
-community: "Docs Superpowers Plans"
+community: "Docs Superpowers Reporting"
 tags:
   - graphify/document
   - graphify/INFERRED
-  - community/Docs_Superpowers_Plans
+  - community/Docs_Superpowers_Reporting
 ---
 
 # 2026-04-05-dashboard-ux-followups.md
@@ -71,4 +71,4 @@ tags:
 - [[user()]] - `rationale_for` [INFERRED]
 - [[visible()]] - `rationale_for` [INFERRED]
 
-#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Plans
+#graphify/document #graphify/INFERRED #community/Docs_Superpowers_Reporting

@@ -1,12 +1,12 @@
 ---
 source_file: "tests/validation/test_split.py"
 type: "code"
-community: "Tests Validation Test_Split"
+community: "Docs Superpowers Plans"
 location: "L33"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Validation_Test_Split
+  - community/Docs_Superpowers_Plans
 ---
 
 # test_split_frame_rejects_touching_boundaries()
@@ -16,4 +16,4 @@ tags:
 - [[split_frame()]] - `calls` [INFERRED]
 - [[test_split.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Validation_Test_Split
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

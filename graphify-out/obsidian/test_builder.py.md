@@ -1,11 +1,11 @@
 ---
 source_file: "tests/reporting/test_builder.py"
 type: "code"
-community: "Raw Ksdq Csv"
+community: "Tests Reporting Test_Builder"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Raw_Ksdq_Csv
+  - community/Tests_Reporting_Test_Builder
 ---
 
 # test_builder.py
@@ -34,4 +34,4 @@ tags:
 - [[test_report_builder_legacy_path_remains_available()]] - `contains` [EXTRACTED]
 - [[test_report_builder_uses_universe_specific_repositories()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Raw_Ksdq_Csv
+#graphify/code #graphify/EXTRACTED #community/Tests_Reporting_Test_Builder

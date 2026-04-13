@@ -1,11 +1,11 @@
 ---
 source_file: "backtesting/strategies/op_fwd.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # op_fwd.py
@@ -17,4 +17,4 @@ tags:
 - [[op_fwd.py]] - `imports_from` [EXTRACTED]
 - [[registry.py]] - `imports_from` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

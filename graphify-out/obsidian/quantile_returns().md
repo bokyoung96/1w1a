@@ -1,12 +1,12 @@
 ---
 source_file: "backtesting/analytics/factor.py"
 type: "code"
-community: "Tests Analytics Test_Factor"
+community: "Tests Reporting Analytics"
 location: "L7"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Tests_Analytics_Test_Factor
+  - community/Tests_Reporting_Analytics
 ---
 
 # quantile_returns()
@@ -20,4 +20,4 @@ tags:
 - [[test_quantile_returns_returns_empty_frame_without_shared_columns()]] - `calls` [INFERRED]
 - [[test_quantile_returns_uses_overlap_and_keeps_sparse_rows()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Tests_Analytics_Test_Factor
+#graphify/code #graphify/INFERRED #community/Tests_Reporting_Analytics

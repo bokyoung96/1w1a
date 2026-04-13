@@ -1,12 +1,12 @@
 ---
 source_file: "tests/strategies/test_registry.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 location: "L189"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # LegacyStrategy.target_weights()
@@ -15,4 +15,4 @@ tags:
 - [[LegacyStrategy]] - `contains` [EXTRACTED]
 - [[series()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

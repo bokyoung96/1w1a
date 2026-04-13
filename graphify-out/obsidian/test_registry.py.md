@@ -1,11 +1,11 @@
 ---
 source_file: "tests/strategies/test_registry.py"
 type: "code"
-community: "Docs Superpowers Policy"
+community: "Backtesting Strategies Tests"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Docs_Superpowers_Policy
+  - community/Backtesting_Strategies_Tests
 ---
 
 # test_registry.py
@@ -32,4 +32,4 @@ tags:
 - [[test_registered_strategy_preserves_legacy_extension_path()]] - `contains` [EXTRACTED]
 - [[test_registry_lists_default_strategies()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Policy
+#graphify/code #graphify/EXTRACTED #community/Backtesting_Strategies_Tests

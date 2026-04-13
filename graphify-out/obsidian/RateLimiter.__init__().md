@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tools.py"
 type: "code"
-community: "Kis Tools.Py Tr_Id"
+community: "Docs Superpowers Reporting"
 location: "L33"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Kis_Tools.Py_Tr_Id
+  - community/Docs_Superpowers_Reporting
 ---
 
 # RateLimiter.__init__()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[RateLimiter]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Kis_Tools.Py_Tr_Id
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Reporting

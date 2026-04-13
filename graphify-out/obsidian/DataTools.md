@@ -1,12 +1,12 @@
 ---
 source_file: "kis/tools.py"
 type: "code"
-community: "Kis Tools.Py Tr_Id"
+community: "Docs Superpowers Plans"
 location: "L11"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Kis_Tools.Py_Tr_Id
+  - community/Docs_Superpowers_Plans
 ---
 
 # DataTools
@@ -16,4 +16,4 @@ tags:
 - [[DataTools.to_frame()]] - `contains` [EXTRACTED]
 - [[tools.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Kis_Tools.Py_Tr_Id
+#graphify/code #graphify/EXTRACTED #community/Docs_Superpowers_Plans
