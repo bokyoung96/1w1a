@@ -205,3 +205,29 @@ def test_load_display_name_maps_reads_sector_and_stock_sheets(tmp_path) -> None:
 
     assert sector_name_map == {"G10": "에너지"}
     assert stock_name_map == {"A005930": "삼성전자"}
+
+
+def test_default_sector_repository_for_kosdaq150_uses_kosdaq_family(monkeypatch) -> None:
+    import backtesting.reporting.benchmarks as benchmarks
+    from backtesting.catalog import DatasetId
+
+    requested: list[DatasetId] = []
+
+    def _fake_load_default_frame(dataset_id: DatasetId) -> pd.DataFrame:
+        requested.append(dataset_id)
+        index = pd.to_datetime(["2024-01-02"])
+        if dataset_id is DatasetId.QW_KSDQ_WICS_SEC_BIG:
+            return pd.DataFrame({"A": ["G45"]}, index=index)
+        if dataset_id is DatasetId.QW_KSDQ_ADJ_C:
+            return pd.DataFrame({"A": [100.0]}, index=index)
+        if dataset_id is DatasetId.QW_BM:
+            return pd.DataFrame({"IKS200": [200.0]}, index=index)
+        raise AssertionError(f"unexpected dataset_id: {dataset_id}")
+
+    monkeypatch.setattr(benchmarks, "_load_default_frame", _fake_load_default_frame)
+
+    benchmark_repo, sector_repo = benchmarks.default_repositories_for_universe("kosdaq150")
+
+    assert benchmark_repo is not None
+    assert sector_repo is not None
+    assert requested[:2] == [DatasetId.QW_KSDQ_WICS_SEC_BIG, DatasetId.QW_KSDQ_ADJ_C]

@@ -5,10 +5,11 @@ from pathlib import Path
 from fastapi import HTTPException
 
 from backtesting.reporting.analytics import ROLLING_WINDOW, SECTOR_CONTRIBUTION_METHOD_WEIGHTED_ASSET_RETURNS
-from backtesting.reporting.benchmarks import BenchmarkRepository, SectorRepository
+from backtesting.reporting.benchmarks import default_repositories_for_universe
 from backtesting.reporting.models import BenchmarkConfig, SavedRun
 from backtesting.reporting.reader import RunReader
 from backtesting.reporting.snapshots import PerformanceSnapshot, PerformanceSnapshotFactory
+from backtesting.universe import UniverseRegistry
 from dashboard.backend.schemas import (
     BenchmarkModel,
     DashboardContextModel,
@@ -52,15 +53,12 @@ class DashboardPayloadService:
         self.runs_root = runs_root or (ROOT.results_path / "backtests")
         self.run_index_service = run_index_service or RunIndexService(self.runs_root)
         self.run_reader = run_reader or RunReader()
-        self.snapshot_factory = snapshot_factory or PerformanceSnapshotFactory(
-            benchmark_repo=BenchmarkRepository.default(),
-            sector_repo=SectorRepository.default(),
-        )
+        self.snapshot_factory = snapshot_factory
         self.benchmark = BenchmarkConfig.default_kospi200()
 
     def build(self, run_ids: list[str]) -> DashboardPayloadModel:
         selected_runs = [self._read_run(run_id) for run_id in run_ids]
-        snapshots = [self.snapshot_factory.build(run, self._resolve_benchmark(run)) for run in selected_runs]
+        snapshots = [self._snapshot_factory_for_run(run).build(run, self._resolve_benchmark(run)) for run in selected_runs]
 
         return DashboardPayloadModel(
             mode="single" if len(run_ids) == 1 else "multi",
@@ -264,6 +262,18 @@ class DashboardPayloadService:
             },
         )
 
+    def _snapshot_factory_for_run(self, run: SavedRun) -> PerformanceSnapshotFactory:
+        if self.snapshot_factory is not None:
+            return self.snapshot_factory
+        universe_id = run.config.get("universe_id")
+        benchmark_repo, sector_repo = default_repositories_for_universe(
+            str(universe_id) if universe_id is not None else None
+        )
+        return PerformanceSnapshotFactory(
+            benchmark_repo=benchmark_repo,
+            sector_repo=sector_repo,
+        )
+
     def _resolve_benchmark(self, run: SavedRun) -> BenchmarkConfig:
         raw = run.config.get("benchmark")
         if isinstance(raw, dict):
@@ -276,6 +286,17 @@ class DashboardPayloadService:
         name = run.config.get("benchmark_name")
         dataset = run.config.get("benchmark_dataset")
         if code is None and name is None and dataset is None:
+            universe_id = run.config.get("universe_id")
+            if universe_id is not None:
+                try:
+                    universe_spec = UniverseRegistry.default().get(str(universe_id))
+                    return BenchmarkConfig(
+                        code=universe_spec.default_benchmark_code,
+                        name=universe_spec.default_benchmark_name,
+                        dataset=universe_spec.default_benchmark_dataset,
+                    )
+                except KeyError:
+                    pass
             return self.benchmark
 
         resolved_code = str(code or self.benchmark.code)

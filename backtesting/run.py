@@ -159,10 +159,13 @@ class BacktestRunner:
                 benchmark_name=config.benchmark_name or "KOSPI200",
                 benchmark_dataset=config.benchmark_dataset or "qw_BM",
             )
+        universe_id = config.universe_id
+        if universe_id is None and universe_spec.id != "legacy_k200":
+            universe_id = universe_spec.id
         return replace(
             config,
             use_k200=universe_spec.id == "legacy_k200" if config.universe_id is not None else config.use_k200,
-            universe_id=config.universe_id or universe_spec.id,
+            universe_id=universe_id,
             benchmark_code=config.benchmark_code or universe_spec.default_benchmark_code,
             benchmark_name=config.benchmark_name or universe_spec.default_benchmark_name,
             benchmark_dataset=config.benchmark_dataset or universe_spec.default_benchmark_dataset,

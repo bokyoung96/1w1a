@@ -10,7 +10,6 @@ from backtesting.data import ParquetStore
 from backtesting.ingest import IngestJob
 from backtesting.ingest.io import find_raw_path
 from root import ROOT
-
 from .models import BenchmarkConfig
 
 
@@ -228,6 +227,22 @@ class SectorRepository:
         if raw.isdigit():
             return f"A{raw.zfill(6)}"
         return raw
+
+
+def default_repositories_for_universe(universe_id: str | None) -> tuple[BenchmarkRepository, SectorRepository]:
+    if universe_id == "kosdaq150":
+        sector_name_map, stock_name_map = _load_display_name_maps(ROOT.raw_path / "map.xlsx")
+        sector_repo = SectorRepository.from_frame(
+            _load_default_frame(DatasetId.QW_KSDQ_WICS_SEC_BIG),
+            prices=_load_default_frame(DatasetId.QW_KSDQ_ADJ_C),
+            sector_name_map=sector_name_map,
+            stock_name_map=stock_name_map,
+        )
+        return (
+            BenchmarkRepository.default(),
+            sector_repo,
+        )
+    return BenchmarkRepository.default(), SectorRepository.default()
 
 
 def _load_default_frame(dataset_id: DatasetId) -> pd.DataFrame:

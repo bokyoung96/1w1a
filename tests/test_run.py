@@ -53,7 +53,7 @@ def test_runner_executes_momentum_strategy(tmp_path: Path) -> None:
 
     assert report.summary["final_equity"] > 0.0
     assert report.config.use_k200 is True
-    assert report.config.universe_id == "legacy_k200"
+    assert report.config.universe_id is None
     assert report.config.benchmark_name == "KOSPI200"
     assert report.result.weights.loc["2024-01-04", "A"] == 1.0
     assert report.output_dir is not None
@@ -67,6 +67,42 @@ def test_runner_executes_momentum_strategy(tmp_path: Path) -> None:
     assert (report.output_dir / "validation.json").exists()
     assert (report.output_dir / "split.json").exists()
     assert (report.output_dir / "factor.json").exists()
+
+
+def test_runner_persists_implicit_legacy_universe_as_none(tmp_path: Path) -> None:
+    parquet_dir = tmp_path / "parquet"
+    raw_dir = tmp_path / "raw"
+    result_dir = tmp_path / "results"
+    parquet_dir.mkdir()
+    raw_dir.mkdir()
+    store = ParquetStore(parquet_dir)
+    index = pd.to_datetime(["2024-01-02", "2024-01-03", "2024-01-04"])
+    store.write("qw_adj_c", pd.DataFrame({"A": [10.0, 11.0, 12.0], "B": [10.0, 10.0, 9.0]}, index=index))
+    store.write("qw_adj_o", pd.DataFrame({"A": [10.0, 11.0, 12.0], "B": [10.0, 10.0, 9.0]}, index=index))
+    store.write("qw_k200_yn", pd.DataFrame({"A": [1, 1, 1], "B": [1, 1, 1]}, index=index))
+
+    runner = BacktestRunner(
+        catalog=DataCatalog.default(),
+        raw_dir=raw_dir,
+        parquet_dir=parquet_dir,
+        result_dir=result_dir,
+    )
+    report = runner.run(
+        RunConfig(
+            strategy="momentum",
+            start="2024-01-02",
+            end="2024-01-04",
+            top_n=1,
+            lookback=1,
+            schedule="daily",
+            fill_mode="close",
+        )
+    )
+
+    assert report.config.universe_id is None
+    assert report.output_dir is not None
+    persisted_config = pd.read_json(report.output_dir / "config.json", typ="series")
+    assert persisted_config["universe_id"] is None
 
 
 def test_runner_executes_op_fwd_strategy(tmp_path: Path) -> None:

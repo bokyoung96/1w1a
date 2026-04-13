@@ -203,6 +203,57 @@ def test_dashboard_payload_launch_benchmark_uses_shared_dashboard_default(tmp_pa
     assert payload["context"]["macro_20260405_120000"]["benchmark"] == {"code": "SPX", "name": "S&P 500"}
 
 
+def test_dashboard_payload_uses_kosdaq150_defaults_when_run_is_kosdaq150(tmp_path: Path) -> None:
+    _write_saved_run(
+        tmp_path,
+        "alpha_20260405_100000",
+        name="Alpha Strategy",
+        final_equity=110.0,
+        avg_turnover=0.03,
+        weights=[[0.6, 0.4, 0.0], [0.55, 0.45, 0.0]],
+    )
+    config_path = tmp_path / "alpha_20260405_100000" / "config.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["universe_id"] = "kosdaq150"
+    config_path.write_text(json.dumps(config), encoding="utf-8")
+
+    client = TestClient(app)
+    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(
+        tmp_path,
+        benchmark_frame=pd.DataFrame(
+            {"IKS200": [200.0, 201.0], "KQ150": [300.0, 303.0]},
+            index=pd.to_datetime(["2024-01-02", "2024-01-03"]),
+        ),
+        sector_frame=pd.DataFrame(
+            {"A": ["KQ Tech", "KQ Tech"], "B": ["KQ Utilities", "KQ Utilities"], "C": ["KQ Consumer", "KQ Consumer"]},
+            index=pd.to_datetime(["2024-01-02", "2024-01-03"]),
+        ),
+    )
+
+    response = client.get("/api/dashboard", params=[("run_ids", "alpha_20260405_100000")])
+
+    app.dependency_overrides.clear()
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["context"]["alpha_20260405_100000"]["benchmark"] == {"code": "KQ150", "name": "KOSDAQ150"}
+    assert payload["performance"]["benchmarks"] == [
+        {
+            "runId": "alpha_20260405_100000",
+            "label": "KOSDAQ150",
+            "points": [
+                {"date": "2024-01-02", "value": 100.0},
+                {"date": "2024-01-03", "value": 101.0},
+            ],
+        }
+    ]
+    assert payload["exposure"]["sectorWeights"] == {
+        "alpha_20260405_100000": [
+            {"name": "KQ Tech", "value": 0.55},
+            {"name": "KQ Utilities", "value": 0.45},
+        ]
+    }
+
+
 def test_dashboard_payload_includes_rolling_correlation(tmp_path: Path) -> None:
     dates = [date.date().isoformat() for date in pd.bdate_range("2024-01-02", periods=260)]
     benchmark_frame = pd.DataFrame(

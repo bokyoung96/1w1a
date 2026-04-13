@@ -60,6 +60,48 @@ def test_report_builder_creates_tearsheet_bundle_and_persists_tables(tmp_path: P
     assert (bundle.out_dir / "tables" / "performance_summary.csv").exists()
 
 
+def test_report_builder_uses_universe_specific_repositories(tmp_path: Path, monkeypatch) -> None:
+    run = _sample_run(tmp_path, "sample")
+    run = SavedRun(
+        run_id=run.run_id,
+        path=run.path,
+        config={**run.config, "universe_id": "kosdaq150"},
+        summary=run.summary,
+        equity=run.equity,
+        returns=run.returns,
+        turnover=run.turnover,
+        weights=run.weights,
+        qty=run.qty,
+    )
+
+    benchmark_repo = object()
+    sector_repo = object()
+    observed: list[tuple[object, object, object]] = []
+
+    def _fake_resolver(universe_id: str | None) -> tuple[object, object]:
+        assert universe_id == "kosdaq150"
+        return benchmark_repo, sector_repo
+
+    class _FakeFactory:
+        def __init__(self, *, benchmark_repo, sector_repo):  # type: ignore[no-untyped-def]
+            observed.append((benchmark_repo, sector_repo, "init"))
+
+        def build(self, run_obj, benchmark):  # type: ignore[no-untyped-def]
+            observed.append((run_obj.config["universe_id"], benchmark.code, benchmark.name))
+            return SimpleNamespace(run_id=run_obj.run_id, display_name="Momentum")
+
+    monkeypatch.setattr("backtesting.reporting.builder.default_repositories_for_universe", _fake_resolver, raising=False)
+    monkeypatch.setattr("backtesting.reporting.builder.PerformanceSnapshotFactory", _FakeFactory)
+    monkeypatch.setattr("backtesting.reporting.builder.TearsheetFigureBuilder", lambda out_dir: SimpleNamespace(build=lambda snapshot, require_png=False: {"executive": out_dir / "executive.png"}))
+    monkeypatch.setattr("backtesting.reporting.builder.TearsheetTableBuilder", lambda: SimpleNamespace(build=lambda snapshot, notes=(): {"performance_summary": pd.DataFrame([{"metric_key": "cagr", "metric": "CAGR", "value": 0.1}])}))
+
+    bundle = ReportBuilder(tmp_path).build(ReportSpec(name="sample-report", run_ids=("sample",)), [run])
+
+    assert isinstance(bundle, TearsheetBundle)
+    assert observed[0][:2] == (benchmark_repo, sector_repo)
+    assert observed[1] == ("kosdaq150", "IKS200", "KOSPI200")
+
+
 def test_report_builder_creates_comparison_bundle_for_multiple_runs(tmp_path: Path, monkeypatch) -> None:
     runs = [_sample_run(tmp_path, "run-a", "momentum"), _sample_run(tmp_path, "run-b", "op_fwd_yield")]
 
