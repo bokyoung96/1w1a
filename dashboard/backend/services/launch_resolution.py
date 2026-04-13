@@ -120,6 +120,10 @@ class LaunchResolutionService:
         signature = asdict(config.global_config)
         signature["strategy"] = preset.strategy_name
         signature["universe_id"] = LaunchResolutionService._normalize_universe_id(preset.universe_id)
+        signature["use_k200"] = LaunchResolutionService._normalize_use_k200(
+            signature["use_k200"],
+            preset.universe_id,
+        )
         signature.update(dict(preset.params))
         signature["benchmark_code"] = preset.benchmark.code
         signature["benchmark_name"] = preset.benchmark.name
@@ -169,6 +173,12 @@ class LaunchResolutionService:
         if value in (None, "legacy_k200"):
             return None
         return value
+
+    @staticmethod
+    def _normalize_use_k200(use_k200: Any, universe_id: Any) -> Any:
+        if universe_id not in (None, "legacy_k200"):
+            return False
+        return use_k200
 
     @staticmethod
     def _archive_run_dir(runs_root: Path, run_id: str) -> None:

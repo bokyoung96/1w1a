@@ -87,6 +87,7 @@ def test_launch_dashboard_passes_universe_id_to_backtest_runner(tmp_path: Path, 
     launch_dashboard(runs_root=tmp_path, host="127.0.0.1", port=8000)
 
     assert observed_configs[0].universe_id == "kosdaq150"
+    assert observed_configs[0].use_k200 is False
 
 
 def test_build_frontend_runs_npm_build_without_install_when_lockfile_matches(tmp_path: Path, monkeypatch) -> None:
