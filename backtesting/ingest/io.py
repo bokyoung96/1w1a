@@ -14,7 +14,9 @@ def find_raw_path(raw_dir: Path, stem: str) -> Path:
     for suffix in (".csv", ".xlsx"):
         matches.extend(sorted(raw_dir.rglob(f"{stem}{suffix}")))
     if matches:
-        return matches[0]
+        if len(matches) == 1:
+            return matches[0]
+        raise ValueError(f"ambiguous raw dataset: {stem} -> {', '.join(str(path) for path in matches)}")
 
     raise FileNotFoundError(f"missing raw dataset: {stem}")
 
