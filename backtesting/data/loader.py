@@ -82,6 +82,8 @@ class DataLoader:
             spec = self.catalog.get(dataset_id)
             frame = self._load_frame(spec, request)
             key = self.FRAME_KEYS.get(dataset_id, spec.stem)
+            if key in frames:
+                raise ValueError(f"duplicate semantic frame key: {key}")
             frames[key] = frame
         return MarketData(
             frames=frames,
