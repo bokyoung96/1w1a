@@ -1,0 +1,36 @@
+---
+source_file: "backtesting/reporting/pdf.py"
+type: "code"
+community: "Docs Superpowers Plans"
+location: "L16"
+tags:
+  - graphify/code
+  - graphify/INFERRED
+  - community/Docs_Superpowers_Plans
+---
+
+# PdfRenderer.render()
+
+## Connections
+- [[2026-04-03-backtest-reporting-design]] - `rationale_for` [INFERRED]
+- [[2026-04-03-backtest-reporting-implementation]] - `rationale_for` [INFERRED]
+- [[2026-04-03-performance-reporting-redesign-design]] - `rationale_for` [INFERRED]
+- [[2026-04-03-performance-reporting-redesign-implementation]] - `rationale_for` [INFERRED]
+- [[2026-04-04-performance-reporting-pdf-polish-design]] - `rationale_for` [INFERRED]
+- [[2026-04-04-performance-reporting-pdf-polish-implementation]] - `rationale_for` [INFERRED]
+- [[2026-04-05-dashboard-chart-followups]] - `rationale_for` [INFERRED]
+- [[2026-04-05-live-dashboard-design]] - `rationale_for` [INFERRED]
+- [[2026-04-05-live-dashboard-single-command-launch]] - `rationale_for` [INFERRED]
+- [[2026-04-05-research-dashboard-refresh-design]] - `rationale_for` [INFERRED]
+- [[2026-04-05-research-dashboard-refresh]] - `rationale_for` [INFERRED]
+- [[2026-04-06-dashboard-analytics-refresh-design]] - `rationale_for` [INFERRED]
+- [[2026-04-06-dashboard-analytics-refresh]] - `rationale_for` [INFERRED]
+- [[2026-04-06-dashboard-metadata-detail-redesign]] - `rationale_for` [INFERRED]
+- [[2026-04-06-dashboard-metadata-detail]] - `rationale_for` [INFERRED]
+- [[2026-04-07-dashboard-drawdown-weight-design]] - `rationale_for` [INFERRED]
+- [[2026-04-07-dashboard-research-series-design]] - `rationale_for` [INFERRED]
+- [[2026-04-07-dashboard-research-series-plan]] - `rationale_for` [INFERRED]
+- [[PdfRenderer]] - `contains` [EXTRACTED]
+- [[PdfRenderer.render_with_status()]] - `calls` [INFERRED]
+
+#graphify/code #graphify/INFERRED #community/Docs_Superpowers_Plans

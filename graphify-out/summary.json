@@ -1,0 +1,159 @@
+{
+  "counts": {
+    "code": 165,
+    "document": 28,
+    "paper": 0,
+    "image": 0,
+    "video": 0,
+    "data": 49
+  },
+  "nodes": 1881,
+  "edges": 6088,
+  "communities": 44,
+  "god_nodes": [
+    {
+      "id": "dataset_raw_qw_mkt_typ_csv",
+      "label": "Mkt Typ",
+      "edges": 87
+    },
+    {
+      "id": "func_dashboard_frontend_src_components_app_test_tsx_series",
+      "label": "series()",
+      "edges": 82
+    },
+    {
+      "id": "func_backtesting_catalog_catalog_py_datacatalog_get",
+      "label": "DataCatalog.get()",
+      "edges": 76
+    },
+    {
+      "id": "dataset_raw_qw_sha_out_csv",
+      "label": "Shares Outstanding Outstanding",
+      "edges": 74
+    },
+    {
+      "id": "dataset_raw_qw_equity_lfq0_csv",
+      "label": "Equity Latest Quarter",
+      "edges": 66
+    },
+    {
+      "id": "dataset_raw_ksdq_qw_ksdq_wics_sec_big_csv",
+      "label": "Kosdaq Kosdaq Wics Sector Sector Large Cap Sector",
+      "edges": 64
+    },
+    {
+      "id": "func_backtesting_catalog_catalog_py_datacatalog_default",
+      "label": "DataCatalog.default()",
+      "edges": 62
+    },
+    {
+      "id": "dataset_raw_qw_wics_sec_big_csv",
+      "label": "Wics Sector Sector Large Cap Sector",
+      "edges": 61
+    },
+    {
+      "id": "func_backtesting_engine_core_py_backtestengine_run",
+      "label": "BacktestEngine.run()",
+      "edges": 53
+    },
+    {
+      "id": "dataset_raw_qw_foreign_ratio_csv",
+      "label": "Foreign Ownership Ratio",
+      "edges": 52
+    }
+  ],
+  "surprises": [
+    {
+      "source": "summarize_perf()",
+      "target": "Options Div",
+      "source_files": [
+        "backtesting/analytics/perf.py",
+        "raw/options/qw_div.csv"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "BacktestEngine._rebalance()",
+      "target": "Options Div",
+      "source_files": [
+        "backtesting/engine/core.py",
+        "raw/options/qw_div.csv"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "SectorRepository.__init__()",
+      "target": "Map",
+      "source_files": [
+        "backtesting/reporting/benchmarks.py",
+        "raw/map.xlsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "SectorRepository.sector_contribution_timeseries()",
+      "target": "Options Div",
+      "source_files": [
+        "backtesting/reporting/benchmarks.py",
+        "raw/options/qw_div.csv"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "ReportBuilder.build_legacy()",
+      "target": "Equity Latest Quarter",
+      "source_files": [
+        "backtesting/reporting/builder.py",
+        "raw/qw_equity_lfq0.csv"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; bridges separate communities"
+    }
+  ],
+  "suggested_questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `series()` connect `Backtesting Reporting Tests` to `Raw Ksdq Csv`, `Docs Superpowers Policy`, `Tests Test Run.Py Engine`, `Tests Dashboard Backend`, `Backtesting Reporting Tests`, `Docs Superpowers Strategy`, `Docs Superpowers Plans`, `Docs Superpowers Plans`, `Docs Superpowers Reporting`, `Dashboard Frontend App`, `Backtesting Reporting Composers`, `Docs Superpowers Analytics`, `Docs Superpowers Live`, `Docs Superpowers Research`, `Docs Superpowers Performance`, `Docs Superpowers Reporting`, `Docs Superpowers Reporting`, `Tests Analytics Test_Factor`?",
+      "why": "High betweenness centrality (0.052) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Equity Latest Quarter` connect `Raw Ksdq Csv` to `Tests Test Run.Py Engine`, `Tests Dashboard Backend`, `Backtesting Reporting Tests`, `Docs Superpowers Strategy`, `Docs Superpowers Plans`, `Docs Superpowers Plans`, `Docs Superpowers Reporting`, `Dashboard Backend Schemas`, `Dashboard Frontend App`, `Docs Superpowers Reporting`, `Backtesting Reporting Composers`, `Dashboard Frontend Src`, `Docs Superpowers Live`, `Docs Superpowers Performance`, `Docs Superpowers Reporting`, `Dashboard Frontend Src`, `Docs Superpowers Reporting`, `Backtesting Reporting Tables_Single`, `Dashboard Frontend Src`?",
+      "why": "High betweenness centrality (0.051) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Foreign Ownership Ratio` connect `Raw Ksdq Csv` to `Docs Superpowers Policy`, `Tests Dashboard Backend`, `Docs Superpowers Strategy`, `Docs Superpowers Plans`, `Docs Superpowers Plans`, `Docs Superpowers Reporting`, `Dashboard Backend Schemas`, `Dashboard Frontend App`, `Docs Superpowers Reporting`, `Backtesting Reporting Composers`, `Dashboard Frontend Src`, `Docs Superpowers Analytics`, `Docs Superpowers Kosdaq150`, `Docs Superpowers Live`, `Docs Superpowers Research`, `Docs Superpowers Performance`, `Docs Superpowers Breakout`, `Dashboard Frontend Src`, `Docs Superpowers Reporting`, `Backtesting Reporting Tables_Single`, `Dashboard Frontend Src`?",
+      "why": "High betweenness centrality (0.043) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 85 inferred relationships involving `Mkt Typ` (e.g. with `factor.py` and `catalog.py`) actually correct?",
+      "why": "`Mkt Typ` has 85 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 81 inferred relationships involving `series()` (e.g. with `quantile_returns()` and `rank_ic()`) actually correct?",
+      "why": "`series()` has 81 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 75 inferred relationships involving `DataCatalog.get()` (e.g. with `DataLoader.load()` and `IngestJob.run()`) actually correct?",
+      "why": "`DataCatalog.get()` has 75 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 72 inferred relationships involving `Shares Outstanding Outstanding` (e.g. with `__init__.py` and `perf.py`) actually correct?",
+      "why": "`Shares Outstanding Outstanding` has 72 INFERRED edges - model-reasoned connections that need verification."
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+---
+source_file: "raw/qw_equity_lfq0.csv"
+type: "document"
+community: "Raw Ksdq Csv"
+tags:
+  - graphify/document
+  - graphify/INFERRED
+  - community/Raw_Ksdq_Csv
+---
+
+# Equity Latest Quarter
+
+## Connections
+- [[2026-04-03-backtest-reporting-design]] - `references` [INFERRED]
+- [[2026-04-03-backtest-reporting-implementation]] - `references` [INFERRED]
+- [[2026-04-03-performance-reporting-redesign-design]] - `references` [INFERRED]
+- [[2026-04-03-performance-reporting-redesign-implementation]] - `references` [INFERRED]
+- [[2026-04-03-stock-backtesting-design]] - `references` [INFERRED]
+- [[2026-04-03-stock-backtesting-implementation]] - `references` [INFERRED]
+- [[2026-04-04-performance-reporting-pdf-polish-implementation]] - `references` [INFERRED]
+- [[2026-04-05-live-dashboard-design]] - `references` [INFERRED]
+- [[2026-04-05-live-dashboard-single-command-launch]] - `references` [INFERRED]
+- [[2026-04-05-research-dashboard-refresh]] - `references` [INFERRED]
+- [[2026-04-06-dashboard-analytics-refresh]] - `references` [INFERRED]
+- [[2026-04-13-kosdaq150-universe-integration]] - `references` [INFERRED]
+- [[App.test.tsx]] - `references` [INFERRED]
+- [[PerformanceStrip.tsx]] - `references` [INFERRED]
+- [[README]] - `references` [INFERRED]
+- [[ReportBuilder.build_legacy()]] - `calls` [INFERRED]
+- [[ResearchWorkspace.tsx]] - `references` [INFERRED]
+- [[RunSelector.test.tsx]] - `references` [INFERRED]
+- [[analytics.py]] - `references` [INFERRED]
+- [[api.ts]] - `references` [INFERRED]
+- [[benchmarks.py]] - `references` [INFERRED]
+- [[builder.py]] - `references` [INFERRED]
+- [[catalog.py]] - `references` [INFERRED]
+- [[comparison_figures.py]] - `references` [INFERRED]
+- [[composers.py]] - `references` [INFERRED]
+- [[core.py]] - `references` [INFERRED]
+- [[dashboard_payload.py]] - `references` [INFERRED]
+- [[enums.py]] - `references` [INFERRED]
+- [[figures.py]] - `references` [INFERRED]
+- [[launch_resolution.py]] - `references` [INFERRED]
+- [[loader.py]] - `references` [INFERRED]
+- [[models.py]] - `references` [INFERRED]
+- [[plots.py]] - `references` [INFERRED]
+- [[qw_equity_lfq0 data shape]] - `references` [EXTRACTED]
+- [[qw_equity_lfq0.csv]] - `contains` [EXTRACTED]
+- [[reader.py]] - `references` [INFERRED]
+- [[result.py]] - `references` [INFERRED]
+- [[run.py]] - `references` [INFERRED]
+- [[run_index.py]] - `references` [INFERRED]
+- [[schemas.py]] - `references` [INFERRED]
+- [[snapshots.py]] - `references` [INFERRED]
+- [[tables.py]] - `references` [INFERRED]
+- [[tables_comparison.py]] - `references` [INFERRED]
+- [[tables_single.py]] - `references` [INFERRED]
+- [[test_benchmarks.py]] - `references` [INFERRED]
+- [[test_builder.py]] - `references` [INFERRED]
+- [[test_core.py]] - `references` [INFERRED]
+- [[test_dashboard_api.py]] - `references` [INFERRED]
+- [[test_figures.py]] - `references` [INFERRED]
+- [[test_groups.py]] - `references` [INFERRED]
+- [[test_html.py]] - `references` [INFERRED]
+- [[test_launch_resolution.py]] - `references` [INFERRED]
+- [[test_pdf.py]] - `references` [INFERRED]
+- [[test_plot_library_preserves_flat_plot_contract()]] - `calls` [INFERRED]
+- [[test_plot_library_supports_multi_run_equity_chart()]] - `calls` [INFERRED]
+- [[test_plot_library_writes_equity_plot()]] - `calls` [INFERRED]
+- [[test_plot_library_writes_html_fallback_when_image_export_fails()]] - `calls` [INFERRED]
+- [[test_plots.py]] - `references` [INFERRED]
+- [[test_reader.py]] - `references` [INFERRED]
+- [[test_report_cli.py]] - `references` [INFERRED]
+- [[test_run.py_1]] - `references` [INFERRED]
+- [[test_run_index_service.py]] - `references` [INFERRED]
+- [[test_snapshots.py]] - `references` [INFERRED]
+- [[test_tables.py]] - `references` [INFERRED]
+- [[types.ts]] - `references` [INFERRED]
+- [[writer.py]] - `references` [INFERRED]
+
+#graphify/document #graphify/INFERRED #community/Raw_Ksdq_Csv
