@@ -161,6 +161,7 @@ class BacktestRunner:
             )
         return replace(
             config,
+            use_k200=universe_spec.id == "legacy_k200" if config.universe_id is not None else config.use_k200,
             universe_id=config.universe_id or universe_spec.id,
             benchmark_code=config.benchmark_code or universe_spec.default_benchmark_code,
             benchmark_name=config.benchmark_name or universe_spec.default_benchmark_name,
