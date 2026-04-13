@@ -14,6 +14,7 @@ class LoadRequest:
     end: str
     universe: pd.DataFrame | None = None
     benchmark: pd.Series | None = None
+    universe_id: str | None = None
     price_mode: str = "adj"
 
 
