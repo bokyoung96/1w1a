@@ -2,6 +2,8 @@
 
 > God node · 27 connections · `dashboard/backend/services/dashboard_payload.py`
 
+**Community:** [[Dashboard Backend Schemas]]
+
 ## Connections by Relation
 
 ### contains
@@ -17,25 +19,25 @@
 
 ### uses
 - [[PerformanceSnapshotFactory]] `INFERRED`
-- [[BenchmarkConfig]] `INFERRED`
 - [[PerformanceSnapshot]] `INFERRED`
+- [[BenchmarkConfig]] `INFERRED`
 - [[RunIndexService]] `INFERRED`
 - [[SavedRun]] `INFERRED`
-- [[RunReader]] `INFERRED`
 - [[UniverseRegistry]] `INFERRED`
+- [[RunReader]] `INFERRED`
 - [[BenchmarkModel]] `INFERRED`
-- [[DashboardContextModel]] `INFERRED`
-- [[DashboardExposureModel]] `INFERRED`
-- [[DashboardLaunchModel]] `INFERRED`
-- [[DashboardMetricModel]] `INFERRED`
-- [[DashboardPayloadModel]] `INFERRED`
-- [[DashboardPerformanceModel]] `INFERRED`
-- [[DashboardResearchModel]] `INFERRED`
-- [[DashboardRollingModel]] `INFERRED`
-- [[LaunchBenchmarkContextModel]] `INFERRED`
 - [[LaunchStrategyBenchmarkModel]] `INFERRED`
-- [[ResearchFocusModel]] `INFERRED`
+- [[LaunchBenchmarkContextModel]] `INFERRED`
+- [[DashboardLaunchModel]] `INFERRED`
 - [[RollingSeriesModel]] `INFERRED`
+- [[ResearchFocusModel]] `INFERRED`
+- [[DashboardMetricModel]] `INFERRED`
+- [[DashboardContextModel]] `INFERRED`
+- [[DashboardPerformanceModel]] `INFERRED`
+- [[DashboardRollingModel]] `INFERRED`
+- [[DashboardExposureModel]] `INFERRED`
+- [[DashboardResearchModel]] `INFERRED`
+- [[DashboardPayloadModel]] `INFERRED`
 
 ---
 

@@ -2,6 +2,8 @@
 
 > God node · 20 connections · `dashboard/frontend/src/lib/api.ts`
 
+**Community:** [[Dashboard Frontend Src]]
+
 ## Connections by Relation
 
 ### calls

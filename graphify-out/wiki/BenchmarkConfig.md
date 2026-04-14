@@ -2,6 +2,8 @@
 
 > God node · 17 connections · `backtesting/reporting/models.py`
 
+**Community:** [[Dashboard Backend Services]]
+
 ## Connections by Relation
 
 ### contains

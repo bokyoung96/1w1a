@@ -2,6 +2,8 @@
 
 > God node · 17 connections · `backtesting/reporting/snapshots.py`
 
+**Community:** [[Backtesting Reporting Snapshots]]
+
 ## Connections by Relation
 
 ### calls

@@ -2,6 +2,8 @@
 
 > God node · 17 connections · `backtesting/signals/base.py`
 
+**Community:** [[Backtesting Strategies Construction]]
+
 ## Connections by Relation
 
 ### contains

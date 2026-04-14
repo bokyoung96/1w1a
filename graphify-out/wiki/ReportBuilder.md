@@ -2,6 +2,8 @@
 
 > God node · 23 connections · `backtesting/reporting/builder.py`
 
+**Community:** [[Backtesting Reporting Builder]]
+
 ## Connections by Relation
 
 ### contains
@@ -18,15 +20,15 @@
 ### uses
 - [[PerformanceSnapshotFactory]] `INFERRED`
 - [[SectorRepository]] `INFERRED`
-- [[ComparisonBundle]] `INFERRED`
 - [[TearsheetBundle]] `INFERRED`
+- [[ComparisonBundle]] `INFERRED`
 - [[ReportCli]] `INFERRED`
 - [[TearsheetFigureBuilder]] `INFERRED`
 - [[PlotLibrary]] `INFERRED`
 - [[ReportArgumentParser]] `INFERRED`
+- [[SavedRun]] `INFERRED`
 - [[BenchmarkRepository]] `INFERRED`
 - [[ComparisonFigureBuilder]] `INFERRED`
-- [[SavedRun]] `INFERRED`
 - [[ReportKind]] `INFERRED`
 - [[ReportSpec]] `INFERRED`
 - [[ComparisonTableBuilder]] `INFERRED`

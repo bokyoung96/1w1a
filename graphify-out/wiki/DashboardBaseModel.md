@@ -2,6 +2,8 @@
 
 > God node · 25 connections · `dashboard/backend/schemas.py`
 
+**Community:** [[Dashboard Backend Schemas]]
+
 ## Connections by Relation
 
 ### contains

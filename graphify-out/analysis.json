@@ -1,7 +1,6 @@
 {
   "communities": {
     "0": [
-      "abc",
       "base_apply",
       "base_build_signal",
       "base_constructionresult",
@@ -40,6 +39,7 @@
       "graphify_scope_backtesting_construction_long_short_py",
       "graphify_scope_backtesting_construction_sector_neutral_py",
       "graphify_scope_backtesting_policy_base_py",
+      "graphify_scope_backtesting_policy_init_py",
       "graphify_scope_backtesting_policy_pass_through_py",
       "graphify_scope_backtesting_policy_staged_py",
       "graphify_scope_backtesting_signals_base_py",
@@ -91,12 +91,6 @@
       "staged_stagedruleset"
     ],
     "1": [
-      "base_basestrategy",
-      "base_basestrategy_zeros_like",
-      "base_crosssectionalstrategy",
-      "base_target_weights",
-      "base_timeseriesstrategy",
-      "base_validate_positive",
       "catalog_datacatalog",
       "catalog_datacatalog_get",
       "catalog_datacatalog_group",
@@ -115,13 +109,6 @@
       "costs_costmodel_calc",
       "costs_total",
       "costs_tradecost",
-      "cross_ranklongonly",
-      "cross_ranklongonly_post_init",
-      "cross_ranklongonly_target_weights",
-      "cross_ranklongshort",
-      "cross_ranklongshort_post_init",
-      "cross_ranklongshort_target_weights",
-      "crosssectionalstrategy",
       "enum",
       "enums_datasetgroup",
       "enums_datasetid",
@@ -138,14 +125,14 @@
       "graphify_scope_backtesting_execution_fill_py",
       "graphify_scope_backtesting_execution_init_py",
       "graphify_scope_backtesting_execution_schedule_py",
-      "graphify_scope_backtesting_policy_init_py",
-      "graphify_scope_backtesting_strategy_base_py",
-      "graphify_scope_backtesting_strategy_cross_py",
-      "graphify_scope_backtesting_strategy_init_py",
-      "graphify_scope_backtesting_strategy_timeseries_py",
+      "graphify_scope_backtesting_validation_init_py",
+      "graphify_scope_backtesting_validation_portfolio_py",
+      "graphify_scope_backtesting_validation_session_py",
+      "graphify_scope_backtesting_validation_split_py",
       "groups_datasetgroups",
       "groups_datasetgroups_get",
       "init_rationale_1",
+      "portfolio_validate_position_plan",
       "result_backtestresult",
       "schedule_customschedule",
       "schedule_customschedule_flags",
@@ -157,13 +144,77 @@
       "schedule_rebalanceschedule_flags",
       "schedule_weeklyschedule",
       "schedule_weeklyschedule_flags",
+      "session_covers_index",
+      "session_has_sparse_row",
+      "session_unique_sorted",
+      "session_validationsession",
+      "session_validationsession_run",
       "specs_datasetspec",
-      "str",
-      "timeseries_thresholdtrend",
-      "timeseries_thresholdtrend_target_weights",
-      "timeseriesstrategy"
+      "split_split_frame",
+      "split_splitconfig",
+      "split_splitresult",
+      "str"
     ],
     "2": [
+      "backtest_runner",
+      "backtesting_reporting_main",
+      "backtesting_run_main",
+      "benchmark_config",
+      "breakout_52w_simple_strategy",
+      "breakout_52w_staged_strategy",
+      "breakout_simple_run_224119",
+      "breakout_simple_run_224119_drawdown",
+      "breakout_simple_run_224119_equity",
+      "breakout_simple_run_224539",
+      "breakout_simple_run_224539_drawdown",
+      "breakout_simple_run_224539_equity",
+      "breakout_staged_run_224143",
+      "breakout_staged_run_224143_drawdown",
+      "breakout_staged_run_224143_equity",
+      "breakout_staged_run_224603",
+      "breakout_staged_run_224603_drawdown",
+      "breakout_staged_run_224603_equity",
+      "dashboard_api_router",
+      "dashboard_backend_app",
+      "dashboard_backend_requirements",
+      "dashboard_launch_config",
+      "dashboard_launcher_main",
+      "dashboard_payload_service",
+      "fastapi_pkg",
+      "kospi200",
+      "launch_resolution_service",
+      "momentum_run_20260408_212535",
+      "momentum_run_20260408_212535_drawdown",
+      "momentum_run_20260408_212535_equity",
+      "momentum_strategy",
+      "op_fwd_yield_run_20260408_212641",
+      "op_fwd_yield_run_20260408_212641_drawdown",
+      "op_fwd_yield_run_20260408_212641_equity",
+      "op_fwd_yield_strategy",
+      "parquet_directory",
+      "performance_snapshot_factory",
+      "pydantic_pkg",
+      "qw_bm_document",
+      "raw_directory",
+      "raw_map_sector_codes_doc",
+      "report_builder",
+      "report_cli",
+      "report_py_entrypoint",
+      "results_backtests_root",
+      "results_directory",
+      "root_py_module",
+      "run_index_service",
+      "run_py_entrypoint",
+      "run_reader",
+      "run_writer",
+      "saved_run",
+      "sector_code_lookup_index",
+      "sector_code_mapping_concept",
+      "sector_map_document",
+      "strategy_preset",
+      "uvicorn_pkg"
+    ],
+    "3": [
       "builder_build_notes",
       "builder_reportbuilder",
       "builder_reportbuilder_build",
@@ -215,7 +266,7 @@
       "tables_single_tearsheettablebuilder",
       "tables_single_tearsheettablebuilder_build"
     ],
-    "3": [
+    "4": [
       "basemodel",
       "dashboard_payload_dashboardpayloadservice",
       "dashboard_payload_dashboardpayloadservice_build",
@@ -234,6 +285,8 @@
       "dashboard_payload_serialize_series",
       "graphify_scope_dashboard_backend_schemas_py",
       "graphify_scope_dashboard_backend_services_dashboard_payload_py",
+      "run_index_runindexservice",
+      "run_index_runindexservice_init",
       "schemas_benchmarkmodel",
       "schemas_categorypointmodel",
       "schemas_categoryseriesmodel",
@@ -256,12 +309,13 @@
       "schemas_namedseriesmodel",
       "schemas_researchfocusmodel",
       "schemas_rollingseriesmodel",
+      "schemas_runoptionmodel",
       "schemas_runsummarymodel",
       "schemas_sessionbootstrapmodel",
       "schemas_to_camel",
       "schemas_valuepointmodel"
     ],
-    "4": [
+    "5": [
       "analytics_annualized_sharpe",
       "analytics_build_monthly_heatmap",
       "analytics_build_return_distribution",
@@ -306,93 +360,7 @@
       "tables_comparison_comparisontablebuilder_build",
       "tables_comparison_ordered_columns"
     ],
-    "5": [
-      "backtest_runner",
-      "backtesting_reporting_main",
-      "backtesting_run_main",
-      "benchmark_config",
-      "breakout_52w_simple_strategy",
-      "breakout_52w_staged_strategy",
-      "breakout_simple_run_224119",
-      "breakout_simple_run_224539",
-      "breakout_staged_run_224143",
-      "breakout_staged_run_224603",
-      "dashboard_api_router",
-      "dashboard_backend_app",
-      "dashboard_backend_requirements",
-      "dashboard_launch_config",
-      "dashboard_launcher_main",
-      "dashboard_payload_service",
-      "fastapi_pkg",
-      "kospi200",
-      "launch_resolution_service",
-      "momentum_run_20260408_212535",
-      "momentum_strategy",
-      "op_fwd_yield_run_20260408_212641",
-      "op_fwd_yield_strategy",
-      "parquet_directory",
-      "performance_snapshot_factory",
-      "pydantic_pkg",
-      "qw_bm_document",
-      "raw_directory",
-      "report_builder",
-      "report_cli",
-      "report_py_entrypoint",
-      "results_backtests_root",
-      "results_directory",
-      "root_py_module",
-      "run_index_service",
-      "run_py_entrypoint",
-      "run_reader",
-      "run_writer",
-      "saved_run",
-      "sector_map_document",
-      "strategy_preset",
-      "uvicorn_pkg"
-    ],
     "6": [
-      "graphify_scope_dashboard_backend_services_launch_resolution_py",
-      "graphify_scope_dashboard_backend_services_run_index_py",
-      "graphify_scope_dashboard_strategies_py",
-      "launch_resolution_archive_run_dir",
-      "launch_resolution_build_saved_signature",
-      "launch_resolution_build_signature",
-      "launch_resolution_is_usable_saved_run",
-      "launch_resolution_launchplan",
-      "launch_resolution_launchresolutionservice",
-      "launch_resolution_launchresolutionservice_archive_duplicate_runs",
-      "launch_resolution_launchresolutionservice_find_matching_run",
-      "launch_resolution_launchresolutionservice_init",
-      "launch_resolution_launchresolutionservice_load_saved_config",
-      "launch_resolution_launchresolutionservice_resolve",
-      "launch_resolution_launchresolutionservice_saved_signature_key",
-      "launch_resolution_normalize_universe_id",
-      "launch_resolution_normalize_use_k200",
-      "launch_resolution_normalize_value",
-      "launch_resolution_parse_run_timestamp",
-      "launch_resolution_resolvedrun",
-      "launch_resolution_run_sort_key",
-      "launch_resolution_selected_run_ids",
-      "models_benchmarkconfig",
-      "run_index_config_signature",
-      "run_index_is_usable_run_dir",
-      "run_index_load_run_option",
-      "run_index_normalize_universe_id",
-      "run_index_normalize_value",
-      "run_index_parse_run_timestamp",
-      "run_index_runindexservice",
-      "run_index_runindexservice_init",
-      "run_index_runindexservice_list_runs",
-      "run_index_sort_key",
-      "schemas_runoptionmodel",
-      "strategies_dashboardlaunchconfig",
-      "strategies_enabled_strategy_presets",
-      "strategies_globalrunconfig",
-      "strategies_strategypreset",
-      "strategies_strategypreset_post_init",
-      "strategies_warmupconfig"
-    ],
-    "7": [
       "composers_comparison_metric_strip",
       "composers_comparisoncomposer",
       "composers_comparisoncomposer_compose",
@@ -430,7 +398,7 @@
       "models_comparisonbundle",
       "models_tearsheetbundle"
     ],
-    "8": [
+    "7": [
       "graphify_scope_backtesting_init_py",
       "graphify_scope_backtesting_run_py",
       "graphify_scope_backtesting_universe_py",
@@ -464,7 +432,7 @@
       "universe_universespec_post_init",
       "universe_universespec_resolve_dataset"
     ],
-    "9": [
+    "8": [
       "graphify_scope_backtesting_data_init_py",
       "graphify_scope_backtesting_data_loader_py",
       "graphify_scope_backtesting_data_policy_py",
@@ -494,6 +462,36 @@
       "store_parquetstore_init",
       "store_parquetstore_read",
       "store_parquetstore_write"
+    ],
+    "9": [
+      "graphify_scope_dashboard_backend_services_launch_resolution_py",
+      "graphify_scope_dashboard_strategies_py",
+      "launch_resolution_archive_run_dir",
+      "launch_resolution_build_saved_signature",
+      "launch_resolution_build_signature",
+      "launch_resolution_is_usable_saved_run",
+      "launch_resolution_launchplan",
+      "launch_resolution_launchresolutionservice",
+      "launch_resolution_launchresolutionservice_archive_duplicate_runs",
+      "launch_resolution_launchresolutionservice_find_matching_run",
+      "launch_resolution_launchresolutionservice_init",
+      "launch_resolution_launchresolutionservice_load_saved_config",
+      "launch_resolution_launchresolutionservice_resolve",
+      "launch_resolution_launchresolutionservice_saved_signature_key",
+      "launch_resolution_normalize_universe_id",
+      "launch_resolution_normalize_use_k200",
+      "launch_resolution_normalize_value",
+      "launch_resolution_parse_run_timestamp",
+      "launch_resolution_resolvedrun",
+      "launch_resolution_run_sort_key",
+      "launch_resolution_selected_run_ids",
+      "models_benchmarkconfig",
+      "strategies_dashboardlaunchconfig",
+      "strategies_enabled_strategy_presets",
+      "strategies_globalrunconfig",
+      "strategies_strategypreset",
+      "strategies_strategypreset_post_init",
+      "strategies_warmupconfig"
     ],
     "10": [
       "api_asnumber",
@@ -599,6 +597,29 @@
       "graphify_scope_backtesting_reporting_figures_py"
     ],
     "14": [
+      "abc",
+      "base_basestrategy",
+      "base_basestrategy_zeros_like",
+      "base_crosssectionalstrategy",
+      "base_target_weights",
+      "base_timeseriesstrategy",
+      "base_validate_positive",
+      "cross_ranklongonly",
+      "cross_ranklongonly_post_init",
+      "cross_ranklongonly_target_weights",
+      "cross_ranklongshort",
+      "cross_ranklongshort_post_init",
+      "cross_ranklongshort_target_weights",
+      "crosssectionalstrategy",
+      "graphify_scope_backtesting_strategy_base_py",
+      "graphify_scope_backtesting_strategy_cross_py",
+      "graphify_scope_backtesting_strategy_init_py",
+      "graphify_scope_backtesting_strategy_timeseries_py",
+      "timeseries_thresholdtrend",
+      "timeseries_thresholdtrend_target_weights",
+      "timeseriesstrategy"
+    ],
+    "15": [
       "app_test_createdashboard",
       "app_test_createdeferredpromise",
       "app_test_findchartoption",
@@ -615,21 +636,6 @@
       "app_test_findstrategysectorweightoption",
       "app_test_selectorscope",
       "graphify_scope_dashboard_frontend_src_components_app_test_tsx"
-    ],
-    "15": [
-      "graphify_scope_backtesting_validation_init_py",
-      "graphify_scope_backtesting_validation_portfolio_py",
-      "graphify_scope_backtesting_validation_session_py",
-      "graphify_scope_backtesting_validation_split_py",
-      "portfolio_validate_position_plan",
-      "session_covers_index",
-      "session_has_sparse_row",
-      "session_unique_sorted",
-      "session_validationsession",
-      "session_validationsession_run",
-      "split_split_frame",
-      "split_splitconfig",
-      "split_splitresult"
     ],
     "16": [
       "graphify_scope_backtesting_reporting_writer_py",
@@ -670,6 +676,17 @@
       "researchdetailpanel_visiblerunids"
     ],
     "19": [
+      "graphify_scope_dashboard_backend_services_run_index_py",
+      "run_index_config_signature",
+      "run_index_is_usable_run_dir",
+      "run_index_load_run_option",
+      "run_index_normalize_universe_id",
+      "run_index_normalize_value",
+      "run_index_parse_run_timestamp",
+      "run_index_runindexservice_list_runs",
+      "run_index_sort_key"
+    ],
+    "20": [
       "graphify_scope_root_py",
       "root_config_path",
       "root_config_path_str",
@@ -679,7 +696,7 @@
       "root_results_path",
       "root_rootpaths"
     ],
-    "20": [
+    "21": [
       "graphify_scope_dashboard_frontend_src_components_performancestrip_tsx",
       "performancestrip_benchmarksummary",
       "performancestrip_buildcostsummary",
@@ -689,7 +706,7 @@
       "performancestrip_formatlaunchtext",
       "performancestrip_normalizefocuslabel"
     ],
-    "21": [
+    "22": [
       "app_isfocusavailable",
       "app_normalizedashboardselection",
       "app_orderselectedrunids",
@@ -698,7 +715,7 @@
       "app_uniquerunoptions",
       "graphify_scope_dashboard_frontend_src_app_app_tsx"
     ],
-    "22": [
+    "23": [
       "factor_quantile_returns",
       "factor_rank_ic",
       "graphify_scope_backtesting_analytics_factor_py",
@@ -706,7 +723,7 @@
       "graphify_scope_backtesting_analytics_perf_py",
       "perf_summarize_perf"
     ],
-    "23": [
+    "24": [
       "api_get_dashboard",
       "api_get_dashboard_payload_service",
       "api_get_run_index_service",
@@ -714,119 +731,124 @@
       "api_list_runs",
       "graphify_scope_dashboard_backend_api_py"
     ],
-    "24": [
+    "25": [
       "graphify_scope_dashboard_frontend_src_components_researchworkspace_tsx",
       "researchworkspace_contributionsubtitle",
       "researchworkspace_formatnumbervalue",
       "researchworkspace_formatpercentvalue",
       "researchworkspace_researchfigure"
     ],
-    "25": [
+    "26": [
       "exposureband_buildsectorsnapshotoption",
       "exposureband_resolverunids",
       "graphify_scope_dashboard_frontend_src_components_exposureband_tsx"
     ],
-    "26": [
+    "27": [
       "format_formatmoney",
       "format_formatpercent",
       "graphify_scope_dashboard_frontend_src_lib_format_ts"
     ],
-    "27": [
+    "28": [
       "graphify_scope_dashboard_backend_main_py",
       "main_create_app",
       "main_get_frontend_dist_dir"
     ],
-    "28": [
+    "29": [
+      "raw_ticker_name_index_doc",
+      "ticker_code_name_index",
+      "ticker_code_name_mapping_concept"
+    ],
+    "30": [
       "graphify_scope_backtesting_types_py",
       "types_rationale_1"
     ],
-    "29": [
+    "31": [
       "graphify_scope_dashboard_frontend_src_components_runselector_tsx",
       "runselector_runselector"
     ],
-    "30": [
+    "32": [
       "graphify_scope_dashboard_frontend_src_components_toprail_tsx",
       "toprail_toprail"
     ],
-    "31": [
+    "33": [
       "errorstate_errorstate",
       "graphify_scope_dashboard_frontend_src_components_errorstate_tsx"
     ],
-    "32": [
+    "34": [
       "diagnosticstrip_diagnosticstrip",
       "graphify_scope_dashboard_frontend_src_components_diagnosticstrip_tsx"
     ],
-    "33": [
+    "35": [
       "emptystate_emptystate",
       "graphify_scope_dashboard_frontend_src_components_emptystate_tsx"
     ],
-    "34": [
+    "36": [
       "graphify_scope_dashboard_frontend_src_components_runselector_test_tsx",
       "runselector_test_selectorscope"
     ],
-    "35": [
+    "37": [
       "graphify_scope_run_py"
     ],
-    "36": [
+    "38": [
       "graphify_scope_report_py"
     ],
-    "37": [
+    "39": [
       "graphify_scope_dashboard_init_py"
     ],
-    "38": [
+    "40": [
       "graphify_scope_dashboard_frontend_vite_config_d_ts"
     ],
-    "39": [
+    "41": [
       "graphify_scope_dashboard_frontend_vite_config_js"
     ],
-    "40": [
+    "42": [
       "graphify_scope_dashboard_frontend_vite_config_ts"
     ],
-    "41": [
+    "43": [
       "graphify_scope_dashboard_frontend_src_main_tsx"
     ],
-    "42": [
+    "44": [
       "graphify_scope_dashboard_frontend_src_test_setup_ts"
     ],
-    "43": [
+    "45": [
       "graphify_scope_dashboard_frontend_src_lib_types_ts"
     ],
-    "44": [
+    "46": [
       "graphify_scope_dashboard_backend_init_py"
     ],
-    "45": [
+    "47": [
       "graphify_scope_dashboard_backend_services_init_py"
     ]
   },
   "cohesion": {
     "0": 0.05,
-    "1": 0.05,
-    "2": 0.08,
-    "3": 0.1,
+    "1": 0.06,
+    "2": 0.06,
+    "3": 0.08,
     "4": 0.09,
     "5": 0.09,
-    "6": 0.11,
-    "7": 0.15,
-    "8": 0.12,
-    "9": 0.09,
+    "6": 0.15,
+    "7": 0.12,
+    "8": 0.09,
+    "9": 0.15,
     "10": 0.24,
     "11": 0.15,
     "12": 0.15,
     "13": 0.16,
-    "14": 0.12,
-    "15": 0.21,
+    "14": 0.14,
+    "15": 0.12,
     "16": 0.33,
     "17": 0.35,
     "18": 0.36,
-    "19": 0.25,
-    "20": 0.29,
-    "21": 0.52,
-    "22": 0.33,
-    "23": 0.4,
-    "24": 0.5,
-    "25": 0.67,
+    "19": 0.36,
+    "20": 0.25,
+    "21": 0.29,
+    "22": 0.52,
+    "23": 0.33,
+    "24": 0.4,
+    "25": 0.5,
     "26": 0.67,
-    "27": 1.0,
+    "27": 0.67,
     "28": 1.0,
     "29": 1.0,
     "30": 1.0,
@@ -844,7 +866,9 @@
     "42": 1.0,
     "43": 1.0,
     "44": 1.0,
-    "45": 1.0
+    "45": 1.0,
+    "46": 1.0,
+    "47": 1.0
   },
   "gods": [
     {
@@ -900,28 +924,6 @@
   ],
   "surprises": [
     {
-      "source": "QW Benchmark Time Series",
-      "target": "Performance Snapshot Factory",
-      "source_files": [
-        "raw/qw_BM.xlsx",
-        "backtesting/reporting/snapshots.py"
-      ],
-      "confidence": "INFERRED",
-      "relation": "conceptually_related_to",
-      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; peripheral node `QW Benchmark Time Series` unexpectedly reaches hub `Performance Snapshot Factory`"
-    },
-    {
-      "source": "Korean Sector Map",
-      "target": "Performance Snapshot Factory",
-      "source_files": [
-        "raw/map.xlsx",
-        "backtesting/reporting/snapshots.py"
-      ],
-      "confidence": "INFERRED",
-      "relation": "conceptually_related_to",
-      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; peripheral node `Korean Sector Map` unexpectedly reaches hub `Performance Snapshot Factory`"
-    },
-    {
       "source": "BenchmarkConfig",
       "target": "KOSPI 200",
       "source_files": [
@@ -930,7 +932,29 @@
       ],
       "confidence": "INFERRED",
       "relation": "conceptually_related_to",
-      "why": "inferred connection - not explicitly stated in source; crosses file types (code \u2194 doc); connects across different repos/directories; peripheral node `KOSPI 200` unexpectedly reaches hub `BenchmarkConfig`"
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code ↔ doc); connects across different repos/directories; peripheral node `KOSPI 200` unexpectedly reaches hub `BenchmarkConfig`"
+    },
+    {
+      "source": "Performance Snapshot Factory",
+      "target": "QW Benchmark Time Series",
+      "source_files": [
+        "backtesting/reporting/snapshots.py",
+        "raw/qw_BM.xlsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (code ↔ doc); connects across different repos/directories; peripheral node `QW Benchmark Time Series` unexpectedly reaches hub `Performance Snapshot Factory`"
+    },
+    {
+      "source": "Performance Snapshot Factory",
+      "target": "Korean Sector Map",
+      "source_files": [
+        "backtesting/reporting/snapshots.py",
+        "raw/map.xlsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "conceptually_related_to",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code ↔ doc); connects across different repos/directories"
     },
     {
       "source": "BenchmarkConfig",
@@ -941,35 +965,35 @@
       ],
       "confidence": "EXTRACTED",
       "relation": "references",
-      "why": "crosses file types (code \u2194 doc); connects across different repos/directories; peripheral node `QW Benchmark Time Series` unexpectedly reaches hub `BenchmarkConfig`"
+      "why": "crosses file types (code ↔ doc); connects across different repos/directories; peripheral node `QW Benchmark Time Series` unexpectedly reaches hub `BenchmarkConfig`"
     },
     {
-      "source": "Public strategy exports.",
-      "target": "SplitConfig",
+      "source": "DashboardPayloadService",
+      "target": "UniverseRegistry",
       "source_files": [
-        "backtesting/strategy/__init__.py",
-        "backtesting/validation/split.py"
+        "dashboard/backend/services/dashboard_payload.py",
+        "backtesting/universe.py"
       ],
       "confidence": "INFERRED",
       "relation": "uses",
-      "why": "inferred connection - not explicitly stated in source; bridges separate communities; peripheral node `SplitConfig` unexpectedly reaches hub `Public strategy exports.`"
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
     }
   ],
   "questions": [
     {
       "type": "bridge_node",
-      "question": "Why does `Public strategy exports.` connect `Engine & Catalog` to `Signals & Policies`, `Factor Analytics`, `Validation`?",
-      "why": "High betweenness centrality (0.218) - this node is a cross-community bridge."
+      "question": "Why does `Public strategy exports.` connect `Backtesting Execution Catalog` to `Backtesting Strategies Construction`, `Backtesting Strategy Base`, `Backtesting Analytics Factor`?",
+      "why": "High betweenness centrality (0.208) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
-      "question": "Why does `DataCatalog` connect `Engine & Catalog` to `Launch Entrypoints`, `Data Loading`, `Benchmarks`?",
-      "why": "High betweenness centrality (0.215) - this node is a cross-community bridge."
+      "question": "Why does `DataCatalog` connect `Backtesting Execution Catalog` to `Backtesting Data Ingest`, `Backtesting Reporting Benchmarks`, `Backtesting Run.Py Universe`?",
+      "why": "High betweenness centrality (0.205) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
-      "question": "Why does `DashboardPayloadService` connect `Payload Schemas` to `Launch Entrypoints`, `Report Builder`, `Snapshots & Analytics`, `Run Resolution`?",
-      "why": "High betweenness centrality (0.107) - this node is a cross-community bridge."
+      "question": "Why does `DashboardPayloadService` connect `Dashboard Backend Schemas` to `Dashboard Backend Services`, `Backtesting Reporting Builder`, `Backtesting Reporting Snapshots`, `Backtesting Run.Py Universe`?",
+      "why": "High betweenness centrality (0.101) - this node is a cross-community bridge."
     },
     {
       "type": "verify_inferred",
@@ -978,7 +1002,7 @@
     },
     {
       "type": "verify_inferred",
-      "question": "Are the 20 inferred relationships involving `DashboardPayloadService` (e.g. with `BenchmarkConfig` and `SavedRun`) actually correct?",
+      "question": "Are the 20 inferred relationships involving `DashboardPayloadService` (e.g. with `UniverseRegistry` and `PerformanceSnapshot`) actually correct?",
       "why": "`DashboardPayloadService` has 20 INFERRED edges - model-reasoned connections that need verification."
     },
     {
@@ -988,7 +1012,7 @@
     },
     {
       "type": "verify_inferred",
-      "question": "Are the 16 inferred relationships involving `ReportBuilder` (e.g. with `BenchmarkRepository` and `SectorRepository`) actually correct?",
+      "question": "Are the 16 inferred relationships involving `ReportBuilder` (e.g. with `PerformanceSnapshotFactory` and `SavedRun`) actually correct?",
       "why": "`ReportBuilder` has 16 INFERRED edges - model-reasoned connections that need verification."
     }
   ]
