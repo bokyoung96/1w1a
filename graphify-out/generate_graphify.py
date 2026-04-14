@@ -11,6 +11,8 @@ from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
+import pandas as pd
+
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "graphify-out"
 LOG = OUT / "run.log"
@@ -112,6 +114,179 @@ RAW_TOKEN_MAP = {
     "ban": "ban list",
     "options": "options data",
 }
+
+
+def _normalize_ticker(value: object) -> str:
+    raw = str(value).strip().upper()
+    if not raw:
+        return raw
+    if raw.startswith("A"):
+        return raw
+    if raw.isdigit():
+        return f"A{raw.zfill(6)}"
+    return raw
+
+
+def _ticker_code(value: object) -> str:
+    ticker = _normalize_ticker(value)
+    return ticker[1:] if ticker.startswith("A") else ticker
+
+
+def materialize_raw_reference_docs(raw_dir: Path) -> list[Path]:
+    generated: list[Path] = []
+    generated.extend(_materialize_map_reference_docs(raw_dir))
+    generated.extend(_materialize_gics_reference_docs(raw_dir))
+    return generated
+
+
+def _materialize_map_reference_docs(raw_dir: Path) -> list[Path]:
+    path = raw_dir / "map.xlsx"
+    if not path.exists():
+        return []
+
+    workbook = pd.ExcelFile(path)
+    generated: list[Path] = []
+
+    sector_frames = []
+    ticker_frames = []
+    for sheet_name in workbook.sheet_names:
+        frame = workbook.parse(sheet_name)
+        columns = {str(column).strip().lower(): column for column in frame.columns}
+        if {"code", "name"} <= set(columns):
+            sector_frames.append(frame.loc[:, [columns["code"], columns["name"]]].dropna())
+        if {"ticker", "name"} <= set(columns):
+            ticker_frames.append(frame.loc[:, [columns["ticker"], columns["name"]]].dropna())
+
+    if sector_frames:
+        sector_pairs = pd.concat(sector_frames, ignore_index=True).drop_duplicates().sort_values(by=["Code", "Name"])
+        sector_pairs.columns = ["Code", "Name"]
+        sector_path = raw_dir / "map_sector_codes.md"
+        lines = [
+            "# Map Sector Codes",
+            "",
+            "> Source: `raw/map.xlsx` sheet `sector_map`",
+            "",
+            "Korean sector code to sector name mapping used by the dataset layer and reporting references.",
+            "",
+            "| Sector Code | Sector Name |",
+            "| --- | --- |",
+        ]
+        for _, row in sector_pairs.iterrows():
+            lines.append(f"| `{str(row['Code']).strip()}` | {str(row['Name']).strip()} |")
+        lines.extend(["", f"Total mappings: **{len(sector_pairs)}**", ""])
+        sector_path.write_text("\n".join(lines), encoding="utf-8")
+        generated.append(sector_path)
+
+    if ticker_frames:
+        ticker_pairs = pd.concat(ticker_frames, ignore_index=True).drop_duplicates()
+        ticker_pairs.columns = ["Ticker", "Name"]
+        ticker_pairs["Ticker"] = ticker_pairs["Ticker"].map(_normalize_ticker)
+        ticker_pairs["Code"] = ticker_pairs["Ticker"].map(_ticker_code)
+        ticker_pairs = ticker_pairs.sort_values(by=["Ticker", "Name"]).loc[:, ["Ticker", "Code", "Name"]]
+
+        ticker_path = raw_dir / "map_ticker_name_index.md"
+        lines = [
+            "# Map Ticker Name Index",
+            "",
+            "> Source: `raw/map.xlsx` sheet `Sheet3`",
+            "",
+            "Ticker to six-digit code to Korean company name mapping for lookup-oriented LLM use.",
+            "",
+            "| Ticker | Code | Name |",
+            "| --- | --- | --- |",
+        ]
+        for _, row in ticker_pairs.iterrows():
+            lines.append(
+                f"| `{str(row['Ticker']).strip()}` | `{str(row['Code']).strip()}` | {str(row['Name']).strip()} |"
+            )
+        lines.extend(["", f"Total mappings: **{len(ticker_pairs)}**", ""])
+        ticker_path.write_text("\n".join(lines), encoding="utf-8")
+        generated.append(ticker_path)
+
+    return generated
+
+
+def _materialize_gics_reference_docs(raw_dir: Path) -> list[Path]:
+    gics_path = raw_dir / "snp_ksdq_gics_sector_big.xlsx"
+    if not gics_path.exists():
+        return []
+
+    frame = pd.read_excel(gics_path)
+    frame = frame.rename(columns={str(column).strip(): str(column).strip() for column in frame.columns})
+    required = {"DATE", "TICKER", "GICS_SECTOR_NAME"}
+    if not required <= set(frame.columns):
+        return []
+
+    mappings = frame.loc[:, ["DATE", "TICKER", "GICS_SECTOR_NAME"]].dropna().copy()
+    mappings["DATE"] = pd.to_datetime(mappings["DATE"]).dt.normalize()
+    mappings["TICKER"] = mappings["TICKER"].map(_normalize_ticker)
+    mappings["CODE"] = mappings["TICKER"].map(_ticker_code)
+    mappings["GICS_SECTOR_NAME"] = mappings["GICS_SECTOR_NAME"].astype(str).str.strip()
+    mappings = mappings.drop_duplicates(subset=["DATE", "TICKER"], keep="last").sort_values(["DATE", "TICKER"])
+
+    pivot = mappings.pivot(index="DATE", columns="TICKER", values="GICS_SECTOR_NAME").sort_index().sort_index(axis=1)
+    pivot.index.name = "date"
+    pivot.columns.name = None
+    pivot_path = raw_dir / "snp_ksdq_gics_sector_big_pivot.csv"
+    pivot.to_csv(pivot_path, encoding="utf-8")
+
+    stock_name_map: dict[str, str] = {}
+    map_xlsx = raw_dir / "map.xlsx"
+    if map_xlsx.exists():
+        workbook = pd.ExcelFile(map_xlsx)
+        for sheet_name in workbook.sheet_names:
+            sheet = workbook.parse(sheet_name)
+            columns = {str(column).strip().lower(): column for column in sheet.columns}
+            if {"ticker", "name"} <= set(columns):
+                pairs = sheet.loc[:, [columns["ticker"], columns["name"]]].dropna()
+                for _, row in pairs.iterrows():
+                    stock_name_map[_normalize_ticker(row.iloc[0])] = str(row.iloc[1]).strip()
+
+    latest_date = pd.Timestamp(mappings["DATE"].max())
+    latest = mappings.loc[mappings["DATE"].eq(latest_date), ["TICKER", "CODE", "GICS_SECTOR_NAME"]].copy()
+    latest["Name"] = latest["TICKER"].map(lambda ticker: stock_name_map.get(str(ticker), ""))
+    latest = latest.sort_values(["GICS_SECTOR_NAME", "TICKER"]).loc[:, ["TICKER", "CODE", "Name", "GICS_SECTOR_NAME"]]
+
+    latest_path = raw_dir / "snp_ksdq_gics_sector_latest.md"
+    lines = [
+        "# KOSDAQ GICS Sector Latest Mapping",
+        "",
+        "> Source: `raw/snp_ksdq_gics_sector_big.xlsx` sheet `KOSDAQ_Hist_GICS260331`",
+        "",
+        f"Latest available KOSDAQ GICS sector mapping as of `{latest_date.date()}`.",
+        "",
+        "| Ticker | Code | Name | GICS Sector |",
+        "| --- | --- | --- | --- |",
+    ]
+    for _, row in latest.iterrows():
+        lines.append(
+            f"| `{row['TICKER']}` | `{row['CODE']}` | {str(row['Name']).strip()} | {row['GICS_SECTOR_NAME']} |"
+        )
+    lines.extend(["", f"Total tickers: **{len(latest)}**", ""])
+    latest_path.write_text("\n".join(lines), encoding="utf-8")
+
+    membership_path = raw_dir / "snp_ksdq_gics_sector_membership.md"
+    membership_lines = [
+        "# KOSDAQ GICS Sector Membership",
+        "",
+        "> Source: `raw/snp_ksdq_gics_sector_big.xlsx` sheet `KOSDAQ_Hist_GICS260331`",
+        "",
+        f"Sector-to-ticker membership grouped from the latest available snapshot on `{latest_date.date()}`.",
+        "",
+    ]
+    for sector_name, group in latest.groupby("GICS_SECTOR_NAME", sort=True):
+        membership_lines.append(f"## {sector_name}")
+        membership_lines.append("")
+        membership_lines.append(f"Ticker count: **{len(group)}**")
+        membership_lines.append("")
+        membership_lines.append("| Ticker | Code | Name |")
+        membership_lines.append("| --- | --- | --- |")
+        for _, row in group.iterrows():
+            membership_lines.append(f"| `{row['TICKER']}` | `{row['CODE']}` | {str(row['Name']).strip()} |")
+        membership_lines.append("")
+    membership_path.write_text("\n".join(membership_lines), encoding="utf-8")
+
+    return [pivot_path, latest_path, membership_path]
 
 
 def slug(value: str) -> str:
@@ -606,6 +781,9 @@ def main() -> None:
     prepare_output_paths(OUT)
     LOG.write_text("", encoding="utf-8")
     log("start")
+    generated_docs = materialize_raw_reference_docs(ROOT / "raw")
+    if generated_docs:
+        log(f"raw_docs.materialized count={len(generated_docs)}")
     builder = GraphBuilder()
     log("scan.begin")
     code_files, doc_files, data_files = builder.scan()

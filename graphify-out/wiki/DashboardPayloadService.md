@@ -2,7 +2,7 @@
 
 > God node · 27 connections · `dashboard/backend/services/dashboard_payload.py`
 
-**Community:** [[Dashboard Backend Schemas]]
+**Community:** [[Dashboard Backend Services]]
 
 ## Connections by Relation
 

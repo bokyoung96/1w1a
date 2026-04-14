@@ -2,7 +2,7 @@
 
 > God node · 41 connections · `backtesting/strategy/__init__.py`
 
-**Community:** [[Backtesting Execution Catalog]]
+**Community:** [[Backtesting Strategy Catalog]]
 
 ## Connections by Relation
 

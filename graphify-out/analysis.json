@@ -1,6 +1,7 @@
 {
   "communities": {
     "0": [
+      "abc",
       "base_apply",
       "base_build_signal",
       "base_constructionresult",
@@ -39,7 +40,6 @@
       "graphify_scope_backtesting_construction_long_short_py",
       "graphify_scope_backtesting_construction_sector_neutral_py",
       "graphify_scope_backtesting_policy_base_py",
-      "graphify_scope_backtesting_policy_init_py",
       "graphify_scope_backtesting_policy_pass_through_py",
       "graphify_scope_backtesting_policy_staged_py",
       "graphify_scope_backtesting_signals_base_py",
@@ -91,6 +91,12 @@
       "staged_stagedruleset"
     ],
     "1": [
+      "base_basestrategy",
+      "base_basestrategy_zeros_like",
+      "base_crosssectionalstrategy",
+      "base_target_weights",
+      "base_timeseriesstrategy",
+      "base_validate_positive",
       "catalog_datacatalog",
       "catalog_datacatalog_get",
       "catalog_datacatalog_group",
@@ -109,6 +115,13 @@
       "costs_costmodel_calc",
       "costs_total",
       "costs_tradecost",
+      "cross_ranklongonly",
+      "cross_ranklongonly_post_init",
+      "cross_ranklongonly_target_weights",
+      "cross_ranklongshort",
+      "cross_ranklongshort_post_init",
+      "cross_ranklongshort_target_weights",
+      "crosssectionalstrategy",
       "enum",
       "enums_datasetgroup",
       "enums_datasetid",
@@ -125,9 +138,13 @@
       "graphify_scope_backtesting_execution_fill_py",
       "graphify_scope_backtesting_execution_init_py",
       "graphify_scope_backtesting_execution_schedule_py",
+      "graphify_scope_backtesting_policy_init_py",
+      "graphify_scope_backtesting_strategy_base_py",
+      "graphify_scope_backtesting_strategy_cross_py",
+      "graphify_scope_backtesting_strategy_init_py",
+      "graphify_scope_backtesting_strategy_timeseries_py",
       "graphify_scope_backtesting_validation_init_py",
       "graphify_scope_backtesting_validation_portfolio_py",
-      "graphify_scope_backtesting_validation_session_py",
       "graphify_scope_backtesting_validation_split_py",
       "groups_datasetgroups",
       "groups_datasetgroups_get",
@@ -144,18 +161,93 @@
       "schedule_rebalanceschedule_flags",
       "schedule_weeklyschedule",
       "schedule_weeklyschedule_flags",
-      "session_covers_index",
-      "session_has_sparse_row",
-      "session_unique_sorted",
-      "session_validationsession",
-      "session_validationsession_run",
       "specs_datasetspec",
       "split_split_frame",
       "split_splitconfig",
       "split_splitresult",
-      "str"
+      "str",
+      "timeseries_thresholdtrend",
+      "timeseries_thresholdtrend_target_weights",
+      "timeseriesstrategy"
     ],
     "2": [
+      "basemodel",
+      "dashboard_payload_dashboardpayloadservice",
+      "dashboard_payload_dashboardpayloadservice_build",
+      "dashboard_payload_dashboardpayloadservice_init",
+      "dashboard_payload_dashboardpayloadservice_read_run",
+      "dashboard_payload_dashboardpayloadservice_resolve_benchmark",
+      "dashboard_payload_dashboardpayloadservice_serialize_context",
+      "dashboard_payload_dashboardpayloadservice_snapshot_factory_for_run",
+      "dashboard_payload_serialize_benchmark",
+      "dashboard_payload_serialize_launch",
+      "dashboard_payload_serialize_launch_benchmark_context",
+      "dashboard_payload_serialize_metrics",
+      "dashboard_payload_serialize_research",
+      "dashboard_payload_serialize_rolling_correlation",
+      "dashboard_payload_serialize_rolling_series",
+      "dashboard_payload_serialize_series",
+      "graphify_scope_dashboard_backend_schemas_py",
+      "graphify_scope_dashboard_backend_services_dashboard_payload_py",
+      "graphify_scope_dashboard_backend_services_launch_resolution_py",
+      "graphify_scope_dashboard_strategies_py",
+      "launch_resolution_archive_run_dir",
+      "launch_resolution_build_saved_signature",
+      "launch_resolution_build_signature",
+      "launch_resolution_is_usable_saved_run",
+      "launch_resolution_launchplan",
+      "launch_resolution_launchresolutionservice",
+      "launch_resolution_launchresolutionservice_archive_duplicate_runs",
+      "launch_resolution_launchresolutionservice_find_matching_run",
+      "launch_resolution_launchresolutionservice_init",
+      "launch_resolution_launchresolutionservice_load_saved_config",
+      "launch_resolution_launchresolutionservice_resolve",
+      "launch_resolution_launchresolutionservice_saved_signature_key",
+      "launch_resolution_normalize_universe_id",
+      "launch_resolution_normalize_use_k200",
+      "launch_resolution_normalize_value",
+      "launch_resolution_parse_run_timestamp",
+      "launch_resolution_resolvedrun",
+      "launch_resolution_run_sort_key",
+      "launch_resolution_selected_run_ids",
+      "models_benchmarkconfig",
+      "run_index_runindexservice",
+      "run_index_runindexservice_init",
+      "schemas_benchmarkmodel",
+      "schemas_categorypointmodel",
+      "schemas_categoryseriesmodel",
+      "schemas_dashboardbasemodel",
+      "schemas_dashboardcontextmodel",
+      "schemas_dashboardexposuremodel",
+      "schemas_dashboardlaunchmodel",
+      "schemas_dashboardmetricmodel",
+      "schemas_dashboardpayloadmodel",
+      "schemas_dashboardperformancemodel",
+      "schemas_dashboardresearchmodel",
+      "schemas_dashboardrollingmodel",
+      "schemas_distributionbinmodel",
+      "schemas_drawdownepisodemodel",
+      "schemas_heatmapcellmodel",
+      "schemas_holdingmodel",
+      "schemas_holdingperformancemodel",
+      "schemas_launchbenchmarkcontextmodel",
+      "schemas_launchstrategybenchmarkmodel",
+      "schemas_namedseriesmodel",
+      "schemas_researchfocusmodel",
+      "schemas_rollingseriesmodel",
+      "schemas_runoptionmodel",
+      "schemas_runsummarymodel",
+      "schemas_sessionbootstrapmodel",
+      "schemas_to_camel",
+      "schemas_valuepointmodel",
+      "strategies_dashboardlaunchconfig",
+      "strategies_enabled_strategy_presets",
+      "strategies_globalrunconfig",
+      "strategies_strategypreset",
+      "strategies_strategypreset_post_init",
+      "strategies_warmupconfig"
+    ],
+    "3": [
       "backtest_runner",
       "backtesting_reporting_main",
       "backtesting_run_main",
@@ -214,7 +306,7 @@
       "strategy_preset",
       "uvicorn_pkg"
     ],
-    "3": [
+    "4": [
       "builder_build_notes",
       "builder_reportbuilder",
       "builder_reportbuilder_build",
@@ -239,7 +331,7 @@
       "graphify_scope_backtesting_reporting_models_py",
       "graphify_scope_backtesting_reporting_pdf_py",
       "graphify_scope_backtesting_reporting_reader_py",
-      "graphify_scope_backtesting_reporting_tables_single_py",
+      "graphify_scope_backtesting_reporting_tables_comparison_py",
       "models_default_kospi200",
       "models_reportbundle",
       "models_reportkind",
@@ -255,65 +347,13 @@
       "reader_read_series",
       "reader_runreader",
       "reader_runreader_read",
-      "tables_single_build_drawdown_episodes_table",
-      "tables_single_build_performance_summary_table",
-      "tables_single_build_sector_weights_table",
-      "tables_single_build_top_holdings_table",
-      "tables_single_build_validation_appendix_table",
-      "tables_single_metric_label",
-      "tables_single_metric_order",
-      "tables_single_ordered_columns",
-      "tables_single_tearsheettablebuilder",
-      "tables_single_tearsheettablebuilder_build"
-    ],
-    "4": [
-      "basemodel",
-      "dashboard_payload_dashboardpayloadservice",
-      "dashboard_payload_dashboardpayloadservice_build",
-      "dashboard_payload_dashboardpayloadservice_init",
-      "dashboard_payload_dashboardpayloadservice_read_run",
-      "dashboard_payload_dashboardpayloadservice_resolve_benchmark",
-      "dashboard_payload_dashboardpayloadservice_serialize_context",
-      "dashboard_payload_dashboardpayloadservice_snapshot_factory_for_run",
-      "dashboard_payload_serialize_benchmark",
-      "dashboard_payload_serialize_launch",
-      "dashboard_payload_serialize_launch_benchmark_context",
-      "dashboard_payload_serialize_metrics",
-      "dashboard_payload_serialize_research",
-      "dashboard_payload_serialize_rolling_correlation",
-      "dashboard_payload_serialize_rolling_series",
-      "dashboard_payload_serialize_series",
-      "graphify_scope_dashboard_backend_schemas_py",
-      "graphify_scope_dashboard_backend_services_dashboard_payload_py",
-      "run_index_runindexservice",
-      "run_index_runindexservice_init",
-      "schemas_benchmarkmodel",
-      "schemas_categorypointmodel",
-      "schemas_categoryseriesmodel",
-      "schemas_dashboardbasemodel",
-      "schemas_dashboardcontextmodel",
-      "schemas_dashboardexposuremodel",
-      "schemas_dashboardlaunchmodel",
-      "schemas_dashboardmetricmodel",
-      "schemas_dashboardpayloadmodel",
-      "schemas_dashboardperformancemodel",
-      "schemas_dashboardresearchmodel",
-      "schemas_dashboardrollingmodel",
-      "schemas_distributionbinmodel",
-      "schemas_drawdownepisodemodel",
-      "schemas_heatmapcellmodel",
-      "schemas_holdingmodel",
-      "schemas_holdingperformancemodel",
-      "schemas_launchbenchmarkcontextmodel",
-      "schemas_launchstrategybenchmarkmodel",
-      "schemas_namedseriesmodel",
-      "schemas_researchfocusmodel",
-      "schemas_rollingseriesmodel",
-      "schemas_runoptionmodel",
-      "schemas_runsummarymodel",
-      "schemas_sessionbootstrapmodel",
-      "schemas_to_camel",
-      "schemas_valuepointmodel"
+      "tables_comparison_build_benchmark_relative_table",
+      "tables_comparison_build_holdings_turnover_table",
+      "tables_comparison_build_ranked_summary_table",
+      "tables_comparison_build_sector_comparison_table",
+      "tables_comparison_comparisontablebuilder",
+      "tables_comparison_comparisontablebuilder_build",
+      "tables_comparison_ordered_columns"
     ],
     "5": [
       "analytics_annualized_sharpe",
@@ -329,7 +369,7 @@
       "analytics_sectorsnapshot",
       "graphify_scope_backtesting_reporting_analytics_py",
       "graphify_scope_backtesting_reporting_snapshots_py",
-      "graphify_scope_backtesting_reporting_tables_comparison_py",
+      "graphify_scope_backtesting_reporting_tables_single_py",
       "models_savedrun",
       "snapshots_build_drawdown_record",
       "snapshots_cagr",
@@ -352,13 +392,16 @@
       "snapshots_performancesnapshotfactory_init",
       "snapshots_performancesnapshotfactory_latest_holdings_relative_performance",
       "snapshots_rank_latest_holdings",
-      "tables_comparison_build_benchmark_relative_table",
-      "tables_comparison_build_holdings_turnover_table",
-      "tables_comparison_build_ranked_summary_table",
-      "tables_comparison_build_sector_comparison_table",
-      "tables_comparison_comparisontablebuilder",
-      "tables_comparison_comparisontablebuilder_build",
-      "tables_comparison_ordered_columns"
+      "tables_single_build_drawdown_episodes_table",
+      "tables_single_build_performance_summary_table",
+      "tables_single_build_sector_weights_table",
+      "tables_single_build_top_holdings_table",
+      "tables_single_build_validation_appendix_table",
+      "tables_single_metric_label",
+      "tables_single_metric_order",
+      "tables_single_ordered_columns",
+      "tables_single_tearsheettablebuilder",
+      "tables_single_tearsheettablebuilder_build"
     ],
     "6": [
       "composers_comparison_metric_strip",
@@ -433,6 +476,40 @@
       "universe_universespec_resolve_dataset"
     ],
     "8": [
+      "benchmarks_benchmarkrepository",
+      "benchmarks_benchmarkrepository_init",
+      "benchmarks_benchmarkrepository_load_returns",
+      "benchmarks_benchmarkrepository_load_series",
+      "benchmarks_benchmarkseries",
+      "benchmarks_default",
+      "benchmarks_default_repositories_for_universe",
+      "benchmarks_from_frame",
+      "benchmarks_load_default_frame",
+      "benchmarks_load_display_name_maps",
+      "benchmarks_normalize_symbol_key",
+      "benchmarks_read_historical_sector_frame",
+      "benchmarks_read_quantwise_benchmark_frame",
+      "benchmarks_sectorrepository",
+      "benchmarks_sectorrepository_display_sector_label",
+      "benchmarks_sectorrepository_display_symbol",
+      "benchmarks_sectorrepository_from_historical_excel",
+      "benchmarks_sectorrepository_group_row_by_sector",
+      "benchmarks_sectorrepository_init",
+      "benchmarks_sectorrepository_latest_aligned_weights",
+      "benchmarks_sectorrepository_latest_sector_counts",
+      "benchmarks_sectorrepository_latest_sector_row",
+      "benchmarks_sectorrepository_latest_sector_weights",
+      "benchmarks_sectorrepository_sector_contribution_timeseries",
+      "benchmarks_sectorrepository_sector_weight_timeseries",
+      "gics_sector_mapping_concept",
+      "gics_sector_membership_concept",
+      "graphify_scope_backtesting_reporting_benchmarks_py",
+      "raw_gics_sector_big_document",
+      "raw_gics_sector_latest_doc",
+      "raw_gics_sector_membership_doc",
+      "raw_gics_sector_pivot_dataset"
+    ],
+    "9": [
       "graphify_scope_backtesting_data_init_py",
       "graphify_scope_backtesting_data_loader_py",
       "graphify_scope_backtesting_data_policy_py",
@@ -463,36 +540,6 @@
       "store_parquetstore_read",
       "store_parquetstore_write"
     ],
-    "9": [
-      "graphify_scope_dashboard_backend_services_launch_resolution_py",
-      "graphify_scope_dashboard_strategies_py",
-      "launch_resolution_archive_run_dir",
-      "launch_resolution_build_saved_signature",
-      "launch_resolution_build_signature",
-      "launch_resolution_is_usable_saved_run",
-      "launch_resolution_launchplan",
-      "launch_resolution_launchresolutionservice",
-      "launch_resolution_launchresolutionservice_archive_duplicate_runs",
-      "launch_resolution_launchresolutionservice_find_matching_run",
-      "launch_resolution_launchresolutionservice_init",
-      "launch_resolution_launchresolutionservice_load_saved_config",
-      "launch_resolution_launchresolutionservice_resolve",
-      "launch_resolution_launchresolutionservice_saved_signature_key",
-      "launch_resolution_normalize_universe_id",
-      "launch_resolution_normalize_use_k200",
-      "launch_resolution_normalize_value",
-      "launch_resolution_parse_run_timestamp",
-      "launch_resolution_resolvedrun",
-      "launch_resolution_run_sort_key",
-      "launch_resolution_selected_run_ids",
-      "models_benchmarkconfig",
-      "strategies_dashboardlaunchconfig",
-      "strategies_enabled_strategy_presets",
-      "strategies_globalrunconfig",
-      "strategies_strategypreset",
-      "strategies_strategypreset_post_init",
-      "strategies_warmupconfig"
-    ],
     "10": [
       "api_asnumber",
       "api_asrecord",
@@ -522,32 +569,6 @@
       "graphify_scope_dashboard_frontend_src_lib_api_ts"
     ],
     "11": [
-      "benchmarks_benchmarkrepository",
-      "benchmarks_benchmarkrepository_init",
-      "benchmarks_benchmarkrepository_load_returns",
-      "benchmarks_benchmarkrepository_load_series",
-      "benchmarks_benchmarkseries",
-      "benchmarks_default",
-      "benchmarks_default_repositories_for_universe",
-      "benchmarks_from_frame",
-      "benchmarks_load_default_frame",
-      "benchmarks_load_display_name_maps",
-      "benchmarks_normalize_symbol_key",
-      "benchmarks_read_quantwise_benchmark_frame",
-      "benchmarks_sectorrepository",
-      "benchmarks_sectorrepository_display_sector_label",
-      "benchmarks_sectorrepository_display_symbol",
-      "benchmarks_sectorrepository_group_row_by_sector",
-      "benchmarks_sectorrepository_init",
-      "benchmarks_sectorrepository_latest_aligned_weights",
-      "benchmarks_sectorrepository_latest_sector_counts",
-      "benchmarks_sectorrepository_latest_sector_row",
-      "benchmarks_sectorrepository_latest_sector_weights",
-      "benchmarks_sectorrepository_sector_contribution_timeseries",
-      "benchmarks_sectorrepository_sector_weight_timeseries",
-      "graphify_scope_backtesting_reporting_benchmarks_py"
-    ],
-    "12": [
       "graphify_scope_backtesting_reporting_plots_py",
       "graphify_scope_backtesting_reporting_tables_py",
       "plots_line_trace",
@@ -572,7 +593,7 @@
       "tables_build_summary_table",
       "tables_coerce_metric"
     ],
-    "13": [
+    "12": [
       "comparison_figures_comparisonfigurebuilder",
       "comparison_figures_comparisonfigurebuilder_build",
       "comparison_figures_comparisonfigurebuilder_build_executive",
@@ -596,30 +617,7 @@
       "graphify_scope_backtesting_reporting_comparison_figures_py",
       "graphify_scope_backtesting_reporting_figures_py"
     ],
-    "14": [
-      "abc",
-      "base_basestrategy",
-      "base_basestrategy_zeros_like",
-      "base_crosssectionalstrategy",
-      "base_target_weights",
-      "base_timeseriesstrategy",
-      "base_validate_positive",
-      "cross_ranklongonly",
-      "cross_ranklongonly_post_init",
-      "cross_ranklongonly_target_weights",
-      "cross_ranklongshort",
-      "cross_ranklongshort_post_init",
-      "cross_ranklongshort_target_weights",
-      "crosssectionalstrategy",
-      "graphify_scope_backtesting_strategy_base_py",
-      "graphify_scope_backtesting_strategy_cross_py",
-      "graphify_scope_backtesting_strategy_init_py",
-      "graphify_scope_backtesting_strategy_timeseries_py",
-      "timeseries_thresholdtrend",
-      "timeseries_thresholdtrend_target_weights",
-      "timeseriesstrategy"
-    ],
-    "15": [
+    "13": [
       "app_test_createdashboard",
       "app_test_createdeferredpromise",
       "app_test_findchartoption",
@@ -637,7 +635,7 @@
       "app_test_selectorscope",
       "graphify_scope_dashboard_frontend_src_components_app_test_tsx"
     ],
-    "16": [
+    "14": [
       "graphify_scope_backtesting_reporting_writer_py",
       "writer_bucket_ledger",
       "writer_drawdown",
@@ -650,7 +648,7 @@
       "writer_runwriter_write",
       "writer_write_json"
     ],
-    "17": [
+    "15": [
       "graphify_scope_dashboard_backend_serializers_py",
       "serializers_sanitize_finite_number",
       "serializers_serialize_category_series",
@@ -663,7 +661,7 @@
       "serializers_serialize_named_values",
       "serializers_serialize_value_points"
     ],
-    "18": [
+    "16": [
       "graphify_scope_dashboard_frontend_src_components_researchdetailpanel_tsx",
       "researchdetailpanel_computevaluediffs",
       "researchdetailpanel_flattenepisodes",
@@ -675,7 +673,7 @@
       "researchdetailpanel_researchdetailpanel",
       "researchdetailpanel_visiblerunids"
     ],
-    "19": [
+    "17": [
       "graphify_scope_dashboard_backend_services_run_index_py",
       "run_index_config_signature",
       "run_index_is_usable_run_dir",
@@ -686,7 +684,7 @@
       "run_index_runindexservice_list_runs",
       "run_index_sort_key"
     ],
-    "20": [
+    "18": [
       "graphify_scope_root_py",
       "root_config_path",
       "root_config_path_str",
@@ -696,7 +694,7 @@
       "root_results_path",
       "root_rootpaths"
     ],
-    "21": [
+    "19": [
       "graphify_scope_dashboard_frontend_src_components_performancestrip_tsx",
       "performancestrip_benchmarksummary",
       "performancestrip_buildcostsummary",
@@ -706,7 +704,7 @@
       "performancestrip_formatlaunchtext",
       "performancestrip_normalizefocuslabel"
     ],
-    "22": [
+    "20": [
       "app_isfocusavailable",
       "app_normalizedashboardselection",
       "app_orderselectedrunids",
@@ -715,7 +713,7 @@
       "app_uniquerunoptions",
       "graphify_scope_dashboard_frontend_src_app_app_tsx"
     ],
-    "23": [
+    "21": [
       "factor_quantile_returns",
       "factor_rank_ic",
       "graphify_scope_backtesting_analytics_factor_py",
@@ -723,7 +721,15 @@
       "graphify_scope_backtesting_analytics_perf_py",
       "perf_summarize_perf"
     ],
-    "24": [
+    "22": [
+      "graphify_scope_backtesting_validation_session_py",
+      "session_covers_index",
+      "session_has_sparse_row",
+      "session_unique_sorted",
+      "session_validationsession",
+      "session_validationsession_run"
+    ],
+    "23": [
       "api_get_dashboard",
       "api_get_dashboard_payload_service",
       "api_get_run_index_service",
@@ -731,124 +737,124 @@
       "api_list_runs",
       "graphify_scope_dashboard_backend_api_py"
     ],
-    "25": [
+    "24": [
       "graphify_scope_dashboard_frontend_src_components_researchworkspace_tsx",
       "researchworkspace_contributionsubtitle",
       "researchworkspace_formatnumbervalue",
       "researchworkspace_formatpercentvalue",
       "researchworkspace_researchfigure"
     ],
-    "26": [
+    "25": [
       "exposureband_buildsectorsnapshotoption",
       "exposureband_resolverunids",
       "graphify_scope_dashboard_frontend_src_components_exposureband_tsx"
     ],
-    "27": [
+    "26": [
       "format_formatmoney",
       "format_formatpercent",
       "graphify_scope_dashboard_frontend_src_lib_format_ts"
     ],
-    "28": [
+    "27": [
       "graphify_scope_dashboard_backend_main_py",
       "main_create_app",
       "main_get_frontend_dist_dir"
     ],
-    "29": [
+    "28": [
       "raw_ticker_name_index_doc",
       "ticker_code_name_index",
       "ticker_code_name_mapping_concept"
     ],
-    "30": [
+    "29": [
       "graphify_scope_backtesting_types_py",
       "types_rationale_1"
     ],
-    "31": [
+    "30": [
       "graphify_scope_dashboard_frontend_src_components_runselector_tsx",
       "runselector_runselector"
     ],
-    "32": [
+    "31": [
       "graphify_scope_dashboard_frontend_src_components_toprail_tsx",
       "toprail_toprail"
     ],
-    "33": [
+    "32": [
       "errorstate_errorstate",
       "graphify_scope_dashboard_frontend_src_components_errorstate_tsx"
     ],
-    "34": [
+    "33": [
       "diagnosticstrip_diagnosticstrip",
       "graphify_scope_dashboard_frontend_src_components_diagnosticstrip_tsx"
     ],
-    "35": [
+    "34": [
       "emptystate_emptystate",
       "graphify_scope_dashboard_frontend_src_components_emptystate_tsx"
     ],
-    "36": [
+    "35": [
       "graphify_scope_dashboard_frontend_src_components_runselector_test_tsx",
       "runselector_test_selectorscope"
     ],
-    "37": [
+    "36": [
       "graphify_scope_run_py"
     ],
-    "38": [
+    "37": [
       "graphify_scope_report_py"
     ],
-    "39": [
+    "38": [
       "graphify_scope_dashboard_init_py"
     ],
-    "40": [
+    "39": [
       "graphify_scope_dashboard_frontend_vite_config_d_ts"
     ],
-    "41": [
+    "40": [
       "graphify_scope_dashboard_frontend_vite_config_js"
     ],
-    "42": [
+    "41": [
       "graphify_scope_dashboard_frontend_vite_config_ts"
     ],
-    "43": [
+    "42": [
       "graphify_scope_dashboard_frontend_src_main_tsx"
     ],
-    "44": [
+    "43": [
       "graphify_scope_dashboard_frontend_src_test_setup_ts"
     ],
-    "45": [
+    "44": [
       "graphify_scope_dashboard_frontend_src_lib_types_ts"
     ],
-    "46": [
+    "45": [
       "graphify_scope_dashboard_backend_init_py"
     ],
-    "47": [
+    "46": [
       "graphify_scope_dashboard_backend_services_init_py"
     ]
   },
   "cohesion": {
     "0": 0.05,
-    "1": 0.06,
+    "1": 0.05,
     "2": 0.06,
-    "3": 0.08,
+    "3": 0.06,
     "4": 0.09,
-    "5": 0.09,
+    "5": 0.08,
     "6": 0.15,
     "7": 0.12,
-    "8": 0.09,
-    "9": 0.15,
+    "8": 0.11,
+    "9": 0.09,
     "10": 0.24,
     "11": 0.15,
-    "12": 0.15,
-    "13": 0.16,
-    "14": 0.14,
-    "15": 0.12,
-    "16": 0.33,
-    "17": 0.35,
-    "18": 0.36,
-    "19": 0.36,
-    "20": 0.25,
-    "21": 0.29,
-    "22": 0.52,
-    "23": 0.33,
-    "24": 0.4,
-    "25": 0.5,
+    "12": 0.16,
+    "13": 0.12,
+    "14": 0.33,
+    "15": 0.35,
+    "16": 0.36,
+    "17": 0.36,
+    "18": 0.25,
+    "19": 0.29,
+    "20": 0.52,
+    "21": 0.33,
+    "22": 0.53,
+    "23": 0.4,
+    "24": 0.5,
+    "25": 0.67,
     "26": 0.67,
-    "27": 0.67,
+    "27": 1.0,
     "28": 1.0,
     "29": 1.0,
     "30": 1.0,
@@ -867,8 +873,7 @@
     "43": 1.0,
     "44": 1.0,
     "45": 1.0,
-    "46": 1.0,
-    "47": 1.0
+    "46": 1.0
   },
   "gods": [
     {
@@ -917,8 +922,8 @@
       "edges": 17
     },
     {
-      "id": "base_signalbundle",
-      "label": "SignalBundle",
+      "id": "benchmarks_sectorrepository",
+      "label": "SectorRepository",
       "edges": 17
     }
   ],
@@ -933,6 +938,17 @@
       "confidence": "INFERRED",
       "relation": "conceptually_related_to",
       "why": "inferred connection - not explicitly stated in source; crosses file types (code ↔ doc); connects across different repos/directories; peripheral node `KOSPI 200` unexpectedly reaches hub `BenchmarkConfig`"
+    },
+    {
+      "source": "default_repositories_for_universe()",
+      "target": "KOSDAQ GICS Sector Mapping",
+      "source_files": [
+        "backtesting/reporting/benchmarks.py",
+        "raw/snp_ksdq_gics_sector_latest.md"
+      ],
+      "confidence": "INFERRED",
+      "relation": "conceptually_related_to",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (code ↔ doc); connects across different repos/directories"
     },
     {
       "source": "Performance Snapshot Factory",
@@ -966,34 +982,23 @@
       "confidence": "EXTRACTED",
       "relation": "references",
       "why": "crosses file types (code ↔ doc); connects across different repos/directories; peripheral node `QW Benchmark Time Series` unexpectedly reaches hub `BenchmarkConfig`"
-    },
-    {
-      "source": "DashboardPayloadService",
-      "target": "UniverseRegistry",
-      "source_files": [
-        "dashboard/backend/services/dashboard_payload.py",
-        "backtesting/universe.py"
-      ],
-      "confidence": "INFERRED",
-      "relation": "uses",
-      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
     }
   ],
   "questions": [
     {
       "type": "bridge_node",
-      "question": "Why does `Public strategy exports.` connect `Backtesting Execution Catalog` to `Backtesting Strategies Construction`, `Backtesting Strategy Base`, `Backtesting Analytics Factor`?",
-      "why": "High betweenness centrality (0.208) - this node is a cross-community bridge."
+      "question": "Why does `DataCatalog` connect `Backtesting Strategy Catalog` to `Backtesting Reporting Benchmarks`, `Backtesting Data Ingest`, `Backtesting Run.Py Universe`?",
+      "why": "High betweenness centrality (0.207) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
-      "question": "Why does `DataCatalog` connect `Backtesting Execution Catalog` to `Backtesting Data Ingest`, `Backtesting Reporting Benchmarks`, `Backtesting Run.Py Universe`?",
-      "why": "High betweenness centrality (0.205) - this node is a cross-community bridge."
+      "question": "Why does `Public strategy exports.` connect `Backtesting Strategy Catalog` to `Backtesting Strategies Construction`, `Backtesting Analytics Factor`, `Backtesting Validation Session`?",
+      "why": "High betweenness centrality (0.207) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
-      "question": "Why does `DashboardPayloadService` connect `Dashboard Backend Schemas` to `Dashboard Backend Services`, `Backtesting Reporting Builder`, `Backtesting Reporting Snapshots`, `Backtesting Run.Py Universe`?",
-      "why": "High betweenness centrality (0.101) - this node is a cross-community bridge."
+      "question": "Why does `DashboardPayloadService` connect `Dashboard Backend Services` to `Backtesting Reporting Builder`, `Backtesting Reporting Snapshots`, `Backtesting Run.Py Universe`?",
+      "why": "High betweenness centrality (0.100) - this node is a cross-community bridge."
     },
     {
       "type": "verify_inferred",

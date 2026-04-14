@@ -13,7 +13,7 @@
 
 ## Relationships
 
-- [[Backtesting Execution Catalog]] (1 shared connections)
+- [[Backtesting Strategy Catalog]] (1 shared connections)
 
 ## Source Files
 

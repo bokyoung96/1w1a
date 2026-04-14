@@ -8,9 +8,11 @@ from backtesting.reporting.benchmarks import (
     BenchmarkRepository,
     SectorRepository,
     _load_display_name_maps,
+    _read_historical_sector_frame,
     _read_quantwise_benchmark_frame,
 )
 from backtesting.reporting.models import BenchmarkConfig
+from root import RootPaths
 
 
 def test_benchmark_repository_load_returns_uses_kospi200_price_path() -> None:
@@ -207,6 +209,29 @@ def test_load_display_name_maps_reads_sector_and_stock_sheets(tmp_path) -> None:
     assert stock_name_map == {"A005930": "삼성전자"}
 
 
+def test_read_historical_sector_frame_pivots_long_excel(tmp_path) -> None:
+    path = tmp_path / "snp_ksdq_gics_sector_big.xlsx"
+    pd.DataFrame(
+        {
+            "DATE": [pd.Timestamp("2024-01-31"), pd.Timestamp("2024-01-31"), pd.Timestamp("2024-02-29")],
+            "TICKER": ["A091990", "091990", "A091990"],
+            "GICS_SECTOR_NAME": ["Health Care", "Health Care", "Information Technology"],
+        }
+    ).to_excel(path, index=False)
+
+    frame = _read_historical_sector_frame(path)
+
+    expected = pd.DataFrame(
+        {
+            "A091990": ["Health Care", "Information Technology"],
+        },
+        index=pd.to_datetime(["2024-01-31", "2024-02-29"]),
+    )
+    expected.index.name = "date"
+
+    assert_frame_equal(frame, expected)
+
+
 def test_default_sector_repository_for_kosdaq150_uses_kosdaq_family(monkeypatch) -> None:
     import backtesting.reporting.benchmarks as benchmarks
     from backtesting.catalog import DatasetId
@@ -231,3 +256,41 @@ def test_default_sector_repository_for_kosdaq150_uses_kosdaq_family(monkeypatch)
     assert benchmark_repo is not None
     assert sector_repo is not None
     assert requested[:2] == [DatasetId.QW_KSDQ_WICS_SEC_BIG, DatasetId.QW_KSDQ_ADJ_C]
+
+
+def test_default_sector_repository_for_kosdaq150_can_use_gics_source(monkeypatch, tmp_path) -> None:
+    import backtesting.reporting.benchmarks as benchmarks
+    from backtesting.catalog import DatasetId
+
+    raw_dir = tmp_path / "raw"
+    raw_dir.mkdir()
+    with pd.ExcelWriter(raw_dir / "map.xlsx") as writer:
+        pd.DataFrame({"Ticker": ["A091990"], "Name": ["셀트리온헬스케어"]}).to_excel(writer, sheet_name="Sheet3", index=False)
+    pd.DataFrame(
+        {
+            "DATE": [pd.Timestamp("2024-01-31"), pd.Timestamp("2024-02-29")],
+            "TICKER": ["A091990", "A091990"],
+            "GICS_SECTOR_NAME": ["Health Care", "Information Technology"],
+        }
+    ).to_excel(raw_dir / "snp_ksdq_gics_sector_big.xlsx", index=False)
+
+    requested: list[DatasetId] = []
+
+    def _fake_load_default_frame(dataset_id: DatasetId) -> pd.DataFrame:
+        requested.append(dataset_id)
+        index = pd.to_datetime(["2024-01-31", "2024-02-29"])
+        if dataset_id is DatasetId.QW_KSDQ_ADJ_C:
+            return pd.DataFrame({"A091990": [100.0, 101.0]}, index=index)
+        if dataset_id is DatasetId.QW_BM:
+            return pd.DataFrame({"IKS200": [200.0, 201.0]}, index=index)
+        raise AssertionError(f"unexpected dataset_id: {dataset_id}")
+
+    monkeypatch.setattr(benchmarks, "ROOT", RootPaths(tmp_path))
+    monkeypatch.setattr(benchmarks, "_load_default_frame", _fake_load_default_frame)
+
+    benchmark_repo, sector_repo = benchmarks.default_repositories_for_universe("kosdaq150", sector_source="gics")
+
+    assert benchmark_repo is not None
+    assert sector_repo.display_symbol("091990") == "셀트리온헬스케어 (091990)"
+    assert sector_repo.latest_sector_row(pd.Timestamp("2024-02-29")).to_dict() == {"A091990": "Information Technology"}
+    assert requested == [DatasetId.QW_KSDQ_ADJ_C, DatasetId.QW_BM]

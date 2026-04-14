@@ -25,8 +25,8 @@
 ### uses
 - [[DashboardPayloadService]] `INFERRED`
 - [[ReportBuilder]] `INFERRED`
-- [[BenchmarkConfig]] `INFERRED`
 - [[SectorRepository]] `INFERRED`
+- [[BenchmarkConfig]] `INFERRED`
 - [[BenchmarkRepository]] `INFERRED`
 - [[SavedRun]] `INFERRED`
 - [[DrawdownStats]] `INFERRED`

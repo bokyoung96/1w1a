@@ -2,7 +2,7 @@
 
 > God node · 20 connections · `backtesting/catalog/catalog.py`
 
-**Community:** [[Backtesting Execution Catalog]]
+**Community:** [[Backtesting Strategy Catalog]]
 
 ## Connections by Relation
 

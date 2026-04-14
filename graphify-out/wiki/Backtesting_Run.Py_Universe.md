@@ -34,9 +34,9 @@
 ## Relationships
 
 - [[Backtesting Strategies Construction]] (4 shared connections)
-- [[Backtesting Execution Catalog]] (3 shared connections)
+- [[Backtesting Strategy Catalog]] (3 shared connections)
 - [[Backtesting Reporting Writer]] (1 shared connections)
-- [[Dashboard Backend Schemas]] (1 shared connections)
+- [[Dashboard Backend Services]] (1 shared connections)
 
 ## Source Files
 

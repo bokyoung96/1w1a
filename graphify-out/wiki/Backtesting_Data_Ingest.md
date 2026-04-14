@@ -33,7 +33,7 @@
 
 ## Relationships
 
-- [[Backtesting Execution Catalog]] (4 shared connections)
+- [[Backtesting Strategy Catalog]] (4 shared connections)
 
 ## Source Files
 

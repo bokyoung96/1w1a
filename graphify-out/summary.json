@@ -1,13 +1,13 @@
 {
-  "total_files": 127,
+  "total_files": 129,
   "counts": {
     "code": 110,
-    "document": 5,
+    "document": 7,
     "paper": 0,
     "image": 12,
     "video": 0
   },
-  "nodes": 723,
-  "edges": 1391,
-  "communities": 48
+  "nodes": 731,
+  "edges": 1406,
+  "communities": 47
 }

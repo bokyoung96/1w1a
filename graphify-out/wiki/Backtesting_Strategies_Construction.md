@@ -22,19 +22,18 @@
 - **Breakout52WeekSignalProducer** (7 connections) — `backtesting/strategies/breakout_simple.py`
 - **Breakout52WeekSimple** (7 connections) — `backtesting/strategies/breakout_simple.py`
 - **breakout_simple.py** (7 connections) — `backtesting/strategies/breakout_simple.py`
+- **ABC** (6 connections)
 - **Breakout52WeekStaged** (6 connections) — `backtesting/strategies/breakout_staged.py`
 - **__init__.py** (6 connections) — `backtesting/strategies/__init__.py`
 - **LongShortTopBottom** (6 connections) — `backtesting/construction/long_short.py`
 - **MomentumTopN** (6 connections) — `backtesting/strategies/momentum.py`
 - **OpFwdYieldTopN** (6 connections) — `backtesting/strategies/op_fwd.py`
 - **SectorNeutralTopBottom** (6 connections) — `backtesting/construction/sector_neutral.py`
-- **BudgetPreservingStagedPolicy** (6 connections) — `backtesting/policy/staged.py`
 - *... and 63 more nodes in this community*
 
 ## Relationships
 
-- [[Backtesting Execution Catalog]] (12 shared connections)
-- [[Backtesting Strategy Base]] (5 shared connections)
+- [[Backtesting Strategy Catalog]] (15 shared connections)
 - [[Backtesting Run.Py Universe]] (4 shared connections)
 
 ## Source Files
@@ -44,7 +43,6 @@
 - `backtesting/construction/long_only.py`
 - `backtesting/construction/long_short.py`
 - `backtesting/construction/sector_neutral.py`
-- `backtesting/policy/__init__.py`
 - `backtesting/policy/base.py`
 - `backtesting/policy/pass_through.py`
 - `backtesting/policy/staged.py`
@@ -59,10 +57,11 @@
 - `backtesting/strategies/composable.py`
 - `backtesting/strategies/momentum.py`
 - `backtesting/strategies/op_fwd.py`
+- `backtesting/strategies/registry.py`
 
 ## Audit Trail
 
-- EXTRACTED: 238 (63%)
+- EXTRACTED: 242 (63%)
 - INFERRED: 141 (37%)
 - AMBIGUOUS: 0 (0%)
 

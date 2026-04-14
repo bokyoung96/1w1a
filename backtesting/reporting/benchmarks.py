@@ -72,6 +72,30 @@ class SectorRepository:
         )
 
     @classmethod
+    def from_historical_excel(
+        cls,
+        path: Path,
+        prices: pd.DataFrame | None = None,
+        *,
+        date_column: str = "DATE",
+        symbol_column: str = "TICKER",
+        sector_column: str = "GICS_SECTOR_NAME",
+        sector_name_map: dict[str, str] | None = None,
+        stock_name_map: dict[str, str] | None = None,
+    ) -> "SectorRepository":
+        return cls(
+            sector=_read_historical_sector_frame(
+                path,
+                date_column=date_column,
+                symbol_column=symbol_column,
+                sector_column=sector_column,
+            ),
+            prices=prices,
+            sector_name_map=sector_name_map,
+            stock_name_map=stock_name_map,
+        )
+
+    @classmethod
     def default(cls) -> "SectorRepository":
         sector_name_map, stock_name_map = _load_display_name_maps(ROOT.raw_path / "map.xlsx")
         return cls(
@@ -229,9 +253,29 @@ class SectorRepository:
         return raw
 
 
-def default_repositories_for_universe(universe_id: str | None) -> tuple[BenchmarkRepository, SectorRepository]:
+def default_repositories_for_universe(
+    universe_id: str | None,
+    *,
+    sector_source: str = "wics",
+) -> tuple[BenchmarkRepository, SectorRepository]:
+    sector_source_value = str(sector_source).strip().lower()
+    if sector_source_value not in {"wics", "gics"}:
+        raise ValueError(f"unsupported sector_source: {sector_source}")
+
     if universe_id == "kosdaq150":
         sector_name_map, stock_name_map = _load_display_name_maps(ROOT.raw_path / "map.xlsx")
+        if sector_source_value == "gics":
+            gics_path = ROOT.raw_path / "snp_ksdq_gics_sector_big.xlsx"
+            if gics_path.exists():
+                sector_repo = SectorRepository.from_historical_excel(
+                    gics_path,
+                    prices=_load_default_frame(DatasetId.QW_KSDQ_ADJ_C),
+                    stock_name_map=stock_name_map,
+                )
+                return (
+                    BenchmarkRepository.default(),
+                    sector_repo,
+                )
         sector_repo = SectorRepository.from_frame(
             _load_default_frame(DatasetId.QW_KSDQ_WICS_SEC_BIG),
             prices=_load_default_frame(DatasetId.QW_KSDQ_ADJ_C),
@@ -281,6 +325,49 @@ def _read_quantwise_benchmark_frame(path: Path) -> pd.DataFrame:
     frame = frame.apply(pd.to_numeric, errors="coerce")
     frame.index.name = "date"
     return frame
+
+
+def _read_historical_sector_frame(
+    path: Path,
+    *,
+    date_column: str = "DATE",
+    symbol_column: str = "TICKER",
+    sector_column: str = "GICS_SECTOR_NAME",
+) -> pd.DataFrame:
+    frame = pd.read_excel(path)
+    columns = {str(column).strip().upper(): column for column in frame.columns}
+    required = {
+        date_column.strip().upper(): date_column,
+        symbol_column.strip().upper(): symbol_column,
+        sector_column.strip().upper(): sector_column,
+    }
+    missing = [original for normalized, original in required.items() if normalized not in columns]
+    if missing:
+        raise KeyError(f"missing sector history columns in {path.name}: {', '.join(missing)}")
+
+    selected = frame.loc[
+        :,
+        [
+            columns[date_column.strip().upper()],
+            columns[symbol_column.strip().upper()],
+            columns[sector_column.strip().upper()],
+        ],
+    ].copy()
+    selected.columns = ["date", "symbol", "sector"]
+    selected = selected.dropna(subset=["date", "symbol", "sector"])
+    selected["date"] = pd.to_datetime(selected["date"]).dt.normalize()
+    selected["symbol"] = selected["symbol"].map(lambda value: SectorRepository._normalize_symbol_key(str(value)))
+    selected["sector"] = selected["sector"].astype(str).str.strip()
+    selected = selected.drop_duplicates(subset=["date", "symbol"], keep="last")
+
+    pivoted = (
+        selected.pivot(index="date", columns="symbol", values="sector")
+        .sort_index()
+        .sort_index(axis=1)
+    )
+    pivoted.index.name = "date"
+    pivoted.columns.name = None
+    return pivoted
 
 
 def _load_display_name_maps(path: Path) -> tuple[dict[str, str], dict[str, str]]:

@@ -14,8 +14,8 @@
 
 ### uses
 - [[DashboardPayloadService]] `INFERRED`
-- [[BenchmarkConfig]] `INFERRED`
 - [[SectorRepository]] `INFERRED`
+- [[BenchmarkConfig]] `INFERRED`
 - [[TearsheetFigureBuilder]] `INFERRED`
 - [[BenchmarkRepository]] `INFERRED`
 - [[SavedRun]] `INFERRED`

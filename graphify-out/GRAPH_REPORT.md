@@ -1,30 +1,28 @@
 # Graph Report - /Users/bkchoi/Desktop/GitHub/1w1a  (2026-04-14)
 
 ## Corpus Check
-- 127 files · ~244,200 words
+- 129 files · ~247,783 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 723 nodes · 1391 edges · 48 communities detected
-- Extraction: 79% EXTRACTED · 21% INFERRED · 0% AMBIGUOUS · INFERRED: 295 edges (avg confidence: 0.55)
+- 731 nodes · 1406 edges · 47 communities detected
+- Extraction: 79% EXTRACTED · 21% INFERRED · 0% AMBIGUOUS · INFERRED: 300 edges (avg confidence: 0.56)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
 - [[_COMMUNITY_Backtesting Strategies Construction|Backtesting Strategies Construction]]
-- [[_COMMUNITY_Backtesting Execution Catalog|Backtesting Execution Catalog]]
+- [[_COMMUNITY_Backtesting Strategy Catalog|Backtesting Strategy Catalog]]
+- [[_COMMUNITY_Dashboard Backend Services|Dashboard Backend Services]]
 - [[_COMMUNITY_Results Backtests Plots|Results Backtests Plots]]
 - [[_COMMUNITY_Backtesting Reporting Builder|Backtesting Reporting Builder]]
-- [[_COMMUNITY_Dashboard Backend Schemas|Dashboard Backend Schemas]]
 - [[_COMMUNITY_Backtesting Reporting Snapshots|Backtesting Reporting Snapshots]]
 - [[_COMMUNITY_Backtesting Reporting Composers|Backtesting Reporting Composers]]
 - [[_COMMUNITY_Backtesting Run.Py Universe|Backtesting Run.Py Universe]]
-- [[_COMMUNITY_Backtesting Data Ingest|Backtesting Data Ingest]]
-- [[_COMMUNITY_Dashboard Backend Services|Dashboard Backend Services]]
-- [[_COMMUNITY_Dashboard Frontend Src|Dashboard Frontend Src]]
 - [[_COMMUNITY_Backtesting Reporting Benchmarks|Backtesting Reporting Benchmarks]]
+- [[_COMMUNITY_Backtesting Data Ingest|Backtesting Data Ingest]]
+- [[_COMMUNITY_Dashboard Frontend Src|Dashboard Frontend Src]]
 - [[_COMMUNITY_Backtesting Reporting Plots|Backtesting Reporting Plots]]
 - [[_COMMUNITY_Backtesting Reporting Figures|Backtesting Reporting Figures]]
-- [[_COMMUNITY_Backtesting Strategy Base|Backtesting Strategy Base]]
 - [[_COMMUNITY_Dashboard Frontend Src|Dashboard Frontend Src]]
 - [[_COMMUNITY_Backtesting Reporting Writer|Backtesting Reporting Writer]]
 - [[_COMMUNITY_Dashboard Backend Serializers|Dashboard Backend Serializers]]
@@ -34,6 +32,7 @@
 - [[_COMMUNITY_Dashboard Frontend Src|Dashboard Frontend Src]]
 - [[_COMMUNITY_Dashboard Frontend App|Dashboard Frontend App]]
 - [[_COMMUNITY_Backtesting Analytics Factor|Backtesting Analytics Factor]]
+- [[_COMMUNITY_Backtesting Validation Session|Backtesting Validation Session]]
 - [[_COMMUNITY_Dashboard Backend Api|Dashboard Backend Api]]
 - [[_COMMUNITY_Dashboard Frontend Src|Dashboard Frontend Src]]
 - [[_COMMUNITY_Dashboard Frontend Src|Dashboard Frontend Src]]
@@ -69,19 +68,19 @@
 7. `asRecord()` - 20 edges
 8. `PerformanceSnapshot` - 17 edges
 9. `BenchmarkConfig` - 17 edges
-10. `SignalBundle` - 17 edges
+10. `SectorRepository` - 17 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `BenchmarkConfig` --conceptually_related_to--> `KOSPI 200`  [INFERRED]
   backtesting/reporting/models.py → raw/qw_BM.xlsx
+- `default_repositories_for_universe()` --conceptually_related_to--> `KOSDAQ GICS Sector Mapping`  [INFERRED]
+  backtesting/reporting/benchmarks.py → raw/snp_ksdq_gics_sector_latest.md
 - `Performance Snapshot Factory` --references--> `QW Benchmark Time Series`  [EXTRACTED]
   backtesting/reporting/snapshots.py → raw/qw_BM.xlsx
 - `Performance Snapshot Factory` --conceptually_related_to--> `Korean Sector Map`  [INFERRED]
   backtesting/reporting/snapshots.py → raw/map.xlsx
 - `BenchmarkConfig` --references--> `QW Benchmark Time Series`  [EXTRACTED]
   backtesting/reporting/models.py → raw/qw_BM.xlsx
-- `DashboardPayloadService` --uses--> `UniverseRegistry`  [INFERRED]
-  dashboard/backend/services/dashboard_payload.py → backtesting/universe.py
 
 ## Hyperedges (group relationships)
 - **Saved Run Lifecycle** — backtest_runner, run_writer, run_reader, run_index_service, dashboard_payload_service, results_backtests_root [INFERRED 0.92]
@@ -90,32 +89,33 @@
 - **Sector Lookup Bundle** — sector_map_document, raw_map_sector_codes_doc, sector_code_lookup_index, sector_code_mapping_concept [INFERRED 0.93]
 - **Ticker Lookup Bundle** — raw_ticker_name_index_doc, ticker_code_name_index, ticker_code_name_mapping_concept [INFERRED 0.93]
 - **Benchmark and Snapshot Bundle** — qw_bm_document, benchmark_config, performance_snapshot_factory [INFERRED 0.90]
+- **KOSDAQ GICS Lookup Bundle** — raw_gics_sector_big_document, raw_gics_sector_latest_doc, raw_gics_sector_membership_doc, raw_gics_sector_pivot_dataset, gics_sector_mapping_concept, benchmarks_default_repositories_for_universe [INFERRED 0.93]
 
 ## Communities
 
 ### Community 0 - "Backtesting Strategies Construction"
 Cohesion: 0.05
-Nodes (31): build_signal(), ConstructionResult, PositionPlan, PositionPolicy, RegisteredStrategy, SignalBundle, _Breakout52WeekConstructionRule, Breakout52WeekSignalProducer (+23 more)
+Nodes (32): ABC, build_signal(), ConstructionResult, PositionPlan, PositionPolicy, RegisteredStrategy, SignalBundle, _Breakout52WeekConstructionRule (+24 more)
 
-### Community 1 - "Backtesting Execution Catalog"
+### Community 1 - "Backtesting Strategy Catalog"
+Cohesion: 0.05
+Nodes (33): BaseStrategy, CrossSectionalStrategy, TimeSeriesStrategy, DataCatalog, default(), _spec(), BacktestEngine, _normalize_quantity() (+25 more)
+
+### Community 2 - "Dashboard Backend Services"
 Cohesion: 0.06
-Nodes (29): DataCatalog, default(), _spec(), BacktestEngine, _normalize_quantity(), _schedule(), _tradable(), CostModel (+21 more)
+Nodes (54): BaseModel, DashboardPayloadService, _serialize_benchmark(), _serialize_launch(), _serialize_launch_benchmark_context(), _serialize_metrics(), _serialize_research(), _serialize_rolling_correlation() (+46 more)
 
-### Community 2 - "Results Backtests Plots"
+### Community 3 - "Results Backtests Plots"
 Cohesion: 0.06
 Nodes (57): Backtest Runner, Backtesting Reporting Main, Backtesting Run Main, BenchmarkConfig, 52W Breakout Strategy, Simple, 52W Breakout Strategy, Staged, Breakout 52W Simple Run (daily, close; CAGR -1.47%, MDD -51.66%), Breakout 52W Simple Drawdown Curve (+49 more)
 
-### Community 3 - "Backtesting Reporting Builder"
-Cohesion: 0.08
-Nodes (26): _build_notes(), ReportBuilder, _write_legacy_table(), _write_tables(), main(), ReportArgumentParser, ReportCli, _validate_report_args() (+18 more)
-
-### Community 4 - "Dashboard Backend Schemas"
+### Community 4 - "Backtesting Reporting Builder"
 Cohesion: 0.09
-Nodes (37): BaseModel, DashboardPayloadService, _serialize_benchmark(), _serialize_launch(), _serialize_launch_benchmark_context(), _serialize_metrics(), _serialize_research(), _serialize_rolling_correlation() (+29 more)
+Nodes (24): _build_notes(), ReportBuilder, _write_legacy_table(), _write_tables(), main(), ReportArgumentParser, ReportCli, _validate_report_args() (+16 more)
 
 ### Community 5 - "Backtesting Reporting Snapshots"
-Cohesion: 0.09
-Nodes (24): build_monthly_heatmap(), DrawdownStats, ExposureSnapshot, monthly_return_series(), PerformanceMetrics, ResearchSnapshot, RollingMetrics, SectorSnapshot (+16 more)
+Cohesion: 0.08
+Nodes (26): build_monthly_heatmap(), DrawdownStats, ExposureSnapshot, monthly_return_series(), PerformanceMetrics, ResearchSnapshot, RollingMetrics, SectorSnapshot (+18 more)
 
 ### Community 6 - "Backtesting Reporting Composers"
 Cohesion: 0.15
@@ -125,97 +125,97 @@ Nodes (26): _comparison_metric_strip(), ComparisonComposer, ComparisonRenderCont
 Cohesion: 0.12
 Nodes (20): BacktestRunner, build_frontend(), build_parser(), _build_run_config(), _install_frontend_dependencies(), launch_dashboard(), main(), _needs_npm_install() (+12 more)
 
-### Community 8 - "Backtesting Data Ingest"
+### Community 8 - "Backtesting Reporting Benchmarks"
+Cohesion: 0.11
+Nodes (17): BenchmarkRepository, BenchmarkSeries, default(), default_repositories_for_universe(), from_frame(), _load_default_frame(), _load_display_name_maps(), _normalize_symbol_key() (+9 more)
+
+### Community 9 - "Backtesting Data Ingest"
 Cohesion: 0.09
 Nodes (6): DataLoader, LoadRequest, MarketData, IngestJob, IngestResult, ParquetStore
-
-### Community 9 - "Dashboard Backend Services"
-Cohesion: 0.15
-Nodes (17): _archive_run_dir(), _build_saved_signature(), _build_signature(), _is_usable_saved_run(), LaunchPlan, LaunchResolutionService, _normalize_universe_id(), _normalize_use_k200() (+9 more)
 
 ### Community 10 - "Dashboard Frontend Src"
 Cohesion: 0.24
 Nodes (24): asNumber(), asRecord(), asString(), fetchDashboard(), fetchSession(), normalizeBenchmarkOption(), normalizeCategoryPoint(), normalizeCategorySeries() (+16 more)
 
-### Community 11 - "Backtesting Reporting Benchmarks"
-Cohesion: 0.15
-Nodes (10): BenchmarkRepository, BenchmarkSeries, default(), default_repositories_for_universe(), from_frame(), _load_default_frame(), _load_display_name_maps(), _normalize_symbol_key() (+2 more)
-
-### Community 12 - "Backtesting Reporting Plots"
+### Community 11 - "Backtesting Reporting Plots"
 Cohesion: 0.15
 Nodes (12): _line_trace(), _monthly_heatmap_trace(), _monthly_returns(), PlotExportError, PlotLibrary, _vertical_spacing(), RuntimeError, build_latest_qty_table() (+4 more)
 
-### Community 13 - "Backtesting Reporting Figures"
+### Community 12 - "Backtesting Reporting Figures"
 Cohesion: 0.16
 Nodes (8): ComparisonFigureBuilder, _largest_holding(), _line(), _line(), _monthly_returns(), TearsheetFigureBuilder, _top_holdings(), write_figure_asset()
 
-### Community 14 - "Backtesting Strategy Base"
-Cohesion: 0.14
-Nodes (9): ABC, BaseStrategy, CrossSectionalStrategy, TimeSeriesStrategy, RankLongOnly, RankLongShort, CrossSectionalStrategy, ThresholdTrend (+1 more)
-
-### Community 15 - "Dashboard Frontend Src"
+### Community 13 - "Dashboard Frontend Src"
 Cohesion: 0.12
 Nodes (0): 
 
-### Community 16 - "Backtesting Reporting Writer"
+### Community 14 - "Backtesting Reporting Writer"
 Cohesion: 0.33
 Nodes (8): _bucket_ledger(), _drawdown(), _latest_qty(), _latest_weights(), _monthly_returns(), _plot_series(), RunWriter, _write_json()
 
-### Community 17 - "Dashboard Backend Serializers"
+### Community 15 - "Dashboard Backend Serializers"
 Cohesion: 0.35
 Nodes (10): sanitize_finite_number(), serialize_category_series(), serialize_distribution(), serialize_drawdown_episodes(), serialize_heatmap(), serialize_latest_holdings(), serialize_latest_holdings_performance(), serialize_named_series() (+2 more)
 
-### Community 18 - "Dashboard Frontend Src"
+### Community 16 - "Dashboard Frontend Src"
 Cohesion: 0.36
 Nodes (8): computeValueDiffs(), flattenEpisodes(), formatMetricNumber(), formatMetricPercent(), formatNumberValue(), formatRewardRisk(), ResearchDetailPanel(), visibleRunIds()
 
-### Community 19 - "Dashboard Backend Services"
+### Community 17 - "Dashboard Backend Services"
 Cohesion: 0.36
 Nodes (7): _config_signature(), _is_usable_run_dir(), _load_run_option(), _normalize_universe_id(), _normalize_value(), _parse_run_timestamp(), _sort_key()
 
-### Community 20 - "Root.Py"
+### Community 18 - "Root.Py"
 Cohesion: 0.25
 Nodes (1): RootPaths
 
-### Community 21 - "Dashboard Frontend Src"
+### Community 19 - "Dashboard Frontend Src"
 Cohesion: 0.29
 Nodes (2): buildCostSummary(), formatCostValue()
 
-### Community 22 - "Dashboard Frontend App"
+### Community 20 - "Dashboard Frontend App"
 Cohesion: 0.52
 Nodes (5): normalizeDashboardSelection(), orderSelectedRunIds(), resolveInitialRunIds(), uniqueRunIds(), uniqueRunOptions()
 
-### Community 23 - "Backtesting Analytics Factor"
+### Community 21 - "Backtesting Analytics Factor"
 Cohesion: 0.33
 Nodes (0): 
 
-### Community 24 - "Dashboard Backend Api"
+### Community 22 - "Backtesting Validation Session"
+Cohesion: 0.53
+Nodes (4): _covers_index(), _has_sparse_row(), _unique_sorted(), ValidationSession
+
+### Community 23 - "Dashboard Backend Api"
 Cohesion: 0.4
 Nodes (2): get_run_index_service(), list_runs()
 
-### Community 25 - "Dashboard Frontend Src"
+### Community 24 - "Dashboard Frontend Src"
 Cohesion: 0.5
 Nodes (2): formatPercentValue(), ResearchFigure()
+
+### Community 25 - "Dashboard Frontend Src"
+Cohesion: 0.67
+Nodes (0): 
 
 ### Community 26 - "Dashboard Frontend Src"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 27 - "Dashboard Frontend Src"
-Cohesion: 0.67
-Nodes (0): 
-
-### Community 28 - "Dashboard Backend Main"
+### Community 27 - "Dashboard Backend Main"
 Cohesion: 1.0
 Nodes (2): create_app(), get_frontend_dist_dir()
 
-### Community 29 - "Raw Map Ticker Name Index.Md"
+### Community 28 - "Raw Map Ticker Name Index.Md"
 Cohesion: 1.0
 Nodes (3): Ticker/Code/Name Index Document, Ticker-Code-Name Index, Ticker/Code-to-Name Mapping
 
-### Community 30 - "Backtesting Types.Py"
+### Community 29 - "Backtesting Types.Py"
 Cohesion: 1.0
 Nodes (1): Core shared type definitions for the backtesting package.
+
+### Community 30 - "Dashboard Frontend Src"
+Cohesion: 1.0
+Nodes (0): 
 
 ### Community 31 - "Dashboard Frontend Src"
 Cohesion: 1.0
@@ -237,19 +237,19 @@ Nodes (0):
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 36 - "Dashboard Frontend Src"
+### Community 36 - "Run.Py"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 37 - "Run.Py"
+### Community 37 - "Report.Py"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 38 - "Report.Py"
+### Community 38 - "Dashboard   Init  .Py"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 39 - "Dashboard   Init  .Py"
+### Community 39 - "Dashboard Frontend Vite"
 Cohesion: 1.0
 Nodes (0): 
 
@@ -261,7 +261,7 @@ Nodes (0):
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 42 - "Dashboard Frontend Vite"
+### Community 42 - "Dashboard Frontend Src"
 Cohesion: 1.0
 Nodes (0): 
 
@@ -273,15 +273,11 @@ Nodes (0):
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 45 - "Dashboard Frontend Src"
+### Community 45 - "Dashboard Backend Init__"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 46 - "Dashboard Backend Init__"
-Cohesion: 1.0
-Nodes (0): 
-
-### Community 47 - "Dashboard Backend Services"
+### Community 46 - "Dashboard Backend Services"
 Cohesion: 1.0
 Nodes (0): 
 
@@ -328,12 +324,12 @@ Nodes (0):
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Public strategy exports.` connect `Backtesting Execution Catalog` to `Backtesting Strategies Construction`, `Backtesting Strategy Base`, `Backtesting Analytics Factor`?**
-  _High betweenness centrality (0.208) - this node is a cross-community bridge._
-- **Why does `DataCatalog` connect `Backtesting Execution Catalog` to `Backtesting Data Ingest`, `Backtesting Reporting Benchmarks`, `Backtesting Run.Py Universe`?**
-  _High betweenness centrality (0.205) - this node is a cross-community bridge._
-- **Why does `DashboardPayloadService` connect `Dashboard Backend Schemas` to `Dashboard Backend Services`, `Backtesting Reporting Builder`, `Backtesting Reporting Snapshots`, `Backtesting Run.Py Universe`?**
-  _High betweenness centrality (0.101) - this node is a cross-community bridge._
+- **Why does `DataCatalog` connect `Backtesting Strategy Catalog` to `Backtesting Reporting Benchmarks`, `Backtesting Data Ingest`, `Backtesting Run.Py Universe`?**
+  _High betweenness centrality (0.207) - this node is a cross-community bridge._
+- **Why does `Public strategy exports.` connect `Backtesting Strategy Catalog` to `Backtesting Strategies Construction`, `Backtesting Analytics Factor`, `Backtesting Validation Session`?**
+  _High betweenness centrality (0.207) - this node is a cross-community bridge._
+- **Why does `DashboardPayloadService` connect `Dashboard Backend Services` to `Backtesting Reporting Builder`, `Backtesting Reporting Snapshots`, `Backtesting Run.Py Universe`?**
+  _High betweenness centrality (0.100) - this node is a cross-community bridge._
 - **Are the 32 inferred relationships involving `Public strategy exports.` (e.g. with `SignalBundle` and `MomentumSignalProducer`) actually correct?**
   _`Public strategy exports.` has 32 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 20 inferred relationships involving `DashboardPayloadService` (e.g. with `UniverseRegistry` and `PerformanceSnapshot`) actually correct?**
