@@ -1,11 +1,14 @@
 {
-  "total_files": 242,
+  "total_files": 125,
+  "total_words": 217981,
   "counts": {
-    "code": 165,
-    "document": 28,
-    "data": 49
+    "code": 110,
+    "document": 3,
+    "paper": 0,
+    "image": 12,
+    "video": 0
   },
-  "nodes": 1885,
-  "edges": 6106,
-  "communities": 41
+  "nodes": 705,
+  "edges": 1371,
+  "communities": 46
 }
