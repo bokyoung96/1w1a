@@ -73,7 +73,7 @@ class UniverseRegistry:
                         "high": DatasetId.QW_KSDQ_ADJ_H,
                         "low": DatasetId.QW_KSDQ_ADJ_L,
                         "volume": DatasetId.QW_KSDQ_V,
-                        "market_cap": DatasetId.QW_KSDQ_MKCAP,
+                        "market_cap": DatasetId.QW_KSDQ_MKTCAP,
                         "float_market_cap": DatasetId.QW_KSDQ_MKTCAP_FLT,
                         "sector_big": DatasetId.QW_KSDQ_WICS_SEC_BIG,
                         "membership": DatasetId.QW_KSDQ150_YN,

@@ -43,7 +43,7 @@
 - `qw_ksdq_adj_h.csv`
 - `qw_ksdq_adj_l.csv`
 - `qw_ksdq_v.csv`
-- `qw_ksdq_mkcap.csv`
+- `qw_ksdq_mktcap.csv`
 - `qw_ksdq_mktcap_flt.csv`
 - `qw_ksdq_wics_sec_big.csv`
 - `qw_ksdq150_yn.csv`
@@ -85,7 +85,7 @@
 - `QW_KSDQ_ADJ_H`
 - `QW_KSDQ_ADJ_L`
 - `QW_KSDQ_V`
-- `QW_KSDQ_MKCAP`
+- `QW_KSDQ_MKTCAP`
 - `QW_KSDQ_MKTCAP_FLT`
 - `QW_KSDQ_WICS_SEC_BIG`
 - `QW_KSDQ150_YN`
@@ -105,7 +105,7 @@
 - `high -> qw_ksdq_adj_h`
 - `low -> qw_ksdq_adj_l`
 - `volume -> qw_ksdq_v`
-- `market_cap -> qw_ksdq_mkcap`
+- `market_cap -> qw_ksdq_mktcap`
 - `float_market_cap -> qw_ksdq_mktcap_flt`
 - `sector_big -> qw_ksdq_wics_sec_big`
 - `universe_membership -> qw_ksdq150_yn`

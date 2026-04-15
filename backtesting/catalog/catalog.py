@@ -57,7 +57,7 @@ class DataCatalog:
             DatasetId.QW_KSDQ_ADJ_H: _spec(DatasetId.QW_KSDQ_ADJ_H, group=DatasetGroup.PRICE, freq="D", kind="price"),
             DatasetId.QW_KSDQ_ADJ_L: _spec(DatasetId.QW_KSDQ_ADJ_L, group=DatasetGroup.PRICE, freq="D", kind="price"),
             DatasetId.QW_KSDQ_V: _spec(DatasetId.QW_KSDQ_V, group=DatasetGroup.PRICE, freq="D", kind="volume", fill="zero"),
-            DatasetId.QW_KSDQ_MKCAP: _spec(DatasetId.QW_KSDQ_MKCAP, group=DatasetGroup.PRICE, freq="D", kind="market_cap"),
+            DatasetId.QW_KSDQ_MKTCAP: _spec(DatasetId.QW_KSDQ_MKTCAP, group=DatasetGroup.PRICE, freq="D", kind="market_cap"),
             DatasetId.QW_KSDQ_MKTCAP_FLT: _spec(
                 DatasetId.QW_KSDQ_MKTCAP_FLT,
                 group=DatasetGroup.PRICE,

@@ -49,7 +49,7 @@ class DataLoader:
         DatasetId.QW_KSDQ_ADJ_H: "high",
         DatasetId.QW_KSDQ_ADJ_L: "low",
         DatasetId.QW_KSDQ_V: "volume",
-        DatasetId.QW_KSDQ_MKCAP: "market_cap",
+        DatasetId.QW_KSDQ_MKTCAP: "market_cap",
         DatasetId.QW_KSDQ_MKTCAP_FLT: "float_market_cap",
         DatasetId.QW_KSDQ150_YN: "universe_membership",
         DatasetId.QW_KSDQ_WICS_SEC_BIG: "sector_big",

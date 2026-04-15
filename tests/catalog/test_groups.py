@@ -22,7 +22,7 @@ EXPECTED_RAW_STEMS = {
     "qw_ksdq_adj_h",
     "qw_ksdq_adj_l",
     "qw_ksdq_adj_o",
-    "qw_ksdq_mkcap",
+    "qw_ksdq_mktcap",
     "qw_ksdq_mktcap_flt",
     "qw_ksdq_v",
     "qw_ksdq_wics_sec_big",

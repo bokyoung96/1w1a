@@ -4,7 +4,7 @@
 
 **Goal:** Add a first-class `kosdaq150` universe to 1w1a by registering the `qw_ksdq_*` dataset family, resolving universe-specific datasets in the backtest runner, and propagating `universe_id` through CLI, saved runs, and dashboard launch logic without breaking legacy `K200` behavior.
 
-**Architecture:** Keep `DataCatalog` as the low-level dataset registry and add a separate `UniverseRegistry` layer that maps semantic dataset aliases like `close` and `market_cap` to concrete dataset ids such as `qw_ksdq_adj_c` and `qw_ksdq_mkcap`. `BacktestRunner` becomes the single place that resolves `universe_id` into datasets, membership masks, and default benchmark metadata, while dashboard presets and saved-run signatures carry `universe_id` as configuration only.
+**Architecture:** Keep `DataCatalog` as the low-level dataset registry and add a separate `UniverseRegistry` layer that maps semantic dataset aliases like `close` and `market_cap` to concrete dataset ids such as `qw_ksdq_adj_c` and `qw_ksdq_mktcap`. `BacktestRunner` becomes the single place that resolves `universe_id` into datasets, membership masks, and default benchmark metadata, while dashboard presets and saved-run signatures carry `universe_id` as configuration only.
 
 **Tech Stack:** Python 3.11, pandas, pytest, dataclasses, argparse, FastAPI dashboard services
 
@@ -67,7 +67,7 @@ EXPECTED_RAW_STEMS = {
     "qw_ksdq_adj_h",
     "qw_ksdq_adj_l",
     "qw_ksdq_adj_o",
-    "qw_ksdq_mkcap",
+    "qw_ksdq_mktcap",
     "qw_ksdq_mktcap_flt",
     "qw_ksdq_v",
     "qw_ksdq_wics_sec_big",
@@ -145,7 +145,7 @@ class DatasetId(str, Enum):
     QW_KSDQ_ADJ_H = "qw_ksdq_adj_h"
     QW_KSDQ_ADJ_L = "qw_ksdq_adj_l"
     QW_KSDQ_ADJ_O = "qw_ksdq_adj_o"
-    QW_KSDQ_MKCAP = "qw_ksdq_mkcap"
+    QW_KSDQ_MKTCAP = "qw_ksdq_mktcap"
     QW_KSDQ_MKTCAP_FLT = "qw_ksdq_mktcap_flt"
     QW_KSDQ_V = "qw_ksdq_v"
     QW_KSDQ_WICS_SEC_BIG = "qw_ksdq_wics_sec_big"
@@ -159,7 +159,7 @@ specs = {
     DatasetId.QW_KSDQ_ADJ_H: _spec(DatasetId.QW_KSDQ_ADJ_H, group=DatasetGroup.PRICE, freq="D", kind="price"),
     DatasetId.QW_KSDQ_ADJ_L: _spec(DatasetId.QW_KSDQ_ADJ_L, group=DatasetGroup.PRICE, freq="D", kind="price"),
     DatasetId.QW_KSDQ_V: _spec(DatasetId.QW_KSDQ_V, group=DatasetGroup.PRICE, freq="D", kind="volume", fill="zero"),
-    DatasetId.QW_KSDQ_MKCAP: _spec(DatasetId.QW_KSDQ_MKCAP, group=DatasetGroup.PRICE, freq="D", kind="market_cap"),
+    DatasetId.QW_KSDQ_MKTCAP: _spec(DatasetId.QW_KSDQ_MKTCAP, group=DatasetGroup.PRICE, freq="D", kind="market_cap"),
     DatasetId.QW_KSDQ_MKTCAP_FLT: _spec(
         DatasetId.QW_KSDQ_MKTCAP_FLT,
         group=DatasetGroup.PRICE,
@@ -202,7 +202,7 @@ FRAME_KEYS = {
     DatasetId.QW_KSDQ_ADJ_H: "high",
     DatasetId.QW_KSDQ_ADJ_L: "low",
     DatasetId.QW_KSDQ_V: "volume",
-    DatasetId.QW_KSDQ_MKCAP: "market_cap",
+    DatasetId.QW_KSDQ_MKTCAP: "market_cap",
     DatasetId.QW_KSDQ_MKTCAP_FLT: "float_market_cap",
     DatasetId.QW_KSDQ150_YN: "universe_membership",
     DatasetId.QW_KSDQ_WICS_SEC_BIG: "sector_big",
@@ -263,7 +263,7 @@ def test_registry_returns_kosdaq150_defaults() -> None:
     assert spec.membership_dataset is DatasetId.QW_KSDQ150_YN
     assert spec.default_benchmark_dataset == "qw_BM"
     assert spec.dataset_aliases["close"] is DatasetId.QW_KSDQ_ADJ_C
-    assert spec.dataset_aliases["market_cap"] is DatasetId.QW_KSDQ_MKCAP
+    assert spec.dataset_aliases["market_cap"] is DatasetId.QW_KSDQ_MKTCAP
 
 
 def test_registry_remaps_generic_dataset_ids_to_universe_specific_ids() -> None:
@@ -271,7 +271,7 @@ def test_registry_remaps_generic_dataset_ids_to_universe_specific_ids() -> None:
     spec = registry.get("kosdaq150")
 
     assert spec.resolve_dataset(DatasetId.QW_ADJ_C) is DatasetId.QW_KSDQ_ADJ_C
-    assert spec.resolve_dataset(DatasetId.QW_MKTCAP) is DatasetId.QW_KSDQ_MKCAP
+    assert spec.resolve_dataset(DatasetId.QW_MKTCAP) is DatasetId.QW_KSDQ_MKTCAP
     assert spec.resolve_dataset(DatasetId.QW_OP_NFY1) is DatasetId.QW_OP_NFY1
 
 
@@ -367,7 +367,7 @@ class UniverseRegistry:
                         "high": DatasetId.QW_KSDQ_ADJ_H,
                         "low": DatasetId.QW_KSDQ_ADJ_L,
                         "volume": DatasetId.QW_KSDQ_V,
-                        "market_cap": DatasetId.QW_KSDQ_MKCAP,
+                        "market_cap": DatasetId.QW_KSDQ_MKTCAP,
                         "float_market_cap": DatasetId.QW_KSDQ_MKTCAP_FLT,
                         "sector_big": DatasetId.QW_KSDQ_WICS_SEC_BIG,
                         "membership": DatasetId.QW_KSDQ150_YN,

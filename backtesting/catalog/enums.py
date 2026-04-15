@@ -35,7 +35,7 @@ class DatasetId(str, Enum):
     QW_KSDQ_ADJ_H = "qw_ksdq_adj_h"
     QW_KSDQ_ADJ_L = "qw_ksdq_adj_l"
     QW_KSDQ_ADJ_O = "qw_ksdq_adj_o"
-    QW_KSDQ_MKCAP = "qw_ksdq_mkcap"
+    QW_KSDQ_MKTCAP = "qw_ksdq_mktcap"
     QW_KSDQ_MKTCAP_FLT = "qw_ksdq_mktcap_flt"
     QW_KSDQ_V = "qw_ksdq_v"
     QW_KSDQ_WICS_SEC_BIG = "qw_ksdq_wics_sec_big"

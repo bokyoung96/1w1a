@@ -656,7 +656,7 @@ def test_runner_uses_kosdaq_market_cap_remap_for_op_fwd_strategy(tmp_path: Path)
     monthly = pd.to_datetime(["2024-01-31"])
 
     store.write("qw_ksdq_adj_c", pd.DataFrame({"A": [10.0, 10.5, 11.0], "B": [10.0, 10.0, 10.0]}, index=daily))
-    store.write("qw_ksdq_mkcap", pd.DataFrame({"A": [100.0, 100.0, 100.0], "B": [10.0, 10.0, 10.0]}, index=daily))
+    store.write("qw_ksdq_mktcap", pd.DataFrame({"A": [100.0, 100.0, 100.0], "B": [10.0, 10.0, 10.0]}, index=daily))
     store.write("qw_op_nfy1", pd.DataFrame({"A": [20.0], "B": [5.0]}, index=monthly))
     store.write("qw_ksdq150_yn", pd.DataFrame({"A": [1, 1, 1], "B": [1, 1, 1]}, index=daily))
 
