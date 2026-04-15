@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Sequence
 
 from .config import build_config
+from .graphify_integration import GraphifyCorpusBuilder
 from .pipeline import ArasPipeline
 from .raw_reports import RawReportCatalog
 from .storage import SqliteArasStore
@@ -35,6 +36,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
     summarize_recent.add_argument("--channel", required=True)
     summarize_recent.add_argument("--limit", type=int, default=10)
     summarize_recent.add_argument("--base-dir", default=".")
+
+    graphify_update = subparsers.add_parser("graphify-update")
+    graphify_update.add_argument("--base-dir", default=".")
 
     return parser
 
@@ -93,6 +97,21 @@ def main(argv: Sequence[str] | None = None) -> int:
                     f"processed_files={len(execution.processed_files)}",
                     f"summaries={len(execution.summaries)}",
                     f"message_id={execution.summary.next_offset}",
+                ]
+            )
+        )
+        return 0
+
+
+    if args.command == "graphify-update":
+        config = build_config(base_dir)
+        result = GraphifyCorpusBuilder(config).update()
+        print(
+            " ".join(
+                [
+                    f"reports={result.report_count}",
+                    f"manifest={result.manifest_path}",
+                    f"graphify_invoked={str(result.graphify_invoked).lower()}",
                 ]
             )
         )

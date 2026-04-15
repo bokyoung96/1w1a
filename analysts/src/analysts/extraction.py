@@ -46,6 +46,7 @@ class SummaryReadyExtractor:
             entities=parsed.entities,
             tickers=parsed.tickers,
             page_previews=list(report.metadata.get('page_previews', [])),
+            important_pages=list(report.metadata.get('important_pages', [])),
         )
 
     def write_artifacts(self, packet: ExtractionPacket) -> ExtractionArtifacts:
@@ -66,6 +67,7 @@ class SummaryReadyExtractor:
             "entities": packet.entities,
             "tickers": packet.tickers,
             "page_previews": packet.page_previews,
+            "important_pages": packet.important_pages,
         }, ensure_ascii=False, indent=2) + "\n")
         return ExtractionArtifacts(packet=packet, raw_text_path=raw_text_path, summary_input_path=summary_input_path)
 

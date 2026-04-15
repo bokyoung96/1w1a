@@ -18,8 +18,10 @@ class FakeRunner:
             'headline': '사모신용은 시스템 리스크가 아님',
             'executive_summary': '핵심 우려는 제한적이라는 요지다.',
             'key_points': ['위험 분산 구조', '은행 건전성 양호'],
+            'key_numbers': ['NBFI 대출 56% 증가'],
             'risks': ['추가 부실 전이 가능성 점검 필요'],
             'confidence': 'medium',
+            'cited_pages': [4, 13],
             'follow_up_questions': ['연준 스트레스 테스트 세부 수치 확인 필요'],
         }
 
@@ -42,7 +44,7 @@ def test_lane_plan_returns_sector_and_macro_comments() -> None:
         tickers=[],
     )
 
-    assert CodexAnalystSummarizer.lane_plan(packet) == [('macro', 'general')]
+    assert CodexAnalystSummarizer.lane_plan(packet) == [('sector', 'general'), ('macro', 'general')]
 
 
 
@@ -65,6 +67,7 @@ def test_summarizer_uses_runner_and_returns_structured_summary(tmp_path: Path) -
         entities=['한화투자증권'],
         tickers=[],
         page_previews=['data/processed/report-1-pages/page-1.png'],
+        important_pages=[1],
     )
 
     summary = summarizer.summarize(packet=packet, lane='macro', topic='general')
@@ -73,4 +76,7 @@ def test_summarizer_uses_runner_and_returns_structured_summary(tmp_path: Path) -
     assert summary.topic == 'general'
     assert '짧은 텍스트' in runner.prompts[0]
     assert 'Lane: macro' in runner.prompts[0]
+    assert 'Important pages: 1' in runner.prompts[0]
     assert runner.image_paths[0].name == 'page-1.png'
+    assert summary.key_numbers == ['NBFI 대출 56% 증가']
+    assert summary.cited_pages == [4, 13]

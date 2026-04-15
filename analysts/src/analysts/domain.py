@@ -81,7 +81,7 @@ class ExtractionPacket:
     entities: list[str]
     tickers: list[str]
     page_previews: list[str] = field(default_factory=list)
-    page_previews: list[str] = field(default_factory=list)
+    important_pages: list[int] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -91,8 +91,10 @@ class AnalystSummary:
     headline: str
     executive_summary: str
     key_points: list[str]
+    key_numbers: list[str]
     risks: list[str]
     confidence: str
+    cited_pages: list[int]
     follow_up_questions: list[str]
 
 

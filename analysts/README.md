@@ -102,3 +102,11 @@ Create `analysts/config.local.json` (gitignored):
 cd analysts
 PYTHONPATH=src ../.venv/bin/pytest tests -q
 ```
+
+## Graphify wiki/update
+```bash
+cd analysts
+PYTHONPATH=src ../.venv/bin/python -m analysts.cli graphify-update
+```
+
+This builds a graphify-ready corpus from processed summary artifacts so a future graphify/OpenClaw layer can update incrementally as new reports are processed.

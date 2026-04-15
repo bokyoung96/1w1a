@@ -77,29 +77,31 @@ class CodexAnalystSummarizer:
             headline=payload["headline"],
             executive_summary=payload["executive_summary"],
             key_points=list(payload["key_points"]),
+            key_numbers=list(payload["key_numbers"]),
             risks=list(payload["risks"]),
             confidence=payload["confidence"],
+            cited_pages=list(payload["cited_pages"]),
             follow_up_questions=list(payload["follow_up_questions"]),
         )
 
     @staticmethod
     def lane_plan(packet: ExtractionPacket) -> list[tuple[str, str]]:
-        lanes: list[tuple[str, str]] = []
+        route_topics: dict[str, str] = {}
         for hint in packet.route_hints:
             if ":" not in hint:
                 continue
             lane, topic = hint.split(":", 1)
-            pair = (lane, topic)
-            if pair not in lanes:
-                lanes.append(pair)
-        if lanes:
-            return lanes
-        return [("macro", "general")]
+            route_topics.setdefault(lane, topic)
+        return [
+            ("sector", route_topics.get("sector", "general")),
+            ("macro", route_topics.get("macro", "general")),
+        ]
 
     def _build_prompt(self, *, packet: ExtractionPacket, lane: str, topic: str) -> str:
         return (
-            f"You are a concise {lane} analyst agent. Summarize this report cheaply and practically. "
+            f"You are a concise but specific {lane} expert analyst agent. Summarize this report cheaply and practically. "
             f"Use the same language as the source when obvious. If the report is not strongly relevant to your lane, say so briefly instead of forcing a view. "
+            f"Prefer concrete numbers, chart/table takeaways, and page-aware evidence over generic phrasing. "
             f"Keep key_points and risks short (max {self.config.summary.max_key_points}).\n\n"
             f"Lane: {lane}\n"
             f"Topic hint: {topic}\n"
@@ -110,7 +112,9 @@ class CodexAnalystSummarizer:
             f"Extraction reason: {packet.extraction_reason}\n"
             f"Route hints: {', '.join(packet.route_hints) or 'none'}\n"
             f"Entities: {', '.join(packet.entities) or 'none'}\n"
-            f"Tickers: {', '.join(packet.tickers) or 'none'}\n\n"
+            f"Tickers: {', '.join(packet.tickers) or 'none'}\n"
+            f"Important pages: {', '.join(str(page) for page in packet.important_pages) or 'none'}\n"
+            f"Attached preview images correspond to selected important pages when available. Inspect them for charts/tables/layout cues.\n\n"
             f"Source text excerpt:\n{packet.text_excerpt}\n"
         )
 
@@ -125,8 +129,10 @@ class CodexAnalystSummarizer:
                 "headline",
                 "executive_summary",
                 "key_points",
+                "key_numbers",
                 "risks",
                 "confidence",
+                "cited_pages",
                 "follow_up_questions",
             ],
             "properties": {
@@ -135,8 +141,10 @@ class CodexAnalystSummarizer:
                 "headline": {"type": "string"},
                 "executive_summary": {"type": "string"},
                 "key_points": {"type": "array", "items": {"type": "string"}, "maxItems": 4},
+                "key_numbers": {"type": "array", "items": {"type": "string"}, "maxItems": 6},
                 "risks": {"type": "array", "items": {"type": "string"}, "maxItems": 4},
                 "confidence": {"type": "string", "enum": ["low", "medium", "high"]},
+                "cited_pages": {"type": "array", "items": {"type": "integer"}, "maxItems": 6},
                 "follow_up_questions": {"type": "array", "items": {"type": "string"}, "maxItems": 3},
             },
         }

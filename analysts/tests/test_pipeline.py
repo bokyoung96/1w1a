@@ -48,18 +48,20 @@ class FakeTelethonClient:
 class FakeSummarizer:
     @staticmethod
     def lane_plan(packet) -> list[tuple[str, str]]:
-        return [('macro', 'general')]
+        return [('sector', 'general'), ('macro', 'general')]
 
     def summarize(self, *, packet, lane: str, topic: str) -> AnalystSummary:
         return AnalystSummary(
             lane=lane,
             topic=topic,
-            headline='headline',
-            executive_summary='summary',
-            key_points=['point'],
-            risks=['risk'],
+            headline=f'{lane} headline',
+            executive_summary=f'{lane} summary',
+            key_points=[f'{lane} point'],
+            key_numbers=['42%'],
+            risks=[f'{lane} risk'],
             confidence='medium',
-            follow_up_questions=['question'],
+            cited_pages=[1],
+            follow_up_questions=[f'{lane} question'],
         )
 
 
@@ -90,11 +92,12 @@ def test_run_once_writes_full_ingestion_and_summary_artifacts(tmp_path: Path) ->
     execution = pipeline.run_once(channel='DOC_POOL')
 
     assert execution.summary.downloaded == 1
-    assert len(execution.summaries) == 1
+    assert len(execution.summaries) == 2
     processed = {path.name for path in execution.processed_files}
     assert 'report-1-fulltext.txt' in processed
     assert 'report-1-extraction.json' in processed
     assert 'report-1-images.json' in processed
+    assert 'report-1-important-pages.json' in processed
     assert 'report-1-chunks.json' in processed
     assert 'report-1-embeddings.json' in processed
     assert 'report-1-summary-input.json' in processed
@@ -126,7 +129,7 @@ def test_summarize_latest_uses_existing_downloaded_report(tmp_path: Path) -> Non
 
     execution = pipeline.summarize_latest(channel='DOC_POOL')
 
-    assert len(execution.summaries) == 1
+    assert len(execution.summaries) == 2
     assert execution.summary.next_offset == 163007
 
 
@@ -144,7 +147,7 @@ def test_summarize_latest_falls_back_to_raw_reports_when_db_is_empty(tmp_path: P
     execution = pipeline.summarize_latest(channel='DOC_POOL')
 
     assert execution.summary.next_offset == 999
-    assert len(execution.summaries) == 1
+    assert len(execution.summaries) == 2
 
 def test_show_config_prints_serialized_paths(tmp_path: Path, capsys) -> None:
     assert main(['show-config', '--base-dir', str(tmp_path)]) == 0
@@ -222,4 +225,4 @@ def test_summarize_recent_cli_reports_counts(tmp_path: Path, monkeypatch, capsys
     assert main(['summarize-recent', '--channel', 'DOC_POOL', '--limit', '2', '--base-dir', str(tmp_path)]) == 0
     output = capsys.readouterr().out.strip()
     assert 'reports=2' in output
-    assert 'summaries=2' in output
+    assert 'summaries=4' in output

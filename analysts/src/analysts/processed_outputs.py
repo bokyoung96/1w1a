@@ -36,6 +36,8 @@ class SummaryArtifactWriter:
             "extraction_quality": packet.extraction_quality,
             "extraction_reason": packet.extraction_reason,
             "route_hints": packet.route_hints,
+            "important_pages": packet.important_pages,
+            "page_previews": packet.page_previews,
             "summaries": [
                 {
                     "lane": summary.lane,
@@ -43,8 +45,10 @@ class SummaryArtifactWriter:
                     "headline": summary.headline,
                     "executive_summary": summary.executive_summary,
                     "key_points": summary.key_points,
+                    "key_numbers": summary.key_numbers,
                     "risks": summary.risks,
                     "confidence": summary.confidence,
+                    "cited_pages": summary.cited_pages,
                     "follow_up_questions": summary.follow_up_questions,
                 }
                 for summary in summaries
@@ -61,6 +65,7 @@ class SummaryArtifactWriter:
             f"- Raw PDF: `{packet.raw_pdf_path}`",
             f"- Extraction quality: {packet.extraction_quality}",
             f"- Extraction reason: {packet.extraction_reason}",
+            f"- Important pages: {', '.join(str(page) for page in packet.important_pages) or 'none'}",
             "",
         ]
         for summary in summaries:
@@ -70,11 +75,15 @@ class SummaryArtifactWriter:
                     f"- Topic: {summary.topic}",
                     f"- Confidence: {summary.confidence}",
                     f"- Headline: {summary.headline}",
+                    f"- Cited pages: {', '.join(str(page) for page in summary.cited_pages) or 'none'}",
                     "",
                     summary.executive_summary,
                     "",
                     "### Key points",
                     *[f"- {item}" for item in summary.key_points],
+                    "",
+                    "### Key numbers",
+                    *[f"- {item}" for item in summary.key_numbers],
                     "",
                     "### Risks",
                     *[f"- {item}" for item in summary.risks],

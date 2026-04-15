@@ -56,3 +56,23 @@ class PdfImageExtractor:
             + "\n"
         )
         return metadata, path
+
+    def render_previews_for_pages(self, *, pdf_path: Path, slug: str, page_numbers: list[int]) -> dict[int, str]:
+        rendered: dict[int, str] = {}
+        try:
+            import fitz  # PyMuPDF
+
+            doc = fitz.open(pdf_path)
+            preview_dir = self.config.paths.processed_dir / f"{slug}-pages"
+            preview_dir.mkdir(parents=True, exist_ok=True)
+            wanted = set(page_numbers)
+            for index, page in enumerate(doc, start=1):
+                if index not in wanted:
+                    continue
+                preview_file = preview_dir / f"page-{index}.png"
+                pix = page.get_pixmap(matrix=fitz.Matrix(1.0, 1.0), alpha=False)
+                pix.save(preview_file)
+                rendered[index] = str(preview_file.relative_to(self.config.paths.base_dir))
+        except Exception:
+            return {}
+        return rendered
