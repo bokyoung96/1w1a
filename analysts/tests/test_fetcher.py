@@ -216,3 +216,61 @@ def test_does_not_advance_last_seen_message_id_when_telethon_download_fails(tmp_
 
     assert store.get_last_seen_message_id('DOC_POOL') == 501
     assert store.list_reports() == []
+
+
+def test_ingest_message_downloads_new_pdf_and_updates_last_seen(tmp_path: Path) -> None:
+    client = FakeTelethonClient(
+        [
+            {
+                'message_id': 700,
+                'date': 1713082000,
+                'chat': {'title': 'DOC_POOL'},
+                'caption': 'Fresh PDF',
+                'document': {
+                    'file_id': 'file-700',
+                    'file_unique_id': 'uniq-700',
+                    'file_name': 'fresh-700.pdf',
+                    'mime_type': 'application/pdf',
+                },
+            }
+        ]
+    )
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    fetcher = TelegramFetcher(client=client, store=store, config=config)
+
+    result = fetcher.ingest_message(channel='DOC_POOL', message=client._messages[0])
+
+    assert result.status == 'downloaded'
+    assert result.report is not None
+    assert result.report.message_id == 700
+    assert result.report.metadata['telegram_caption_text'] == 'Fresh PDF'
+    assert store.get_last_seen_message_id('DOC_POOL') == 700
+    assert client.downloaded_file_ids == ['file-700']
+
+
+def test_ingest_message_skips_duplicate_without_resummarizing_download(tmp_path: Path) -> None:
+    message = {
+        'message_id': 701,
+        'date': 1713082060,
+        'chat': {'title': 'DOC_POOL'},
+        'caption': 'Duplicate PDF',
+        'document': {
+            'file_id': 'file-701',
+            'file_unique_id': 'uniq-701',
+            'file_name': 'duplicate-701.pdf',
+            'mime_type': 'application/pdf',
+        },
+    }
+    client = FakeTelethonClient([message])
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    fetcher = TelegramFetcher(client=client, store=store, config=config)
+    assert fetcher.ingest_message(channel='DOC_POOL', message=message).status == 'downloaded'
+
+    duplicate = fetcher.ingest_message(channel='DOC_POOL', message=message)
+
+    assert duplicate.status == 'duplicate'
+    assert duplicate.report is None
+    assert store.get_last_seen_message_id('DOC_POOL') == 701
+    assert client.downloaded_file_ids == ['file-701']

@@ -1,16 +1,20 @@
 from __future__ import annotations
 
+import asyncio
 import argparse
 import json
+from datetime import datetime
 from importlib import import_module
 from pathlib import Path
 from typing import Sequence
 
 from .config import build_config
+from .fetcher import TelegramFetcher
 from .graphify import GraphifyCorpusBuilder
 from .pipeline import ArasPipeline
 from .raw_reports import RawReportCatalog
 from .storage import SqliteArasStore
+from .watcher import WatchUntilRunner
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
@@ -37,6 +41,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
     summarize_recent.add_argument("--limit", type=int, default=10)
     summarize_recent.add_argument("--base-dir", default=".")
 
+    watch_until = subparsers.add_parser("watch-until")
+    watch_until.add_argument("--channel", required=True)
+    watch_until.add_argument("--until", required=True)
+    watch_until.add_argument("--base-dir", default=".")
+
     graphify_update = subparsers.add_parser("graphify-update")
     graphify_update.add_argument("--base-dir", default=".")
 
@@ -52,6 +61,40 @@ def build_default_pipeline(*, base_dir: Path, fixtures_path: str | None = None) 
         return ArasPipeline(client=client, store=store, config=config)
     client = telethon_module.TelethonChannelClient(base_dir=base_dir, config=config)
     return ArasPipeline(client=client, store=store, config=config)
+
+
+def build_watch_runner(*, base_dir: Path) -> WatchUntilRunner:
+    config = build_config(base_dir)
+    store = SqliteArasStore(config.paths.state_db)
+    telethon_module = import_module("analysts.telethon_client")
+    client = telethon_module.TelethonChannelClient(base_dir=base_dir, config=config)
+    pipeline = ArasPipeline(client=client, store=store, config=config)
+    fetcher = TelegramFetcher(client=client, store=store, config=config)
+    return WatchUntilRunner(client=client, message_ingestor=fetcher, pipeline=pipeline)
+
+
+def parse_watch_deadline(until: str) -> datetime:
+    return datetime.fromisoformat(until)
+
+
+def print_watch_summary(*, result) -> None:
+    print(
+        " ".join(
+            [
+                f"downloaded={result.downloaded}",
+                f"duplicates={result.duplicates}",
+                f"ignored={result.ignored}",
+                f"summarized={result.summarized}",
+                f"retries={result.summarize_retries}",
+            ]
+        )
+    )
+
+
+def run_watch_until(*, base_dir: Path, channel: str, until: str) -> int:
+    result = asyncio.run(build_watch_runner(base_dir=base_dir).watch_until(channel=channel, until=parse_watch_deadline(until)))
+    print_watch_summary(result=result)
+    return 0
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -87,6 +130,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
         )
         return 0
+
+    if args.command == "watch-until":
+        return run_watch_until(base_dir=base_dir, channel=args.channel, until=args.until)
 
     if args.command == "summarize-latest":
         pipeline = build_default_pipeline(base_dir=base_dir)

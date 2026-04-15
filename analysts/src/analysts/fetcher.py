@@ -8,6 +8,7 @@ from typing import Any, Protocol
 from .config import ArasConfig
 from .domain import ReportRecord
 from .storage import SqliteArasStore
+from .watcher import WatchMessageResult
 
 
 class TelegramBotClient(Protocol):
@@ -60,6 +61,17 @@ class TelegramFetcher:
         if hasattr(self.client, "get_updates"):
             return self._poll_bot_updates_once(channel=channel)
         return self._poll_telethon_once(channel=channel)
+
+    def ingest_message(self, *, channel: str, message: dict[str, Any]) -> WatchMessageResult:
+        parsed = self._extract_downloadable_message(message, expected_channel=channel)
+        message_id = int(message.get("message_id") or 0)
+        if parsed is None:
+            if message_id:
+                self.store.set_last_seen_message_id(channel, message_id)
+            return WatchMessageResult(status="ignored")
+        result = self._ingest_downloadable_message(channel=channel, parsed=parsed)
+        self.store.set_last_seen_message_id(channel, parsed.message_id)
+        return result
 
     def _poll_bot_updates_once(self, *, channel: str) -> FetchBatch:
         offset = self.store.get_next_update_offset()
@@ -141,30 +153,11 @@ class TelegramFetcher:
                 safe_last_seen = message["message_id"]
                 continue
 
-            if self.store.has_seen_file(parsed.file_unique_id):
-                skipped_duplicates.append(message)
-                safe_last_seen = message["message_id"]
-                continue
-
-            payload = self.client.download_document(parsed.payload)
-            report = self._record_report(
-                channel=channel,
-                message_id=parsed.message_id,
-                published_at=parsed.published_at,
-                title=parsed.title,
-                file_unique_id=parsed.file_unique_id,
-                file_name=parsed.file_name,
-                payload=payload,
-                metadata={
-                    "file_unique_id": parsed.file_unique_id,
-                    "telegram_message_id": parsed.message_id,
-                    "source": "telethon",
-                },
-            )
-            if report is None:
+            result = self._ingest_downloadable_message(channel=channel, parsed=parsed)
+            if result.status == "duplicate":
                 skipped_duplicates.append(message)
             else:
-                downloaded.append(report)
+                downloaded.append(result.report)
             safe_last_seen = message["message_id"]
 
         if safe_last_seen is not None and safe_last_seen != last_seen_message_id:
@@ -208,6 +201,34 @@ class TelegramFetcher:
         )
         inserted = self.store.record_download(report)
         return report if inserted else None
+
+    def _ingest_downloadable_message(self, *, channel: str, parsed: DownloadableMessage) -> WatchMessageResult:
+        if self.store.has_seen_file(parsed.file_unique_id):
+            return WatchMessageResult(status="duplicate")
+
+        payload = self.client.download_document(parsed.payload)
+        report = self._record_report(
+            channel=channel,
+            message_id=parsed.message_id,
+            published_at=parsed.published_at,
+            title=parsed.title,
+            file_unique_id=parsed.file_unique_id,
+            file_name=parsed.file_name,
+            payload=payload,
+            metadata=self._telethon_metadata(parsed),
+        )
+        if report is None:
+            return WatchMessageResult(status="duplicate")
+        return WatchMessageResult(status="downloaded", report=report)
+
+    @staticmethod
+    def _telethon_metadata(parsed: DownloadableMessage) -> dict[str, Any]:
+        return {
+            "file_unique_id": parsed.file_unique_id,
+            "telegram_message_id": parsed.message_id,
+            "source": "telethon",
+            "telegram_caption_text": parsed.payload.get("caption") or "",
+        }
 
     @staticmethod
     def _extract_pdf_message(update: dict[str, Any], *, expected_channel: str) -> dict[str, Any] | None:

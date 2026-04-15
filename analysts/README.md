@@ -50,6 +50,19 @@ cd analysts
 PYTHONPATH=src ../.venv/bin/python -m analysts.cli summarize-latest --channel DOC_POOL
 ```
 
+### 4) Watch for new reports until a deadline
+```bash
+cd analysts
+PYTHONPATH=src ../.venv/bin/python -m analysts.cli watch-until \
+  --channel DOC_POOL \
+  --until 2026-04-15T17:30:00+09:00
+```
+
+- deadline must be timezone-aware ISO-8601
+- new unique PDF reports are downloaded once and summarized immediately
+- summarize failures retry immediately without stopping the watch loop
+- no new messages are accepted after the deadline; any report already accepted before cutoff is allowed to finish processing
+
 ## Active pipeline map
 The live analysts path is intentionally narrow:
 

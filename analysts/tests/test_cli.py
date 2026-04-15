@@ -111,3 +111,34 @@ def test_graphify_update_command_prints_manifest_summary(
     assert 'reports=1' in output
     assert 'graphify_invoked=true' in output
     assert 'manifest=' in output
+
+
+def test_watch_until_command_dispatches_to_async_runner(
+    tmp_path: Path,
+    monkeypatch,
+    capsys,
+) -> None:
+    calls: list[tuple[Path, str, str]] = []
+
+    def fake_run_watch_until(*, base_dir: Path, channel: str, until: str) -> int:
+        calls.append((base_dir, channel, until))
+        print('downloaded=1 duplicates=0 ignored=0 summarized=1 retries=0')
+        return 0
+
+    monkeypatch.setattr('analysts.cli.run_watch_until', fake_run_watch_until)
+
+    exit_code = main(
+        [
+            'watch-until',
+            '--channel',
+            'DOC_POOL',
+            '--until',
+            '2026-04-15T17:30:00+09:00',
+            '--base-dir',
+            str(tmp_path),
+        ]
+    )
+
+    assert exit_code == 0
+    assert calls == [(tmp_path, 'DOC_POOL', '2026-04-15T17:30:00+09:00')]
+    assert 'summarized=1' in capsys.readouterr().out

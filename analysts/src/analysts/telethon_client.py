@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
+from datetime import datetime
 from getpass import getpass
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -83,6 +85,43 @@ class TelethonChannelClient:
                 raise RuntimeError(f"Failed to download media for message {message['message_id']}")
             return Path(result).read_bytes()
 
+    async def watch_channel(self, *, channel: str, until, on_message) -> None:
+        from telethon import TelegramClient, events
+
+        remaining_seconds = max((until - self._now_like(until)).total_seconds(), 0)
+        if remaining_seconds <= 0:
+            return
+
+        session_stem = self.config.paths.telethon_session_path.with_suffix("")
+        async with TelegramClient(str(session_stem), self.settings.api_id, self.settings.api_hash) as client:
+            if not await client.is_user_authorized():
+                raise RuntimeError("Telethon session is not authorized. Run auth-login first.")
+            entity = await self._resolve_entity_async(client, channel)
+            pending_tasks: set[asyncio.Task] = set()
+            accepting_messages = True
+
+            async def process_payload(payload: dict[str, Any]) -> None:
+                await self._maybe_await(on_message(payload))
+
+            @client.on(events.NewMessage(chats=entity))
+            async def handler(event) -> None:
+                accepted_at = self._now_like(until)
+                if not accepting_messages or accepted_at >= until:
+                    return
+                payload = self._adapt_message(channel=channel, message=event.message).to_fetcher_payload()
+                payload["_accepted_at"] = accepted_at.isoformat()
+                task = asyncio.create_task(process_payload(payload))
+                pending_tasks.add(task)
+                task.add_done_callback(pending_tasks.discard)
+
+            try:
+                await asyncio.sleep(remaining_seconds)
+            finally:
+                accepting_messages = False
+                client.remove_event_handler(handler)
+                if pending_tasks:
+                    await asyncio.gather(*pending_tasks, return_exceptions=True)
+
     def _build_client(self):
         from telethon.sync import TelegramClient
 
@@ -103,6 +142,15 @@ class TelethonChannelClient:
             if channel.startswith("@"):
                 raise
             return client.get_entity(f"@{channel}")
+
+    @staticmethod
+    async def _resolve_entity_async(client: Any, channel: str):
+        try:
+            return await client.get_entity(channel)
+        except ValueError:
+            if channel.startswith("@"):
+                raise
+            return await client.get_entity(f"@{channel}")
 
     @staticmethod
     def _adapt_message(*, channel: str, message: Any) -> TelethonMessageAdapter:
@@ -133,6 +181,15 @@ class TelethonChannelClient:
             },
             _message=message,
         )
+
+    @staticmethod
+    async def _maybe_await(result) -> None:
+        if asyncio.iscoroutine(result) or asyncio.isfuture(result):
+            await result
+
+    @staticmethod
+    def _now_like(reference):
+        return datetime.now(reference.tzinfo)
 
 
 class FixtureTelegramClient:
