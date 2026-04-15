@@ -18,7 +18,7 @@ class TelegramBotClient(Protocol):
     def download_file(self, file_path: str) -> bytes: ...
 
 
-class TelegramChannelClient(Protocol):
+class TelethonChannelClient(Protocol):
     def get_latest_message_id(self, *, channel: str) -> int | None: ...
 
     def iter_channel_messages(
@@ -40,16 +40,26 @@ class FetchBatch:
     next_offset: int | None = None
 
 
+@dataclass(frozen=True)
+class DownloadableMessage:
+    message_id: int
+    published_at: str | None
+    title: str
+    file_unique_id: str
+    file_name: str | None
+    payload: dict[str, Any]
+
+
 class TelegramFetcher:
-    def __init__(self, *, client: TelegramBotClient | TelegramChannelClient, store: SqliteArasStore, config: ArasConfig) -> None:
+    def __init__(self, *, client: TelegramBotClient | TelethonChannelClient, store: SqliteArasStore, config: ArasConfig) -> None:
         self.client = client
         self.store = store
         self.config = config
 
     def poll_once(self, *, channel: str) -> FetchBatch:
-        if self._supports_telethon_channel_crawl():
-            return self._poll_channel_once(channel=channel)
-        return self._poll_bot_updates_once(channel=channel)
+        if hasattr(self.client, "get_updates"):
+            return self._poll_bot_updates_once(channel=channel)
+        return self._poll_telethon_once(channel=channel)
 
     def _poll_bot_updates_once(self, *, channel: str) -> FetchBatch:
         offset = self.store.get_next_update_offset()
@@ -75,21 +85,14 @@ class TelegramFetcher:
             file_id = parsed["document"]["file_id"]
             file_info = self.client.get_file(file_id)
             file_bytes = self.client.download_file(file_info["file_path"])
-            pdf_path = self._write_pdf(
-                update_id=update["update_id"],
-                file_unique_id=file_unique_id,
-                file_name=parsed["document"].get("file_name"),
-                payload=file_bytes,
-            )
-            report = ReportRecord(
-                id=None,
-                source="telegram",
+            report = self._record_report(
                 channel=channel,
                 message_id=parsed["message_id"],
                 published_at=self._format_timestamp(parsed.get("date")),
                 title=parsed.get("caption") or Path(parsed["document"].get("file_name", "report.pdf")).stem,
-                pdf_path=pdf_path,
-                content="",
+                file_unique_id=file_unique_id,
+                file_name=parsed["document"].get("file_name"),
+                payload=file_bytes,
                 metadata={
                     "file_unique_id": file_unique_id,
                     "telegram_file_id": file_id,
@@ -97,11 +100,10 @@ class TelegramFetcher:
                     "telegram_update_id": update["update_id"],
                 },
             )
-            inserted = self.store.record_download(report)
-            if inserted:
-                downloaded.append(report)
-            else:
+            if report is None:
                 skipped_duplicates.append(update)
+            else:
+                downloaded.append(report)
             safe_next_offset = update["update_id"] + 1
 
         if safe_next_offset is not None:
@@ -114,7 +116,7 @@ class TelegramFetcher:
             next_offset=safe_next_offset,
         )
 
-    def _poll_channel_once(self, *, channel: str) -> FetchBatch:
+    def _poll_telethon_once(self, *, channel: str) -> FetchBatch:
         last_seen_message_id = self.store.get_last_seen_message_id(channel)
         if last_seen_message_id is None:
             latest_message_id = self.client.get_latest_message_id(channel=channel)
@@ -130,82 +132,124 @@ class TelegramFetcher:
         downloaded: list[ReportRecord] = []
         skipped_duplicates: list[dict[str, Any]] = []
         ignored_updates: list[int] = []
-        safe_last_seen_message_id = last_seen_message_id
+        safe_last_seen = last_seen_message_id
 
-        try:
-            for message in sorted(messages, key=lambda item: item["message_id"]):
-                parsed = self._extract_pdf_message(message, expected_channel=channel)
-                message_id = int(message["message_id"])
-                if parsed is None:
-                    ignored_updates.append(message_id)
-                    safe_last_seen_message_id = message_id
-                    continue
+        for message in sorted(messages, key=lambda item: item["message_id"]):
+            parsed = self._extract_downloadable_message(message, expected_channel=channel)
+            if parsed is None:
+                ignored_updates.append(message["message_id"])
+                safe_last_seen = message["message_id"]
+                continue
 
-                file_unique_id = parsed["document"]["file_unique_id"]
-                if self.store.has_seen_file(file_unique_id):
-                    skipped_duplicates.append(message)
-                    safe_last_seen_message_id = message_id
-                    continue
+            if self.store.has_seen_file(parsed.file_unique_id):
+                skipped_duplicates.append(message)
+                safe_last_seen = message["message_id"]
+                continue
 
-                file_bytes = self.client.download_document(parsed)
-                pdf_path = self._write_pdf(
-                    update_id=message_id,
-                    file_unique_id=file_unique_id,
-                    file_name=parsed["document"].get("file_name"),
-                    payload=file_bytes,
-                )
-                report = ReportRecord(
-                    id=None,
-                    source="telegram",
-                    channel=channel,
-                    message_id=message_id,
-                    published_at=self._format_timestamp(parsed.get("date")),
-                    title=parsed.get("caption") or Path(parsed["document"].get("file_name", "report.pdf")).stem,
-                    pdf_path=pdf_path,
-                    content="",
-                    metadata={
-                        "file_unique_id": file_unique_id,
-                        "telegram_file_id": parsed["document"]["file_id"],
-                        "telegram_message_id": message_id,
-                    },
-                )
-                inserted = self.store.record_download(report)
-                if inserted:
-                    downloaded.append(report)
-                else:
-                    skipped_duplicates.append(message)
-                safe_last_seen_message_id = message_id
-        except Exception:
-            if safe_last_seen_message_id != last_seen_message_id:
-                self.store.set_last_seen_message_id(channel, safe_last_seen_message_id)
-            raise
+            payload = self.client.download_document(parsed.payload)
+            report = self._record_report(
+                channel=channel,
+                message_id=parsed.message_id,
+                published_at=parsed.published_at,
+                title=parsed.title,
+                file_unique_id=parsed.file_unique_id,
+                file_name=parsed.file_name,
+                payload=payload,
+                metadata={
+                    "file_unique_id": parsed.file_unique_id,
+                    "telegram_message_id": parsed.message_id,
+                    "source": "telethon",
+                },
+            )
+            if report is None:
+                skipped_duplicates.append(message)
+            else:
+                downloaded.append(report)
+            safe_last_seen = message["message_id"]
 
-        if safe_last_seen_message_id is not None:
-            self.store.set_last_seen_message_id(channel, safe_last_seen_message_id)
+        if safe_last_seen is not None and safe_last_seen != last_seen_message_id:
+            self.store.set_last_seen_message_id(channel, safe_last_seen)
 
         return FetchBatch(
             downloaded=downloaded,
             skipped_duplicates=skipped_duplicates,
             ignored_updates=ignored_updates,
-            next_offset=safe_last_seen_message_id,
+            next_offset=safe_last_seen,
         )
+
+    def _record_report(
+        self,
+        *,
+        channel: str,
+        message_id: int,
+        published_at: str | None,
+        title: str,
+        file_unique_id: str,
+        file_name: str | None,
+        payload: bytes,
+        metadata: dict[str, Any],
+    ) -> ReportRecord | None:
+        pdf_path = self._write_pdf(
+            update_id=message_id,
+            file_unique_id=file_unique_id,
+            file_name=file_name,
+            payload=payload,
+        )
+        report = ReportRecord(
+            id=None,
+            source="telegram",
+            channel=channel,
+            message_id=message_id,
+            published_at=published_at,
+            title=title,
+            pdf_path=pdf_path,
+            content="",
+            metadata=metadata,
+        )
+        inserted = self.store.record_download(report)
+        return report if inserted else None
 
     @staticmethod
     def _extract_pdf_message(update: dict[str, Any], *, expected_channel: str) -> dict[str, Any] | None:
-        payload = update.get("channel_post") or update.get("message") or update
+        payload = update.get("channel_post") or update.get("message")
         if not payload:
             return None
-        chat = payload.get("chat") or {}
-        if chat.get("title") != expected_channel:
+        if not TelegramFetcher._is_expected_channel(payload, expected_channel=expected_channel):
             return None
-        document = payload.get("document")
-        if not document:
-            return None
-        file_name = str(document.get("file_name", ""))
-        mime_type = str(document.get("mime_type", ""))
-        if mime_type != "application/pdf" and not file_name.lower().endswith(".pdf"):
+        if not TelegramFetcher._payload_has_pdf_document(payload):
             return None
         return payload
+
+    @staticmethod
+    def _extract_downloadable_message(message: dict[str, Any], *, expected_channel: str) -> DownloadableMessage | None:
+        if not TelegramFetcher._is_expected_channel(message, expected_channel=expected_channel):
+            return None
+        if not TelegramFetcher._payload_has_pdf_document(message):
+            return None
+        document = message["document"]
+        title = message.get("caption") or Path(document.get("file_name", "report.pdf")).stem
+        return DownloadableMessage(
+            message_id=message["message_id"],
+            published_at=TelegramFetcher._format_timestamp(message.get("date") or message.get("published_at")),
+            title=title,
+            file_unique_id=str(document["file_unique_id"]),
+            file_name=document.get("file_name"),
+            payload=message,
+        )
+
+    @staticmethod
+    def _is_expected_channel(payload: dict[str, Any], *, expected_channel: str) -> bool:
+        chat = payload.get("chat") or {}
+        return chat.get("title") == expected_channel
+
+    @staticmethod
+    def _payload_has_pdf_document(payload: dict[str, Any]) -> bool:
+        document = payload.get("document")
+        if not document:
+            return False
+        file_name = str(document.get("file_name", ""))
+        mime_type = str(document.get("mime_type", ""))
+        return mime_type == "application/pdf" or file_name.lower().endswith(".pdf")
 
     def _write_pdf(self, *, update_id: int, file_unique_id: str, file_name: str | None, payload: bytes) -> Path:
         safe_name = (file_name or "report.pdf").replace("/", "-")
@@ -214,13 +258,9 @@ class TelegramFetcher:
         return target
 
     @staticmethod
-    def _format_timestamp(timestamp: int | None) -> str | None:
+    def _format_timestamp(timestamp: int | str | None) -> str | None:
         if timestamp is None:
             return None
+        if isinstance(timestamp, str):
+            return timestamp
         return datetime.fromtimestamp(timestamp, tz=UTC).isoformat().replace("+00:00", "Z")
-
-    def _supports_telethon_channel_crawl(self) -> bool:
-        return all(
-            hasattr(self.client, attribute)
-            for attribute in ("get_latest_message_id", "iter_channel_messages", "download_document")
-        )

@@ -6,7 +6,7 @@ from typing import Any
 
 from .agents import AnalystCoordinator
 from .config import ArasConfig
-from .domain import PipelineRunSummary, ReportRecord
+from .domain import PipelineExecution, PipelineRunSummary, ReportRecord
 from .fetcher import TelegramFetcher
 from .parser import DocumentParser
 from .router import TaskRouter
@@ -21,7 +21,7 @@ class ArasPipeline:
     store: SqliteArasStore
     config: ArasConfig
 
-    def run_once(self, *, channel: str) -> PipelineRunSummary:
+    def run_once(self, *, channel: str) -> PipelineExecution:
         fetcher = TelegramFetcher(client=self.client, store=self.store, config=self.config)
         parser = DocumentParser()
         router = TaskRouter()
@@ -39,15 +39,23 @@ class ArasPipeline:
                 coordinator.build_insights(parsed, routes, source_document_id=stored_report.id or 0)
             )
 
+        wiki_pages: list[Path] = []
+        signal_files: list[Path] = []
         if insights:
-            wiki.materialize(insights)
-            signals.generate(insights)
+            wiki_result = wiki.materialize(insights)
+            signal_result = signals.generate(insights)
+            wiki_pages = wiki_result.page_paths
+            signal_files = signal_result.snapshot_paths
 
-        return PipelineRunSummary(
-            downloaded=len(batch.downloaded),
-            duplicates=len(batch.skipped_duplicates),
-            ignored=len(batch.ignored_updates),
-            next_offset=batch.next_offset,
+        return PipelineExecution(
+            summary=PipelineRunSummary(
+                downloaded=len(batch.downloaded),
+                duplicates=len(batch.skipped_duplicates),
+                ignored=len(batch.ignored_updates),
+                next_offset=batch.next_offset,
+            ),
+            wiki_pages=wiki_pages,
+            signal_files=signal_files,
         )
 
     def _hydrate_report(self, report: ReportRecord) -> ReportRecord:

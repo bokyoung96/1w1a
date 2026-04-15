@@ -126,25 +126,21 @@ class SqliteArasStore:
             return None if row is None else int(row["value"])
 
     def set_next_update_offset(self, update_offset: int) -> None:
-        with self._connect() as connection:
-            connection.execute(
-                """
-                INSERT INTO pipeline_state (key, value)
-                VALUES ('telegram_next_update_offset', ?)
-                ON CONFLICT(key) DO UPDATE SET value = excluded.value
-                """,
-                (str(update_offset),),
-            )
+        self._set_pipeline_state("telegram_next_update_offset", update_offset)
 
     def get_last_seen_message_id(self, channel: str) -> int | None:
+        key = self._last_seen_key(channel)
         with self._connect() as connection:
             row = connection.execute(
                 "SELECT value FROM pipeline_state WHERE key = ?",
-                (self._last_seen_message_key(channel),),
+                (key,),
             ).fetchone()
             return None if row is None else int(row["value"])
 
     def set_last_seen_message_id(self, channel: str, message_id: int) -> None:
+        self._set_pipeline_state(self._last_seen_key(channel), message_id)
+
+    def _set_pipeline_state(self, key: str, value: int) -> None:
         with self._connect() as connection:
             connection.execute(
                 """
@@ -152,9 +148,9 @@ class SqliteArasStore:
                 VALUES (?, ?)
                 ON CONFLICT(key) DO UPDATE SET value = excluded.value
                 """,
-                (self._last_seen_message_key(channel), str(message_id)),
+                (key, str(value)),
             )
 
     @staticmethod
-    def _last_seen_message_key(channel: str) -> str:
-        return f"telethon.last_seen_message_id.{channel}"
+    def _last_seen_key(channel: str) -> str:
+        return f"telethon_last_seen_message_id::{channel}"

@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import argparse
 import json
-from dataclasses import asdict
+from importlib import import_module
 from pathlib import Path
 from typing import Sequence
 
 from .config import build_config
+from .pipeline import ArasPipeline
+from .storage import SqliteArasStore
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
@@ -16,6 +18,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
     show_config = subparsers.add_parser("show-config")
     show_config.add_argument("--base-dir", default=".")
 
+    auth = subparsers.add_parser("auth-login")
+    auth.add_argument("--base-dir", default=".")
+
     run_once = subparsers.add_parser("run-once")
     run_once.add_argument("--channel", required=True)
     run_once.add_argument("--base-dir", default=".")
@@ -24,11 +29,15 @@ def build_arg_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def build_default_pipeline(*, base_dir: Path, fixtures_path: str | None = None):
-    raise RuntimeError(
-        "Default pipeline wiring depends on parser/router/agents lanes. "
-        "Use tests to inject a pipeline or run from a merged checkout with those modules available."
-    )
+def build_default_pipeline(*, base_dir: Path, fixtures_path: str | None = None) -> ArasPipeline:
+    config = build_config(base_dir)
+    store = SqliteArasStore(config.paths.state_db)
+    telethon_module = import_module("analysts.telethon_client")
+    if fixtures_path:
+        client = telethon_module.FixtureTelegramClient.from_fixture_path(Path(fixtures_path))
+        return ArasPipeline(client=client, store=store, config=config)
+    client = telethon_module.TelethonChannelClient(base_dir=base_dir, config=config)
+    return ArasPipeline(client=client, store=store, config=config)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -38,8 +47,14 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.command == "show-config":
         config = build_config(base_dir)
-        payload = asdict(config)
+        payload = config.to_display_dict()
         print(json.dumps(payload, indent=2, default=str, sort_keys=True))
+        return 0
+
+    if args.command == "auth-login":
+        config = build_config(base_dir)
+        telethon_module = import_module("analysts.telethon_client")
+        telethon_module.auth_login(base_dir=base_dir, config=config)
         return 0
 
     if args.command == "run-once":

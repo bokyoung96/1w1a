@@ -71,3 +71,10 @@ class PipelineRunSummary:
     duplicates: int
     ignored: int
     next_offset: int | None
+
+
+@dataclass(frozen=True)
+class PipelineExecution:
+    summary: PipelineRunSummary
+    wiki_pages: list[Path]
+    signal_files: list[Path]
