@@ -1,11 +1,10 @@
 import asyncio
+import logging
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
-from analysts.config import build_config
 from analysts.domain import PipelineExecution, PipelineRunSummary, ReportRecord
-from analysts.storage import SqliteArasStore
 from analysts.watcher import AsyncWatchResult, WatchMessageResult, WatchUntilRunner
 
 
@@ -13,10 +12,13 @@ from analysts.watcher import AsyncWatchResult, WatchMessageResult, WatchUntilRun
 class FakeAsyncClient:
     messages: list[dict]
     calls: list[tuple[str, datetime]] | None = None
+    delay_seconds: float = 0.0
 
     async def watch_channel(self, *, channel: str, until: datetime, on_message) -> None:
         if self.calls is not None:
             self.calls.append((channel, until))
+        if self.delay_seconds:
+            await asyncio.sleep(self.delay_seconds)
         for message in self.messages:
             await on_message(message)
 
@@ -145,6 +147,29 @@ def test_watch_until_skips_duplicate_reports_without_resummarizing(tmp_path: Pat
 
     assert result == AsyncWatchResult(seen=2, downloaded=1, duplicates=1, summarized=1)
     assert pipeline.calls == [101]
+
+
+def test_watch_until_recovers_unsummarized_duplicate_report(tmp_path: Path) -> None:
+    report = _report(tmp_path, message_id=111, file_unique_id='uniq-111')
+    pipeline = FakePipeline()
+    runner = WatchUntilRunner(
+        client=FakeAsyncClient(messages=[{'message_id': 111}]),
+        message_ingestor=FakeMessageIngestor(
+            [WatchMessageResult(status='existing_unsummarized', report=report)]
+        ),
+        pipeline=pipeline,
+        now_fn=lambda: datetime.fromisoformat('2026-04-15T13:00:00+09:00'),
+    )
+
+    result = asyncio.run(
+        runner.watch_until(
+            channel='DOC_POOL',
+            until=datetime.fromisoformat('2026-04-15T17:30:00+09:00'),
+        )
+    )
+
+    assert result == AsyncWatchResult(seen=1, duplicates=1, summarized=1)
+    assert pipeline.calls == [111]
 
 
 def test_watch_until_retries_summarization_immediately(tmp_path: Path) -> None:
@@ -278,3 +303,54 @@ def test_watch_until_processes_message_accepted_before_deadline_even_if_it_finis
     )
 
     assert result == AsyncWatchResult(seen=1, downloaded=1, summarized=1)
+
+
+def test_watch_until_emits_progress_logs_for_retry_and_finish(tmp_path: Path, caplog) -> None:
+    report = _report(tmp_path, message_id=601, file_unique_id='uniq-601')
+    logger = logging.getLogger('analysts.watch.test')
+    runner = WatchUntilRunner(
+        client=FakeAsyncClient(messages=[{'message_id': 601}]),
+        message_ingestor=FakeMessageIngestor([WatchMessageResult(status='downloaded', report=report)]),
+        pipeline=FakePipeline(failures_before_success=1),
+        now_fn=lambda: datetime.fromisoformat('2026-04-15T13:00:00+09:00'),
+        summarize_retry_limit=1,
+        heartbeat_interval_seconds=60.0,
+        logger=logger,
+    )
+
+    with caplog.at_level(logging.INFO, logger='analysts.watch.test'):
+        asyncio.run(
+            runner.watch_until(
+                channel='DOC_POOL',
+                until=datetime.fromisoformat('2026-04-15T17:30:00+09:00'),
+            )
+        )
+
+    text = caplog.text
+    assert 'watch_started channel=DOC_POOL' in text
+    assert 'watch_message status=downloaded channel=DOC_POOL message_id=601' in text
+    assert 'watch_retry message_id=601 attempt=1' in text
+    assert 'watch_summary_ok message_id=601' in text
+    assert 'watch_finished channel=DOC_POOL' in text
+
+
+def test_watch_until_emits_heartbeat_while_waiting(tmp_path: Path, caplog) -> None:
+    logger = logging.getLogger('analysts.watch.heartbeat')
+    runner = WatchUntilRunner(
+        client=FakeAsyncClient(messages=[], delay_seconds=0.03),
+        message_ingestor=FakeMessageIngestor([]),
+        pipeline=FakePipeline(),
+        now_fn=lambda: datetime.fromisoformat('2026-04-15T13:00:00+09:00'),
+        heartbeat_interval_seconds=0.01,
+        logger=logger,
+    )
+
+    with caplog.at_level(logging.INFO, logger='analysts.watch.heartbeat'):
+        asyncio.run(
+            runner.watch_until(
+                channel='DOC_POOL',
+                until=datetime.fromisoformat('2026-04-15T17:30:00+09:00'),
+            )
+        )
+
+    assert 'watch_heartbeat channel=DOC_POOL' in caplog.text

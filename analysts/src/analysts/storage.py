@@ -119,6 +119,19 @@ class SqliteArasStore:
             ).fetchone()
         return None if row is None else self._row_to_report(row)
 
+    def get_report_by_file_unique_id(self, file_unique_id: str) -> ReportRecord | None:
+        with self._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT id, source, channel, message_id, published_at, title, pdf_path, content, metadata_json
+                FROM reports
+                WHERE file_unique_id = ?
+                LIMIT 1
+                """,
+                (file_unique_id,),
+            ).fetchone()
+        return None if row is None else self._row_to_report(row)
+
     def get_next_update_offset(self) -> int | None:
         with self._connect() as connection:
             row = connection.execute(

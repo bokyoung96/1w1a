@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
@@ -55,6 +55,7 @@ class ArasPipeline:
         return self.summarize_report(report)
 
     def summarize_report(self, report: ReportRecord) -> PipelineExecution:
+        report = self._resolve_report_path(report)
         parsed = DocumentParser().parse(report)
         routes = TaskRouter().route(parsed)
         ingestion = PdfIngestionPipeline(self.config).ingest(report=report, parsed=parsed, routes=routes)
@@ -80,3 +81,9 @@ class ArasPipeline:
             if str(stored.metadata.get("file_unique_id")) == file_unique_id:
                 return stored
         return report
+
+    def _resolve_report_path(self, report: ReportRecord) -> ReportRecord:
+        if report.pdf_path.is_absolute() or report.pdf_path.exists():
+            return report
+        resolved = self.config.paths.base_dir / report.pdf_path
+        return replace(report, pdf_path=resolved)

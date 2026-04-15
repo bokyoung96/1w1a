@@ -266,7 +266,13 @@ def test_ingest_message_skips_duplicate_without_resummarizing_download(tmp_path:
     config = build_config(tmp_path)
     store = SqliteArasStore(config.paths.state_db)
     fetcher = TelegramFetcher(client=client, store=store, config=config)
-    assert fetcher.ingest_message(channel='DOC_POOL', message=message).status == 'downloaded'
+    first = fetcher.ingest_message(channel='DOC_POOL', message=message)
+    assert first.status == 'downloaded'
+    stored = store.get_report_by_file_unique_id('uniq-701')
+    assert stored is not None
+    summary_path = config.paths.processed_dir / f'report-{stored.id}-summary.json'
+    summary_path.parent.mkdir(parents=True, exist_ok=True)
+    summary_path.write_text('{}\n')
 
     duplicate = fetcher.ingest_message(channel='DOC_POOL', message=message)
 
@@ -274,3 +280,33 @@ def test_ingest_message_skips_duplicate_without_resummarizing_download(tmp_path:
     assert duplicate.report is None
     assert store.get_last_seen_message_id('DOC_POOL') == 701
     assert client.downloaded_file_ids == ['file-701']
+
+
+def test_ingest_message_recovers_existing_report_when_summary_is_missing(tmp_path: Path) -> None:
+    message = {
+        'message_id': 702,
+        'date': 1713082120,
+        'chat': {'title': 'DOC_POOL'},
+        'caption': 'Needs summary recovery',
+        'document': {
+            'file_id': 'file-702',
+            'file_unique_id': 'uniq-702',
+            'file_name': 'recovery-702.pdf',
+            'mime_type': 'application/pdf',
+        },
+    }
+    client = FakeTelethonClient([message])
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    fetcher = TelegramFetcher(client=client, store=store, config=config)
+
+    first = fetcher.ingest_message(channel='DOC_POOL', message=message)
+    assert first.status == 'downloaded'
+    assert first.report is not None
+
+    recovered = fetcher.ingest_message(channel='DOC_POOL', message=message)
+
+    assert recovered.status == 'existing_unsummarized'
+    assert recovered.report is not None
+    assert recovered.report.message_id == 702
+    assert client.downloaded_file_ids == ['file-702']

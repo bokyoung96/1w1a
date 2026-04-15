@@ -58,10 +58,18 @@ PYTHONPATH=src ../.venv/bin/python -m analysts.cli watch-until \
   --until 2026-04-15T17:30:00+09:00
 ```
 
+### 4a) Easier launcher from repo root
+```bash
+cd /Users/bkchoi/Desktop/GitHub/1w1a
+.venv/bin/python analysts/run_watcher.py --until 2026-04-15T17:30:00+09:00
+```
+
 - deadline must be timezone-aware ISO-8601
 - new unique PDF reports are downloaded once and summarized immediately
 - summarize failures retry immediately without stopping the watch loop
 - no new messages are accepted after the deadline; any report already accepted before cutoff is allowed to finish processing
+- progress logs stream to stdout and `analysts/data/state/watch-runner.log`
+- heartbeat logs show liveness while the watcher is idle
 
 ## Active pipeline map
 The live analysts path is intentionally narrow:

@@ -5,6 +5,7 @@ import types
 from pathlib import Path
 
 from analysts.cli import build_default_pipeline, main
+from analysts.runner_entry import main as runner_entry_main
 
 
 
@@ -142,3 +143,21 @@ def test_watch_until_command_dispatches_to_async_runner(
     assert exit_code == 0
     assert calls == [(tmp_path, 'DOC_POOL', '2026-04-15T17:30:00+09:00')]
     assert 'summarized=1' in capsys.readouterr().out
+
+
+def test_runner_entry_uses_doc_pool_default_and_supplied_base_dir(tmp_path: Path, monkeypatch) -> None:
+    calls: list[tuple[Path, str, str]] = []
+
+    def fake_run_watch_until(*, base_dir: Path, channel: str, until: str) -> int:
+        calls.append((base_dir, channel, until))
+        return 0
+
+    monkeypatch.setattr('analysts.runner_entry.run_watch_until', fake_run_watch_until)
+
+    exit_code = runner_entry_main(
+        ['--until', '2026-04-15T17:30:00+09:00'],
+        default_base_dir=tmp_path,
+    )
+
+    assert exit_code == 0
+    assert calls == [(tmp_path, 'DOC_POOL', '2026-04-15T17:30:00+09:00')]

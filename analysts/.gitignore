@@ -7,6 +7,4 @@ data/raw/
 data/processed/
 data/wiki/
 data/signals/
-data/state/*.session
-data/state/*.session-journal
-data/state/*.sqlite3
+data/state/

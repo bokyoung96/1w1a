@@ -1,6 +1,7 @@
 import json
 import sys
 import types
+from dataclasses import replace
 from pathlib import Path
 
 from analysts.cli import main
@@ -131,6 +132,34 @@ def test_summarize_latest_uses_existing_downloaded_report(tmp_path: Path) -> Non
 
     assert len(execution.summaries) == 2
     assert execution.summary.next_offset == 163007
+
+
+def test_summarize_latest_resolves_relative_stored_pdf_paths_against_base_dir(tmp_path: Path) -> None:
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    relative_pdf_path = Path('data') / 'raw' / 'relative-live.pdf'
+    absolute_pdf_path = tmp_path / relative_pdf_path
+    absolute_pdf_path.parent.mkdir(parents=True, exist_ok=True)
+    absolute_pdf_path.write_bytes(b'not readable pdf bytes')
+    store.record_download(
+        ReportRecord(
+            id=None,
+            source='telegram',
+            channel='DOC_POOL',
+            message_id=163090,
+            published_at='2026-04-15T02:56:28Z',
+            title='AI 로 돈을 번다는 것',
+            pdf_path=relative_pdf_path,
+            content='',
+            metadata={'file_unique_id': 'telethon-163090', 'telegram_caption_text': 'caption fallback'},
+        )
+    )
+    pipeline = ArasPipeline(client=object(), store=store, config=config, summarizer=FakeSummarizer())
+
+    execution = pipeline.summarize_latest(channel='DOC_POOL')
+
+    assert execution.summary.next_offset == 163090
+    assert len(execution.summaries) == 2
 
 
 

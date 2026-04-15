@@ -204,6 +204,9 @@ class TelegramFetcher:
 
     def _ingest_downloadable_message(self, *, channel: str, parsed: DownloadableMessage) -> WatchMessageResult:
         if self.store.has_seen_file(parsed.file_unique_id):
+            existing_report = self.store.get_report_by_file_unique_id(parsed.file_unique_id)
+            if existing_report is not None and not self._summary_exists(existing_report):
+                return WatchMessageResult(status="existing_unsummarized", report=existing_report)
             return WatchMessageResult(status="duplicate")
 
         payload = self.client.download_document(parsed.payload)
@@ -218,6 +221,9 @@ class TelegramFetcher:
             metadata=self._telethon_metadata(parsed),
         )
         if report is None:
+            existing_report = self.store.get_report_by_file_unique_id(parsed.file_unique_id)
+            if existing_report is not None and not self._summary_exists(existing_report):
+                return WatchMessageResult(status="existing_unsummarized", report=existing_report)
             return WatchMessageResult(status="duplicate")
         return WatchMessageResult(status="downloaded", report=report)
 
@@ -229,6 +235,10 @@ class TelegramFetcher:
             "source": "telethon",
             "telegram_caption_text": parsed.payload.get("caption") or "",
         }
+
+    def _summary_exists(self, report: ReportRecord) -> bool:
+        slug = f"report-{report.id or report.message_id}"
+        return (self.config.paths.processed_dir / f"{slug}-summary.json").exists()
 
     @staticmethod
     def _extract_pdf_message(update: dict[str, Any], *, expected_channel: str) -> dict[str, Any] | None:

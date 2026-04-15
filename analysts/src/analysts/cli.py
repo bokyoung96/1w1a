@@ -3,6 +3,8 @@ from __future__ import annotations
 import asyncio
 import argparse
 import json
+import logging
+import sys
 from datetime import datetime
 from importlib import import_module
 from pathlib import Path
@@ -91,8 +93,29 @@ def print_watch_summary(*, result) -> None:
     )
 
 
+def configure_watch_logger(*, base_dir: Path) -> logging.Logger:
+    logger = logging.getLogger("analysts.watch")
+    if logger.handlers:
+        return logger
+    logger.setLevel(logging.INFO)
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
+    stream_handler = logging.StreamHandler(sys.stdout)
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
+    log_path = build_config(base_dir).paths.state_dir / "watch-runner.log"
+    file_handler = logging.FileHandler(log_path, encoding="utf-8")
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+    logger.propagate = False
+    return logger
+
+
 def run_watch_until(*, base_dir: Path, channel: str, until: str) -> int:
-    result = asyncio.run(build_watch_runner(base_dir=base_dir).watch_until(channel=channel, until=parse_watch_deadline(until)))
+    logger = configure_watch_logger(base_dir=base_dir)
+    logger.info("watch_cli_invoked channel=%s base_dir=%s until=%s", channel, base_dir, until)
+    runner = build_watch_runner(base_dir=base_dir)
+    runner.logger = logger
+    result = asyncio.run(runner.watch_until(channel=channel, until=parse_watch_deadline(until)))
     print_watch_summary(result=result)
     return 0
 
