@@ -135,3 +135,26 @@ class SqliteArasStore:
                 """,
                 (str(update_offset),),
             )
+
+    def get_last_seen_message_id(self, channel: str) -> int | None:
+        with self._connect() as connection:
+            row = connection.execute(
+                "SELECT value FROM pipeline_state WHERE key = ?",
+                (self._last_seen_message_key(channel),),
+            ).fetchone()
+            return None if row is None else int(row["value"])
+
+    def set_last_seen_message_id(self, channel: str, message_id: int) -> None:
+        with self._connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO pipeline_state (key, value)
+                VALUES (?, ?)
+                ON CONFLICT(key) DO UPDATE SET value = excluded.value
+                """,
+                (self._last_seen_message_key(channel), str(message_id)),
+            )
+
+    @staticmethod
+    def _last_seen_message_key(channel: str) -> str:
+        return f"telethon.last_seen_message_id.{channel}"
