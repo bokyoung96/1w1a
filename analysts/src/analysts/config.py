@@ -45,10 +45,31 @@ class TelethonConfig:
 
 
 @dataclass(frozen=True)
+class SummaryConfig:
+    provider: str = "codex_cli"
+    model: str = "gpt-5.4-mini"
+    reasoning_effort: str = "low"
+    max_input_chars: int = 3200
+    max_key_points: int = 4
+    cli_command: str = "codex"
+
+    def to_display_dict(self) -> dict[str, Any]:
+        return {
+            "provider": self.provider,
+            "model": self.model,
+            "reasoning_effort": self.reasoning_effort,
+            "max_input_chars": self.max_input_chars,
+            "max_key_points": self.max_key_points,
+            "cli_command": self.cli_command,
+        }
+
+
+@dataclass(frozen=True)
 class ArasConfig:
     paths: ArasPaths
     polling_limit: int = 100
     telethon: TelethonConfig | None = None
+    summary: SummaryConfig = SummaryConfig()
 
     def to_display_dict(self) -> dict[str, Any]:
         return {
@@ -66,12 +87,14 @@ class ArasConfig:
             },
             "polling_limit": self.polling_limit,
             "telethon": None if self.telethon is None else self.telethon.to_display_dict(),
+            "summary": self.summary.to_display_dict(),
         }
 
 
 @dataclass(frozen=True)
 class LocalRuntimeConfig:
     telethon: TelethonConfig | None
+    summary: SummaryConfig
 
 
 def build_config(base_dir: Path) -> ArasConfig:
@@ -101,7 +124,7 @@ def build_config(base_dir: Path) -> ArasConfig:
         paths.state_dir,
     ):
         directory.mkdir(parents=True, exist_ok=True)
-    return ArasConfig(paths=paths, telethon=runtime.telethon)
+    return ArasConfig(paths=paths, telethon=runtime.telethon, summary=runtime.summary)
 
 
 def require_telethon_config(config: ArasConfig) -> TelethonConfig:
@@ -115,25 +138,32 @@ def require_telethon_config(config: ArasConfig) -> TelethonConfig:
 
 def _load_local_runtime_config(local_config_path: Path) -> LocalRuntimeConfig:
     if not local_config_path.exists():
-        return LocalRuntimeConfig(telethon=None)
+        return LocalRuntimeConfig(telethon=None, summary=SummaryConfig())
 
     payload = json.loads(local_config_path.read_text())
     telegram_payload = payload.get("telegram") or {}
-    if not telegram_payload:
-        return LocalRuntimeConfig(telethon=None)
+    summary_payload = payload.get("summary") or {}
 
-    mode = str(telegram_payload.get("mode", "telethon"))
-    if mode != "telethon":
-        return LocalRuntimeConfig(telethon=None)
+    telethon = None
+    if telegram_payload:
+        mode = str(telegram_payload.get("mode", "telethon"))
+        if mode == "telethon":
+            telethon = TelethonConfig(
+                api_id=int(telegram_payload["api_id"]),
+                api_hash=str(telegram_payload["api_hash"]),
+                phone_number=str(telegram_payload["phone_number"]),
+                channel=str(telegram_payload["channel"]),
+                session_name=str(telegram_payload.get("session_name", "telethon")),
+                mode=mode,
+                pdf_only=bool(telegram_payload.get("pdf_only", True)),
+            )
 
-    return LocalRuntimeConfig(
-        telethon=TelethonConfig(
-            api_id=int(telegram_payload["api_id"]),
-            api_hash=str(telegram_payload["api_hash"]),
-            phone_number=str(telegram_payload["phone_number"]),
-            channel=str(telegram_payload["channel"]),
-            session_name=str(telegram_payload.get("session_name", "telethon")),
-            mode=mode,
-            pdf_only=bool(telegram_payload.get("pdf_only", True)),
-        )
+    summary = SummaryConfig(
+        provider=str(summary_payload.get("provider", "codex_cli")),
+        model=str(summary_payload.get("model", "gpt-5.4-mini")),
+        reasoning_effort=str(summary_payload.get("reasoning_effort", "low")),
+        max_input_chars=int(summary_payload.get("max_input_chars", 3200)),
+        max_key_points=int(summary_payload.get("max_key_points", 4)),
+        cli_command=str(summary_payload.get("cli_command", "codex")),
     )
+    return LocalRuntimeConfig(telethon=telethon, summary=summary)

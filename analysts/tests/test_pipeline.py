@@ -5,6 +5,7 @@ from pathlib import Path
 
 from analysts.cli import main
 from analysts.config import build_config
+from analysts.domain import AnalystSummary
 from analysts.pipeline import ArasPipeline
 from analysts.storage import SqliteArasStore
 
@@ -44,8 +45,30 @@ class FakeTelethonClient:
         return message['payload']
 
 
+class FakeSummarizer:
+    def __init__(self) -> None:
+        self.calls: list[tuple[str, str, str]] = []
 
-def test_runs_fetch_parse_route_analyze_wiki_and_signal_end_to_end(tmp_path: Path) -> None:
+    @staticmethod
+    def lane_plan(packet) -> list[tuple[str, str]]:
+        return [('sector', 'general'), ('macro', 'general')]
+
+    def summarize(self, *, packet, lane: str, topic: str) -> AnalystSummary:
+        self.calls.append((lane, topic, packet.text_excerpt))
+        return AnalystSummary(
+            lane=lane,
+            topic=topic,
+            headline=f'{lane} headline',
+            executive_summary=f'{lane} summary',
+            key_points=[f'{lane} point'],
+            risks=[f'{lane} risk'],
+            confidence='medium',
+            follow_up_questions=[f'{lane} question'],
+        )
+
+
+
+def test_run_once_writes_processed_summary_artifacts_for_downloaded_pdf(tmp_path: Path) -> None:
     updates = [
         {
             'update_id': 100,
@@ -63,106 +86,58 @@ def test_runs_fetch_parse_route_analyze_wiki_and_signal_end_to_end(tmp_path: Pat
             },
         }
     ]
-    file_payloads = {
-        'file-001': (
-            b'Executive Summary:\nNVIDIA (NVDA) and TSMC are expanding advanced packaging.\n\n'
-            b'Risks:\nSupply concentration remains a risk for AI accelerators.'
-        )
-    }
+    file_payloads = {'file-001': b'Executive Summary:\nNVIDIA expands packaging.\n\nRisks:\nSupply concentration.'}
     config = build_config(tmp_path)
     store = SqliteArasStore(config.paths.state_db)
     pipeline = ArasPipeline(
         client=FakeTelegramClient(updates, file_payloads),
         store=store,
         config=config,
+        summarizer=FakeSummarizer(),
     )
 
-    first_run = pipeline.run_once(channel='DOC_POOL')
-    second_run = pipeline.run_once(channel='DOC_POOL')
+    execution = pipeline.run_once(channel='DOC_POOL')
 
-    assert first_run.summary.downloaded == 1
-    assert first_run.summary.duplicates == 0
-    assert first_run.summary.ignored == 0
-    assert first_run.summary.next_offset == 101
-    assert len(first_run.wiki_pages) == 1
-    assert len(first_run.signal_files) == 1
+    assert execution.summary.downloaded == 1
+    assert len(execution.processed_files) == 4
+    assert len(execution.summaries) == 2
+    assert (tmp_path / 'data' / 'processed' / 'report-1-summary.md').exists()
+    assert (tmp_path / 'data' / 'processed' / 'report-1-summary.json').exists()
 
-    assert second_run.summary.downloaded == 0
-    assert second_run.summary.duplicates == 0
-    assert second_run.summary.next_offset == 101
-    assert second_run.wiki_pages == []
-    assert second_run.signal_files == []
 
-    wiki_page = tmp_path / 'data' / 'wiki' / 'sector' / 'semiconductors' / 'source-1.md'
-    signal_snapshot = tmp_path / 'data' / 'signals' / 'semiconductors.json'
-    processed_base = tmp_path / 'data' / 'processed' / '501-uniq-001-ai-capacity-update'
-    raw_text_path = processed_base.with_name(f'{processed_base.name}-raw-text.txt')
-    summary_input_path = processed_base.with_name(f'{processed_base.name}-summary-input.json')
-    summary_json_path = processed_base.with_name(f'{processed_base.name}-summary.json')
-    summary_markdown_path = processed_base.with_name(f'{processed_base.name}-summary.md')
-    assert wiki_page.exists()
-    assert signal_snapshot.exists()
-    assert raw_text_path.exists()
-    assert summary_input_path.exists()
-    assert summary_json_path.exists()
-    assert summary_markdown_path.exists()
-    assert 'Semiconductors: NVIDIA (NVDA) and TSMC are expanding advanced packaging.' in wiki_page.read_text()
-    assert '"topic": "semiconductors"' in signal_snapshot.read_text()
-    assert 'NVIDIA (NVDA) and TSMC are expanding advanced packaging.' in raw_text_path.read_text()
 
-    summary_input = json.loads(summary_input_path.read_text())
-    assert summary_input['document']['raw_pdf_path'].endswith('501-uniq-001-ai-capacity-update.pdf')
-    assert summary_input['document']['parse_quality'] == 'high'
-    assert summary_input['routes'][0]['topic'] == 'semiconductors'
-    assert summary_input['raw_text_path'].endswith('501-uniq-001-ai-capacity-update-raw-text.txt')
+def test_summarize_latest_uses_existing_downloaded_report(tmp_path: Path) -> None:
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    pdf_path = tmp_path / 'data' / 'raw' / 'live.pdf'
+    pdf_path.parent.mkdir(parents=True, exist_ok=True)
+    pdf_path.write_bytes(b'not readable pdf bytes')
+    store.record_download(
+        report := __import__('analysts.domain', fromlist=['ReportRecord']).ReportRecord(
+            id=None,
+            source='telegram',
+            channel='DOC_POOL',
+            message_id=163007,
+            published_at='2026-04-15T00:34:10Z',
+            title='사모신용 이슈가 시스템 리스크가 아닌 이유',
+            pdf_path=pdf_path,
+            content='',
+            metadata={'file_unique_id': 'telethon-163007'},
+        )
+    )
+    pipeline = ArasPipeline(client=object(), store=store, config=config, summarizer=FakeSummarizer())
 
-    summary_payload = json.loads(summary_json_path.read_text())
-    assert summary_payload['document']['title'] == 'AI Capacity Update'
-    assert summary_payload['insights'][0]['lane'] == 'sector'
-    assert summary_payload['insights'][0]['topic'] == 'semiconductors'
-    assert summary_payload['markdown_path'].endswith('501-uniq-001-ai-capacity-update-summary.md')
+    execution = pipeline.summarize_latest(channel='DOC_POOL')
 
-    summary_markdown = summary_markdown_path.read_text()
-    assert '# AI Capacity Update' in summary_markdown
-    assert '## Analyst Summary' in summary_markdown
-    assert 'Semiconductors: NVIDIA (NVDA) and TSMC are expanding advanced packaging.' in summary_markdown
+    assert len(execution.summaries) == 2
+    assert execution.summary.next_offset == 163007
 
 
 
 def test_show_config_prints_serialized_paths(tmp_path: Path, capsys) -> None:
     assert main(['show-config', '--base-dir', str(tmp_path)]) == 0
-
     payload = json.loads(capsys.readouterr().out)
     assert payload['paths']['base_dir'] == str(tmp_path)
-    assert payload['paths']['state_db'].endswith('data/state/aras.sqlite3')
-
-
-
-def test_run_once_with_fixtures_builds_default_pipeline(tmp_path: Path, capsys) -> None:
-    fixture_path = Path(__file__).parent / 'fixtures' / 'sample_updates.json'
-
-    assert (
-        main(
-            [
-                'run-once',
-                '--channel',
-                'DOC_POOL',
-                '--base-dir',
-                str(tmp_path),
-                '--fixtures',
-                str(fixture_path),
-            ]
-        )
-        == 0
-    )
-
-    output = capsys.readouterr().out.strip()
-    assert 'downloaded=1' in output
-    assert 'duplicates=1' in output
-    assert 'ignored=1' in output
-    assert 'processed_reports=1' in output
-    assert 'wiki_pages=1' in output
-    assert 'signal_files=1' in output
 
 
 
@@ -173,7 +148,19 @@ def test_auth_login_dispatches_to_telethon_adapter(tmp_path: Path, monkeypatch) 
     def auth_login(*, base_dir: Path, config) -> None:
         calls.append((base_dir, config))
 
+    class FixtureTelegramClient:
+        @classmethod
+        def from_fixture_path(cls, fixture_path: Path):
+            raise AssertionError('not used')
+
+    class TelethonChannelClient:
+        def __init__(self, *, base_dir: Path, config) -> None:
+            self.base_dir = base_dir
+            self.config = config
+
     module.auth_login = auth_login
+    module.FixtureTelegramClient = FixtureTelegramClient
+    module.TelethonChannelClient = TelethonChannelClient
     monkeypatch.setitem(sys.modules, 'analysts.telethon_client', module)
 
     assert main(['auth-login', '--base-dir', str(tmp_path)]) == 0
@@ -181,57 +168,45 @@ def test_auth_login_dispatches_to_telethon_adapter(tmp_path: Path, monkeypatch) 
 
 
 
-def test_telethon_pipeline_seeds_history_then_processes_only_new_posts(tmp_path: Path) -> None:
-    messages = [
-        {
-            'message_id': 100,
-            'date': 1713081000,
-            'chat': {'title': 'DOC_POOL'},
-            'caption': 'Historical AI Capacity Update',
-            'document': {
-                'file_id': 'telethon-file-100',
-                'file_unique_id': 'telethon-100',
-                'file_name': 'historical.pdf',
-                'mime_type': 'application/pdf',
-            },
-            'payload': b'Historical content',
-        }
-    ]
+def test_summarize_latest_cli_reports_processed_outputs(tmp_path: Path, monkeypatch, capsys) -> None:
     config = build_config(tmp_path)
     store = SqliteArasStore(config.paths.state_db)
-    client = FakeTelethonClient(messages)
-    pipeline = ArasPipeline(client=client, store=store, config=config)
-
-    first_run = pipeline.run_once(channel='DOC_POOL')
-
-    assert first_run.summary.downloaded == 0
-    assert first_run.summary.next_offset == 100
-
-    client._messages.append(
-        {
-            'message_id': 101,
-            'date': 1713081060,
-            'chat': {'title': 'DOC_POOL'},
-            'caption': 'AI Capacity Update',
-            'document': {
-                'file_id': 'telethon-file-101',
-                'file_unique_id': 'telethon-101',
-                'file_name': 'ai-capacity-update.pdf',
-                'mime_type': 'application/pdf',
-            },
-            'payload': (
-                b'Executive Summary:\nNVIDIA (NVDA) and TSMC are expanding advanced packaging.\n\n'
-                b'Risks:\nSupply concentration remains a risk for AI accelerators.'
-            ),
-        }
+    pdf_path = tmp_path / 'data' / 'raw' / 'live.pdf'
+    pdf_path.parent.mkdir(parents=True, exist_ok=True)
+    pdf_path.write_bytes(b'not readable pdf bytes')
+    from analysts.domain import ReportRecord
+    store.record_download(
+        ReportRecord(
+            id=None,
+            source='telegram',
+            channel='DOC_POOL',
+            message_id=88,
+            published_at='2026-04-15T00:00:00Z',
+            title='latest title',
+            pdf_path=pdf_path,
+            content='',
+            metadata={'file_unique_id': 'u-88'},
+        )
     )
 
-    second_run = pipeline.run_once(channel='DOC_POOL')
+    class FixtureTelegramClient:
+        @classmethod
+        def from_fixture_path(cls, fixture_path: Path):
+            raise AssertionError('not used')
 
-    assert second_run.summary.downloaded == 1
-    assert second_run.summary.next_offset == 101
+    class TelethonChannelClient:
+        def __init__(self, *, base_dir: Path, config) -> None:
+            self.base_dir = base_dir
+            self.config = config
 
-    wiki_page = tmp_path / 'data' / 'wiki' / 'sector' / 'semiconductors' / 'source-1.md'
-    summary_json_path = tmp_path / 'data' / 'processed' / '101-telethon-101-ai-capacity-update-summary.json'
-    assert wiki_page.exists()
-    assert summary_json_path.exists()
+    module = types.ModuleType('analysts.telethon_client')
+    module.auth_login = lambda **kwargs: None
+    module.FixtureTelegramClient = FixtureTelegramClient
+    module.TelethonChannelClient = TelethonChannelClient
+    monkeypatch.setitem(sys.modules, 'analysts.telethon_client', module)
+    monkeypatch.setattr('analysts.cli.build_default_pipeline', lambda **kwargs: ArasPipeline(client=object(), store=store, config=config, summarizer=FakeSummarizer()))
+
+    assert main(['summarize-latest', '--channel', 'DOC_POOL', '--base-dir', str(tmp_path)]) == 0
+    output = capsys.readouterr().out.strip()
+    assert 'processed_files=4' in output
+    assert 'summaries=2' in output

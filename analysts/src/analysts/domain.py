@@ -66,6 +66,35 @@ class SignalSnapshot:
 
 
 @dataclass(frozen=True)
+class ExtractionPacket:
+    source_document_id: int
+    report_title: str
+    report_channel: str
+    message_id: int
+    published_at: str | None
+    raw_pdf_path: Path
+    extraction_quality: str
+    extraction_reason: str | None
+    preferred_text: str
+    text_excerpt: str
+    route_hints: list[str]
+    entities: list[str]
+    tickers: list[str]
+
+
+@dataclass(frozen=True)
+class AnalystSummary:
+    lane: str
+    topic: str
+    headline: str
+    executive_summary: str
+    key_points: list[str]
+    risks: list[str]
+    confidence: str
+    follow_up_questions: list[str]
+
+
+@dataclass(frozen=True)
 class PipelineRunSummary:
     downloaded: int
     duplicates: int
@@ -76,5 +105,5 @@ class PipelineRunSummary:
 @dataclass(frozen=True)
 class PipelineExecution:
     summary: PipelineRunSummary
-    wiki_pages: list[Path]
-    signal_files: list[Path]
+    processed_files: list[Path]
+    summaries: list[AnalystSummary]

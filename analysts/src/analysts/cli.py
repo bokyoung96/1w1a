@@ -26,6 +26,10 @@ def build_arg_parser() -> argparse.ArgumentParser:
     run_once.add_argument("--base-dir", default=".")
     run_once.add_argument("--fixtures")
 
+    summarize_latest = subparsers.add_parser("summarize-latest")
+    summarize_latest.add_argument("--channel", required=True)
+    summarize_latest.add_argument("--base-dir", default=".")
+
     return parser
 
 
@@ -67,8 +71,22 @@ def main(argv: Sequence[str] | None = None) -> int:
                     f"duplicates={execution.summary.duplicates}",
                     f"ignored={execution.summary.ignored}",
                     f"next_offset={execution.summary.next_offset}",
-                    f"wiki_pages={len(execution.wiki_pages)}",
-                    f"signal_files={len(execution.signal_files)}",
+                    f"processed_files={len(execution.processed_files)}",
+                    f"summaries={len(execution.summaries)}",
+                ]
+            )
+        )
+        return 0
+
+    if args.command == "summarize-latest":
+        pipeline = build_default_pipeline(base_dir=base_dir)
+        execution = pipeline.summarize_latest(channel=args.channel)
+        print(
+            " ".join(
+                [
+                    f"processed_files={len(execution.processed_files)}",
+                    f"summaries={len(execution.summaries)}",
+                    f"message_id={execution.summary.next_offset}",
                 ]
             )
         )

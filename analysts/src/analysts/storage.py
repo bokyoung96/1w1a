@@ -103,20 +103,21 @@ class SqliteArasStore:
                 ORDER BY id ASC
                 """
             ).fetchall()
-        return [
-            ReportRecord(
-                id=row["id"],
-                source=row["source"],
-                channel=row["channel"],
-                message_id=row["message_id"],
-                published_at=row["published_at"],
-                title=row["title"],
-                pdf_path=Path(row["pdf_path"]),
-                content=row["content"],
-                metadata=json.loads(row["metadata_json"]),
-            )
-            for row in rows
-        ]
+        return [self._row_to_report(row) for row in rows]
+
+    def get_latest_report(self, channel: str) -> ReportRecord | None:
+        with self._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT id, source, channel, message_id, published_at, title, pdf_path, content, metadata_json
+                FROM reports
+                WHERE channel = ?
+                ORDER BY message_id DESC, id DESC
+                LIMIT 1
+                """,
+                (channel,),
+            ).fetchone()
+        return None if row is None else self._row_to_report(row)
 
     def get_next_update_offset(self) -> int | None:
         with self._connect() as connection:
@@ -154,3 +155,17 @@ class SqliteArasStore:
     @staticmethod
     def _last_seen_key(channel: str) -> str:
         return f"telethon_last_seen_message_id::{channel}"
+
+    @staticmethod
+    def _row_to_report(row: sqlite3.Row) -> ReportRecord:
+        return ReportRecord(
+            id=row["id"],
+            source=row["source"],
+            channel=row["channel"],
+            message_id=row["message_id"],
+            published_at=row["published_at"],
+            title=row["title"],
+            pdf_path=Path(row["pdf_path"]),
+            content=row["content"],
+            metadata=json.loads(row["metadata_json"]),
+        )

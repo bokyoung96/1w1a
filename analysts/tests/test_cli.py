@@ -22,8 +22,8 @@ def test_show_config_redacts_local_telethon_secrets(tmp_path: Path, capsys) -> N
     )
 
     exit_code = main(['show-config', '--base-dir', str(tmp_path)])
-
     payload = json.loads(capsys.readouterr().out)
+
     assert exit_code == 0
     assert payload['telethon']['api_hash'] == '<redacted>'
     assert payload['telethon']['channel'] == 'DOC_POOL'
