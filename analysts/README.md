@@ -9,6 +9,28 @@ Alpha Research Agent System (ARAS) workspace built only inside `analysts/`.
 - Processed artifacts under `data/processed/`
 - Saved local Telethon session under `data/state/`
 
+## In-flight PDF ingestion contract
+The current runtime still uses the lightweight summary extractor, but the active PDF-ingestion lane is targeting a richer artifact contract inside `analysts/` only:
+
+- raw PDFs stay in `data/raw/` as the source of truth
+- processed artifacts become inspectable per report under `data/processed/`
+- summaries should read chunked PDF content when full extraction succeeds
+- future command surface:
+  - `ingest-pdf --path ...`
+  - `summarize-latest --channel DOC_POOL`
+  - `summarize-recent --channel DOC_POOL --limit 10`
+
+Planned processed artifact set:
+- `data/processed/*-fulltext.txt`
+- `data/processed/*-extraction.json`
+- `data/processed/*-images.json`
+- `data/processed/*-chunks.json`
+- `data/processed/*-summary-input.json`
+- `data/processed/*-summary.json`
+- `data/processed/*-summary.md`
+
+Until that work lands, the current summarized path still emits `*-raw-text.txt` plus summary input/output artifacts.
+
 ## Current workflow
 ### 1) Authenticate once
 ```bash
@@ -65,6 +87,10 @@ Create `analysts/config.local.json` (gitignored):
   - `data/processed/*-summary-input.json`
   - `data/processed/*-summary.json`
   - `data/processed/*-summary.md`
+
+## PDF ingestion design references
+- `docs/2026-04-15-pdf-ingestion-review.md` — current gap analysis, integration risks, and merge checklist for the ingestion upgrade
+- `docs/openclaw-integration.md` — stable command-oriented interface that future OpenClaw automation should call
 
 ## Notes
 - Generated data is gitignored but still available for inspection locally.
