@@ -1,5 +1,9 @@
+import json
+import sys
+import types
 from pathlib import Path
 
+from analysts.cli import main
 from analysts.config import build_config
 from analysts.pipeline import ArasPipeline
 from analysts.storage import SqliteArasStore
@@ -56,14 +60,18 @@ def test_runs_fetch_parse_route_analyze_wiki_and_signal_end_to_end(tmp_path: Pat
     first_run = pipeline.run_once(channel="DOC_POOL")
     second_run = pipeline.run_once(channel="DOC_POOL")
 
-    assert first_run.downloaded == 1
-    assert first_run.duplicates == 0
-    assert first_run.ignored == 0
-    assert first_run.next_offset == 101
+    assert first_run.summary.downloaded == 1
+    assert first_run.summary.duplicates == 0
+    assert first_run.summary.ignored == 0
+    assert first_run.summary.next_offset == 101
+    assert len(first_run.wiki_pages) == 1
+    assert len(first_run.signal_files) == 1
 
-    assert second_run.downloaded == 0
-    assert second_run.duplicates == 0
-    assert second_run.next_offset == 101
+    assert second_run.summary.downloaded == 0
+    assert second_run.summary.duplicates == 0
+    assert second_run.summary.next_offset == 101
+    assert second_run.wiki_pages == []
+    assert second_run.signal_files == []
 
     wiki_page = tmp_path / "data" / "wiki" / "sector" / "semiconductors" / "source-1.md"
     signal_snapshot = tmp_path / "data" / "signals" / "semiconductors.json"
@@ -71,3 +79,51 @@ def test_runs_fetch_parse_route_analyze_wiki_and_signal_end_to_end(tmp_path: Pat
     assert signal_snapshot.exists()
     assert "Semiconductors: NVIDIA (NVDA) and TSMC are expanding advanced packaging." in wiki_page.read_text()
     assert '"topic": "semiconductors"' in signal_snapshot.read_text()
+
+
+def test_show_config_prints_serialized_paths(tmp_path: Path, capsys) -> None:
+    assert main(["show-config", "--base-dir", str(tmp_path)]) == 0
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["paths"]["base_dir"] == str(tmp_path)
+    assert payload["paths"]["state_db"].endswith("data/state/aras.sqlite3")
+
+
+def test_run_once_with_fixtures_builds_default_pipeline(tmp_path: Path, capsys) -> None:
+    fixture_path = Path(__file__).parent / "fixtures" / "sample_updates.json"
+
+    assert (
+        main(
+            [
+                "run-once",
+                "--channel",
+                "DOC_POOL",
+                "--base-dir",
+                str(tmp_path),
+                "--fixtures",
+                str(fixture_path),
+            ]
+        )
+        == 0
+    )
+
+    output = capsys.readouterr().out.strip()
+    assert "downloaded=1" in output
+    assert "duplicates=1" in output
+    assert "ignored=1" in output
+    assert "wiki_pages=1" in output
+    assert "signal_files=1" in output
+
+
+def test_auth_login_dispatches_to_telethon_adapter(tmp_path: Path, monkeypatch) -> None:
+    calls: list[tuple[Path, object]] = []
+    module = types.ModuleType("analysts.telethon_client")
+
+    def auth_login(*, base_dir: Path, config) -> None:
+        calls.append((base_dir, config))
+
+    module.auth_login = auth_login
+    monkeypatch.setitem(sys.modules, "analysts.telethon_client", module)
+
+    assert main(["auth-login", "--base-dir", str(tmp_path)]) == 0
+    assert calls and calls[0][0] == tmp_path
