@@ -44,7 +44,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     summarize_recent.add_argument("--base-dir", default=".")
 
     watch_until = subparsers.add_parser("watch-until")
-    watch_until.add_argument("--channel", required=True)
+    watch_until.add_argument("--channel", action="append", required=True)
     watch_until.add_argument("--until", required=True)
     watch_until.add_argument("--base-dir", default=".")
 
@@ -93,6 +93,16 @@ def print_watch_summary(*, result) -> None:
     )
 
 
+def normalize_channels(channels: list[str]) -> list[str]:
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for channel in channels:
+        if channel not in seen:
+            ordered.append(channel)
+            seen.add(channel)
+    return ordered
+
+
 def configure_watch_logger(*, base_dir: Path) -> logging.Logger:
     logger = logging.getLogger("analysts.watch")
     if logger.handlers:
@@ -110,12 +120,23 @@ def configure_watch_logger(*, base_dir: Path) -> logging.Logger:
     return logger
 
 
-def run_watch_until(*, base_dir: Path, channel: str, until: str) -> int:
+def run_watch_until(
+    *,
+    base_dir: Path,
+    until: str,
+    channel: str | None = None,
+    channels: list[str] | None = None,
+) -> int:
+    resolved_channels = normalize_channels(([channel] if channel is not None else []) + (channels or []))
     logger = configure_watch_logger(base_dir=base_dir)
-    logger.info("watch_cli_invoked channel=%s base_dir=%s until=%s", channel, base_dir, until)
+    logger.info("watch_cli_invoked channels=%s base_dir=%s until=%s", ",".join(resolved_channels), base_dir, until)
     runner = build_watch_runner(base_dir=base_dir)
     runner.logger = logger
-    result = asyncio.run(runner.watch_until(channel=channel, until=parse_watch_deadline(until)))
+    deadline = parse_watch_deadline(until)
+    if len(resolved_channels) == 1:
+        result = asyncio.run(runner.watch_until(channel=resolved_channels[0], until=deadline))
+    else:
+        result = asyncio.run(runner.watch_until_many(channels=resolved_channels, until=deadline))
     print_watch_summary(result=result)
     return 0
 
@@ -155,7 +176,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
 
     if args.command == "watch-until":
-        return run_watch_until(base_dir=base_dir, channel=args.channel, until=args.until)
+        normalized = normalize_channels(args.channel)
+        if len(normalized) == 1:
+            return run_watch_until(base_dir=base_dir, channel=normalized[0], until=args.until)
+        return run_watch_until(base_dir=base_dir, channels=normalized, until=args.until)
 
     if args.command == "summarize-latest":
         pipeline = build_default_pipeline(base_dir=base_dir)

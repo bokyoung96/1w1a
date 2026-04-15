@@ -64,12 +64,26 @@ cd /Users/bkchoi/Desktop/GitHub/1w1a
 .venv/bin/python analysts/run_watcher.py --until 2026-04-15T17:30:00+09:00
 ```
 
+Default channels for the easy launcher:
+- `DOC_POOL`
+- `report_figure_by_offset`
+
+Explicit multi-channel run:
+```bash
+cd /Users/bkchoi/Desktop/GitHub/1w1a
+.venv/bin/python analysts/run_watcher.py \
+  --channel DOC_POOL \
+  --channel report_figure_by_offset \
+  --until 2026-04-15T17:30:00+09:00
+```
+
 - deadline must be timezone-aware ISO-8601
 - new unique PDF reports are downloaded once and summarized immediately
 - summarize failures retry immediately without stopping the watch loop
 - no new messages are accepted after the deadline; any report already accepted before cutoff is allowed to finish processing
 - progress logs stream to stdout and `analysts/data/state/watch-runner.log`
 - heartbeat logs show liveness while the watcher is idle
+- new-report detection is event-driven through Telethon `NewMessage` subscriptions, not heartbeat polling
 
 ## Active pipeline map
 The live analysts path is intentionally narrow:

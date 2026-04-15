@@ -22,6 +22,15 @@ class FakeAsyncClient:
         for message in self.messages:
             await on_message(message)
 
+    async def watch_channels(self, *, channels: list[str], until: datetime, on_message) -> None:
+        if self.calls is not None:
+            for channel in channels:
+                self.calls.append((channel, until))
+        if self.delay_seconds:
+            await asyncio.sleep(self.delay_seconds)
+        for message in self.messages:
+            await on_message(message)
+
 
 class FakePipeline:
     def __init__(self, failures_before_success: int = 0) -> None:
@@ -354,3 +363,60 @@ def test_watch_until_emits_heartbeat_while_waiting(tmp_path: Path, caplog) -> No
         )
 
     assert 'watch_heartbeat channel=DOC_POOL' in caplog.text
+
+
+def test_watch_until_many_processes_two_channels_in_one_runner(tmp_path: Path) -> None:
+    sector_report = _report(tmp_path, message_id=701, file_unique_id='uniq-701')
+    figure_report = _report(tmp_path, message_id=702, file_unique_id='uniq-702')
+    pipeline = FakePipeline()
+    runner = WatchUntilRunner(
+        client=FakeAsyncClient(
+            messages=[
+                {'message_id': 701, 'chat': {'title': 'DOC_POOL'}},
+                {'message_id': 702, 'chat': {'title': 'report_figure_by_offset'}},
+            ]
+        ),
+        message_ingestor=FakeMessageIngestor(
+            [
+                WatchMessageResult(status='downloaded', report=sector_report),
+                WatchMessageResult(status='downloaded', report=figure_report),
+            ]
+        ),
+        pipeline=pipeline,
+        now_fn=lambda: datetime.fromisoformat('2026-04-15T13:00:00+09:00'),
+    )
+
+    result = asyncio.run(
+        runner.watch_until_many(
+            channels=['DOC_POOL', 'report_figure_by_offset'],
+            until=datetime.fromisoformat('2026-04-15T17:30:00+09:00'),
+        )
+    )
+
+    assert result == AsyncWatchResult(seen=2, downloaded=2, summarized=2)
+    assert pipeline.calls == [701, 702]
+
+
+def test_watch_until_many_logs_channel_specific_events(tmp_path: Path, caplog) -> None:
+    report = _report(tmp_path, message_id=703, file_unique_id='uniq-703')
+    logger = logging.getLogger('analysts.watch.multi')
+    runner = WatchUntilRunner(
+        client=FakeAsyncClient(messages=[{'message_id': 703, 'chat': {'title': 'report_figure_by_offset'}}]),
+        message_ingestor=FakeMessageIngestor([WatchMessageResult(status='downloaded', report=report)]),
+        pipeline=FakePipeline(),
+        now_fn=lambda: datetime.fromisoformat('2026-04-15T13:00:00+09:00'),
+        logger=logger,
+    )
+
+    with caplog.at_level(logging.INFO, logger='analysts.watch.multi'):
+        asyncio.run(
+            runner.watch_until_many(
+                channels=['DOC_POOL', 'report_figure_by_offset'],
+                until=datetime.fromisoformat('2026-04-15T17:30:00+09:00'),
+            )
+        )
+
+    text = caplog.text
+    assert 'watch_started channels=DOC_POOL,report_figure_by_offset' in text
+    assert 'watch_message status=downloaded channel=report_figure_by_offset message_id=703' in text
+    assert 'watch_finished channels=DOC_POOL,report_figure_by_offset' in text

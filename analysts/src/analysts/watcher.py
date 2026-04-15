@@ -38,6 +38,14 @@ class AsyncWatchClient(Protocol):
         on_message: Callable[[dict[str, Any]], Awaitable[None] | None],
     ) -> None: ...
 
+    async def watch_channels(
+        self,
+        *,
+        channels: list[str],
+        until: datetime,
+        on_message: Callable[[dict[str, Any]], Awaitable[None] | None],
+    ) -> None: ...
+
 
 class MessageIngestor(Protocol):
     def ingest_message(self, *, channel: str, message: dict[str, Any]) -> WatchMessageResult: ...
@@ -68,27 +76,35 @@ class WatchUntilRunner:
         self.logger = logger or logging.getLogger("analysts.watch")
 
     async def watch_until(self, *, channel: str, until: datetime) -> AsyncWatchResult:
+        return await self.watch_until_many(channels=[channel], until=until)
+
+    async def watch_until_many(self, *, channels: list[str], until: datetime) -> AsyncWatchResult:
         if until.tzinfo is None:
             raise ValueError("watch-until requires a timezone-aware deadline")
         if self._normalize_now(until=until) >= until:
             return AsyncWatchResult()
+        channels = self._normalize_channels(channels)
+        if not channels:
+            raise ValueError("watch-until requires at least one channel")
 
         counts = self._new_counts()
-        self.logger.info("watch_started channel=%s until=%s", channel, until.isoformat())
+        self.logger.info("watch_started %s until=%s", self._channels_log_field(channels), until.isoformat())
         stop_heartbeat = asyncio.Event()
 
         async def on_message(message: dict[str, Any]) -> None:
-            await self._handle_message(channel=channel, message=message, until=until, counts=counts)
+            await self._handle_message(channels=channels, message=message, until=until, counts=counts)
 
-        heartbeat_task = asyncio.create_task(self._heartbeat(channel=channel, until=until, counts=counts, stop=stop_heartbeat))
+        heartbeat_task = asyncio.create_task(
+            self._heartbeat(scope=self._channels_log_field(channels), until=until, counts=counts, stop=stop_heartbeat)
+        )
         try:
-            await self._await_watch(channel=channel, until=until, on_message=on_message)
+            await self._await_watch(channels=channels, until=until, on_message=on_message)
         finally:
             stop_heartbeat.set()
             await heartbeat_task
         self.logger.info(
-            "watch_finished channel=%s seen=%s downloaded=%s duplicates=%s ignored=%s summarized=%s retries=%s failures=%s",
-            channel,
+            "watch_finished %s seen=%s downloaded=%s duplicates=%s ignored=%s summarized=%s retries=%s failures=%s",
+            self._channels_log_field(channels),
             counts["seen"],
             counts["downloaded"],
             counts["duplicates"],
@@ -102,11 +118,14 @@ class WatchUntilRunner:
     async def _await_watch(
         self,
         *,
-        channel: str,
+        channels: list[str],
         until: datetime,
         on_message: Callable[[dict[str, Any]], Awaitable[None] | None],
     ) -> None:
-        maybe_awaitable = self.client.watch_channel(channel=channel, until=until, on_message=on_message)
+        if len(channels) == 1:
+            maybe_awaitable = self.client.watch_channel(channel=channels[0], until=until, on_message=on_message)
+        else:
+            maybe_awaitable = self.client.watch_channels(channels=channels, until=until, on_message=on_message)
         if inspect.isawaitable(maybe_awaitable):
             await maybe_awaitable
 
@@ -131,11 +150,12 @@ class WatchUntilRunner:
     async def _handle_message(
         self,
         *,
-        channel: str,
+        channels: list[str],
         message: dict[str, Any],
         until: datetime,
         counts: dict[str, int],
     ) -> None:
+        channel = self._channel_from_message(message=message, channels=channels)
         if not self._was_accepted_before_deadline(message=message, until=until):
             self.logger.info("watch_message status=ignored_after_deadline channel=%s message_id=%s", channel, message.get("message_id"))
             return
@@ -194,7 +214,7 @@ class WatchUntilRunner:
     async def _heartbeat(
         self,
         *,
-        channel: str,
+        scope: str,
         until: datetime,
         counts: dict[str, int],
         stop: asyncio.Event,
@@ -207,8 +227,8 @@ class WatchUntilRunner:
                 return
             except asyncio.TimeoutError:
                 self.logger.info(
-                    "watch_heartbeat channel=%s until=%s seen=%s downloaded=%s duplicates=%s ignored=%s summarized=%s retries=%s failures=%s",
-                    channel,
+                    "watch_heartbeat %s until=%s seen=%s downloaded=%s duplicates=%s ignored=%s summarized=%s retries=%s failures=%s",
+                    scope,
                     until.isoformat(),
                     counts["seen"],
                     counts["downloaded"],
@@ -218,3 +238,27 @@ class WatchUntilRunner:
                     counts["summarize_retries"],
                     counts["summarize_failures"],
                 )
+
+    @staticmethod
+    def _normalize_channels(channels: list[str]) -> list[str]:
+        seen: set[str] = set()
+        ordered: list[str] = []
+        for channel in channels:
+            if channel not in seen:
+                ordered.append(channel)
+                seen.add(channel)
+        return ordered
+
+    @staticmethod
+    def _channels_log_field(channels: list[str]) -> str:
+        if len(channels) == 1:
+            return f"channel={channels[0]}"
+        return f"channels={','.join(channels)}"
+
+    @staticmethod
+    def _channel_from_message(*, message: dict[str, Any], channels: list[str]) -> str:
+        chat = message.get("chat") or {}
+        title = chat.get("title")
+        if isinstance(title, str) and title:
+            return title
+        return channels[0]

@@ -145,11 +145,44 @@ def test_watch_until_command_dispatches_to_async_runner(
     assert 'summarized=1' in capsys.readouterr().out
 
 
-def test_runner_entry_uses_doc_pool_default_and_supplied_base_dir(tmp_path: Path, monkeypatch) -> None:
-    calls: list[tuple[Path, str, str]] = []
+def test_watch_until_command_accepts_multiple_channels(
+    tmp_path: Path,
+    monkeypatch,
+    capsys,
+) -> None:
+    calls: list[tuple[Path, list[str], str]] = []
 
-    def fake_run_watch_until(*, base_dir: Path, channel: str, until: str) -> int:
-        calls.append((base_dir, channel, until))
+    def fake_run_watch_until(*, base_dir: Path, channels: list[str], until: str) -> int:
+        calls.append((base_dir, channels, until))
+        print('downloaded=2 duplicates=0 ignored=0 summarized=2 retries=0')
+        return 0
+
+    monkeypatch.setattr('analysts.cli.run_watch_until', fake_run_watch_until)
+
+    exit_code = main(
+        [
+            'watch-until',
+            '--channel',
+            'DOC_POOL',
+            '--channel',
+            'report_figure_by_offset',
+            '--until',
+            '2026-04-15T17:30:00+09:00',
+            '--base-dir',
+            str(tmp_path),
+        ]
+    )
+
+    assert exit_code == 0
+    assert calls == [(tmp_path, ['DOC_POOL', 'report_figure_by_offset'], '2026-04-15T17:30:00+09:00')]
+    assert 'summarized=2' in capsys.readouterr().out
+
+
+def test_runner_entry_uses_doc_pool_default_and_supplied_base_dir(tmp_path: Path, monkeypatch) -> None:
+    calls: list[tuple[Path, list[str], str]] = []
+
+    def fake_run_watch_until(*, base_dir: Path, channels: list[str], until: str) -> int:
+        calls.append((base_dir, channels, until))
         return 0
 
     monkeypatch.setattr('analysts.runner_entry.run_watch_until', fake_run_watch_until)
@@ -160,4 +193,29 @@ def test_runner_entry_uses_doc_pool_default_and_supplied_base_dir(tmp_path: Path
     )
 
     assert exit_code == 0
-    assert calls == [(tmp_path, 'DOC_POOL', '2026-04-15T17:30:00+09:00')]
+    assert calls == [(tmp_path, ['DOC_POOL', 'report_figure_by_offset'], '2026-04-15T17:30:00+09:00')]
+
+
+def test_runner_entry_allows_multiple_explicit_channels(tmp_path: Path, monkeypatch) -> None:
+    calls: list[tuple[Path, list[str], str]] = []
+
+    def fake_run_watch_until(*, base_dir: Path, channels: list[str], until: str) -> int:
+        calls.append((base_dir, channels, until))
+        return 0
+
+    monkeypatch.setattr('analysts.runner_entry.run_watch_until', fake_run_watch_until)
+
+    exit_code = runner_entry_main(
+        [
+            '--channel',
+            'DOC_POOL',
+            '--channel',
+            'report_figure_by_offset',
+            '--until',
+            '2026-04-15T17:30:00+09:00',
+        ],
+        default_base_dir=tmp_path,
+    )
+
+    assert exit_code == 0
+    assert calls == [(tmp_path, ['DOC_POOL', 'report_figure_by_offset'], '2026-04-15T17:30:00+09:00')]

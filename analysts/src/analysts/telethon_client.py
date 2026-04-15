@@ -86,6 +86,9 @@ class TelethonChannelClient:
             return Path(result).read_bytes()
 
     async def watch_channel(self, *, channel: str, until, on_message) -> None:
+        await self.watch_channels(channels=[channel], until=until, on_message=on_message)
+
+    async def watch_channels(self, *, channels: list[str], until, on_message) -> None:
         from telethon import TelegramClient, events
 
         remaining_seconds = max((until - self._now_like(until)).total_seconds(), 0)
@@ -96,29 +99,36 @@ class TelethonChannelClient:
         async with TelegramClient(str(session_stem), self.settings.api_id, self.settings.api_hash) as client:
             if not await client.is_user_authorized():
                 raise RuntimeError("Telethon session is not authorized. Run auth-login first.")
-            entity = await self._resolve_entity_async(client, channel)
+            resolved_channels = list(dict.fromkeys(channels))
             pending_tasks: set[asyncio.Task] = set()
             accepting_messages = True
 
             async def process_payload(payload: dict[str, Any]) -> None:
                 await self._maybe_await(on_message(payload))
 
-            @client.on(events.NewMessage(chats=entity))
-            async def handler(event) -> None:
-                accepted_at = self._now_like(until)
-                if not accepting_messages or accepted_at >= until:
-                    return
-                payload = self._adapt_message(channel=channel, message=event.message).to_fetcher_payload()
-                payload["_accepted_at"] = accepted_at.isoformat()
-                task = asyncio.create_task(process_payload(payload))
-                pending_tasks.add(task)
-                task.add_done_callback(pending_tasks.discard)
+            handlers = []
+            for channel in resolved_channels:
+                entity = await self._resolve_entity_async(client, channel)
+
+                @client.on(events.NewMessage(chats=entity))
+                async def handler(event, *, channel: str = channel) -> None:
+                    accepted_at = self._now_like(until)
+                    if not accepting_messages or accepted_at >= until:
+                        return
+                    payload = self._adapt_message(channel=channel, message=event.message).to_fetcher_payload()
+                    payload["_accepted_at"] = accepted_at.isoformat()
+                    task = asyncio.create_task(process_payload(payload))
+                    pending_tasks.add(task)
+                    task.add_done_callback(pending_tasks.discard)
+
+                handlers.append(handler)
 
             try:
                 await asyncio.sleep(remaining_seconds)
             finally:
                 accepting_messages = False
-                client.remove_event_handler(handler)
+                for handler in handlers:
+                    client.remove_event_handler(handler)
                 if pending_tasks:
                     await asyncio.gather(*pending_tasks, return_exceptions=True)
 
