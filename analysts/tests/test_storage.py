@@ -47,3 +47,18 @@ def test_checks_seen_file_unique_ids_without_reinserting(tmp_path: Path) -> None
     assert store.has_seen_file("uniq-rates-1") is False
     assert store.record_download(report) is True
     assert store.has_seen_file("uniq-rates-1") is True
+
+
+def test_persists_last_seen_message_id_per_channel(tmp_path: Path) -> None:
+    store = SqliteArasStore(tmp_path / "aras.sqlite3")
+
+    assert store.get_last_seen_message_id("DOC_POOL") is None
+    assert store.get_last_seen_message_id("OTHER_CHANNEL") is None
+
+    store.set_last_seen_message_id("DOC_POOL", 501)
+    store.set_last_seen_message_id("OTHER_CHANNEL", 33)
+    store.set_last_seen_message_id("DOC_POOL", 503)
+
+    assert store.get_last_seen_message_id("DOC_POOL") == 503
+    assert store.get_last_seen_message_id("OTHER_CHANNEL") == 33
+    assert store.get_next_update_offset() is None
