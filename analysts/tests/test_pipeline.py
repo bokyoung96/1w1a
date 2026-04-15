@@ -95,10 +95,37 @@ def test_runs_fetch_parse_route_analyze_wiki_and_signal_end_to_end(tmp_path: Pat
 
     wiki_page = tmp_path / 'data' / 'wiki' / 'sector' / 'semiconductors' / 'source-1.md'
     signal_snapshot = tmp_path / 'data' / 'signals' / 'semiconductors.json'
+    processed_base = tmp_path / 'data' / 'processed' / '501-uniq-001-ai-capacity-update'
+    raw_text_path = processed_base.with_name(f'{processed_base.name}-raw-text.txt')
+    summary_input_path = processed_base.with_name(f'{processed_base.name}-summary-input.json')
+    summary_json_path = processed_base.with_name(f'{processed_base.name}-summary.json')
+    summary_markdown_path = processed_base.with_name(f'{processed_base.name}-summary.md')
     assert wiki_page.exists()
     assert signal_snapshot.exists()
+    assert raw_text_path.exists()
+    assert summary_input_path.exists()
+    assert summary_json_path.exists()
+    assert summary_markdown_path.exists()
     assert 'Semiconductors: NVIDIA (NVDA) and TSMC are expanding advanced packaging.' in wiki_page.read_text()
     assert '"topic": "semiconductors"' in signal_snapshot.read_text()
+    assert 'NVIDIA (NVDA) and TSMC are expanding advanced packaging.' in raw_text_path.read_text()
+
+    summary_input = json.loads(summary_input_path.read_text())
+    assert summary_input['document']['raw_pdf_path'].endswith('501-uniq-001-ai-capacity-update.pdf')
+    assert summary_input['document']['parse_quality'] == 'high'
+    assert summary_input['routes'][0]['topic'] == 'semiconductors'
+    assert summary_input['raw_text_path'].endswith('501-uniq-001-ai-capacity-update-raw-text.txt')
+
+    summary_payload = json.loads(summary_json_path.read_text())
+    assert summary_payload['document']['title'] == 'AI Capacity Update'
+    assert summary_payload['insights'][0]['lane'] == 'sector'
+    assert summary_payload['insights'][0]['topic'] == 'semiconductors'
+    assert summary_payload['markdown_path'].endswith('501-uniq-001-ai-capacity-update-summary.md')
+
+    summary_markdown = summary_markdown_path.read_text()
+    assert '# AI Capacity Update' in summary_markdown
+    assert '## Analyst Summary' in summary_markdown
+    assert 'Semiconductors: NVIDIA (NVDA) and TSMC are expanding advanced packaging.' in summary_markdown
 
 
 
@@ -133,6 +160,7 @@ def test_run_once_with_fixtures_builds_default_pipeline(tmp_path: Path, capsys) 
     assert 'downloaded=1' in output
     assert 'duplicates=1' in output
     assert 'ignored=1' in output
+    assert 'processed_reports=1' in output
     assert 'wiki_pages=1' in output
     assert 'signal_files=1' in output
 
@@ -204,4 +232,6 @@ def test_telethon_pipeline_seeds_history_then_processes_only_new_posts(tmp_path:
     assert second_run.summary.next_offset == 101
 
     wiki_page = tmp_path / 'data' / 'wiki' / 'sector' / 'semiconductors' / 'source-1.md'
+    summary_json_path = tmp_path / 'data' / 'processed' / '101-telethon-101-ai-capacity-update-summary.json'
     assert wiki_page.exists()
+    assert summary_json_path.exists()
