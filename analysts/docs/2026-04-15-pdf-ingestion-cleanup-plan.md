@@ -16,7 +16,8 @@ After the new PDF ingestion pipeline lands, the code should be restructured for 
 - `pdf_images.py` — image metadata extraction
 - `chunking.py` — deterministic chunk creation only
 - `embeddings.py` — embeddings-ready payload generation / persistence helpers
-- `summary_agents.py` — route-aware agent prompt assembly and output normalization
+- `summarizer.py` — route-aware lane planning, prompt assembly, and output normalization
+- `summary_outputs.py` — persisted JSON/Markdown summary artifacts
 - `pipeline.py` — fetch + delegate orchestration only
 - `cli.py` — command parsing and reporting only
 

@@ -50,6 +50,20 @@ cd analysts
 PYTHONPATH=src ../.venv/bin/python -m analysts.cli summarize-latest --channel DOC_POOL
 ```
 
+## Active pipeline map
+The live analysts path is intentionally narrow:
+
+1. `cli.py` — command entrypoints and wiring
+2. `telethon_client.py` + `fetcher.py` — Telegram auth/crawl/download
+3. `pipeline.py` — top-level orchestration
+4. `parser.py` + `router.py` — route hints for a report
+5. `pdf_ingest.py` — PDF extraction, chunks, page selection, preview artifacts
+6. `summarizer.py` — Codex-backed sector/macro summaries
+7. `summary_outputs.py` — persisted summary JSON/Markdown artifacts
+8. `graphify.py` — optional graphify corpus refresh from processed summaries
+
+Legacy wiki/signal/coordinator modules were removed from the active package surface because they were no longer part of the current production pipeline.
+
 ## Local config
 Create `analysts/config.local.json` (gitignored):
 

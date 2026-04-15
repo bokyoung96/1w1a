@@ -5,9 +5,9 @@ from pathlib import Path
 from typing import Any
 
 from .config import ArasConfig
-from .domain import AnalystSummary, PipelineExecution, PipelineRunSummary, ReportRecord
+from .domain import AnalystSummary, ExtractionPacket, PipelineExecution, PipelineRunSummary, ReportRecord
 from .pdf_ingest import PdfIngestionPipeline
-from .processed_outputs import SummaryArtifactWriter
+from .summary_outputs import SummaryArtifactWriter
 from .raw_reports import RawReportCatalog
 from .fetcher import TelegramFetcher
 from .parser import DocumentParser
@@ -22,7 +22,6 @@ class ArasPipeline:
     store: SqliteArasStore
     config: ArasConfig
     summarizer: CodexAnalystSummarizer | None = None
-    extractor: object | None = None
 
     def run_once(self, *, channel: str) -> PipelineExecution:
         fetcher = TelegramFetcher(client=self.client, store=self.store, config=self.config)
@@ -56,26 +55,24 @@ class ArasPipeline:
         return self.summarize_report(report)
 
     def summarize_report(self, report: ReportRecord) -> PipelineExecution:
-        parser = DocumentParser()
-        router = TaskRouter()
-        ingest = PdfIngestionPipeline(self.config)
-        summarizer = self.summarizer or CodexAnalystSummarizer(config=self.config, base_dir=self.config.paths.base_dir)
-
-        parsed = parser.parse(report)
-        routes = router.route(parsed)
-        ingestion = ingest.ingest(report=report, parsed=parsed, routes=routes)
-        packet = ingestion.packet
-        summaries = [
-            summarizer.summarize(packet=packet, lane=lane, topic=topic)
-            for lane, topic in summarizer.lane_plan(packet)
-        ]
-        outputs = SummaryArtifactWriter(self.config).write(packet=packet, summaries=summaries)
+        parsed = DocumentParser().parse(report)
+        routes = TaskRouter().route(parsed)
+        ingestion = PdfIngestionPipeline(self.config).ingest(report=report, parsed=parsed, routes=routes)
+        summaries = self._build_summaries(ingestion.packet)
+        outputs = SummaryArtifactWriter(self.config).write(packet=ingestion.packet, summaries=summaries)
 
         return PipelineExecution(
             summary=PipelineRunSummary(downloaded=0, duplicates=0, ignored=0, next_offset=report.message_id),
             processed_files=[*ingestion.processed_files, outputs.json_path, outputs.markdown_path],
             summaries=summaries,
         )
+
+    def _build_summaries(self, packet: ExtractionPacket) -> list[AnalystSummary]:
+        summarizer = self.summarizer or CodexAnalystSummarizer(config=self.config, base_dir=self.config.paths.base_dir)
+        return [
+            summarizer.summarize(packet=packet, lane=lane, topic=topic)
+            for lane, topic in summarizer.lane_plan(packet)
+        ]
 
     def _hydrate_report(self, report: ReportRecord) -> ReportRecord:
         file_unique_id = str(report.metadata["file_unique_id"])

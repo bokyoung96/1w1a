@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from analysts.config import build_config
-from analysts.graphify_integration import GraphifyCorpusBuilder
+from analysts.graphify import GraphifyCorpusBuilder
 
 
 

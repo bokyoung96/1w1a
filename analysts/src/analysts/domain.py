@@ -45,27 +45,6 @@ class RouteDecision:
 
 
 @dataclass(frozen=True)
-class InsightRecord:
-    topic: str
-    lane: str
-    summary: str
-    bull_case: str
-    bear_case: str
-    confidence: str
-    key_drivers: list[str]
-    risk_factors: list[str]
-    source_document_id: int
-
-
-@dataclass(frozen=True)
-class SignalSnapshot:
-    topic: str
-    repeated_keywords: list[str]
-    sentiment_delta: str
-    conflict_flags: list[str]
-
-
-@dataclass(frozen=True)
 class ExtractionPacket:
     source_document_id: int
     report_title: str

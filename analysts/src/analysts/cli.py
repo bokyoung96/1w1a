@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Sequence
 
 from .config import build_config
-from .graphify_integration import GraphifyCorpusBuilder
+from .graphify import GraphifyCorpusBuilder
 from .pipeline import ArasPipeline
 from .raw_reports import RawReportCatalog
 from .storage import SqliteArasStore

@@ -35,7 +35,7 @@
 ## Recommended verification after merge
 ```bash
 cd analysts
-PYTHONPATH=src ../.venv/bin/pytest tests/test_pdf_text.py tests/test_pdf_images.py tests/test_chunking.py tests/test_embeddings.py tests/test_summary_agents.py tests/test_pipeline.py -q
+PYTHONPATH=src ../.venv/bin/pytest tests/test_pdf_text.py tests/test_pdf_images.py tests/test_page_selection.py tests/test_chunking.py tests/test_embeddings.py tests/test_pipeline.py -q
 PYTHONPATH=src ../.venv/bin/pytest tests -q
 PYTHONPATH=src ../.venv/bin/python -m analysts.cli summarize-latest --channel DOC_POOL
 PYTHONPATH=src ../.venv/bin/python -m analysts.cli summarize-recent --channel DOC_POOL --limit 10
