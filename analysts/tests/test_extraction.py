@@ -73,3 +73,13 @@ def test_write_artifacts_persists_raw_text_and_summary_input(tmp_path: Path) -> 
     assert artifacts.summary_input_path.exists()
     assert 'Line one' in artifacts.raw_text_path.read_text()
     assert 'NVDA' in artifacts.summary_input_path.read_text()
+
+
+def test_extraction_packet_carries_page_previews(tmp_path):
+    from analysts.domain import ParsedDocument, ReportRecord, RouteDecision, ParseQuality
+    from analysts.extraction import SummaryReadyExtractor
+    config = build_config(tmp_path)
+    report = ReportRecord(id=1, source='telegram', channel='DOC_POOL', message_id=1, published_at=None, title='t', pdf_path=tmp_path / 'a.pdf', content='', metadata={'page_previews': ['data/processed/report-1-pages/page-1.png']})
+    parsed = ParsedDocument(title='t', content='hello', sections=[], entities=[], tickers=[], routes=[], parse_quality=ParseQuality.HIGH)
+    packet = SummaryReadyExtractor(config).build_packet(report=report, parsed=parsed, routes=[RouteDecision(topic='general', lane='macro', rationale='x')])
+    assert packet.page_previews == ['data/processed/report-1-pages/page-1.png']

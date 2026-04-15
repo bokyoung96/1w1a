@@ -52,6 +52,8 @@ class SummaryConfig:
     max_input_chars: int = 3200
     max_key_points: int = 4
     cli_command: str = "codex"
+    render_page_previews: bool = True
+    max_preview_pages: int = 2
 
     def to_display_dict(self) -> dict[str, Any]:
         return {
@@ -61,6 +63,8 @@ class SummaryConfig:
             "max_input_chars": self.max_input_chars,
             "max_key_points": self.max_key_points,
             "cli_command": self.cli_command,
+            "render_page_previews": self.render_page_previews,
+            "max_preview_pages": self.max_preview_pages,
         }
 
 
@@ -165,5 +169,7 @@ def _load_local_runtime_config(local_config_path: Path) -> LocalRuntimeConfig:
         max_input_chars=int(summary_payload.get("max_input_chars", 3200)),
         max_key_points=int(summary_payload.get("max_key_points", 4)),
         cli_command=str(summary_payload.get("cli_command", "codex")),
+        render_page_previews=bool(summary_payload.get("render_page_previews", True)),
+        max_preview_pages=int(summary_payload.get("max_preview_pages", 2)),
     )
     return LocalRuntimeConfig(telethon=telethon, summary=summary)

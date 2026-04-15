@@ -12,12 +12,12 @@ from .domain import AnalystSummary, ExtractionPacket
 
 
 class CodexRunner(Protocol):
-    def run(self, *, prompt: str, schema: dict, base_dir: Path, config: ArasConfig) -> dict: ...
+    def run(self, *, prompt: str, schema: dict, base_dir: Path, config: ArasConfig, image_paths: list[Path]) -> dict: ...
 
 
 @dataclass(frozen=True)
 class SubprocessCodexRunner:
-    def run(self, *, prompt: str, schema: dict, base_dir: Path, config: ArasConfig) -> dict:
+    def run(self, *, prompt: str, schema: dict, base_dir: Path, config: ArasConfig, image_paths: list[Path]) -> dict:
         with tempfile.TemporaryDirectory(dir=config.paths.state_dir) as tmp_dir:
             tmp_path = Path(tmp_dir)
             schema_path = tmp_path / "schema.json"
@@ -42,6 +42,8 @@ class SubprocessCodexRunner:
                 str(output_path),
                 "-",
             ]
+            for image_path in image_paths:
+                command.extend(["-i", str(image_path)])
             completed = subprocess.run(
                 command,
                 input=prompt,
@@ -67,6 +69,7 @@ class CodexAnalystSummarizer:
             schema=self._output_schema(),
             base_dir=self.base_dir,
             config=self.config,
+            image_paths=[self.base_dir / path for path in packet.page_previews],
         )
         return AnalystSummary(
             lane=payload["lane"],

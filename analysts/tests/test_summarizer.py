@@ -9,8 +9,9 @@ class FakeRunner:
     def __init__(self) -> None:
         self.prompts: list[str] = []
 
-    def run(self, *, prompt: str, schema: dict, base_dir: Path, config) -> dict:
+    def run(self, *, prompt: str, schema: dict, base_dir: Path, config, image_paths) -> dict:
         self.prompts.append(prompt)
+        self.image_paths = image_paths
         return {
             'lane': 'macro',
             'topic': 'general',
@@ -63,6 +64,7 @@ def test_summarizer_uses_runner_and_returns_structured_summary(tmp_path: Path) -
         route_hints=['macro:general'],
         entities=['한화투자증권'],
         tickers=[],
+        page_previews=['data/processed/report-1-pages/page-1.png'],
     )
 
     summary = summarizer.summarize(packet=packet, lane='macro', topic='general')
@@ -71,3 +73,4 @@ def test_summarizer_uses_runner_and_returns_structured_summary(tmp_path: Path) -
     assert summary.topic == 'general'
     assert '짧은 텍스트' in runner.prompts[0]
     assert 'Lane: macro' in runner.prompts[0]
+    assert runner.image_paths[0].name == 'page-1.png'

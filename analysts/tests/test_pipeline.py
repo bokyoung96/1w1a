@@ -5,7 +5,7 @@ from pathlib import Path
 
 from analysts.cli import main
 from analysts.config import build_config
-from analysts.domain import AnalystSummary
+from analysts.domain import AnalystSummary, ReportRecord
 from analysts.pipeline import ArasPipeline
 from analysts.storage import SqliteArasStore
 
@@ -46,29 +46,25 @@ class FakeTelethonClient:
 
 
 class FakeSummarizer:
-    def __init__(self) -> None:
-        self.calls: list[tuple[str, str, str]] = []
-
     @staticmethod
     def lane_plan(packet) -> list[tuple[str, str]]:
-        return [('sector', 'general'), ('macro', 'general')]
+        return [('macro', 'general')]
 
     def summarize(self, *, packet, lane: str, topic: str) -> AnalystSummary:
-        self.calls.append((lane, topic, packet.text_excerpt))
         return AnalystSummary(
             lane=lane,
             topic=topic,
-            headline=f'{lane} headline',
-            executive_summary=f'{lane} summary',
-            key_points=[f'{lane} point'],
-            risks=[f'{lane} risk'],
+            headline='headline',
+            executive_summary='summary',
+            key_points=['point'],
+            risks=['risk'],
             confidence='medium',
-            follow_up_questions=[f'{lane} question'],
+            follow_up_questions=['question'],
         )
 
 
 
-def test_run_once_writes_processed_summary_artifacts_for_downloaded_pdf(tmp_path: Path) -> None:
+def test_run_once_writes_full_ingestion_and_summary_artifacts(tmp_path: Path) -> None:
     updates = [
         {
             'update_id': 100,
@@ -89,20 +85,21 @@ def test_run_once_writes_processed_summary_artifacts_for_downloaded_pdf(tmp_path
     file_payloads = {'file-001': b'Executive Summary:\nNVIDIA expands packaging.\n\nRisks:\nSupply concentration.'}
     config = build_config(tmp_path)
     store = SqliteArasStore(config.paths.state_db)
-    pipeline = ArasPipeline(
-        client=FakeTelegramClient(updates, file_payloads),
-        store=store,
-        config=config,
-        summarizer=FakeSummarizer(),
-    )
+    pipeline = ArasPipeline(client=FakeTelegramClient(updates, file_payloads), store=store, config=config, summarizer=FakeSummarizer())
 
     execution = pipeline.run_once(channel='DOC_POOL')
 
     assert execution.summary.downloaded == 1
-    assert len(execution.processed_files) == 4
-    assert len(execution.summaries) == 2
-    assert (tmp_path / 'data' / 'processed' / 'report-1-summary.md').exists()
-    assert (tmp_path / 'data' / 'processed' / 'report-1-summary.json').exists()
+    assert len(execution.summaries) == 1
+    processed = {path.name for path in execution.processed_files}
+    assert 'report-1-fulltext.txt' in processed
+    assert 'report-1-extraction.json' in processed
+    assert 'report-1-images.json' in processed
+    assert 'report-1-chunks.json' in processed
+    assert 'report-1-embeddings.json' in processed
+    assert 'report-1-summary-input.json' in processed
+    assert 'report-1-summary.json' in processed
+    assert 'report-1-summary.md' in processed
 
 
 
@@ -113,7 +110,7 @@ def test_summarize_latest_uses_existing_downloaded_report(tmp_path: Path) -> Non
     pdf_path.parent.mkdir(parents=True, exist_ok=True)
     pdf_path.write_bytes(b'not readable pdf bytes')
     store.record_download(
-        report := __import__('analysts.domain', fromlist=['ReportRecord']).ReportRecord(
+        ReportRecord(
             id=None,
             source='telegram',
             channel='DOC_POOL',
@@ -122,17 +119,32 @@ def test_summarize_latest_uses_existing_downloaded_report(tmp_path: Path) -> Non
             title='사모신용 이슈가 시스템 리스크가 아닌 이유',
             pdf_path=pdf_path,
             content='',
-            metadata={'file_unique_id': 'telethon-163007'},
+            metadata={'file_unique_id': 'telethon-163007', 'telegram_caption_text': 'caption fallback'},
         )
     )
     pipeline = ArasPipeline(client=object(), store=store, config=config, summarizer=FakeSummarizer())
 
     execution = pipeline.summarize_latest(channel='DOC_POOL')
 
-    assert len(execution.summaries) == 2
+    assert len(execution.summaries) == 1
     assert execution.summary.next_offset == 163007
 
 
+
+
+def test_summarize_latest_falls_back_to_raw_reports_when_db_is_empty(tmp_path: Path) -> None:
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    raw_dir = tmp_path / 'data' / 'raw'
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    pdf_path = raw_dir / 'live-999-telethon-abc-raw_title.pdf'
+    pdf_path.write_bytes(b'not readable pdf bytes')
+    pipeline = ArasPipeline(client=object(), store=store, config=config, summarizer=FakeSummarizer())
+
+    execution = pipeline.summarize_latest(channel='DOC_POOL')
+
+    assert execution.summary.next_offset == 999
+    assert len(execution.summaries) == 1
 
 def test_show_config_prints_serialized_paths(tmp_path: Path, capsys) -> None:
     assert main(['show-config', '--base-dir', str(tmp_path)]) == 0
@@ -168,26 +180,27 @@ def test_auth_login_dispatches_to_telethon_adapter(tmp_path: Path, monkeypatch) 
 
 
 
-def test_summarize_latest_cli_reports_processed_outputs(tmp_path: Path, monkeypatch, capsys) -> None:
+def test_summarize_recent_cli_reports_counts(tmp_path: Path, monkeypatch, capsys) -> None:
     config = build_config(tmp_path)
     store = SqliteArasStore(config.paths.state_db)
-    pdf_path = tmp_path / 'data' / 'raw' / 'live.pdf'
-    pdf_path.parent.mkdir(parents=True, exist_ok=True)
-    pdf_path.write_bytes(b'not readable pdf bytes')
-    from analysts.domain import ReportRecord
-    store.record_download(
-        ReportRecord(
-            id=None,
-            source='telegram',
-            channel='DOC_POOL',
-            message_id=88,
-            published_at='2026-04-15T00:00:00Z',
-            title='latest title',
-            pdf_path=pdf_path,
-            content='',
-            metadata={'file_unique_id': 'u-88'},
+    raw_dir = tmp_path / 'data' / 'raw'
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    for idx in range(2):
+        pdf_path = raw_dir / f'live-{idx}.pdf'
+        pdf_path.write_bytes(b'not readable pdf bytes')
+        store.record_download(
+            ReportRecord(
+                id=None,
+                source='telegram',
+                channel='DOC_POOL',
+                message_id=100 + idx,
+                published_at='2026-04-15T00:00:00Z',
+                title=f'title-{idx}',
+                pdf_path=pdf_path,
+                content='',
+                metadata={'file_unique_id': f'u-{idx}', 'telegram_caption_text': f'caption {idx}'},
+            )
         )
-    )
 
     class FixtureTelegramClient:
         @classmethod
@@ -206,7 +219,7 @@ def test_summarize_latest_cli_reports_processed_outputs(tmp_path: Path, monkeypa
     monkeypatch.setitem(sys.modules, 'analysts.telethon_client', module)
     monkeypatch.setattr('analysts.cli.build_default_pipeline', lambda **kwargs: ArasPipeline(client=object(), store=store, config=config, summarizer=FakeSummarizer()))
 
-    assert main(['summarize-latest', '--channel', 'DOC_POOL', '--base-dir', str(tmp_path)]) == 0
+    assert main(['summarize-recent', '--channel', 'DOC_POOL', '--limit', '2', '--base-dir', str(tmp_path)]) == 0
     output = capsys.readouterr().out.strip()
-    assert 'processed_files=4' in output
+    assert 'reports=2' in output
     assert 'summaries=2' in output

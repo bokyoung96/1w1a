@@ -45,6 +45,7 @@ class SummaryReadyExtractor:
             route_hints=[f"{route.lane}:{route.topic}" for route in routes],
             entities=parsed.entities,
             tickers=parsed.tickers,
+            page_previews=list(report.metadata.get('page_previews', [])),
         )
 
     def write_artifacts(self, packet: ExtractionPacket) -> ExtractionArtifacts:
@@ -64,6 +65,7 @@ class SummaryReadyExtractor:
             "route_hints": packet.route_hints,
             "entities": packet.entities,
             "tickers": packet.tickers,
+            "page_previews": packet.page_previews,
         }, ensure_ascii=False, indent=2) + "\n")
         return ExtractionArtifacts(packet=packet, raw_text_path=raw_text_path, summary_input_path=summary_input_path)
 

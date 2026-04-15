@@ -80,6 +80,8 @@ class ExtractionPacket:
     route_hints: list[str]
     entities: list[str]
     tickers: list[str]
+    page_previews: list[str] = field(default_factory=list)
+    page_previews: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)

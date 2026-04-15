@@ -8,6 +8,7 @@ from typing import Sequence
 
 from .config import build_config
 from .pipeline import ArasPipeline
+from .raw_reports import RawReportCatalog
 from .storage import SqliteArasStore
 
 
@@ -29,6 +30,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
     summarize_latest = subparsers.add_parser("summarize-latest")
     summarize_latest.add_argument("--channel", required=True)
     summarize_latest.add_argument("--base-dir", default=".")
+
+    summarize_recent = subparsers.add_parser("summarize-recent")
+    summarize_recent.add_argument("--channel", required=True)
+    summarize_recent.add_argument("--limit", type=int, default=10)
+    summarize_recent.add_argument("--base-dir", default=".")
 
     return parser
 
@@ -87,6 +93,30 @@ def main(argv: Sequence[str] | None = None) -> int:
                     f"processed_files={len(execution.processed_files)}",
                     f"summaries={len(execution.summaries)}",
                     f"message_id={execution.summary.next_offset}",
+                ]
+            )
+        )
+        return 0
+
+    if args.command == "summarize-recent":
+        pipeline = build_default_pipeline(base_dir=base_dir)
+        reports = [report for report in pipeline.store.list_reports() if report.channel == args.channel]
+        if not reports:
+            reports = RawReportCatalog(raw_dir=pipeline.config.paths.raw_dir, channel=args.channel).recent_reports(args.limit)
+        else:
+            reports = reports[-args.limit:]
+        total_processed = 0
+        total_summaries = 0
+        for report in reports:
+            execution = pipeline.summarize_report(report)
+            total_processed += len(execution.processed_files)
+            total_summaries += len(execution.summaries)
+        print(
+            " ".join(
+                [
+                    f"reports={len(reports)}",
+                    f"processed_files={total_processed}",
+                    f"summaries={total_summaries}",
                 ]
             )
         )

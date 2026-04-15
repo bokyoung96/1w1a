@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from .config import ArasConfig
 from .domain import AnalystSummary, PipelineExecution, PipelineRunSummary, ReportRecord
-from .extraction import SummaryReadyExtractor
+from .pdf_ingest import PdfIngestionPipeline
+from .processed_outputs import SummaryArtifactWriter
+from .raw_reports import RawReportCatalog
 from .fetcher import TelegramFetcher
 from .parser import DocumentParser
 from .router import TaskRouter
@@ -21,7 +22,7 @@ class ArasPipeline:
     store: SqliteArasStore
     config: ArasConfig
     summarizer: CodexAnalystSummarizer | None = None
-    extractor: SummaryReadyExtractor | None = None
+    extractor: object | None = None
 
     def run_once(self, *, channel: str) -> PipelineExecution:
         fetcher = TelegramFetcher(client=self.client, store=self.store, config=self.config)
@@ -49,28 +50,30 @@ class ArasPipeline:
     def summarize_latest(self, *, channel: str) -> PipelineExecution:
         report = self.store.get_latest_report(channel)
         if report is None:
-            raise RuntimeError(f"No stored report found for channel {channel}")
+            report = RawReportCatalog(raw_dir=self.config.paths.raw_dir, channel=channel).latest_report()
+        if report is None:
+            raise RuntimeError(f"No stored or raw report found for channel {channel}")
         return self.summarize_report(report)
 
     def summarize_report(self, report: ReportRecord) -> PipelineExecution:
         parser = DocumentParser()
         router = TaskRouter()
-        extractor = self.extractor or SummaryReadyExtractor(self.config)
+        ingest = PdfIngestionPipeline(self.config)
         summarizer = self.summarizer or CodexAnalystSummarizer(config=self.config, base_dir=self.config.paths.base_dir)
 
         parsed = parser.parse(report)
         routes = router.route(parsed)
-        packet = extractor.build_packet(report=report, parsed=parsed, routes=routes)
-        artifacts = extractor.write_artifacts(packet)
+        ingestion = ingest.ingest(report=report, parsed=parsed, routes=routes)
+        packet = ingestion.packet
         summaries = [
             summarizer.summarize(packet=packet, lane=lane, topic=topic)
             for lane, topic in summarizer.lane_plan(packet)
         ]
-        summary_json_path, summary_md_path = self._write_summary_outputs(packet=packet, summaries=summaries)
+        outputs = SummaryArtifactWriter(self.config).write(packet=packet, summaries=summaries)
 
         return PipelineExecution(
             summary=PipelineRunSummary(downloaded=0, duplicates=0, ignored=0, next_offset=report.message_id),
-            processed_files=[artifacts.raw_text_path, artifacts.summary_input_path, summary_json_path, summary_md_path],
+            processed_files=[*ingestion.processed_files, outputs.json_path, outputs.markdown_path],
             summaries=summaries,
         )
 
@@ -80,64 +83,3 @@ class ArasPipeline:
             if str(stored.metadata.get("file_unique_id")) == file_unique_id:
                 return stored
         return report
-
-    def _write_summary_outputs(self, *, packet, summaries: list[AnalystSummary]) -> tuple[Path, Path]:
-        slug = f"report-{packet.source_document_id or packet.message_id}"
-        json_path = self.config.paths.processed_dir / f"{slug}-summary.json"
-        md_path = self.config.paths.processed_dir / f"{slug}-summary.md"
-        payload = {
-            "report_title": packet.report_title,
-            "message_id": packet.message_id,
-            "published_at": packet.published_at,
-            "raw_pdf_path": str(packet.raw_pdf_path),
-            "extraction_quality": packet.extraction_quality,
-            "extraction_reason": packet.extraction_reason,
-            "route_hints": packet.route_hints,
-            "summaries": [
-                {
-                    "lane": summary.lane,
-                    "topic": summary.topic,
-                    "headline": summary.headline,
-                    "executive_summary": summary.executive_summary,
-                    "key_points": summary.key_points,
-                    "risks": summary.risks,
-                    "confidence": summary.confidence,
-                    "follow_up_questions": summary.follow_up_questions,
-                }
-                for summary in summaries
-            ],
-        }
-        json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
-        lines = [
-            f"# {packet.report_title}",
-            "",
-            f"- Message ID: {packet.message_id}",
-            f"- Published at: {packet.published_at}",
-            f"- Raw PDF: `{packet.raw_pdf_path}`",
-            f"- Extraction quality: {packet.extraction_quality}",
-            f"- Extraction reason: {packet.extraction_reason}",
-            "",
-        ]
-        for summary in summaries:
-            lines.extend(
-                [
-                    f"## {summary.lane.title()} analyst",
-                    f"- Topic: {summary.topic}",
-                    f"- Confidence: {summary.confidence}",
-                    f"- Headline: {summary.headline}",
-                    "",
-                    summary.executive_summary,
-                    "",
-                    "### Key points",
-                    *[f"- {item}" for item in summary.key_points],
-                    "",
-                    "### Risks",
-                    *[f"- {item}" for item in summary.risks],
-                    "",
-                    "### Follow-up questions",
-                    *[f"- {item}" for item in summary.follow_up_questions],
-                    "",
-                ]
-            )
-        md_path.write_text("\n".join(lines).rstrip() + "\n")
-        return json_path, md_path
