@@ -231,3 +231,4 @@ __marimo__/
 # Local credentials
 config/config.json
 config/access_token.json
+.omx/
