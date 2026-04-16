@@ -1,8 +1,9 @@
 from pathlib import Path
+import json
 
 from analysts.config import build_config
 from analysts.domain import ExtractionPacket
-from analysts.summarizer import CodexAnalystSummarizer
+from analysts.summarizer import CodexAnalystSummarizer, SubprocessCodexRunner
 
 
 class FakeRunner:
@@ -80,3 +81,46 @@ def test_summarizer_uses_runner_and_returns_structured_summary(tmp_path: Path) -
     assert runner.image_paths[0].name == 'page-1.png'
     assert summary.key_numbers == ['NBFI 대출 56% 증가']
     assert summary.cited_pages == [4, 13]
+
+
+def test_subprocess_runner_includes_skip_git_repo_check_for_isolated_dirs(tmp_path: Path, monkeypatch) -> None:
+    config = build_config(tmp_path)
+    runner = SubprocessCodexRunner()
+    captured: dict[str, object] = {}
+
+    def fake_run(command, **kwargs):
+        captured["command"] = command
+        output_path = Path(command[command.index("-o") + 1])
+        output_path.write_text(
+            json.dumps(
+                {
+                    "lane": "macro",
+                    "topic": "general",
+                    "headline": "headline",
+                    "executive_summary": "summary",
+                    "key_points": ["point"],
+                    "key_numbers": ["42"],
+                    "risks": ["risk"],
+                    "confidence": "medium",
+                    "cited_pages": [1],
+                    "follow_up_questions": ["question"],
+                }
+            )
+        )
+
+        class Result:
+            stderr = ""
+
+        return Result()
+
+    monkeypatch.setattr("analysts.summarizer.subprocess.run", fake_run)
+
+    runner.run(
+        prompt="prompt",
+        schema={"type": "object"},
+        base_dir=tmp_path,
+        config=config,
+        image_paths=[],
+    )
+
+    assert "--skip-git-repo-check" in captured["command"]

@@ -28,6 +28,7 @@ class SubprocessCodexRunner:
                 "exec",
                 "-C",
                 str(base_dir),
+                "--skip-git-repo-check",
                 "--sandbox",
                 "read-only",
                 "--color",
