@@ -106,3 +106,11 @@ def test_gmail_source_pipeline_summarizes_latest_body_candidate(tmp_path: Path) 
 
     assert len(execution.summaries) == 2
     assert execution.summary.next_offset == "msg-1"
+    assert (config.paths.processed_dir / "gmail" / "msg-1-body.txt").exists()
+    assert {path.name for path in execution.processed_files} == {
+        "report-msg-1-raw-text.txt",
+        "report-msg-1-summary-input.json",
+        "report-msg-1-summary.json",
+        "report-msg-1-summary.md",
+    }
+    assert {path.parent for path in execution.processed_files} == {config.paths.processed_dir}

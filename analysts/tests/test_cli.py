@@ -34,6 +34,47 @@ def test_show_config_redacts_local_telethon_secrets(tmp_path: Path, capsys) -> N
     assert payload['telethon']['channel'] == 'DOC_POOL'
 
 
+def test_show_config_includes_gmail_paths_and_redacts_inline_client_secret(tmp_path: Path, capsys) -> None:
+    (tmp_path / 'config.local.json').write_text(
+        json.dumps(
+            {
+                'gmail': {
+                    'account_name': 'reports-primary',
+                    'client_secret_json': {
+                        'installed': {
+                            'client_id': 'client-id',
+                            'client_secret': 'super-secret-client-secret',
+                            'auth_uri': 'https://accounts.google.com/o/oauth2/auth',
+                            'token_uri': 'https://oauth2.googleapis.com/token',
+                        }
+                    },
+                    'token_path': 'data/state/gmail-token.json',
+                    'query': 'label:broker-reports',
+                    'label_filters': ['Label_Reports'],
+                    'body_candidate_rules': {
+                        'min_chars': 200,
+                        'require_structure': True,
+                    },
+                    'zip_allow_extensions': ['.pdf', '.txt', '.html'],
+                }
+            }
+        )
+    )
+
+    exit_code = main(['show-config', '--base-dir', str(tmp_path)])
+    payload = json.loads(capsys.readouterr().out)
+
+    assert exit_code == 0
+    assert payload['gmail']['account_name'] == 'reports-primary'
+    assert payload['gmail']['client_secret_json'] == '<inline>'
+    assert payload['gmail']['token_path'] == 'data/state/gmail-token.json'
+    assert payload['gmail']['body_candidate_rules'] == {
+        'min_chars': 200,
+        'require_structure': True,
+    }
+    assert payload['gmail']['zip_allow_extensions'] == ['.pdf', '.txt', '.html']
+
+
 def test_build_default_pipeline_prefers_fixture_client_when_fixture_path_is_set(
     tmp_path: Path,
     monkeypatch,
