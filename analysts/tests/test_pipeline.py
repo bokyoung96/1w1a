@@ -1,6 +1,4 @@
 import json
-import sys
-import types
 from dataclasses import replace
 from pathlib import Path
 
@@ -332,25 +330,10 @@ def test_pipeline_summarizes_pdf_backed_canonical_document(tmp_path: Path) -> No
 
 def test_auth_login_dispatches_to_telethon_adapter(tmp_path: Path, monkeypatch) -> None:
     calls: list[tuple[Path, object]] = []
-    module = types.ModuleType('analysts.telethon_client')
-
-    def auth_login(*, base_dir: Path, config) -> None:
+    def fake_auth_login(*, base_dir: Path, config) -> None:
         calls.append((base_dir, config))
 
-    class FixtureTelegramClient:
-        @classmethod
-        def from_fixture_path(cls, fixture_path: Path):
-            raise AssertionError('not used')
-
-    class TelethonChannelClient:
-        def __init__(self, *, base_dir: Path, config) -> None:
-            self.base_dir = base_dir
-            self.config = config
-
-    module.auth_login = auth_login
-    module.FixtureTelegramClient = FixtureTelegramClient
-    module.TelethonChannelClient = TelethonChannelClient
-    monkeypatch.setitem(sys.modules, 'analysts.telethon_client', module)
+    monkeypatch.setattr('analysts.cli.telegram_auth_login', fake_auth_login)
 
     assert main(['auth-login', '--base-dir', str(tmp_path)]) == 0
     assert calls and calls[0][0] == tmp_path

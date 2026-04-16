@@ -17,6 +17,7 @@ from .raw_reports import RawReportCatalog
 from .sources.gmail.client import GmailApiClient
 from .sources.gmail.pipeline import GmailSourcePipeline
 from .sources.gmail.storage import GmailStore
+from .sources.telegram.client import auth_login as telegram_auth_login
 from .sources.telegram.fetcher import TelegramFetcher
 from .sources.telegram.watcher import AsyncWatchResult, WatchUntilRunner
 from .storage import SqliteArasStore
@@ -280,8 +281,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.command == "auth-login":
         config = build_config(base_dir)
-        telethon_module = import_module("analysts.telethon_client")
-        telethon_module.auth_login(base_dir=base_dir, config=config)
+        telegram_auth_login(base_dir=base_dir, config=config)
         return 0
 
     if args.command == "run-once":
