@@ -103,7 +103,7 @@ Current Gmail assumptions:
 - ZIP extraction is allowlisted to `.pdf`, `.txt`, and `.html`
 - Gmail state lives separately from Telegram state
 
-Planned command surface:
+Current command surface:
 ```bash
 cd analysts
 PYTHONPATH=src ../.venv/bin/python -m analysts.cli gmail-auth-login
@@ -114,9 +114,14 @@ PYTHONPATH=src ../.venv/bin/python -m analysts.cli gmail-summarize-recent --limi
 ```
 
 Storage layout for Gmail:
-- `data/raw/gmail/`
-- `data/processed/gmail/`
-- `data/state/gmail.sqlite3`
+- `data/state/gmail.sqlite3` stores Gmail message records, sync state, and candidate metadata separately from Telegram state.
+- `data/processed/gmail/` holds Gmail-only staged candidate material, such as promoted body-text files and allowlisted ZIP entries.
+- `data/processed/report-*.{txt,json,md}` remains the shared analyst artifact surface for both Telegram and Gmail summarization outputs.
+
+Raw-vs-processed organization notes:
+- the Gmail API payload remains in SQLite via `raw_payload_json` on each stored message record
+- promoted Gmail body text and extracted ZIP members are treated as **processed staging inputs**, not canonical raw inbox blobs
+- the top-level analyst summaries still point back to the staged source path through `raw_pdf_path`, even when the source is a Gmail body/text candidate rather than a Telegram PDF
 
 ## Active pipeline map
 The live analysts path is intentionally narrow:
@@ -160,12 +165,33 @@ Create `analysts/config.local.json` (gitignored):
 Gmail config will live alongside Telegram config under a separate top-level `gmail` key. Expected fields include:
 - `account_name`
 - `client_secret_path`
+- `client_secret_json`
 - `token_path`
 - `query`
 - optional `label_filters`
 - `body_candidate_rules`
 - `zip_allow_extensions`
 - `poll_interval_seconds`
+
+Example Gmail config:
+
+```json
+{
+  "gmail": {
+    "account_name": "reports-primary",
+    "client_secret_path": "secrets/google-client.json",
+    "token_path": "data/state/gmail-token.json",
+    "query": "label:broker-reports newer_than:7d",
+    "label_filters": ["Label_Reports"],
+    "body_candidate_rules": {
+      "min_chars": 200,
+      "require_structure": true
+    },
+    "zip_allow_extensions": [".pdf", ".txt", ".html"],
+    "poll_interval_seconds": 300
+  }
+}
+```
 
 ## Token-cheap summary design
 - raw PDF remains the source of truth
