@@ -11,15 +11,15 @@ from pathlib import Path
 from typing import Sequence
 
 from .config import build_config
-from .fetcher import TelegramFetcher
 from .graphify import GraphifyCorpusBuilder
 from .pipeline import ArasPipeline
 from .raw_reports import RawReportCatalog
 from .sources.gmail.client import GmailApiClient
 from .sources.gmail.pipeline import GmailSourcePipeline
 from .sources.gmail.storage import GmailStore
+from .sources.telegram.fetcher import TelegramFetcher
+from .sources.telegram.watcher import AsyncWatchResult, WatchUntilRunner
 from .storage import SqliteArasStore
-from .watcher import AsyncWatchResult, WatchUntilRunner
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
@@ -78,7 +78,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
 def build_default_pipeline(*, base_dir: Path, fixtures_path: str | None = None) -> ArasPipeline:
     config = build_config(base_dir)
     store = SqliteArasStore(config.paths.state_db)
-    telethon_module = import_module("analysts.telethon_client")
+    telethon_module = import_module("analysts.sources.telegram.client")
     if fixtures_path:
         client = telethon_module.FixtureTelegramClient.from_fixture_path(Path(fixtures_path))
         return ArasPipeline(client=client, store=store, config=config)
@@ -89,7 +89,7 @@ def build_default_pipeline(*, base_dir: Path, fixtures_path: str | None = None) 
 def build_watch_runner(*, base_dir: Path) -> WatchUntilRunner:
     config = build_config(base_dir)
     store = SqliteArasStore(config.paths.state_db)
-    telethon_module = import_module("analysts.telethon_client")
+    telethon_module = import_module("analysts.sources.telegram.client")
     client = telethon_module.TelethonChannelClient(base_dir=base_dir, config=config)
     pipeline = ArasPipeline(client=client, store=store, config=config)
     fetcher = TelegramFetcher(client=client, store=store, config=config)

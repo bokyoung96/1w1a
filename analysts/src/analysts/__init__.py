@@ -8,7 +8,7 @@ from .domain import (
     ReportRecord,
     RouteDecision,
 )
-from .fetcher import FetchBatch, TelegramFetcher
+from .sources.telegram.fetcher import FetchBatch, TelegramFetcher
 from .pipeline import ArasPipeline
 from .storage import SqliteArasStore
 

@@ -7,10 +7,10 @@ from typing import Any
 from .config import ArasConfig
 from .domain import AnalystSummary, CanonicalDocument, ExtractionPacket, PipelineExecution, PipelineRunSummary, ReportRecord
 from .extraction import SummaryReadyExtractor
+from .sources.telegram.fetcher import TelegramFetcher
 from .pdf_ingest import PdfIngestionPipeline
 from .summary_outputs import SummaryArtifactWriter
 from .raw_reports import RawReportCatalog
-from .fetcher import TelegramFetcher
 from .parser import DocumentParser
 from .router import TaskRouter
 from .storage import SqliteArasStore
