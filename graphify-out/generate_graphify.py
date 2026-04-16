@@ -220,9 +220,16 @@ def _materialize_gics_reference_docs(raw_dir: Path) -> list[Path]:
                     stock_name_map[_normalize_ticker(row.iloc[0])] = str(row.iloc[1]).strip()
 
     generated: list[Path] = []
+    workbook_path = raw_dir / "snp_ksdq_gics_sector_big.xlsx"
+    if workbook_path.exists():
+        level_mappings = _read_gics_level_mappings_from_workbook(workbook_path)
+        for level, mappings in level_mappings.items():
+            generated.extend(_write_gics_reference_outputs(raw_dir, workbook_path, level, mappings, stock_name_map))
+        return generated
+
     level_paths = _resolve_kosdaq_gics_paths(raw_dir)
     for level, gics_path in level_paths.items():
-        mappings = _read_gics_mappings(gics_path)
+        mappings = _read_gics_mappings(gics_path, sector_column="GICS_SECTOR_NAME")
         if mappings is None:
             continue
         generated.extend(_write_gics_reference_outputs(raw_dir, gics_path, level, mappings, stock_name_map))
@@ -246,19 +253,34 @@ def _resolve_kosdaq_gics_paths(raw_dir: Path) -> dict[str, Path]:
     return resolved
 
 
-def _read_gics_mappings(gics_path: Path) -> pd.DataFrame | None:
+def _read_gics_mappings(gics_path: Path, *, sector_column: str) -> pd.DataFrame | None:
     frame = pd.read_excel(gics_path)
     frame = frame.rename(columns={str(column).strip(): str(column).strip() for column in frame.columns})
-    required = {"DATE", "TICKER", "GICS_SECTOR_NAME"}
+    required = {"DATE", "TICKER", sector_column}
     if not required <= set(frame.columns):
         return None
 
-    mappings = frame.loc[:, ["DATE", "TICKER", "GICS_SECTOR_NAME"]].dropna().copy()
+    mappings = frame.loc[:, ["DATE", "TICKER", sector_column]].dropna().copy()
     mappings["DATE"] = pd.to_datetime(mappings["DATE"]).dt.normalize()
     mappings["TICKER"] = mappings["TICKER"].map(_normalize_ticker)
     mappings["CODE"] = mappings["TICKER"].map(_ticker_code)
-    mappings["GICS_SECTOR_NAME"] = mappings["GICS_SECTOR_NAME"].astype(str).str.strip()
+    mappings["GICS_SECTOR_NAME"] = mappings[sector_column].astype(str).str.strip()
+    if sector_column != "GICS_SECTOR_NAME":
+        mappings = mappings.drop(columns=[sector_column])
     return mappings.drop_duplicates(subset=["DATE", "TICKER"], keep="last").sort_values(["DATE", "TICKER"])
+
+
+def _read_gics_level_mappings_from_workbook(gics_path: Path) -> dict[str, pd.DataFrame]:
+    resolved: dict[str, pd.DataFrame] = {}
+    for level, column in (("lv1", "GICS_SECTOR_LV1_NAME"), ("lv2", "GICS_SECTOR_LV2_NAME")):
+        mappings = _read_gics_mappings(gics_path, sector_column=column)
+        if mappings is not None:
+            resolved[level] = mappings
+    if not resolved:
+        legacy = _read_gics_mappings(gics_path, sector_column="GICS_SECTOR_NAME")
+        if legacy is not None:
+            resolved["lv1"] = legacy
+    return resolved
 
 
 def _write_gics_reference_outputs(

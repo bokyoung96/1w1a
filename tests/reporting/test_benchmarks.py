@@ -215,7 +215,7 @@ def test_read_historical_sector_frame_pivots_long_excel(tmp_path) -> None:
         {
             "DATE": [pd.Timestamp("2024-01-31"), pd.Timestamp("2024-01-31"), pd.Timestamp("2024-02-29")],
             "TICKER": ["A091990", "091990", "A091990"],
-            "GICS_SECTOR_NAME": ["Health Care", "Health Care", "Information Technology"],
+            "GICS_SECTOR_LV1_NAME": ["Health Care", "Health Care", "Information Technology"],
         }
     ).to_excel(path, index=False)
 
@@ -270,7 +270,8 @@ def test_default_sector_repository_for_kosdaq150_can_use_gics_source(monkeypatch
         {
             "DATE": [pd.Timestamp("2024-01-31"), pd.Timestamp("2024-02-29")],
             "TICKER": ["A091990", "A091990"],
-            "GICS_SECTOR_NAME": ["Health Care", "Information Technology"],
+            "GICS_SECTOR_LV1_NAME": ["Health Care", "Information Technology"],
+            "GICS_SECTOR_LV2_NAME": ["Biotechnology", "Health Care Equipment & Services"],
         }
     ).to_excel(raw_dir / "snp_ksdq_gics_sector_big.xlsx", index=False)
 
@@ -296,28 +297,22 @@ def test_default_sector_repository_for_kosdaq150_can_use_gics_source(monkeypatch
     assert requested == [DatasetId.QW_KSDQ_ADJ_C, DatasetId.QW_BM]
 
 
-def test_default_sector_repository_for_kosdaq150_prefers_lv1_gics_layout(monkeypatch, tmp_path) -> None:
+def test_default_sector_repository_for_kosdaq150_prefers_lv1_column_from_gics_workbook(monkeypatch, tmp_path) -> None:
     import backtesting.reporting.benchmarks as benchmarks
     from backtesting.catalog import DatasetId
 
     raw_dir = tmp_path / "raw"
-    (raw_dir / "ksdq").mkdir(parents=True)
+    raw_dir.mkdir(parents=True)
     with pd.ExcelWriter(raw_dir / "map.xlsx") as writer:
         pd.DataFrame({"Ticker": ["A091990"], "Name": ["셀트리온헬스케어"]}).to_excel(writer, sheet_name="Sheet3", index=False)
     pd.DataFrame(
         {
             "DATE": [pd.Timestamp("2024-01-31"), pd.Timestamp("2024-02-29")],
             "TICKER": ["A091990", "A091990"],
-            "GICS_SECTOR_NAME": ["Health Care", "Information Technology"],
+            "GICS_SECTOR_LV1_NAME": ["Health Care", "Information Technology"],
+            "GICS_SECTOR_LV2_NAME": ["Biotechnology", "Healthcare Equipment"],
         }
-    ).to_excel(raw_dir / "ksdq" / "snp_ksdq_gics_sector_big_lv1.xlsx", index=False)
-    pd.DataFrame(
-        {
-            "DATE": [pd.Timestamp("2024-01-31"), pd.Timestamp("2024-02-29")],
-            "TICKER": ["A091990", "A091990"],
-            "GICS_SECTOR_NAME": ["Biotechnology", "Healthcare Equipment"],
-        }
-    ).to_excel(raw_dir / "ksdq" / "snp_ksdq_gics_sector_big_lv2.xlsx", index=False)
+    ).to_excel(raw_dir / "snp_ksdq_gics_sector_big.xlsx", index=False)
 
     requested: list[DatasetId] = []
 

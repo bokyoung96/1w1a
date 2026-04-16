@@ -53,7 +53,8 @@ def test_materialize_raw_reference_docs_writes_map_and_gics_outputs(tmp_path) ->
         {
             "DATE": [pd.Timestamp("2024-01-31"), pd.Timestamp("2024-02-29")],
             "TICKER": ["A091990", "A091990"],
-            "GICS_SECTOR_NAME": ["Health Care", "Information Technology"],
+            "GICS_SECTOR_LV1_NAME": ["Health Care", "Information Technology"],
+            "GICS_SECTOR_LV2_NAME": ["Biotechnology", "Health Care Equipment & Services"],
         }
     ).to_excel(raw_dir / "snp_ksdq_gics_sector_big.xlsx", index=False)
 
@@ -77,11 +78,11 @@ def test_materialize_raw_reference_docs_writes_map_and_gics_outputs(tmp_path) ->
     assert list(pivot.columns) == ["date", "A091990"]
 
 
-def test_materialize_raw_reference_docs_writes_lv1_and_lv2_gics_outputs(tmp_path) -> None:
+def test_materialize_raw_reference_docs_writes_lv1_and_lv2_gics_outputs_from_single_workbook(tmp_path) -> None:
     module = _load_generate_module()
 
     raw_dir = tmp_path / "raw"
-    (raw_dir / "ksdq").mkdir(parents=True)
+    raw_dir.mkdir(parents=True)
 
     with pd.ExcelWriter(raw_dir / "map.xlsx") as writer:
         pd.DataFrame({"Ticker": ["A091990"], "Name": ["셀트리온헬스케어"]}).to_excel(writer, sheet_name="Sheet3", index=False)
@@ -90,16 +91,10 @@ def test_materialize_raw_reference_docs_writes_lv1_and_lv2_gics_outputs(tmp_path
         {
             "DATE": [pd.Timestamp("2024-01-31"), pd.Timestamp("2024-02-29")],
             "TICKER": ["A091990", "A091990"],
-            "GICS_SECTOR_NAME": ["Health Care", "Information Technology"],
+            "GICS_SECTOR_LV1_NAME": ["Health Care", "Information Technology"],
+            "GICS_SECTOR_LV2_NAME": ["Biotechnology", "Healthcare Equipment"],
         }
-    ).to_excel(raw_dir / "ksdq" / "snp_ksdq_gics_sector_big_lv1.xlsx", index=False)
-    pd.DataFrame(
-        {
-            "DATE": [pd.Timestamp("2024-01-31"), pd.Timestamp("2024-02-29")],
-            "TICKER": ["A091990", "A091990"],
-            "GICS_SECTOR_NAME": ["Biotechnology", "Healthcare Equipment"],
-        }
-    ).to_excel(raw_dir / "ksdq" / "snp_ksdq_gics_sector_big_lv2.xlsx", index=False)
+    ).to_excel(raw_dir / "snp_ksdq_gics_sector_big.xlsx", index=False)
 
     generated = module.materialize_raw_reference_docs(raw_dir)
 

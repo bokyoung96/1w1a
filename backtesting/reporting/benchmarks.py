@@ -79,7 +79,7 @@ class SectorRepository:
         *,
         date_column: str = "DATE",
         symbol_column: str = "TICKER",
-        sector_column: str = "GICS_SECTOR_NAME",
+        sector_column: str = "GICS_SECTOR_LV1_NAME",
         sector_name_map: dict[str, str] | None = None,
         stock_name_map: dict[str, str] | None = None,
     ) -> "SectorRepository":
@@ -332,14 +332,15 @@ def _read_historical_sector_frame(
     *,
     date_column: str = "DATE",
     symbol_column: str = "TICKER",
-    sector_column: str = "GICS_SECTOR_NAME",
+    sector_column: str = "GICS_SECTOR_LV1_NAME",
 ) -> pd.DataFrame:
     frame = pd.read_excel(path)
     columns = {str(column).strip().upper(): column for column in frame.columns}
+    resolved_sector_column = _resolve_sector_column(columns, sector_column)
     required = {
         date_column.strip().upper(): date_column,
         symbol_column.strip().upper(): symbol_column,
-        sector_column.strip().upper(): sector_column,
+        resolved_sector_column.strip().upper(): resolved_sector_column,
     }
     missing = [original for normalized, original in required.items() if normalized not in columns]
     if missing:
@@ -350,7 +351,7 @@ def _read_historical_sector_frame(
         [
             columns[date_column.strip().upper()],
             columns[symbol_column.strip().upper()],
-            columns[sector_column.strip().upper()],
+            columns[resolved_sector_column.strip().upper()],
         ],
     ].copy()
     selected.columns = ["date", "symbol", "sector"]
@@ -391,6 +392,21 @@ def _resolve_kosdaq_gics_level_path(raw_dir: Path, *, level: str = "lv1") -> Pat
         return legacy
 
     return raw_dir / "ksdq" / candidate_names[0]
+
+
+def _resolve_sector_column(columns: dict[str, object], requested: str) -> str:
+    normalized = str(requested).strip().upper()
+    if normalized in columns:
+        return str(requested).strip()
+    fallbacks = {
+        "GICS_SECTOR_LV1_NAME": ["GICS_SECTOR_NAME"],
+        "GICS_SECTOR_LV2_NAME": [],
+        "GICS_SECTOR_NAME": ["GICS_SECTOR_LV1_NAME"],
+    }
+    for candidate in fallbacks.get(normalized, []):
+        if candidate in columns:
+            return candidate
+    return str(requested).strip()
 
 
 def _load_display_name_maps(path: Path) -> tuple[dict[str, str], dict[str, str]]:
