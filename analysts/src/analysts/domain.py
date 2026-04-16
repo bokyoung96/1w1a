@@ -26,6 +26,23 @@ class ReportRecord:
 
 
 @dataclass(frozen=True)
+class CanonicalDocument:
+    source: str
+    source_message_id: str
+    source_thread_id: str | None
+    source_feed: str
+    document_kind: str
+    title: str
+    published_at: str | None
+    sender_or_origin: str | None
+    mime_type: str
+    dedupe_key: str
+    raw_path: Path
+    normalized_text_path: Path | None
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
 class ParsedDocument:
     title: str
     content: str

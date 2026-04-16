@@ -69,10 +69,44 @@ class SummaryConfig:
 
 
 @dataclass(frozen=True)
+class BodyCandidateRules:
+    min_chars: int = 800
+    require_structure: bool = True
+
+
+@dataclass(frozen=True)
+class GmailConfig:
+    account_name: str
+    client_secret_path: Path
+    token_path: Path
+    query: str
+    label_filters: tuple[str, ...] = ()
+    body_candidate_rules: BodyCandidateRules = BodyCandidateRules()
+    zip_allow_extensions: tuple[str, ...] = (".pdf", ".txt", ".html")
+    poll_interval_seconds: int = 300
+
+    def to_display_dict(self) -> dict[str, Any]:
+        return {
+            "account_name": self.account_name,
+            "client_secret_path": str(self.client_secret_path),
+            "token_path": str(self.token_path),
+            "query": self.query,
+            "label_filters": list(self.label_filters),
+            "body_candidate_rules": {
+                "min_chars": self.body_candidate_rules.min_chars,
+                "require_structure": self.body_candidate_rules.require_structure,
+            },
+            "zip_allow_extensions": list(self.zip_allow_extensions),
+            "poll_interval_seconds": self.poll_interval_seconds,
+        }
+
+
+@dataclass(frozen=True)
 class ArasConfig:
     paths: ArasPaths
     polling_limit: int = 100
     telethon: TelethonConfig | None = None
+    gmail: GmailConfig | None = None
     summary: SummaryConfig = SummaryConfig()
 
     def to_display_dict(self) -> dict[str, Any]:
@@ -91,6 +125,7 @@ class ArasConfig:
             },
             "polling_limit": self.polling_limit,
             "telethon": None if self.telethon is None else self.telethon.to_display_dict(),
+            "gmail": None if self.gmail is None else self.gmail.to_display_dict(),
             "summary": self.summary.to_display_dict(),
         }
 
@@ -98,6 +133,7 @@ class ArasConfig:
 @dataclass(frozen=True)
 class LocalRuntimeConfig:
     telethon: TelethonConfig | None
+    gmail: GmailConfig | None
     summary: SummaryConfig
 
 
@@ -128,7 +164,7 @@ def build_config(base_dir: Path) -> ArasConfig:
         paths.state_dir,
     ):
         directory.mkdir(parents=True, exist_ok=True)
-    return ArasConfig(paths=paths, telethon=runtime.telethon, summary=runtime.summary)
+    return ArasConfig(paths=paths, telethon=runtime.telethon, gmail=runtime.gmail, summary=runtime.summary)
 
 
 def require_telethon_config(config: ArasConfig) -> TelethonConfig:
@@ -142,10 +178,11 @@ def require_telethon_config(config: ArasConfig) -> TelethonConfig:
 
 def _load_local_runtime_config(local_config_path: Path) -> LocalRuntimeConfig:
     if not local_config_path.exists():
-        return LocalRuntimeConfig(telethon=None, summary=SummaryConfig())
+        return LocalRuntimeConfig(telethon=None, gmail=None, summary=SummaryConfig())
 
     payload = json.loads(local_config_path.read_text())
     telegram_payload = payload.get("telegram") or {}
+    gmail_payload = payload.get("gmail") or {}
     summary_payload = payload.get("summary") or {}
 
     telethon = None
@@ -162,6 +199,25 @@ def _load_local_runtime_config(local_config_path: Path) -> LocalRuntimeConfig:
                 pdf_only=bool(telegram_payload.get("pdf_only", True)),
             )
 
+    gmail = None
+    if gmail_payload:
+        body_rules_payload = gmail_payload.get("body_candidate_rules") or {}
+        gmail = GmailConfig(
+            account_name=str(gmail_payload["account_name"]),
+            client_secret_path=Path(str(gmail_payload["client_secret_path"])),
+            token_path=Path(str(gmail_payload["token_path"])),
+            query=str(gmail_payload["query"]),
+            label_filters=tuple(str(item) for item in gmail_payload.get("label_filters", [])),
+            body_candidate_rules=BodyCandidateRules(
+                min_chars=int(body_rules_payload.get("min_chars", 800)),
+                require_structure=bool(body_rules_payload.get("require_structure", True)),
+            ),
+            zip_allow_extensions=tuple(
+                str(item) for item in gmail_payload.get("zip_allow_extensions", [".pdf", ".txt", ".html"])
+            ),
+            poll_interval_seconds=int(gmail_payload.get("poll_interval_seconds", 300)),
+        )
+
     summary = SummaryConfig(
         provider=str(summary_payload.get("provider", "codex_cli")),
         model=str(summary_payload.get("model", "gpt-5.4-mini")),
@@ -172,4 +228,4 @@ def _load_local_runtime_config(local_config_path: Path) -> LocalRuntimeConfig:
         render_page_previews=bool(summary_payload.get("render_page_previews", True)),
         max_preview_pages=int(summary_payload.get("max_preview_pages", 2)),
     )
-    return LocalRuntimeConfig(telethon=telethon, summary=summary)
+    return LocalRuntimeConfig(telethon=telethon, gmail=gmail, summary=summary)
