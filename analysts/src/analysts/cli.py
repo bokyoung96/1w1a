@@ -120,6 +120,7 @@ def build_gmail_source_pipeline(*, base_dir: Path) -> GmailSourcePipeline:
         query=config.gmail.query,
         body_rules=config.gmail.body_candidate_rules,
         zip_allow_extensions=config.gmail.zip_allow_extensions,
+        raw_root=config.paths.raw_dir / "gmail",
     )
 
 

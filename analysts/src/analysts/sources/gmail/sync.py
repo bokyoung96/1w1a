@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from base64 import urlsafe_b64decode
 from dataclasses import dataclass
+import json
+from pathlib import Path
 from typing import Any
 
-from .models import GmailMessageRecord
+from .models import GmailAttachmentRecord, GmailMessageRecord
 from .storage import GmailStore
 
 
@@ -16,11 +18,20 @@ class GmailSyncResult:
 
 
 class GmailPollingSync:
-    def __init__(self, *, api: Any, store: GmailStore, account_name: str, query: str) -> None:
+    def __init__(
+        self,
+        *,
+        api: Any,
+        store: GmailStore,
+        account_name: str,
+        query: str,
+        raw_root: Path,
+    ) -> None:
         self.api = api
         self.store = store
         self.account_name = account_name
         self.query = query
+        self.raw_root = Path(raw_root)
 
     def sync_once(self, *, limit: int) -> GmailSyncResult:
         listed = self.api.list_message_ids(query=self.query, limit=limit)
@@ -35,6 +46,7 @@ class GmailPollingSync:
                 continue
             payload = self.api.get_message(message_id=message_id)
             record = build_message_record(account_name=self.account_name, query=self.query, payload=payload)
+            self._write_raw_container(record=record)
             self.store.record_message(record)
             fetched += 1
             last_history_id = payload.get("historyId") or last_history_id
@@ -50,6 +62,30 @@ class GmailPollingSync:
             skipped_existing=skipped_existing,
             last_history_id=last_history_id,
         )
+
+    def _write_raw_container(self, *, record: GmailMessageRecord) -> None:
+        container = self.raw_root / record.gmail_message_id
+        attachments_dir = container / "attachments"
+        attachments_dir.mkdir(parents=True, exist_ok=True)
+        (container / "message.json").write_text(json.dumps(record.raw_payload_json, ensure_ascii=False, indent=2) + "\n")
+        if record.body_plain:
+            (container / "body.txt").write_text(record.body_plain)
+        if record.body_html:
+            (container / "body.html").write_text(record.body_html)
+        attachments = _extract_attachment_records(payload=record.raw_payload_json, message_id=record.gmail_message_id)
+        manifest_payload = {
+            "gmail_message_id": record.gmail_message_id,
+            "attachments": [
+                {
+                    "attachment_id": item.attachment_id,
+                    "filename": item.filename,
+                    "mime_type": item.mime_type,
+                    "is_zip": item.is_zip,
+                }
+                for item in attachments
+            ],
+        }
+        (attachments_dir / "manifest.json").write_text(json.dumps(manifest_payload, ensure_ascii=False, indent=2) + "\n")
 
 
 def build_message_record(*, account_name: str, query: str, payload: dict[str, Any]) -> GmailMessageRecord:
@@ -74,6 +110,35 @@ def build_message_record(*, account_name: str, query: str, payload: dict[str, An
         sync_status="synced",
         query_fingerprint=query,
     )
+
+
+def _extract_attachment_records(*, payload: dict[str, Any], message_id: str) -> list[GmailAttachmentRecord]:
+    attachments: list[GmailAttachmentRecord] = []
+
+    def walk(part: dict[str, Any]) -> None:
+        filename = str(part.get("filename") or "")
+        body = part.get("body") or {}
+        attachment_id = body.get("attachmentId")
+        mime_type = str(part.get("mimeType") or "")
+        if filename or attachment_id:
+            attachments.append(
+                GmailAttachmentRecord(
+                    gmail_message_id=message_id,
+                    attachment_id=str(attachment_id or filename or "inline"),
+                    filename=filename,
+                    mime_type=mime_type,
+                    size_bytes=int(body.get("size") or 0),
+                    sha256="",
+                    raw_path=Path(filename or str(attachment_id or "attachment.bin")),
+                    is_zip=filename.lower().endswith(".zip") or mime_type == "application/zip",
+                    extraction_status="listed",
+                )
+            )
+        for child in part.get("parts") or []:
+            walk(child)
+
+    walk(payload.get("payload", {}))
+    return attachments
 
 
 def _extract_body_text(message_part: dict[str, Any]) -> str | None:

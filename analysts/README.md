@@ -115,12 +115,16 @@ PYTHONPATH=src ../.venv/bin/python -m analysts.cli gmail-summarize-recent --limi
 
 Storage layout for Gmail:
 - `data/state/gmail.sqlite3` stores Gmail message records, sync state, and candidate metadata separately from Telegram state.
+- `data/raw/gmail/<gmail-message-id>/message.json` stores the fetched Gmail message payload per message container.
+- `data/raw/gmail/<gmail-message-id>/body.txt` and `body.html` store extracted body artifacts when present.
+- `data/raw/gmail/<gmail-message-id>/attachments/manifest.json` records attachment metadata for that message container.
 - `data/processed/gmail/` holds Gmail-only staged candidate material, such as promoted body-text files and allowlisted ZIP entries.
 - `data/processed/report-*.{txt,json,md}` remains the shared analyst artifact surface for both Telegram and Gmail summarization outputs.
 
 Raw-vs-processed organization notes:
-- the Gmail API payload remains in SQLite via `raw_payload_json` on each stored message record
-- promoted Gmail body text and extracted ZIP members are treated as **processed staging inputs**, not canonical raw inbox blobs
+- raw Gmail storage is **message-centric** so one email can keep its body, payload metadata, and attachment manifest together
+- processed Gmail staging remains **document-centric** so downstream summaries look like the Telegram-style artifact flow
+- the Gmail API payload also remains in SQLite via `raw_payload_json` on each stored message record for queryable metadata
 - the top-level analyst summaries still point back to the staged source path through `raw_pdf_path`, even when the source is a Gmail body/text candidate rather than a Telegram PDF
 
 ## Active pipeline map

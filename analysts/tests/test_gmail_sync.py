@@ -55,13 +55,24 @@ class FakeSummarizer:
 
 def test_polling_sync_records_new_messages(tmp_path) -> None:
     store = GmailStore(tmp_path / "gmail.sqlite3")
-    sync = GmailPollingSync(api=FakeGmailApi(), store=store, account_name="reports-primary", query="label:broker-reports")
+    sync = GmailPollingSync(
+        api=FakeGmailApi(),
+        store=store,
+        account_name="reports-primary",
+        query="label:broker-reports",
+        raw_root=tmp_path / "raw" / "gmail",
+    )
 
     result = sync.sync_once(limit=10)
 
     assert result.fetched == 1
     assert store.get_message("msg-1").subject == "Morning wrap"
     assert store.get_sync_state("reports-primary").last_history_id == "200"
+    container = tmp_path / "raw" / "gmail" / "msg-1"
+    assert (container / "message.json").exists()
+    assert (container / "body.txt").read_text() == "Structured report body"
+    manifest = (container / "attachments" / "manifest.json").read_text()
+    assert '"attachments": []' in manifest
 
 
 def test_gmail_source_pipeline_summarizes_latest_body_candidate(tmp_path: Path) -> None:
@@ -100,6 +111,7 @@ def test_gmail_source_pipeline_summarizes_latest_body_candidate(tmp_path: Path) 
         query="label:broker-reports",
         body_rules=BodyCandidateRules(min_chars=200, require_structure=True),
         zip_allow_extensions=(".pdf", ".txt", ".html"),
+        raw_root=config.paths.raw_dir / "gmail",
     )
 
     execution = source_pipeline.summarize_latest()

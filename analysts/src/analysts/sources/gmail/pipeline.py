@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from analysts.config import ArasConfig, BodyCandidateRules
 from analysts.pipeline import ArasPipeline
@@ -21,6 +22,7 @@ class GmailSourcePipeline:
     query: str
     body_rules: BodyCandidateRules
     zip_allow_extensions: tuple[str, ...]
+    raw_root: Path
 
     def sync_once(self, *, limit: int):
         return GmailPollingSync(
@@ -28,6 +30,7 @@ class GmailSourcePipeline:
             store=self.store,
             account_name=self.account_name,
             query=self.query,
+            raw_root=self.raw_root,
         ).sync_once(limit=limit)
 
     def summarize_latest(self):
