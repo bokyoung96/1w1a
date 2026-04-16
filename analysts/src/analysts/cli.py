@@ -79,7 +79,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
 def build_default_pipeline(*, base_dir: Path, fixtures_path: str | None = None) -> ArasPipeline:
     config = build_config(base_dir)
     store = SqliteArasStore(config.paths.state_db)
-    telethon_module = import_module("analysts.sources.telegram.client")
+    telethon_module = import_module("analysts.telethon_client")
     if fixtures_path:
         client = telethon_module.FixtureTelegramClient.from_fixture_path(Path(fixtures_path))
         return ArasPipeline(client=client, store=store, config=config)
@@ -90,7 +90,7 @@ def build_default_pipeline(*, base_dir: Path, fixtures_path: str | None = None) 
 def build_watch_runner(*, base_dir: Path) -> WatchUntilRunner:
     config = build_config(base_dir)
     store = SqliteArasStore(config.paths.state_db)
-    telethon_module = import_module("analysts.sources.telegram.client")
+    telethon_module = import_module("analysts.telethon_client")
     client = telethon_module.TelethonChannelClient(base_dir=base_dir, config=config)
     pipeline = ArasPipeline(client=client, store=store, config=config)
     fetcher = TelegramFetcher(client=client, store=store, config=config)
@@ -190,7 +190,7 @@ def normalize_channels(channels: list[str]) -> list[str]:
 
 
 def configure_watch_logger(*, base_dir: Path) -> logging.Logger:
-    logger = logging.getLogger("analysts.watch")
+    logger = logging.getLogger("analysts.watch.cli")
     if logger.handlers:
         return logger
     logger.setLevel(logging.INFO)

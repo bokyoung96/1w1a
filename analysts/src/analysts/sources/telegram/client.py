@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from getpass import getpass
 from pathlib import Path
+from tempfile import mkdtemp
 from tempfile import TemporaryDirectory
 from typing import Any, Callable, TypeVar
 
@@ -211,10 +212,10 @@ class TelethonChannelClient:
     @contextmanager
     def _isolated_session_path(self):
         source_session_path = self.config.paths.telethon_session_path
-        with TemporaryDirectory(dir=self.config.paths.state_dir) as tmp_dir:
-            isolated_session_path = Path(tmp_dir) / source_session_path.name
-            shutil.copy2(source_session_path, isolated_session_path)
-            yield isolated_session_path
+        tmp_dir = Path(mkdtemp(dir=self.config.paths.state_dir))
+        isolated_session_path = tmp_dir / source_session_path.name
+        shutil.copy2(source_session_path, isolated_session_path)
+        yield isolated_session_path
 
     @staticmethod
     def _session_password_error():
