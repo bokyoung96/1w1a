@@ -96,7 +96,6 @@ def test_build_default_pipeline_prefers_fixture_client_when_fixture_path_is_set(
             live_calls.append((base_dir, config))
 
         def __new__(cls, *args, **kwargs):
-            instance = super().__new__(cls)
             return live_client
 
     module.auth_login = lambda **kwargs: None
