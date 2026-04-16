@@ -4,10 +4,12 @@ Alpha Research Agent System (ARAS) workspace built only inside `analysts/`.
 
 ## What works now
 - Telethon-based Telegram crawling for `DOC_POOL`
-- Raw PDF persistence under `data/raw/`
+- PDF-only raw persistence under `data/raw/`
 - Token-cheap LLM analyst summaries via local `codex exec`
 - Processed artifacts under `data/processed/`
 - Saved local Telethon session under `data/state/`
+- Watch startup catch-up before switching to live event subscriptions
+- Async-safe Telethon refetch fallback for live watcher downloads
 
 ## In-flight PDF ingestion contract
 The current runtime still uses the lightweight summary extractor, but the active PDF-ingestion lane is targeting a richer artifact contract inside `analysts/` only:
@@ -38,7 +40,7 @@ cd analysts
 PYTHONPATH=src ../.venv/bin/python -m analysts.cli auth-login
 ```
 
-### 2) Crawl new posts going forward
+### 2) Crawl backlog once from the current `last_seen`
 ```bash
 cd analysts
 PYTHONPATH=src ../.venv/bin/python -m analysts.cli run-once --channel DOC_POOL
@@ -57,6 +59,12 @@ PYTHONPATH=src ../.venv/bin/python -m analysts.cli watch-until \
   --channel DOC_POOL \
   --until 2026-04-15T17:30:00+09:00
 ```
+
+What the watcher does now:
+- runs a **catch-up pass first** using `run-once`
+- then switches to Telethon `NewMessage` live subscriptions
+- downloads only **actual PDF report posts**
+- ignores generic message attachments that do not expose a real PDF filename or PDF mime type
 
 ### 4a) Easier launcher from repo root
 ```bash
@@ -79,6 +87,7 @@ cd /Users/bkchoi/Desktop/GitHub/1w1a
 
 - deadline must be timezone-aware ISO-8601
 - new unique PDF reports are downloaded once and summarized immediately
+- startup catch-up reduces the chance of missing posts that arrived before the live watch began
 - summarize failures retry immediately without stopping the watch loop
 - no new messages are accepted after the deadline; any report already accepted before cutoff is allowed to finish processing
 - progress logs stream to stdout and `analysts/data/state/watch-runner.log`
@@ -90,7 +99,7 @@ The live analysts path is intentionally narrow:
 
 1. `cli.py` — command entrypoints and wiring
 2. `telethon_client.py` + `fetcher.py` — Telegram auth/crawl/download
-3. `pipeline.py` — top-level orchestration
+3. `pipeline.py` — top-level orchestration and stale-path recovery
 4. `parser.py` + `router.py` — route hints for a report
 5. `pdf_ingest.py` — PDF extraction, chunks, page selection, preview artifacts
 6. `summarizer.py` — Codex-backed sector/macro summaries
@@ -145,11 +154,23 @@ Create `analysts/config.local.json` (gitignored):
 - Generated data is gitignored but still available for inspection locally.
 - Telethon session files stay under `data/state/` and are gitignored.
 - The local `pyaes` shim exists only to satisfy Telethon import behavior in this environment while `cryptg` handles the actual crypto path.
+- `data/raw/`, `data/processed/`, and `data/state/aras.sqlite3` can be safely cleared for a fresh comparison run as long as `data/state/*.session` is kept.
 
 ## Verification
 ```bash
 cd analysts
 PYTHONPATH=src ../.venv/bin/pytest tests -q
+```
+
+Focused Telegram/watch regression slice:
+```bash
+cd analysts
+PYTHONPATH=src ../.venv/bin/pytest \
+  tests/test_telethon_client.py \
+  tests/test_fetcher.py \
+  tests/test_watcher.py \
+  tests/test_cli.py \
+  tests/test_pipeline.py -q
 ```
 
 ## Graphify wiki/update
