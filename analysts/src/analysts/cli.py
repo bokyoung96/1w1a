@@ -15,6 +15,9 @@ from .fetcher import TelegramFetcher
 from .graphify import GraphifyCorpusBuilder
 from .pipeline import ArasPipeline
 from .raw_reports import RawReportCatalog
+from .sources.gmail.client import GmailApiClient
+from .sources.gmail.pipeline import GmailSourcePipeline
+from .sources.gmail.storage import GmailStore
 from .storage import SqliteArasStore
 from .watcher import AsyncWatchResult, WatchUntilRunner
 
@@ -51,6 +54,24 @@ def build_arg_parser() -> argparse.ArgumentParser:
     graphify_update = subparsers.add_parser("graphify-update")
     graphify_update.add_argument("--base-dir", default=".")
 
+    gmail_auth = subparsers.add_parser("gmail-auth-login")
+    gmail_auth.add_argument("--base-dir", default=".")
+
+    gmail_sync_once = subparsers.add_parser("gmail-sync-once")
+    gmail_sync_once.add_argument("--base-dir", default=".")
+    gmail_sync_once.add_argument("--limit", type=int, default=20)
+
+    gmail_sync_recent = subparsers.add_parser("gmail-sync-recent")
+    gmail_sync_recent.add_argument("--base-dir", default=".")
+    gmail_sync_recent.add_argument("--limit", type=int, default=20)
+
+    gmail_summarize_latest = subparsers.add_parser("gmail-summarize-latest")
+    gmail_summarize_latest.add_argument("--base-dir", default=".")
+
+    gmail_summarize_recent = subparsers.add_parser("gmail-summarize-recent")
+    gmail_summarize_recent.add_argument("--base-dir", default=".")
+    gmail_summarize_recent.add_argument("--limit", type=int, default=10)
+
     return parser
 
 
@@ -73,6 +94,64 @@ def build_watch_runner(*, base_dir: Path) -> WatchUntilRunner:
     pipeline = ArasPipeline(client=client, store=store, config=config)
     fetcher = TelegramFetcher(client=client, store=store, config=config)
     return WatchUntilRunner(client=client, message_ingestor=fetcher, pipeline=pipeline)
+
+
+def build_gmail_source_pipeline(*, base_dir: Path) -> GmailSourcePipeline:
+    config = build_config(base_dir)
+    if config.gmail is None:
+        raise RuntimeError("Missing Gmail config in analysts/config.local.json")
+    gmail_store = GmailStore(config.paths.state_dir / "gmail.sqlite3")
+    api = GmailApiClient(
+        credentials_path=config.paths.base_dir / config.gmail.client_secret_path,
+        token_path=config.paths.base_dir / config.gmail.token_path,
+    )
+    analysts_pipeline = ArasPipeline(client=object(), store=SqliteArasStore(config.paths.state_db), config=config)
+    return GmailSourcePipeline(
+        config=config,
+        api=api,
+        store=gmail_store,
+        analysts_pipeline=analysts_pipeline,
+        account_name=config.gmail.account_name,
+        query=config.gmail.query,
+        body_rules=config.gmail.body_candidate_rules,
+        zip_allow_extensions=config.gmail.zip_allow_extensions,
+    )
+
+
+def run_gmail_auth_login(*, base_dir: Path) -> int:
+    pipeline = build_gmail_source_pipeline(base_dir=base_dir)
+    pipeline.api.ensure_authorized()
+    return 0
+
+
+def run_gmail_sync_once(*, base_dir: Path, limit: int) -> int:
+    pipeline = build_gmail_source_pipeline(base_dir=base_dir)
+    result = pipeline.sync_once(limit=limit)
+    print(f"fetched={result.fetched} skipped_existing={result.skipped_existing} last_history_id={result.last_history_id}")
+    return 0
+
+
+def run_gmail_sync_recent(*, base_dir: Path, limit: int) -> int:
+    return run_gmail_sync_once(base_dir=base_dir, limit=limit)
+
+
+def run_gmail_summarize_latest(*, base_dir: Path) -> int:
+    pipeline = build_gmail_source_pipeline(base_dir=base_dir)
+    execution = pipeline.summarize_latest()
+    print(
+        " ".join(
+            [
+                f"processed_files={len(execution.processed_files)}",
+                f"summaries={len(execution.summaries)}",
+                f"message_id={execution.summary.next_offset}",
+            ]
+        )
+    )
+    return 0
+
+
+def run_gmail_summarize_recent(*, base_dir: Path, limit: int) -> int:
+    return run_gmail_summarize_latest(base_dir=base_dir)
 
 
 def parse_watch_deadline(until: str) -> datetime:
@@ -250,6 +329,21 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
         )
         return 0
+
+    if args.command == "gmail-auth-login":
+        return run_gmail_auth_login(base_dir=base_dir)
+
+    if args.command == "gmail-sync-once":
+        return run_gmail_sync_once(base_dir=base_dir, limit=args.limit)
+
+    if args.command == "gmail-sync-recent":
+        return run_gmail_sync_recent(base_dir=base_dir, limit=args.limit)
+
+    if args.command == "gmail-summarize-latest":
+        return run_gmail_summarize_latest(base_dir=base_dir)
+
+    if args.command == "gmail-summarize-recent":
+        return run_gmail_summarize_recent(base_dir=base_dir, limit=args.limit)
 
     if args.command == "summarize-recent":
         pipeline = build_default_pipeline(base_dir=base_dir)

@@ -5,7 +5,8 @@ from pathlib import Path
 from typing import Any
 
 from .config import ArasConfig
-from .domain import AnalystSummary, ExtractionPacket, PipelineExecution, PipelineRunSummary, ReportRecord
+from .domain import AnalystSummary, CanonicalDocument, ExtractionPacket, PipelineExecution, PipelineRunSummary, ReportRecord
+from .extraction import SummaryReadyExtractor
 from .pdf_ingest import PdfIngestionPipeline
 from .summary_outputs import SummaryArtifactWriter
 from .raw_reports import RawReportCatalog
@@ -65,6 +66,45 @@ class ArasPipeline:
         return PipelineExecution(
             summary=PipelineRunSummary(downloaded=0, duplicates=0, ignored=0, next_offset=report.message_id),
             processed_files=[*ingestion.processed_files, outputs.json_path, outputs.markdown_path],
+            summaries=summaries,
+        )
+
+    def summarize_canonical(self, document: CanonicalDocument) -> PipelineExecution:
+        if document.mime_type == "application/pdf":
+            report = ReportRecord(
+                id=None,
+                source=document.source,
+                channel=document.source_feed,
+                message_id=document.source_message_id,  # type: ignore[arg-type]
+                published_at=document.published_at,
+                title=document.title,
+                pdf_path=document.raw_path,
+                content="",
+                metadata=document.metadata,
+            )
+            return self.summarize_report(report)
+
+        text_path = document.normalized_text_path or document.raw_path
+        report = ReportRecord(
+            id=None,
+            source=document.source,
+            channel=document.source_feed,
+            message_id=document.source_message_id,  # type: ignore[arg-type]
+            published_at=document.published_at,
+            title=document.title,
+            pdf_path=document.raw_path,
+            content=text_path.read_text(),
+            metadata={**document.metadata, "telegram_caption_text": document.title},
+        )
+        parsed = DocumentParser().parse(report)
+        routes = TaskRouter().route(parsed)
+        packet = SummaryReadyExtractor(self.config).build_packet(report=report, parsed=parsed, routes=routes)
+        summaries = self._build_summaries(packet)
+        outputs = SummaryArtifactWriter(self.config).write(packet=packet, summaries=summaries)
+        artifacts = SummaryReadyExtractor(self.config).write_artifacts(packet)
+        return PipelineExecution(
+            summary=PipelineRunSummary(downloaded=0, duplicates=0, ignored=0, next_offset=document.source_message_id),  # type: ignore[arg-type]
+            processed_files=[artifacts.raw_text_path, artifacts.summary_input_path, outputs.json_path, outputs.markdown_path],
             summaries=summaries,
         )
 

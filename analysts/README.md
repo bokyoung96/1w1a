@@ -94,6 +94,30 @@ cd /Users/bkchoi/Desktop/GitHub/1w1a
 - heartbeat logs show liveness while the watcher is idle
 - new-report detection is event-driven through Telethon `NewMessage` subscriptions, not heartbeat polling
 
+## Gmail source
+Gmail is now modeled as a **separate source family** from Telegram rather than as another channel.
+
+Current Gmail assumptions:
+- one Gmail message can produce multiple candidate documents
+- body text is promoted to a candidate only when rule-based heuristics pass
+- ZIP extraction is allowlisted to `.pdf`, `.txt`, and `.html`
+- Gmail state lives separately from Telegram state
+
+Planned command surface:
+```bash
+cd analysts
+PYTHONPATH=src ../.venv/bin/python -m analysts.cli gmail-auth-login
+PYTHONPATH=src ../.venv/bin/python -m analysts.cli gmail-sync-once --limit 20
+PYTHONPATH=src ../.venv/bin/python -m analysts.cli gmail-sync-recent --limit 20
+PYTHONPATH=src ../.venv/bin/python -m analysts.cli gmail-summarize-latest
+PYTHONPATH=src ../.venv/bin/python -m analysts.cli gmail-summarize-recent --limit 10
+```
+
+Storage layout for Gmail:
+- `data/raw/gmail/`
+- `data/processed/gmail/`
+- `data/state/gmail.sqlite3`
+
 ## Active pipeline map
 The live analysts path is intentionally narrow:
 
@@ -132,6 +156,16 @@ Create `analysts/config.local.json` (gitignored):
   }
 }
 ```
+
+Gmail config will live alongside Telegram config under a separate top-level `gmail` key. Expected fields include:
+- `account_name`
+- `client_secret_path`
+- `token_path`
+- `query`
+- optional `label_filters`
+- `body_candidate_rules`
+- `zip_allow_extensions`
+- `poll_interval_seconds`
 
 ## Token-cheap summary design
 - raw PDF remains the source of truth

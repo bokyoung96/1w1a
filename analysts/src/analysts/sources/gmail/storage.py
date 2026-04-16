@@ -126,6 +126,21 @@ class GmailStore:
             ).fetchone()
         return None if row is None else self._row_to_message(row)
 
+    def list_messages(self, *, account_name: str | None = None) -> list[GmailMessageRecord]:
+        query = "SELECT * FROM gmail_messages"
+        params: tuple[str, ...] = ()
+        if account_name is not None:
+            query += " WHERE account_name = ?"
+            params = (account_name,)
+        query += " ORDER BY internal_date DESC, gmail_message_id DESC"
+        with self._connect() as connection:
+            rows = connection.execute(query, params).fetchall()
+        return [self._row_to_message(row) for row in rows]
+
+    def get_latest_message(self, *, account_name: str | None = None) -> GmailMessageRecord | None:
+        messages = self.list_messages(account_name=account_name)
+        return messages[0] if messages else None
+
     def record_candidate(self, candidate: GmailCandidateDocument) -> None:
         with self._connect() as connection:
             connection.execute(

@@ -66,6 +66,12 @@ class FakeSummarizer:
         )
 
 
+def build_fixture_pipeline(tmp_path: Path) -> ArasPipeline:
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    return ArasPipeline(client=object(), store=store, config=config, summarizer=FakeSummarizer())
+
+
 
 def test_run_once_writes_full_ingestion_and_summary_artifacts(tmp_path: Path) -> None:
     updates = [
@@ -257,6 +263,70 @@ def test_canonical_document_supports_gmail_body_source(tmp_path: Path) -> None:
 
     assert document.source == "gmail"
     assert document.document_kind == "email_body"
+
+
+def test_pipeline_summarizes_text_backed_canonical_document(tmp_path: Path) -> None:
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    raw_path = tmp_path / "data" / "raw" / "gmail-body.txt"
+    raw_path.parent.mkdir(parents=True, exist_ok=True)
+    raw_path.write_text("Revenue up 10%\n\nMargin stable\n\nRisk: FX")
+    pipeline = ArasPipeline(client=object(), store=store, config=config, summarizer=FakeSummarizer())
+    document = CanonicalDocument(
+        source="gmail",
+        source_message_id="msg-1",
+        source_thread_id="thread-1",
+        source_feed="reports-primary",
+        document_kind="email_body",
+        title="Morning wrap",
+        published_at="2026-04-16T06:00:00Z",
+        sender_or_origin="broker@example.com",
+        mime_type="text/plain",
+        dedupe_key="body::msg-1::hash",
+        raw_path=raw_path,
+        normalized_text_path=raw_path,
+        metadata={},
+    )
+
+    execution = pipeline.summarize_canonical(document)
+
+    assert len(execution.summaries) == 2
+    assert execution.summary.next_offset == "msg-1"
+    assert {path.name for path in execution.processed_files} == {
+        "report-msg-1-raw-text.txt",
+        "report-msg-1-summary-input.json",
+        "report-msg-1-summary.json",
+        "report-msg-1-summary.md",
+    }
+
+
+def test_pipeline_summarizes_pdf_backed_canonical_document(tmp_path: Path) -> None:
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    raw_path = tmp_path / "data" / "raw" / "gmail-report.pdf"
+    raw_path.parent.mkdir(parents=True, exist_ok=True)
+    raw_path.write_bytes(b"%PDF-1.4 fake")
+    pipeline = ArasPipeline(client=object(), store=store, config=config, summarizer=FakeSummarizer())
+    document = CanonicalDocument(
+        source="gmail",
+        source_message_id="msg-2",
+        source_thread_id="thread-2",
+        source_feed="reports-primary",
+        document_kind="attachment_pdf",
+        title="Attached report",
+        published_at="2026-04-16T06:10:00Z",
+        sender_or_origin="broker@example.com",
+        mime_type="application/pdf",
+        dedupe_key="pdf::msg-2::hash",
+        raw_path=raw_path,
+        normalized_text_path=None,
+        metadata={},
+    )
+
+    execution = pipeline.summarize_canonical(document)
+
+    assert len(execution.summaries) == 2
+    assert execution.summary.next_offset == "msg-2"
 
 
 
