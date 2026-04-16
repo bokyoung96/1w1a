@@ -32,6 +32,9 @@ class FakeGmailApi:
             },
         }
 
+    def get_attachment_data(self, *, message_id: str, attachment_id: str) -> bytes:
+        return f"{message_id}:{attachment_id}".encode("utf-8")
+
 
 class FakeSummarizer:
     @staticmethod
@@ -73,6 +76,50 @@ def test_polling_sync_records_new_messages(tmp_path) -> None:
     assert (container / "body.txt").read_text() == "Structured report body"
     manifest = (container / "attachments" / "manifest.json").read_text()
     assert '"attachments": []' in manifest
+
+
+def test_polling_sync_persists_original_attachment_files(tmp_path) -> None:
+    class AttachmentApi(FakeGmailApi):
+        def get_message(self, *, message_id: str) -> dict:
+            payload = super().get_message(message_id=message_id)
+            payload["payload"] = {
+                "mimeType": "multipart/mixed",
+                "headers": [
+                    {"name": "From", "value": "broker@example.com"},
+                    {"name": "Subject", "value": "Morning wrap"},
+                ],
+                "parts": [
+                    {
+                        "mimeType": "application/pdf",
+                        "filename": "report.pdf",
+                        "body": {"attachmentId": "att-1", "size": 12},
+                    },
+                    {
+                        "mimeType": "application/zip",
+                        "filename": "bundle.zip",
+                        "body": {"attachmentId": "att-2", "size": 20},
+                    },
+                ],
+            }
+            return payload
+
+    store = GmailStore(tmp_path / "gmail.sqlite3")
+    sync = GmailPollingSync(
+        api=AttachmentApi(),
+        store=store,
+        account_name="reports-primary",
+        query="label:broker-reports",
+        raw_root=tmp_path / "raw" / "gmail",
+    )
+
+    result = sync.sync_once(limit=10)
+
+    assert result.fetched == 1
+    container = tmp_path / "raw" / "gmail" / "msg-1" / "attachments" / "original"
+    assert (container / "report.pdf").read_bytes() == b"msg-1:att-1"
+    assert (container / "bundle.zip").read_bytes() == b"msg-1:att-2"
+    manifest = (tmp_path / "raw" / "gmail" / "msg-1" / "attachments" / "manifest.json").read_text()
+    assert '"saved_path":' in manifest
 
 
 def test_gmail_source_pipeline_summarizes_latest_body_candidate(tmp_path: Path) -> None:

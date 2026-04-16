@@ -82,6 +82,17 @@ class GmailApiClient:
             query_params={"format": "full"},
         )
 
+    def get_attachment_data(self, *, message_id: str, attachment_id: str) -> bytes:
+        payload = self._gmail_get(
+            f"https://gmail.googleapis.com/gmail/v1/users/me/messages/{message_id}/attachments/{attachment_id}",
+            query_params={},
+        )
+        data = payload.get("data")
+        if not data:
+            return b""
+        padded = data + "=" * (-len(data) % 4)
+        return urlsafe_b64decode(padded.encode("utf-8"))
+
     def _gmail_get(self, url: str, *, query_params: dict[str, str]) -> dict[str, Any]:
         self.ensure_authorized()
         token = self._load_token()

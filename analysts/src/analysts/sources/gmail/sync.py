@@ -66,24 +66,35 @@ class GmailPollingSync:
     def _write_raw_container(self, *, record: GmailMessageRecord) -> None:
         container = self.raw_root / record.gmail_message_id
         attachments_dir = container / "attachments"
+        originals_dir = attachments_dir / "original"
         attachments_dir.mkdir(parents=True, exist_ok=True)
+        originals_dir.mkdir(parents=True, exist_ok=True)
         (container / "message.json").write_text(json.dumps(record.raw_payload_json, ensure_ascii=False, indent=2) + "\n")
         if record.body_plain:
             (container / "body.txt").write_text(record.body_plain)
         if record.body_html:
             (container / "body.html").write_text(record.body_html)
         attachments = _extract_attachment_records(payload=record.raw_payload_json, message_id=record.gmail_message_id)
-        manifest_payload = {
-            "gmail_message_id": record.gmail_message_id,
-            "attachments": [
+        attachment_entries = []
+        for item in attachments:
+            saved_path = None
+            if item.attachment_id and item.filename:
+                payload = self.api.get_attachment_data(message_id=record.gmail_message_id, attachment_id=item.attachment_id)
+                target = originals_dir / Path(item.filename).name
+                target.write_bytes(payload)
+                saved_path = str(target.relative_to(container))
+            attachment_entries.append(
                 {
                     "attachment_id": item.attachment_id,
                     "filename": item.filename,
                     "mime_type": item.mime_type,
                     "is_zip": item.is_zip,
+                    "saved_path": saved_path,
                 }
-                for item in attachments
-            ],
+            )
+        manifest_payload = {
+            "gmail_message_id": record.gmail_message_id,
+            "attachments": attachment_entries,
         }
         (attachments_dir / "manifest.json").write_text(json.dumps(manifest_payload, ensure_ascii=False, indent=2) + "\n")
 
