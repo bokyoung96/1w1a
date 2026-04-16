@@ -4,8 +4,9 @@ import sys
 import types
 from pathlib import Path
 
-from analysts.cli import build_default_pipeline, main
+from analysts.cli import build_default_pipeline, main, run_watch_until
 from analysts.runner_entry import main as runner_entry_main
+from analysts.watcher import AsyncWatchResult
 
 
 
@@ -176,6 +177,45 @@ def test_watch_until_command_accepts_multiple_channels(
     assert exit_code == 0
     assert calls == [(tmp_path, ['DOC_POOL', 'report_figure_by_offset'], '2026-04-15T17:30:00+09:00')]
     assert 'summarized=2' in capsys.readouterr().out
+
+
+def test_run_watch_until_catches_up_backlog_before_subscribing(tmp_path: Path, monkeypatch, capsys) -> None:
+    catchup_calls: list[str] = []
+    watched: list[tuple[str, str]] = []
+
+    class FakePipeline:
+        def run_once(self, *, channel: str):
+            catchup_calls.append(channel)
+            return types.SimpleNamespace(
+                summary=types.SimpleNamespace(downloaded=1, duplicates=2, ignored=3, next_offset=123),
+                processed_files=[Path('a.json'), Path('b.md')],
+                summaries=['sector', 'macro'],
+            )
+
+    class FakeRunner:
+        logger = None
+
+        async def watch_until(self, *, channel: str, until):
+            watched.append((channel, until.isoformat()))
+            return AsyncWatchResult(seen=4, downloaded=5, duplicates=6, ignored=7, message_failures=0, summarized=8)
+
+    monkeypatch.setattr('analysts.cli.build_default_pipeline', lambda *, base_dir, fixtures_path=None: FakePipeline())
+    monkeypatch.setattr('analysts.cli.build_watch_runner', lambda *, base_dir: FakeRunner())
+
+    exit_code = run_watch_until(
+        base_dir=tmp_path,
+        channel='DOC_POOL',
+        until='2026-04-15T17:30:00+09:00',
+    )
+
+    assert exit_code == 0
+    assert catchup_calls == ['DOC_POOL']
+    assert watched == [('DOC_POOL', '2026-04-15T17:30:00+09:00')]
+    output = capsys.readouterr().out
+    assert 'downloaded=6' in output
+    assert 'duplicates=8' in output
+    assert 'ignored=10' in output
+    assert 'summarized=10' in output
 
 
 def test_runner_entry_uses_doc_pool_default_and_supplied_base_dir(tmp_path: Path, monkeypatch) -> None:

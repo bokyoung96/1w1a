@@ -24,6 +24,7 @@ class AsyncWatchResult:
     downloaded: int = 0
     duplicates: int = 0
     ignored: int = 0
+    message_failures: int = 0
     summarized: int = 0
     summarize_failures: int = 0
     summarize_retries: int = 0
@@ -103,12 +104,13 @@ class WatchUntilRunner:
             stop_heartbeat.set()
             await heartbeat_task
         self.logger.info(
-            "watch_finished %s seen=%s downloaded=%s duplicates=%s ignored=%s summarized=%s retries=%s failures=%s",
+            "watch_finished %s seen=%s downloaded=%s duplicates=%s ignored=%s message_failures=%s summarized=%s retries=%s failures=%s",
             self._channels_log_field(channels),
             counts["seen"],
             counts["downloaded"],
             counts["duplicates"],
             counts["ignored"],
+            counts["message_failures"],
             counts["summarized"],
             counts["summarize_retries"],
             counts["summarize_failures"],
@@ -142,6 +144,7 @@ class WatchUntilRunner:
             "downloaded": 0,
             "duplicates": 0,
             "ignored": 0,
+            "message_failures": 0,
             "summarized": 0,
             "summarize_failures": 0,
             "summarize_retries": 0,
@@ -160,7 +163,12 @@ class WatchUntilRunner:
             self.logger.info("watch_message status=ignored_after_deadline channel=%s message_id=%s", channel, message.get("message_id"))
             return
         counts["seen"] += 1
-        result = self.message_ingestor.ingest_message(channel=channel, message=message)
+        try:
+            result = self.message_ingestor.ingest_message(channel=channel, message=message)
+        except Exception:
+            counts["message_failures"] += 1
+            self.logger.exception("watch_message_failed channel=%s message_id=%s", channel, message.get("message_id"))
+            return
         if result.status == "duplicate":
             counts["duplicates"] += 1
             self.logger.info("watch_message status=duplicate channel=%s message_id=%s", channel, message.get("message_id"))
@@ -227,13 +235,14 @@ class WatchUntilRunner:
                 return
             except asyncio.TimeoutError:
                 self.logger.info(
-                    "watch_heartbeat %s until=%s seen=%s downloaded=%s duplicates=%s ignored=%s summarized=%s retries=%s failures=%s",
+                    "watch_heartbeat %s until=%s seen=%s downloaded=%s duplicates=%s ignored=%s message_failures=%s summarized=%s retries=%s failures=%s",
                     scope,
                     until.isoformat(),
                     counts["seen"],
                     counts["downloaded"],
                     counts["duplicates"],
                     counts["ignored"],
+                    counts["message_failures"],
                     counts["summarized"],
                     counts["summarize_retries"],
                     counts["summarize_failures"],

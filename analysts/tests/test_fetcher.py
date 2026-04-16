@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from analysts.config import build_config
+from analysts.domain import ReportRecord
 from analysts.fetcher import TelegramFetcher
 from analysts.storage import SqliteArasStore
 
@@ -148,6 +149,58 @@ def test_seeds_last_seen_message_id_on_first_run_without_downloading_history(tmp
     assert store.get_last_seen_message_id('DOC_POOL') == 501
 
 
+def test_infers_last_seen_from_latest_stored_report_when_state_is_missing(tmp_path: Path) -> None:
+    client = FakeTelethonClient(
+        [
+            {
+                'message_id': 502,
+                'date': 1713081120,
+                'chat': {'title': 'DOC_POOL'},
+                'caption': 'Text-only update',
+            },
+            {
+                'message_id': 503,
+                'date': 1713081180,
+                'chat': {'title': 'DOC_POOL'},
+                'caption': 'Fresh PDF',
+                'document': {
+                    'file_id': 'file-503',
+                    'file_unique_id': 'uniq-503',
+                    'file_name': 'fresh.pdf',
+                    'mime_type': 'application/pdf',
+                },
+            },
+        ]
+    )
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    existing_pdf = config.paths.raw_dir / 'existing.pdf'
+    existing_pdf.parent.mkdir(parents=True, exist_ok=True)
+    existing_pdf.write_bytes(b'PDF bytes for existing')
+    store.record_download(
+        ReportRecord(
+            id=None,
+            source='telegram',
+            channel='DOC_POOL',
+            message_id=501,
+            published_at='2026-04-15T00:00:00Z',
+            title='Existing report',
+            pdf_path=existing_pdf,
+            content='',
+            metadata={'file_unique_id': 'uniq-501'},
+        )
+    )
+    fetcher = TelegramFetcher(client=client, store=store, config=config)
+
+    result = fetcher.poll_once(channel='DOC_POOL')
+
+    assert client.latest_channel_requests == []
+    assert client.channel_requests == [('DOC_POOL', 501, config.polling_limit)]
+    assert result.ignored_updates == [502]
+    assert [report.message_id for report in result.downloaded] == [503]
+    assert store.get_last_seen_message_id('DOC_POOL') == 503
+
+
 
 def test_downloads_only_new_pdf_messages_after_last_seen_seed(tmp_path: Path) -> None:
     client = FakeTelethonClient(
@@ -187,6 +240,36 @@ def test_downloads_only_new_pdf_messages_after_last_seen_seed(tmp_path: Path) ->
     assert client.downloaded_file_ids == ['file-503']
 
 
+def test_skips_generic_message_like_documents_without_pdf_mime_or_filename(tmp_path: Path) -> None:
+    client = FakeTelethonClient(
+        [
+            {
+                'message_id': 504,
+                'date': 1713081240,
+                'chat': {'title': 'DOC_POOL'},
+                'caption': '',
+                'document': {
+                    'file_id': 'file-504',
+                    'file_unique_id': 'uniq-504',
+                    'file_name': None,
+                    'mime_type': '',
+                },
+            }
+        ]
+    )
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    store.set_last_seen_message_id('DOC_POOL', 503)
+    fetcher = TelegramFetcher(client=client, store=store, config=config)
+
+    result = fetcher.poll_once(channel='DOC_POOL')
+
+    assert result.downloaded == []
+    assert result.ignored_updates == [504]
+    assert store.get_last_seen_message_id('DOC_POOL') == 504
+    assert client.downloaded_file_ids == []
+
+
 
 def test_does_not_advance_last_seen_message_id_when_telethon_download_fails(tmp_path: Path) -> None:
     client = FakeTelethonClient(
@@ -218,6 +301,50 @@ def test_does_not_advance_last_seen_message_id_when_telethon_download_fails(tmp_
     assert store.list_reports() == []
 
 
+def test_advances_last_seen_to_last_successful_message_before_later_failure(tmp_path: Path) -> None:
+    client = FakeTelethonClient(
+        [
+            {
+                'message_id': 502,
+                'date': 1713081120,
+                'chat': {'title': 'DOC_POOL'},
+                'caption': 'Fresh PDF',
+                'document': {
+                    'file_id': 'file-502',
+                    'file_unique_id': 'uniq-502',
+                    'file_name': 'first.pdf',
+                    'mime_type': 'application/pdf',
+                },
+            },
+            {
+                'message_id': 503,
+                'date': 1713081180,
+                'chat': {'title': 'DOC_POOL'},
+                'caption': 'Fresh PDF',
+                'document': {
+                    'file_id': 'file-503',
+                    'file_unique_id': 'uniq-503',
+                    'file_name': 'second.pdf',
+                    'mime_type': 'application/pdf',
+                },
+            },
+        ],
+        fail_file_ids={'file-503'},
+    )
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    store.set_last_seen_message_id('DOC_POOL', 501)
+    fetcher = TelegramFetcher(client=client, store=store, config=config)
+
+    with pytest.raises(RuntimeError, match='download failed for file-503'):
+        fetcher.poll_once(channel='DOC_POOL')
+
+    assert store.get_last_seen_message_id('DOC_POOL') == 502
+    reports = store.list_reports()
+    assert [report.message_id for report in reports] == [502]
+    assert client.downloaded_file_ids == ['file-502', 'file-503']
+
+
 def test_ingest_message_downloads_new_pdf_and_updates_last_seen(tmp_path: Path) -> None:
     client = FakeTelethonClient(
         [
@@ -247,6 +374,66 @@ def test_ingest_message_downloads_new_pdf_and_updates_last_seen(tmp_path: Path) 
     assert result.report.metadata['telegram_caption_text'] == 'Fresh PDF'
     assert store.get_last_seen_message_id('DOC_POOL') == 700
     assert client.downloaded_file_ids == ['file-700']
+
+
+def test_ingest_message_skips_generic_message_like_document_without_pdf_mime(tmp_path: Path) -> None:
+    client = FakeTelethonClient(
+        [
+            {
+                'message_id': 705,
+                'date': 1713082120,
+                'chat': {'title': 'DOC_POOL'},
+                'caption': '',
+                'document': {
+                    'file_id': 'file-705',
+                    'file_unique_id': 'uniq-705',
+                    'file_name': None,
+                    'mime_type': '',
+                },
+            }
+        ]
+    )
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    fetcher = TelegramFetcher(client=client, store=store, config=config)
+
+    result = fetcher.ingest_message(channel='DOC_POOL', message=client._messages[0])
+
+    assert result.status == 'ignored'
+    assert result.report is None
+    assert store.get_last_seen_message_id('DOC_POOL') == 705
+    assert client.downloaded_file_ids == []
+
+
+def test_ingest_message_downloads_pdf_when_mime_type_marks_pdf_even_without_filename(tmp_path: Path) -> None:
+    client = FakeTelethonClient(
+        [
+            {
+                'message_id': 706,
+                'date': 1713082180,
+                'chat': {'title': 'DOC_POOL'},
+                'caption': '',
+                'document': {
+                    'file_id': 'file-706',
+                    'file_unique_id': 'uniq-706',
+                    'file_name': None,
+                    'mime_type': 'application/pdf',
+                },
+            }
+        ]
+    )
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    fetcher = TelegramFetcher(client=client, store=store, config=config)
+
+    result = fetcher.ingest_message(channel='DOC_POOL', message=client._messages[0])
+
+    assert result.status == 'downloaded'
+    assert result.report is not None
+    assert result.report.message_id == 706
+    assert result.report.title == 'report'
+    assert store.get_last_seen_message_id('DOC_POOL') == 706
+    assert client.downloaded_file_ids == ['file-706']
 
 
 def test_ingest_message_skips_duplicate_without_resummarizing_download(tmp_path: Path) -> None:

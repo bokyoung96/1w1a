@@ -58,6 +58,11 @@ class FakeMessageIngestor:
         return self.outcomes.pop(0)
 
 
+class RaisingMessageIngestor:
+    def ingest_message(self, *, channel: str, message: dict) -> WatchMessageResult:
+        raise TypeError("bad payload")
+
+
 def _report(tmp_path: Path, *, message_id: int, file_unique_id: str) -> ReportRecord:
     pdf_path = tmp_path / 'data' / 'raw' / f'{message_id}.pdf'
     pdf_path.parent.mkdir(parents=True, exist_ok=True)
@@ -420,3 +425,25 @@ def test_watch_until_many_logs_channel_specific_events(tmp_path: Path, caplog) -
     assert 'watch_started channels=DOC_POOL,report_figure_by_offset' in text
     assert 'watch_message status=downloaded channel=report_figure_by_offset message_id=703' in text
     assert 'watch_finished channels=DOC_POOL,report_figure_by_offset' in text
+
+
+def test_watch_until_logs_message_processing_failures(tmp_path: Path, caplog) -> None:
+    logger = logging.getLogger('analysts.watch.failures')
+    runner = WatchUntilRunner(
+        client=FakeAsyncClient(messages=[{'message_id': 801, 'chat': {'title': 'DOC_POOL'}}]),
+        message_ingestor=RaisingMessageIngestor(),
+        pipeline=FakePipeline(),
+        now_fn=lambda: datetime.fromisoformat('2026-04-15T13:00:00+09:00'),
+        logger=logger,
+    )
+
+    with caplog.at_level(logging.INFO, logger='analysts.watch.failures'):
+        result = asyncio.run(
+            runner.watch_until(
+                channel='DOC_POOL',
+                until=datetime.fromisoformat('2026-04-15T17:30:00+09:00'),
+            )
+        )
+
+    assert result == AsyncWatchResult(seen=1, message_failures=1)
+    assert 'watch_message_failed channel=DOC_POOL message_id=801' in caplog.text

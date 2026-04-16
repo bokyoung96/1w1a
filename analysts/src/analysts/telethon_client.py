@@ -1,14 +1,20 @@
 from __future__ import annotations
 
 import asyncio
+from contextlib import contextmanager
+import inspect
+import shutil
+import threading
 from dataclasses import dataclass
 from datetime import datetime
 from getpass import getpass
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any
+from typing import Any, Callable, TypeVar
 
 from .config import ArasConfig, require_telethon_config
+
+T = TypeVar("T")
 
 
 @dataclass(frozen=True)
@@ -50,10 +56,11 @@ class TelethonChannelClient:
                 client.sign_in(password=password)
 
     def get_latest_message_id(self, *, channel: str) -> int | None:
-        with self._build_client() as client:
-            entity = self._resolve_entity(client, channel)
+        def read_latest(client: Any, entity: Any) -> int | None:
             messages = client.get_messages(entity, limit=1)
             return None if not messages else int(messages[0].id)
+
+        return self._read_channel(channel=channel, reader=read_latest)
 
     def iter_channel_messages(
         self,
@@ -62,8 +69,7 @@ class TelethonChannelClient:
         after_message_id: int | None,
         limit: int,
     ) -> list[dict[str, Any]]:
-        with self._build_client() as client:
-            entity = self._resolve_entity(client, channel)
+        def read_messages(client: Any, entity: Any) -> list[dict[str, Any]]:
             messages = list(
                 client.iter_messages(
                     entity,
@@ -74,16 +80,64 @@ class TelethonChannelClient:
             )
             return [self._adapt_message(channel=channel, message=message).to_fetcher_payload() for message in messages]
 
+        return self._read_channel(channel=channel, reader=read_messages)
+
     def download_document(self, message: dict[str, Any]) -> bytes:
         telethon_message = message.get("_message")
         if telethon_message is None:
             raise RuntimeError("Telethon download requires the original message object.")
+        try:
+            return self._download_document_via_message(telethon_message=telethon_message, message=message)
+        except (ConnectionError, TypeError):
+            return self._download_document_via_refetch(message=message)
+
+    def _download_document_via_message(self, *, telethon_message: Any, message: dict[str, Any]) -> bytes:
         with TemporaryDirectory(dir=self.config.paths.state_dir) as tmp_dir:
             tmp_path = Path(tmp_dir) / (message["document"].get("file_name") or f"{message['message_id']}.pdf")
             result = telethon_message.download_media(file=str(tmp_path))
+            if inspect.isawaitable(result):
+                close = getattr(result, "close", None)
+                if callable(close):
+                    close()
+                raise TypeError("download_media returned awaitable in sync path")
             if result is None:
                 raise RuntimeError(f"Failed to download media for message {message['message_id']}")
             return Path(result).read_bytes()
+
+    def _download_document_via_refetch(self, *, message: dict[str, Any]) -> bytes:
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            return self._download_document_via_refetch_sync(message=message)
+        return self._download_document_via_refetch_in_thread(message=message)
+
+    def _download_document_via_refetch_sync(self, *, message: dict[str, Any], session_path: Path | None = None) -> bytes:
+        channel = str((message.get("chat") or {}).get("title") or "")
+        message_id = int(message["message_id"])
+        with self._sync_client_context(session_path=session_path) as client:
+            entity = self._resolve_entity(client, channel)
+            telethon_message = client.get_messages(entity, ids=message_id)
+            if telethon_message is None:
+                raise RuntimeError(f"Failed to refetch message {message_id} for channel {channel}")
+            return self._download_document_via_message(telethon_message=telethon_message, message=message)
+
+    def _download_document_via_refetch_in_thread(self, *, message: dict[str, Any]) -> bytes:
+        result: dict[str, bytes] = {}
+        error: dict[str, BaseException] = {}
+
+        def run() -> None:
+            try:
+                with self._isolated_session_path() as isolated_session_path:
+                    result["payload"] = self._download_document_via_refetch_sync(message=message, session_path=isolated_session_path)
+            except BaseException as exc:  # pragma: no cover - re-raised on caller thread
+                error["exc"] = exc
+
+        thread = threading.Thread(target=run, daemon=True)
+        thread.start()
+        thread.join()
+        if "exc" in error:
+            raise error["exc"]
+        return result["payload"]
 
     async def watch_channel(self, *, channel: str, until, on_message) -> None:
         await self.watch_channels(channels=[channel], until=until, on_message=on_message)
@@ -132,11 +186,35 @@ class TelethonChannelClient:
                 if pending_tasks:
                     await asyncio.gather(*pending_tasks, return_exceptions=True)
 
-    def _build_client(self):
+    def _build_client(self, session_path: Path | None = None):
         from telethon.sync import TelegramClient
 
-        session_stem = self.config.paths.telethon_session_path.with_suffix("")
+        session_stem = (session_path or self.config.paths.telethon_session_path).with_suffix("")
         return TelegramClient(str(session_stem), self.settings.api_id, self.settings.api_hash)
+
+    @contextmanager
+    def _sync_client_context(self, *, session_path: Path | None = None):
+        with self._build_client(session_path=session_path) as client:
+            yield client
+
+    @contextmanager
+    def _isolated_sync_client(self):
+        with self._isolated_session_path() as isolated_session_path:
+            with self._sync_client_context(session_path=isolated_session_path) as client:
+                yield client
+
+    def _read_channel(self, *, channel: str, reader: Callable[[Any, Any], T]) -> T:
+        with self._isolated_sync_client() as client:
+            entity = self._resolve_entity(client, channel)
+            return reader(client, entity)
+
+    @contextmanager
+    def _isolated_session_path(self):
+        source_session_path = self.config.paths.telethon_session_path
+        with TemporaryDirectory(dir=self.config.paths.state_dir) as tmp_dir:
+            isolated_session_path = Path(tmp_dir) / source_session_path.name
+            shutil.copy2(source_session_path, isolated_session_path)
+            yield isolated_session_path
 
     @staticmethod
     def _session_password_error():
@@ -164,20 +242,7 @@ class TelethonChannelClient:
 
     @staticmethod
     def _adapt_message(*, channel: str, message: Any) -> TelethonMessageAdapter:
-        document = getattr(message, "document", None)
-        file_name = None
-        mime_type = ""
-        file_unique_id = None
-        file_id = None
-        if document is not None:
-            file_id = str(getattr(document, "id", ""))
-            file_unique_id = f"telethon-{file_id}" if file_id else f"telethon-{message.id}"
-            mime_type = str(getattr(document, "mime_type", "") or "")
-            for attribute in getattr(document, "attributes", []) or []:
-                candidate = getattr(attribute, "file_name", None)
-                if candidate:
-                    file_name = str(candidate)
-                    break
+        file_id, file_unique_id, file_name, mime_type = TelethonChannelClient._extract_document_payload(message=message)
         return TelethonMessageAdapter(
             message_id=int(message.id),
             date=int(message.date.timestamp()) if getattr(message, "date", None) else None,
@@ -186,11 +251,27 @@ class TelethonChannelClient:
             document={
                 "file_id": file_id or f"message-{message.id}",
                 "file_unique_id": file_unique_id or f"telethon-message-{message.id}",
-                "file_name": file_name or f"message-{message.id}.pdf",
+                "file_name": file_name,
                 "mime_type": mime_type,
             },
             _message=message,
         )
+
+    @staticmethod
+    def _extract_document_payload(*, message: Any) -> tuple[str | None, str | None, str | None, str]:
+        document = getattr(message, "document", None)
+        if document is None:
+            return None, None, None, ""
+        file_id = str(getattr(document, "id", "")) or None
+        file_unique_id = f"telethon-{file_id}" if file_id else f"telethon-{message.id}"
+        mime_type = str(getattr(document, "mime_type", "") or "")
+        file_name = None
+        for attribute in getattr(document, "attributes", []) or []:
+            candidate = getattr(attribute, "file_name", None)
+            if candidate:
+                file_name = str(candidate)
+                break
+        return file_id, file_unique_id, file_name, mime_type
 
     @staticmethod
     async def _maybe_await(result) -> None:

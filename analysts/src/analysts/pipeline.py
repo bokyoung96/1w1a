@@ -86,4 +86,14 @@ class ArasPipeline:
         if report.pdf_path.is_absolute() or report.pdf_path.exists():
             return report
         resolved = self.config.paths.base_dir / report.pdf_path
+        if resolved.exists():
+            return replace(report, pdf_path=resolved)
+        if report.pdf_path.parts and report.pdf_path.parts[0] == "analysts":
+            trimmed = Path(*report.pdf_path.parts[1:])
+            trimmed_resolved = self.config.paths.base_dir / trimmed
+            if trimmed_resolved.exists():
+                return replace(report, pdf_path=trimmed_resolved)
+        fallback_matches = sorted(self.config.paths.raw_dir.glob(f"{report.message_id}-*"))
+        if fallback_matches:
+            return replace(report, pdf_path=fallback_matches[-1])
         return replace(report, pdf_path=resolved)

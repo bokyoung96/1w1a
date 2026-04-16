@@ -129,11 +129,10 @@ class TelegramFetcher:
         )
 
     def _poll_telethon_once(self, *, channel: str) -> FetchBatch:
-        last_seen_message_id = self.store.get_last_seen_message_id(channel)
+        last_seen_message_id = self._resolve_starting_last_seen_message_id(channel=channel)
         if last_seen_message_id is None:
             latest_message_id = self.client.get_latest_message_id(channel=channel)
-            if latest_message_id is not None:
-                self.store.set_last_seen_message_id(channel, latest_message_id)
+            self._checkpoint_last_seen(channel=channel, message_id=latest_message_id)
             return FetchBatch(next_offset=latest_message_id)
 
         messages = self.client.iter_channel_messages(
@@ -151,6 +150,7 @@ class TelegramFetcher:
             if parsed is None:
                 ignored_updates.append(message["message_id"])
                 safe_last_seen = message["message_id"]
+                self._checkpoint_last_seen(channel=channel, message_id=safe_last_seen)
                 continue
 
             result = self._ingest_downloadable_message(channel=channel, parsed=parsed)
@@ -159,9 +159,7 @@ class TelegramFetcher:
             else:
                 downloaded.append(result.report)
             safe_last_seen = message["message_id"]
-
-        if safe_last_seen is not None and safe_last_seen != last_seen_message_id:
-            self.store.set_last_seen_message_id(channel, safe_last_seen)
+            self._checkpoint_last_seen(channel=channel, message_id=safe_last_seen)
 
         return FetchBatch(
             downloaded=downloaded,
@@ -169,6 +167,16 @@ class TelegramFetcher:
             ignored_updates=ignored_updates,
             next_offset=safe_last_seen,
         )
+
+    def _resolve_starting_last_seen_message_id(self, *, channel: str) -> int | None:
+        last_seen_message_id = self.store.get_last_seen_message_id(channel)
+        if last_seen_message_id is not None:
+            return last_seen_message_id
+        latest_stored_report = self.store.get_latest_report(channel)
+        if latest_stored_report is None:
+            return None
+        self._checkpoint_last_seen(channel=channel, message_id=latest_stored_report.message_id)
+        return latest_stored_report.message_id
 
     def _record_report(
         self,
@@ -243,6 +251,30 @@ class TelegramFetcher:
     @staticmethod
     def _extract_pdf_message(update: dict[str, Any], *, expected_channel: str) -> dict[str, Any] | None:
         payload = update.get("channel_post") or update.get("message")
+        return TelegramFetcher._extract_supported_pdf_payload(payload, expected_channel=expected_channel)
+
+    @staticmethod
+    def _extract_downloadable_message(message: dict[str, Any], *, expected_channel: str) -> DownloadableMessage | None:
+        supported = TelegramFetcher._extract_supported_pdf_payload(message, expected_channel=expected_channel)
+        if supported is None:
+            return None
+        document = supported["document"]
+        title = TelegramFetcher._downloadable_title(supported)
+        return DownloadableMessage(
+            message_id=supported["message_id"],
+            published_at=TelegramFetcher._format_timestamp(supported.get("date") or supported.get("published_at")),
+            title=title,
+            file_unique_id=str(document["file_unique_id"]),
+            file_name=document.get("file_name"),
+            payload=supported,
+        )
+
+    @staticmethod
+    def _extract_supported_pdf_payload(
+        payload: dict[str, Any] | None,
+        *,
+        expected_channel: str,
+    ) -> dict[str, Any] | None:
         if not payload:
             return None
         if not TelegramFetcher._is_expected_channel(payload, expected_channel=expected_channel):
@@ -252,21 +284,9 @@ class TelegramFetcher:
         return payload
 
     @staticmethod
-    def _extract_downloadable_message(message: dict[str, Any], *, expected_channel: str) -> DownloadableMessage | None:
-        if not TelegramFetcher._is_expected_channel(message, expected_channel=expected_channel):
-            return None
-        if not TelegramFetcher._payload_has_pdf_document(message):
-            return None
+    def _downloadable_title(message: dict[str, Any]) -> str:
         document = message["document"]
-        title = message.get("caption") or Path(document.get("file_name", "report.pdf")).stem
-        return DownloadableMessage(
-            message_id=message["message_id"],
-            published_at=TelegramFetcher._format_timestamp(message.get("date") or message.get("published_at")),
-            title=title,
-            file_unique_id=str(document["file_unique_id"]),
-            file_name=document.get("file_name"),
-            payload=message,
-        )
+        return message.get("caption") or Path(document.get("file_name") or "report.pdf").stem
 
     @staticmethod
     def _is_expected_channel(payload: dict[str, Any], *, expected_channel: str) -> bool:
@@ -287,6 +307,11 @@ class TelegramFetcher:
         target = self.config.paths.raw_dir / f"{update_id}-{file_unique_id}-{safe_name}"
         target.write_bytes(payload)
         return target
+
+    def _checkpoint_last_seen(self, *, channel: str, message_id: int | None) -> None:
+        if message_id is None:
+            return
+        self.store.set_last_seen_message_id(channel, message_id)
 
     @staticmethod
     def _format_timestamp(timestamp: int | str | None) -> str | None:

@@ -162,6 +162,60 @@ def test_summarize_latest_resolves_relative_stored_pdf_paths_against_base_dir(tm
     assert len(execution.summaries) == 2
 
 
+def test_summarize_latest_resolves_paths_with_redundant_analysts_prefix(tmp_path: Path) -> None:
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    actual_pdf_path = tmp_path / 'data' / 'raw' / 'prefixed-live.pdf'
+    actual_pdf_path.parent.mkdir(parents=True, exist_ok=True)
+    actual_pdf_path.write_bytes(b'not readable pdf bytes')
+    store.record_download(
+        ReportRecord(
+            id=None,
+            source='telegram',
+            channel='DOC_POOL',
+            message_id=163091,
+            published_at='2026-04-15T02:56:29Z',
+            title='Prefixed relative path',
+            pdf_path=Path('analysts') / 'data' / 'raw' / 'prefixed-live.pdf',
+            content='',
+            metadata={'file_unique_id': 'telethon-163091', 'telegram_caption_text': 'caption fallback'},
+        )
+    )
+    pipeline = ArasPipeline(client=object(), store=store, config=config, summarizer=FakeSummarizer())
+
+    execution = pipeline.summarize_latest(channel='DOC_POOL')
+
+    assert execution.summary.next_offset == 163091
+    assert len(execution.summaries) == 2
+
+
+def test_summarize_latest_falls_back_to_message_id_prefixed_raw_file_when_stored_path_is_stale(tmp_path: Path) -> None:
+    config = build_config(tmp_path)
+    store = SqliteArasStore(config.paths.state_db)
+    actual_pdf_path = tmp_path / 'data' / 'raw' / '163092-telethon-live-actual.pdf'
+    actual_pdf_path.parent.mkdir(parents=True, exist_ok=True)
+    actual_pdf_path.write_bytes(b'not readable pdf bytes')
+    store.record_download(
+        ReportRecord(
+            id=None,
+            source='telegram',
+            channel='DOC_POOL',
+            message_id=163092,
+            published_at='2026-04-15T02:56:30Z',
+            title='Stale stored path',
+            pdf_path=Path('analysts') / 'data' / 'raw' / '163092-telethon-stale-name.pdf',
+            content='',
+            metadata={'file_unique_id': 'telethon-163092', 'telegram_caption_text': 'caption fallback'},
+        )
+    )
+    pipeline = ArasPipeline(client=object(), store=store, config=config, summarizer=FakeSummarizer())
+
+    execution = pipeline.summarize_latest(channel='DOC_POOL')
+
+    assert execution.summary.next_offset == 163092
+    assert len(execution.summaries) == 2
+
+
 
 
 def test_summarize_latest_falls_back_to_raw_reports_when_db_is_empty(tmp_path: Path) -> None:

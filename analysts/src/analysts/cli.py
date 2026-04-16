@@ -16,7 +16,7 @@ from .graphify import GraphifyCorpusBuilder
 from .pipeline import ArasPipeline
 from .raw_reports import RawReportCatalog
 from .storage import SqliteArasStore
-from .watcher import WatchUntilRunner
+from .watcher import AsyncWatchResult, WatchUntilRunner
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
@@ -130,15 +130,56 @@ def run_watch_until(
     resolved_channels = normalize_channels(([channel] if channel is not None else []) + (channels or []))
     logger = configure_watch_logger(base_dir=base_dir)
     logger.info("watch_cli_invoked channels=%s base_dir=%s until=%s", ",".join(resolved_channels), base_dir, until)
+    catchup = _run_watch_catchup(base_dir=base_dir, channels=resolved_channels, logger=logger)
     runner = build_watch_runner(base_dir=base_dir)
     runner.logger = logger
     deadline = parse_watch_deadline(until)
     if len(resolved_channels) == 1:
-        result = asyncio.run(runner.watch_until(channel=resolved_channels[0], until=deadline))
+        watch_result = asyncio.run(runner.watch_until(channel=resolved_channels[0], until=deadline))
     else:
-        result = asyncio.run(runner.watch_until_many(channels=resolved_channels, until=deadline))
+        watch_result = asyncio.run(runner.watch_until_many(channels=resolved_channels, until=deadline))
+    result = _merge_watch_results(catchup=catchup, live=watch_result)
     print_watch_summary(result=result)
     return 0
+
+
+def _run_watch_catchup(*, base_dir: Path, channels: list[str], logger: logging.Logger) -> AsyncWatchResult:
+    aggregate = AsyncWatchResult()
+    pipeline = build_default_pipeline(base_dir=base_dir)
+    for channel in channels:
+        execution = pipeline.run_once(channel=channel)
+        aggregate = AsyncWatchResult(
+            seen=aggregate.seen,
+            downloaded=aggregate.downloaded + execution.summary.downloaded,
+            duplicates=aggregate.duplicates + execution.summary.duplicates,
+            ignored=aggregate.ignored + execution.summary.ignored,
+            message_failures=aggregate.message_failures,
+            summarized=aggregate.summarized + len(execution.summaries),
+            summarize_failures=aggregate.summarize_failures,
+            summarize_retries=aggregate.summarize_retries,
+        )
+        logger.info(
+            "watch_catchup channel=%s downloaded=%s duplicates=%s ignored=%s summarized=%s",
+            channel,
+            execution.summary.downloaded,
+            execution.summary.duplicates,
+            execution.summary.ignored,
+            len(execution.summaries),
+        )
+    return aggregate
+
+
+def _merge_watch_results(*, catchup: AsyncWatchResult, live: AsyncWatchResult) -> AsyncWatchResult:
+    return AsyncWatchResult(
+        seen=catchup.seen + live.seen,
+        downloaded=catchup.downloaded + live.downloaded,
+        duplicates=catchup.duplicates + live.duplicates,
+        ignored=catchup.ignored + live.ignored,
+        message_failures=catchup.message_failures + live.message_failures,
+        summarized=catchup.summarized + live.summarized,
+        summarize_failures=catchup.summarize_failures + live.summarize_failures,
+        summarize_retries=catchup.summarize_retries + live.summarize_retries,
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
