@@ -75,3 +75,53 @@ def test_materialize_raw_reference_docs_writes_map_and_gics_outputs(tmp_path) ->
     assert "Information Technology" in latest_doc
     assert "## Information Technology" in membership_doc
     assert list(pivot.columns) == ["date", "A091990"]
+
+
+def test_materialize_raw_reference_docs_writes_lv1_and_lv2_gics_outputs(tmp_path) -> None:
+    module = _load_generate_module()
+
+    raw_dir = tmp_path / "raw"
+    (raw_dir / "ksdq").mkdir(parents=True)
+
+    with pd.ExcelWriter(raw_dir / "map.xlsx") as writer:
+        pd.DataFrame({"Ticker": ["A091990"], "Name": ["셀트리온헬스케어"]}).to_excel(writer, sheet_name="Sheet3", index=False)
+
+    pd.DataFrame(
+        {
+            "DATE": [pd.Timestamp("2024-01-31"), pd.Timestamp("2024-02-29")],
+            "TICKER": ["A091990", "A091990"],
+            "GICS_SECTOR_NAME": ["Health Care", "Information Technology"],
+        }
+    ).to_excel(raw_dir / "ksdq" / "snp_ksdq_gics_sector_big_lv1.xlsx", index=False)
+    pd.DataFrame(
+        {
+            "DATE": [pd.Timestamp("2024-01-31"), pd.Timestamp("2024-02-29")],
+            "TICKER": ["A091990", "A091990"],
+            "GICS_SECTOR_NAME": ["Biotechnology", "Healthcare Equipment"],
+        }
+    ).to_excel(raw_dir / "ksdq" / "snp_ksdq_gics_sector_big_lv2.xlsx", index=False)
+
+    generated = module.materialize_raw_reference_docs(raw_dir)
+
+    generated_names = {path.name for path in generated}
+    assert "snp_ksdq_gics_sector_big_lv1_pivot.csv" in generated_names
+    assert "snp_ksdq_gics_sector_big_lv2_pivot.csv" in generated_names
+    assert "snp_ksdq_gics_sector_latest_lv1.md" in generated_names
+    assert "snp_ksdq_gics_sector_latest_lv2.md" in generated_names
+    assert "snp_ksdq_gics_sector_membership_lv1.md" in generated_names
+    assert "snp_ksdq_gics_sector_membership_lv2.md" in generated_names
+    assert "snp_ksdq_gics_sector_big_pivot.csv" in generated_names
+    assert "snp_ksdq_gics_sector_latest.md" in generated_names
+    assert "snp_ksdq_gics_sector_membership.md" in generated_names
+
+    latest_lv1 = (raw_dir / "snp_ksdq_gics_sector_latest_lv1.md").read_text(encoding="utf-8")
+    latest_lv2 = (raw_dir / "snp_ksdq_gics_sector_latest_lv2.md").read_text(encoding="utf-8")
+    pivot_lv1 = pd.read_csv(raw_dir / "snp_ksdq_gics_sector_big_lv1_pivot.csv")
+    pivot_lv2 = pd.read_csv(raw_dir / "snp_ksdq_gics_sector_big_lv2_pivot.csv")
+    compat_latest = (raw_dir / "snp_ksdq_gics_sector_latest.md").read_text(encoding="utf-8")
+
+    assert "Information Technology" in latest_lv1
+    assert "Healthcare Equipment" in latest_lv2
+    assert list(pivot_lv1.columns) == ["date", "A091990"]
+    assert list(pivot_lv2.columns) == ["date", "A091990"]
+    assert "Information Technology" in compat_latest

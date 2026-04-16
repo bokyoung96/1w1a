@@ -207,29 +207,6 @@ def _materialize_map_reference_docs(raw_dir: Path) -> list[Path]:
 
 
 def _materialize_gics_reference_docs(raw_dir: Path) -> list[Path]:
-    gics_path = raw_dir / "snp_ksdq_gics_sector_big.xlsx"
-    if not gics_path.exists():
-        return []
-
-    frame = pd.read_excel(gics_path)
-    frame = frame.rename(columns={str(column).strip(): str(column).strip() for column in frame.columns})
-    required = {"DATE", "TICKER", "GICS_SECTOR_NAME"}
-    if not required <= set(frame.columns):
-        return []
-
-    mappings = frame.loc[:, ["DATE", "TICKER", "GICS_SECTOR_NAME"]].dropna().copy()
-    mappings["DATE"] = pd.to_datetime(mappings["DATE"]).dt.normalize()
-    mappings["TICKER"] = mappings["TICKER"].map(_normalize_ticker)
-    mappings["CODE"] = mappings["TICKER"].map(_ticker_code)
-    mappings["GICS_SECTOR_NAME"] = mappings["GICS_SECTOR_NAME"].astype(str).str.strip()
-    mappings = mappings.drop_duplicates(subset=["DATE", "TICKER"], keep="last").sort_values(["DATE", "TICKER"])
-
-    pivot = mappings.pivot(index="DATE", columns="TICKER", values="GICS_SECTOR_NAME").sort_index().sort_index(axis=1)
-    pivot.index.name = "date"
-    pivot.columns.name = None
-    pivot_path = raw_dir / "snp_ksdq_gics_sector_big_pivot.csv"
-    pivot.to_csv(pivot_path, encoding="utf-8")
-
     stock_name_map: dict[str, str] = {}
     map_xlsx = raw_dir / "map.xlsx"
     if map_xlsx.exists():
@@ -242,18 +219,85 @@ def _materialize_gics_reference_docs(raw_dir: Path) -> list[Path]:
                 for _, row in pairs.iterrows():
                     stock_name_map[_normalize_ticker(row.iloc[0])] = str(row.iloc[1]).strip()
 
+    generated: list[Path] = []
+    level_paths = _resolve_kosdaq_gics_paths(raw_dir)
+    for level, gics_path in level_paths.items():
+        mappings = _read_gics_mappings(gics_path)
+        if mappings is None:
+            continue
+        generated.extend(_write_gics_reference_outputs(raw_dir, gics_path, level, mappings, stock_name_map))
+    return generated
+
+
+def _resolve_kosdaq_gics_paths(raw_dir: Path) -> dict[str, Path]:
+    resolved: dict[str, Path] = {}
+    for level in ("lv1", "lv2"):
+        for directory in (raw_dir / "ksdq", raw_dir):
+            for suffix in ("xlsx", "xls"):
+                candidate = directory / f"snp_ksdq_gics_sector_big_{level}.{suffix}"
+                if candidate.exists():
+                    resolved[level] = candidate
+                    break
+            if level in resolved:
+                break
+    legacy = raw_dir / "snp_ksdq_gics_sector_big.xlsx"
+    if legacy.exists() and "lv1" not in resolved:
+        resolved["lv1"] = legacy
+    return resolved
+
+
+def _read_gics_mappings(gics_path: Path) -> pd.DataFrame | None:
+    frame = pd.read_excel(gics_path)
+    frame = frame.rename(columns={str(column).strip(): str(column).strip() for column in frame.columns})
+    required = {"DATE", "TICKER", "GICS_SECTOR_NAME"}
+    if not required <= set(frame.columns):
+        return None
+
+    mappings = frame.loc[:, ["DATE", "TICKER", "GICS_SECTOR_NAME"]].dropna().copy()
+    mappings["DATE"] = pd.to_datetime(mappings["DATE"]).dt.normalize()
+    mappings["TICKER"] = mappings["TICKER"].map(_normalize_ticker)
+    mappings["CODE"] = mappings["TICKER"].map(_ticker_code)
+    mappings["GICS_SECTOR_NAME"] = mappings["GICS_SECTOR_NAME"].astype(str).str.strip()
+    return mappings.drop_duplicates(subset=["DATE", "TICKER"], keep="last").sort_values(["DATE", "TICKER"])
+
+
+def _write_gics_reference_outputs(
+    raw_dir: Path,
+    gics_path: Path,
+    level: str,
+    mappings: pd.DataFrame,
+    stock_name_map: dict[str, str],
+) -> list[Path]:
+    pivot = mappings.pivot(index="DATE", columns="TICKER", values="GICS_SECTOR_NAME").sort_index().sort_index(axis=1)
+    pivot.index.name = "date"
+    pivot.columns.name = None
+
+    pivot_name = "snp_ksdq_gics_sector_big_pivot.csv" if level == "lv1" else f"snp_ksdq_gics_sector_big_{level}_pivot.csv"
+    latest_name = "snp_ksdq_gics_sector_latest.md" if level == "lv1" else f"snp_ksdq_gics_sector_latest_{level}.md"
+    membership_name = (
+        "snp_ksdq_gics_sector_membership.md" if level == "lv1" else f"snp_ksdq_gics_sector_membership_{level}.md"
+    )
+
+    if level == "lv1":
+        level_pivot_path = raw_dir / "snp_ksdq_gics_sector_big_lv1_pivot.csv"
+        pivot.to_csv(level_pivot_path, encoding="utf-8")
+    pivot_path = raw_dir / pivot_name
+    pivot.to_csv(pivot_path, encoding="utf-8")
+
     latest_date = pd.Timestamp(mappings["DATE"].max())
     latest = mappings.loc[mappings["DATE"].eq(latest_date), ["TICKER", "CODE", "GICS_SECTOR_NAME"]].copy()
     latest["Name"] = latest["TICKER"].map(lambda ticker: stock_name_map.get(str(ticker), ""))
     latest = latest.sort_values(["GICS_SECTOR_NAME", "TICKER"]).loc[:, ["TICKER", "CODE", "Name", "GICS_SECTOR_NAME"]]
 
-    latest_path = raw_dir / "snp_ksdq_gics_sector_latest.md"
+    source_label = _gics_source_label(raw_dir, gics_path)
+    level_label = level.upper()
+    latest_path = raw_dir / latest_name
     lines = [
-        "# KOSDAQ GICS Sector Latest Mapping",
+        f"# KOSDAQ GICS Sector Latest Mapping ({level_label})",
         "",
-        "> Source: `raw/snp_ksdq_gics_sector_big.xlsx` sheet `KOSDAQ_Hist_GICS260331`",
+        f"> Source: `{source_label}`",
         "",
-        f"Latest available KOSDAQ GICS sector mapping as of `{latest_date.date()}`.",
+        f"Latest available KOSDAQ GICS {level_label} sector mapping as of `{latest_date.date()}`.",
         "",
         "| Ticker | Code | Name | GICS Sector |",
         "| --- | --- | --- | --- |",
@@ -265,13 +309,17 @@ def _materialize_gics_reference_docs(raw_dir: Path) -> list[Path]:
     lines.extend(["", f"Total tickers: **{len(latest)}**", ""])
     latest_path.write_text("\n".join(lines), encoding="utf-8")
 
-    membership_path = raw_dir / "snp_ksdq_gics_sector_membership.md"
+    if level == "lv1":
+        compat_latest_path = raw_dir / "snp_ksdq_gics_sector_latest_lv1.md"
+        compat_latest_path.write_text("\n".join(lines), encoding="utf-8")
+
+    membership_path = raw_dir / membership_name
     membership_lines = [
-        "# KOSDAQ GICS Sector Membership",
+        f"# KOSDAQ GICS Sector Membership ({level_label})",
         "",
-        "> Source: `raw/snp_ksdq_gics_sector_big.xlsx` sheet `KOSDAQ_Hist_GICS260331`",
+        f"> Source: `{source_label}`",
         "",
-        f"Sector-to-ticker membership grouped from the latest available snapshot on `{latest_date.date()}`.",
+        f"Sector-to-ticker membership grouped from the latest available {level_label} snapshot on `{latest_date.date()}`.",
         "",
     ]
     for sector_name, group in latest.groupby("GICS_SECTOR_NAME", sort=True):
@@ -286,7 +334,20 @@ def _materialize_gics_reference_docs(raw_dir: Path) -> list[Path]:
         membership_lines.append("")
     membership_path.write_text("\n".join(membership_lines), encoding="utf-8")
 
-    return [pivot_path, latest_path, membership_path]
+    generated = [pivot_path, latest_path, membership_path]
+    if level == "lv1":
+        compat_membership_path = raw_dir / "snp_ksdq_gics_sector_membership_lv1.md"
+        compat_membership_path.write_text("\n".join(membership_lines), encoding="utf-8")
+        generated.extend([level_pivot_path, compat_latest_path, compat_membership_path])
+    return generated
+
+
+def _gics_source_label(raw_dir: Path, gics_path: Path) -> str:
+    try:
+        relative = gics_path.relative_to(ROOT)
+        return str(relative).replace("\\", "/")
+    except ValueError:
+        return f"raw/{gics_path.relative_to(raw_dir).as_posix()}"
 
 
 def slug(value: str) -> str:

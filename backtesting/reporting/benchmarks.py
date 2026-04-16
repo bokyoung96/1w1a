@@ -265,7 +265,7 @@ def default_repositories_for_universe(
     if universe_id == "kosdaq150":
         sector_name_map, stock_name_map = _load_display_name_maps(ROOT.raw_path / "map.xlsx")
         if sector_source_value == "gics":
-            gics_path = ROOT.raw_path / "snp_ksdq_gics_sector_big.xlsx"
+            gics_path = _resolve_kosdaq_gics_level_path(ROOT.raw_path, level="lv1")
             if gics_path.exists():
                 sector_repo = SectorRepository.from_historical_excel(
                     gics_path,
@@ -368,6 +368,29 @@ def _read_historical_sector_frame(
     pivoted.index.name = "date"
     pivoted.columns.name = None
     return pivoted
+
+
+def _resolve_kosdaq_gics_level_path(raw_dir: Path, *, level: str = "lv1") -> Path:
+    normalized = str(level).strip().lower()
+    candidate_names = [
+        f"snp_ksdq_gics_sector_big_{normalized}.xlsx",
+        f"snp_ksdq_gics_sector_big_{normalized}.xls",
+    ]
+    candidate_dirs = [
+        raw_dir / "ksdq",
+        raw_dir,
+    ]
+    for directory in candidate_dirs:
+        for name in candidate_names:
+            path = directory / name
+            if path.exists():
+                return path
+
+    legacy = raw_dir / "snp_ksdq_gics_sector_big.xlsx"
+    if legacy.exists():
+        return legacy
+
+    return raw_dir / "ksdq" / candidate_names[0]
 
 
 def _load_display_name_maps(path: Path) -> tuple[dict[str, str], dict[str, str]]:

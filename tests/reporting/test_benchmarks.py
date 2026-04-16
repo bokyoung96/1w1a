@@ -294,3 +294,47 @@ def test_default_sector_repository_for_kosdaq150_can_use_gics_source(monkeypatch
     assert sector_repo.display_symbol("091990") == "셀트리온헬스케어 (091990)"
     assert sector_repo.latest_sector_row(pd.Timestamp("2024-02-29")).to_dict() == {"A091990": "Information Technology"}
     assert requested == [DatasetId.QW_KSDQ_ADJ_C, DatasetId.QW_BM]
+
+
+def test_default_sector_repository_for_kosdaq150_prefers_lv1_gics_layout(monkeypatch, tmp_path) -> None:
+    import backtesting.reporting.benchmarks as benchmarks
+    from backtesting.catalog import DatasetId
+
+    raw_dir = tmp_path / "raw"
+    (raw_dir / "ksdq").mkdir(parents=True)
+    with pd.ExcelWriter(raw_dir / "map.xlsx") as writer:
+        pd.DataFrame({"Ticker": ["A091990"], "Name": ["셀트리온헬스케어"]}).to_excel(writer, sheet_name="Sheet3", index=False)
+    pd.DataFrame(
+        {
+            "DATE": [pd.Timestamp("2024-01-31"), pd.Timestamp("2024-02-29")],
+            "TICKER": ["A091990", "A091990"],
+            "GICS_SECTOR_NAME": ["Health Care", "Information Technology"],
+        }
+    ).to_excel(raw_dir / "ksdq" / "snp_ksdq_gics_sector_big_lv1.xlsx", index=False)
+    pd.DataFrame(
+        {
+            "DATE": [pd.Timestamp("2024-01-31"), pd.Timestamp("2024-02-29")],
+            "TICKER": ["A091990", "A091990"],
+            "GICS_SECTOR_NAME": ["Biotechnology", "Healthcare Equipment"],
+        }
+    ).to_excel(raw_dir / "ksdq" / "snp_ksdq_gics_sector_big_lv2.xlsx", index=False)
+
+    requested: list[DatasetId] = []
+
+    def _fake_load_default_frame(dataset_id: DatasetId) -> pd.DataFrame:
+        requested.append(dataset_id)
+        index = pd.to_datetime(["2024-01-31", "2024-02-29"])
+        if dataset_id is DatasetId.QW_KSDQ_ADJ_C:
+            return pd.DataFrame({"A091990": [100.0, 101.0]}, index=index)
+        if dataset_id is DatasetId.QW_BM:
+            return pd.DataFrame({"IKS200": [200.0, 201.0]}, index=index)
+        raise AssertionError(f"unexpected dataset_id: {dataset_id}")
+
+    monkeypatch.setattr(benchmarks, "ROOT", RootPaths(tmp_path))
+    monkeypatch.setattr(benchmarks, "_load_default_frame", _fake_load_default_frame)
+
+    benchmark_repo, sector_repo = benchmarks.default_repositories_for_universe("kosdaq150", sector_source="gics")
+
+    assert benchmark_repo is not None
+    assert sector_repo.latest_sector_row(pd.Timestamp("2024-02-29")).to_dict() == {"A091990": "Information Technology"}
+    assert requested == [DatasetId.QW_KSDQ_ADJ_C, DatasetId.QW_BM]
