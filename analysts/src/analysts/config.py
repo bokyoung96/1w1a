@@ -77,7 +77,8 @@ class BodyCandidateRules:
 @dataclass(frozen=True)
 class GmailConfig:
     account_name: str
-    client_secret_path: Path
+    client_secret_path: Path | None
+    client_secret_json: dict[str, Any] | None
     token_path: Path
     query: str
     label_filters: tuple[str, ...] = ()
@@ -88,7 +89,8 @@ class GmailConfig:
     def to_display_dict(self) -> dict[str, Any]:
         return {
             "account_name": self.account_name,
-            "client_secret_path": str(self.client_secret_path),
+            "client_secret_path": None if self.client_secret_path is None else str(self.client_secret_path),
+            "client_secret_json": "<inline>" if self.client_secret_json is not None else None,
             "token_path": str(self.token_path),
             "query": self.query,
             "label_filters": list(self.label_filters),
@@ -204,7 +206,12 @@ def _load_local_runtime_config(local_config_path: Path) -> LocalRuntimeConfig:
         body_rules_payload = gmail_payload.get("body_candidate_rules") or {}
         gmail = GmailConfig(
             account_name=str(gmail_payload["account_name"]),
-            client_secret_path=Path(str(gmail_payload["client_secret_path"])),
+            client_secret_path=(
+                Path(str(gmail_payload["client_secret_path"]))
+                if gmail_payload.get("client_secret_path")
+                else None
+            ),
+            client_secret_json=gmail_payload.get("client_secret_json"),
             token_path=Path(str(gmail_payload["token_path"])),
             query=str(gmail_payload["query"]),
             label_filters=tuple(str(item) for item in gmail_payload.get("label_filters", [])),

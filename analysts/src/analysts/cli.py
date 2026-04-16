@@ -102,7 +102,12 @@ def build_gmail_source_pipeline(*, base_dir: Path) -> GmailSourcePipeline:
         raise RuntimeError("Missing Gmail config in analysts/config.local.json")
     gmail_store = GmailStore(config.paths.state_dir / "gmail.sqlite3")
     api = GmailApiClient(
-        credentials_path=config.paths.base_dir / config.gmail.client_secret_path,
+        credentials_path=(
+            None
+            if config.gmail.client_secret_path is None
+            else config.paths.base_dir / config.gmail.client_secret_path
+        ),
+        credentials_json=config.gmail.client_secret_json,
         token_path=config.paths.base_dir / config.gmail.token_path,
     )
     analysts_pipeline = ArasPipeline(client=object(), store=SqliteArasStore(config.paths.state_db), config=config)
