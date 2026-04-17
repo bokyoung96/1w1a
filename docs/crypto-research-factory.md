@@ -41,6 +41,49 @@ Every note should document:
 - how it works
 - the economic rationale
 
+## Task 2: parametric candidate generation contract
+
+Task 2 adds the first factory surface under:
+
+- `crypto/factory/candidates.py`
+
+The approved candidate-generation shape is intentionally narrow for v1:
+
+1. **Fixed-grid seeds first**
+   - start from small, explicit parameter grids
+   - use the grid to guarantee baseline family/parameter coverage
+   - keep the seed stage legible enough that reviewers can explain where the initial candidates came from
+2. **Bounded adaptive/random expansion second**
+   - expand only around promising regions from the seed pass
+   - keep the adaptive/random pass bounded so the pool stays reviewable
+   - do not turn the v1 factory into open-ended search or invention
+3. **Deterministic outputs**
+   - repeated runs with the same config/seed should produce the same candidate pool and ordering
+   - adaptive/random expansion should still be reproducible from explicit seed inputs
+
+Pool-size contract:
+
+- target candidate count stays within `30-50`
+- fixed-grid coverage should produce the initial pool skeleton
+- adaptive/random expansion should top the pool up instead of replacing the fixed-grid pass
+
+Task-2 non-goals:
+
+- do not implement scoring
+- do not implement orthogonality filtering or basket selection
+- do not implement allocator behavior
+- do not introduce compositional/open-ended factory logic in this slice
+
+Review expectations for candidate objects:
+
+- family identity remains explicit
+- parameter choices remain inspectable
+- generation mode remains explainable during review and testing
+
+This keeps Task 2 aligned with the approved factory order:
+
+`fixed-grid coverage -> bounded adaptive/random expansion -> downstream scoring/selection`
+
 ## Promotion thresholds
 
 Promotion and report outputs should use the approved research thresholds:
@@ -115,6 +158,10 @@ When reviewing `crypto/` changes, reject implementations that:
 - silently change the primary execution cadence away from `15m`
 - collapse lane boundaries by putting paper/reporting logic into strategy or exchange modules
 - omit promotion-threshold reporting from paper-trading outputs
+- let Task 2 candidate generation drift outside the `30-50` pool target
+- make adaptive/random expansion unbounded or non-reproducible
+- hide fixed-grid coverage behind opaque heuristics that reviewers cannot inspect
+- rely on candidate ordering that changes between identical runs
 
 ## Notes for future implementation
 
@@ -127,6 +174,7 @@ When reviewing `crypto/` changes, reject implementations that:
 Focused checks used for the integrated scaffold review:
 
 ```bash
+uv run python -m unittest crypto.tests.test_factory_candidates -v
 uv run python -m unittest crypto.tests.test_paper crypto.tests.test_reporting -v
 uv run python -m unittest discover -s crypto/tests -v
 ```
