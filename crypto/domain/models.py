@@ -57,10 +57,20 @@ class PositionSide(str, Enum):
     FLAT = "flat"
 
 
+class OrderSide(str, Enum):
+    BUY = "buy"
+    SELL = "sell"
+
+
+class OrderType(str, Enum):
+    MARKET = "market"
+    LIMIT = "limit"
+
+
 @dataclass(frozen=True)
 class ExecutionPlan:
     primary_timeframe: str = "15m"
-    feature_timeframes: tuple[str, ...] = ("15m",)
+    feature_timeframes: tuple[str, ...] = ("5m", "15m", "1h")
 
     def __post_init__(self) -> None:
         if not self.feature_timeframes:
@@ -192,6 +202,47 @@ class PositionSnapshot:
     @property
     def notional_value(self) -> float:
         return self.quantity * self.mark_price
+
+
+@dataclass(frozen=True)
+class OrderIntent:
+    strategy_id: str
+    instrument: InstrumentId
+    side: OrderSide
+    quantity: float
+    order_type: OrderType
+    limit_price: float | None = None
+
+    def __post_init__(self) -> None:
+        if self.quantity <= 0:
+            raise ValueError("quantity must be positive")
+        if self.order_type is OrderType.LIMIT and self.limit_price is None:
+            raise ValueError("limit orders require limit_price")
+        if self.order_type is OrderType.MARKET and self.limit_price is not None:
+            raise ValueError("market orders must not set limit_price")
+
+
+@dataclass(frozen=True)
+class FillRecord:
+    fill_id: str
+    order_id: str
+    instrument: InstrumentId
+    side: OrderSide
+    quantity: float
+    price: float
+    fee: float = 0.0
+
+    def __post_init__(self) -> None:
+        if self.quantity <= 0:
+            raise ValueError("quantity must be positive")
+
+    @property
+    def gross_notional(self) -> float:
+        return self.quantity * self.price
+
+    @property
+    def net_notional(self) -> float:
+        return self.gross_notional - self.fee
 
 
 @dataclass(frozen=True)

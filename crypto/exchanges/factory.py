@@ -18,7 +18,7 @@ def build_exchange_adapter(
 
     return BinancePerpetualCCXTAdapter(
         client=client,
-        execution_plan=execution_plan or ExecutionPlan(primary_timeframe="15m", feature_timeframes=("15m",)),
+        execution_plan=execution_plan or ExecutionPlan(primary_timeframe="15m", feature_timeframes=("5m", "15m", "1h")),
     )
 
 

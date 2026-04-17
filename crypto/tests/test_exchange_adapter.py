@@ -59,6 +59,7 @@ class ExchangeAdapterTests(unittest.TestCase):
         self.assertEqual(adapter.exchange_id, "binance_perpetual")
         self.assertEqual(adapter.execution_plan.primary_timeframe, "15m")
         self.assertIn("15m", adapter.execution_plan.feature_timeframes)
+        self.assertEqual(adapter.execution_plan.feature_timeframes, ("5m", "15m", "1h"))
 
     def test_fetch_bars_normalizes_ccxt_payload_to_canonical_bars(self) -> None:
         adapter = BinancePerpetualCCXTAdapter(client=_FakeBinanceClient())
