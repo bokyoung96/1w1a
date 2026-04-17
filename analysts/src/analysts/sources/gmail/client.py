@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from base64 import urlsafe_b64decode
 from contextlib import contextmanager
 from datetime import UTC, datetime, timedelta
 import json

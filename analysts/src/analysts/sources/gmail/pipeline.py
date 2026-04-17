@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
 from pathlib import Path
 
 from analysts.config import ArasConfig, BodyCandidateRules
 from analysts.pipeline import ArasPipeline
 
-from .models import GmailCandidateDocument
+from .models import GmailAttachmentRecord, GmailCandidateDocument, GmailMessageRecord
 from .normalize import GmailCandidateBuilder
 from .storage import GmailStore
 from .sync import GmailPollingSync
@@ -34,18 +35,51 @@ class GmailSourcePipeline:
         ).sync_once(limit=limit)
 
     def summarize_latest(self):
-        message = self.store.get_latest_message(account_name=self.account_name)
-        if message is None:
+        candidate = self._find_candidate()
+        return self.analysts_pipeline.summarize_canonical(_candidate_to_canonical(candidate, account_name=self.account_name))
+
+    def _find_candidate(self) -> GmailCandidateDocument:
+        messages = self.store.list_messages(account_name=self.account_name)
+        if not messages:
             raise RuntimeError(f"No Gmail messages found for account {self.account_name}")
-        candidates = GmailCandidateBuilder(
+        builder = GmailCandidateBuilder(
             self.config.paths.processed_dir / "gmail",
             body_rules=self.body_rules,
             zip_allow_extensions=self.zip_allow_extensions,
-        ).build_candidates(message=message, attachments=[])
-        if not candidates:
-            raise RuntimeError(f"No Gmail candidates available for message {message.gmail_message_id}")
-        candidate = candidates[0]
-        return self.analysts_pipeline.summarize_canonical(_candidate_to_canonical(candidate, account_name=self.account_name))
+        )
+        for message in messages:
+            candidates = builder.build_candidates(message=message, attachments=self._read_attachments(message))
+            if candidates:
+                return candidates[0]
+        raise RuntimeError(f"No Gmail candidates available for account {self.account_name}")
+
+    def _read_attachments(self, message: GmailMessageRecord) -> list[GmailAttachmentRecord]:
+        manifest_path = self.raw_root / message.gmail_message_id / "attachments" / "manifest.json"
+        if not manifest_path.exists():
+            return []
+        payload = json.loads(manifest_path.read_text())
+        attachments: list[GmailAttachmentRecord] = []
+        for item in payload.get("attachments", []):
+            saved_path = item.get("saved_path")
+            if not saved_path:
+                continue
+            file_path = manifest_path.parent.parent / str(saved_path)
+            if not file_path.exists():
+                continue
+            attachments.append(
+                GmailAttachmentRecord(
+                    gmail_message_id=message.gmail_message_id,
+                    attachment_id=str(item.get("attachment_id") or file_path.name),
+                    filename=str(item.get("filename") or file_path.name),
+                    mime_type=str(item.get("mime_type") or ""),
+                    size_bytes=file_path.stat().st_size,
+                    sha256="",
+                    raw_path=file_path,
+                    is_zip=bool(item.get("is_zip")),
+                    extraction_status="stored",
+                )
+            )
+        return attachments
 
 
 def _candidate_to_canonical(candidate: GmailCandidateDocument, *, account_name: str):

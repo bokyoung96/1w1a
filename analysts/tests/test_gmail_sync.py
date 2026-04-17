@@ -1,4 +1,5 @@
 from pathlib import Path
+import zipfile
 
 from analysts.config import BodyCandidateRules, build_config
 from analysts.domain import AnalystSummary
@@ -173,3 +174,292 @@ def test_gmail_source_pipeline_summarizes_latest_body_candidate(tmp_path: Path) 
         "report-msg-1-summary.md",
     }
     assert {path.parent for path in execution.processed_files} == {config.paths.processed_dir}
+
+
+def test_gmail_source_pipeline_uses_latest_html_body(tmp_path: Path) -> None:
+    config = build_config(tmp_path)
+    gmail_store = GmailStore(tmp_path / "gmail.sqlite3")
+    gmail_store.record_message(
+        GmailMessageRecord(
+            gmail_message_id="msg-1",
+            gmail_thread_id="thread-1",
+            history_id="200",
+            account_name="reports-primary",
+            subject="Structured wrap",
+            sender="broker@example.com",
+            internal_date="2026-04-16T06:00:00Z",
+            label_ids=("Label_Reports",),
+            snippet="Top line",
+            body_plain="Section A\n\nRevenue up 10%\n\nRisk factors listed below." * 40,
+            body_html=None,
+            raw_payload_json={"id": "msg-1"},
+            sync_status="synced",
+            query_fingerprint="label:broker-reports",
+        )
+    )
+    gmail_store.record_message(
+        GmailMessageRecord(
+            gmail_message_id="msg-2",
+            gmail_thread_id="thread-2",
+            history_id="201",
+            account_name="reports-primary",
+            subject="HTML-only wrap",
+            sender="broker@example.com",
+            internal_date="2026-04-17T06:00:00Z",
+            label_ids=("Label_Reports",),
+            snippet="Top line",
+            body_plain="<html><body><p>Revenue up 10%</p><p>Margins stable</p></body></html>" * 40,
+            body_html=None,
+            raw_payload_json={"id": "msg-2"},
+            sync_status="synced",
+            query_fingerprint="label:broker-reports",
+        )
+    )
+    analysts_pipeline = ArasPipeline(
+        client=object(),
+        store=SqliteArasStore(config.paths.state_db),
+        config=config,
+        summarizer=FakeSummarizer(),
+    )
+    source_pipeline = GmailSourcePipeline(
+        config=config,
+        api=FakeGmailApi(),
+        store=gmail_store,
+        analysts_pipeline=analysts_pipeline,
+        account_name="reports-primary",
+        query="label:broker-reports",
+        body_rules=BodyCandidateRules(min_chars=200, require_structure=True),
+        zip_allow_extensions=(".pdf", ".txt", ".html"),
+        raw_root=config.paths.raw_dir / "gmail",
+    )
+
+    execution = source_pipeline.summarize_latest()
+
+    assert execution.summary.next_offset == "msg-2"
+    assert {path.name for path in execution.processed_files} == {
+        "report-msg-2-raw-text.txt",
+        "report-msg-2-summary-input.json",
+        "report-msg-2-summary.json",
+        "report-msg-2-summary.md",
+    }
+
+
+def test_gmail_source_pipeline_skips_latest_empty_message(tmp_path: Path) -> None:
+    config = build_config(tmp_path)
+    gmail_store = GmailStore(tmp_path / "gmail.sqlite3")
+    gmail_store.record_message(
+        GmailMessageRecord(
+            gmail_message_id="msg-1",
+            gmail_thread_id="thread-1",
+            history_id="200",
+            account_name="reports-primary",
+            subject="Structured wrap",
+            sender="broker@example.com",
+            internal_date="2026-04-16T06:00:00Z",
+            label_ids=("Label_Reports",),
+            snippet="Top line",
+            body_plain="Section A\n\nRevenue up 10%\n\nRisk factors listed below." * 40,
+            body_html=None,
+            raw_payload_json={"id": "msg-1"},
+            sync_status="synced",
+            query_fingerprint="label:broker-reports",
+        )
+    )
+    gmail_store.record_message(
+        GmailMessageRecord(
+            gmail_message_id="msg-2",
+            gmail_thread_id="thread-2",
+            history_id="201",
+            account_name="reports-primary",
+            subject="Empty wrap",
+            sender="broker@example.com",
+            internal_date="2026-04-17T06:00:00Z",
+            label_ids=("Label_Reports",),
+            snippet="Top line",
+            body_plain="too short",
+            body_html=None,
+            raw_payload_json={"id": "msg-2"},
+            sync_status="synced",
+            query_fingerprint="label:broker-reports",
+        )
+    )
+    analysts_pipeline = ArasPipeline(
+        client=object(),
+        store=SqliteArasStore(config.paths.state_db),
+        config=config,
+        summarizer=FakeSummarizer(),
+    )
+    source_pipeline = GmailSourcePipeline(
+        config=config,
+        api=FakeGmailApi(),
+        store=gmail_store,
+        analysts_pipeline=analysts_pipeline,
+        account_name="reports-primary",
+        query="label:broker-reports",
+        body_rules=BodyCandidateRules(min_chars=200, require_structure=True),
+        zip_allow_extensions=(".pdf", ".txt", ".html"),
+        raw_root=config.paths.raw_dir / "gmail",
+    )
+
+    execution = source_pipeline.summarize_latest()
+
+    assert execution.summary.next_offset == "msg-1"
+    assert {path.name for path in execution.processed_files} == {
+        "report-msg-1-raw-text.txt",
+        "report-msg-1-summary-input.json",
+        "report-msg-1-summary.json",
+        "report-msg-1-summary.md",
+    }
+
+
+def test_gmail_source_pipeline_uses_latest_attachment_candidate(tmp_path: Path) -> None:
+    config = build_config(tmp_path)
+    gmail_store = GmailStore(tmp_path / "gmail.sqlite3")
+    gmail_store.record_message(
+        GmailMessageRecord(
+            gmail_message_id="msg-1",
+            gmail_thread_id="thread-1",
+            history_id="200",
+            account_name="reports-primary",
+            subject="Older wrap",
+            sender="broker@example.com",
+            internal_date="2026-04-16T06:00:00Z",
+            label_ids=("Label_Reports",),
+            snippet="Top line",
+            body_plain="Section A\n\nRevenue up 10%\n\nRisk factors listed below." * 40,
+            body_html=None,
+            raw_payload_json={"id": "msg-1"},
+            sync_status="synced",
+            query_fingerprint="label:broker-reports",
+        )
+    )
+    gmail_store.record_message(
+        GmailMessageRecord(
+            gmail_message_id="msg-2",
+            gmail_thread_id="thread-2",
+            history_id="201",
+            account_name="reports-primary",
+            subject="Latest attachment wrap",
+            sender="broker@example.com",
+            internal_date="2026-04-17T06:00:00Z",
+            label_ids=("Label_Reports",),
+            snippet="Top line",
+            body_plain="too short",
+            body_html=None,
+            raw_payload_json={"id": "msg-2"},
+            sync_status="synced",
+            query_fingerprint="label:broker-reports",
+        )
+    )
+    raw_dir = config.paths.raw_dir / "gmail" / "msg-2" / "attachments" / "original"
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    report_path = raw_dir / "report.txt"
+    report_path.write_text("Revenue up 10%\n\nMargins stable")
+    manifest_path = raw_dir.parent / "manifest.json"
+    manifest_path.write_text(
+        '{"gmail_message_id":"msg-2","attachments":[{"attachment_id":"att-1","filename":"report.txt","mime_type":"text/plain","is_zip":false,"saved_path":"attachments/original/report.txt"}]}\n'
+    )
+    analysts_pipeline = ArasPipeline(
+        client=object(),
+        store=SqliteArasStore(config.paths.state_db),
+        config=config,
+        summarizer=FakeSummarizer(),
+    )
+    source_pipeline = GmailSourcePipeline(
+        config=config,
+        api=FakeGmailApi(),
+        store=gmail_store,
+        analysts_pipeline=analysts_pipeline,
+        account_name="reports-primary",
+        query="label:broker-reports",
+        body_rules=BodyCandidateRules(min_chars=200, require_structure=True),
+        zip_allow_extensions=(".pdf", ".txt", ".html"),
+        raw_root=config.paths.raw_dir / "gmail",
+    )
+
+    execution = source_pipeline.summarize_latest()
+
+    assert execution.summary.next_offset == "msg-2"
+    assert {path.name for path in execution.processed_files} == {
+        "report-msg-2-raw-text.txt",
+        "report-msg-2-summary-input.json",
+        "report-msg-2-summary.json",
+        "report-msg-2-summary.md",
+    }
+
+
+def test_gmail_source_pipeline_uses_latest_zip_html_candidate(tmp_path: Path) -> None:
+    config = build_config(tmp_path)
+    gmail_store = GmailStore(tmp_path / "gmail.sqlite3")
+    gmail_store.record_message(
+        GmailMessageRecord(
+            gmail_message_id="msg-1",
+            gmail_thread_id="thread-1",
+            history_id="200",
+            account_name="reports-primary",
+            subject="Older wrap",
+            sender="broker@example.com",
+            internal_date="2026-04-16T06:00:00Z",
+            label_ids=("Label_Reports",),
+            snippet="Top line",
+            body_plain="Section A\n\nRevenue up 10%\n\nRisk factors listed below." * 40,
+            body_html=None,
+            raw_payload_json={"id": "msg-1"},
+            sync_status="synced",
+            query_fingerprint="label:broker-reports",
+        )
+    )
+    gmail_store.record_message(
+        GmailMessageRecord(
+            gmail_message_id="msg-2",
+            gmail_thread_id="thread-2",
+            history_id="201",
+            account_name="reports-primary",
+            subject="Latest zip wrap",
+            sender="broker@example.com",
+            internal_date="2026-04-17T06:00:00Z",
+            label_ids=("Label_Reports",),
+            snippet="Top line",
+            body_plain="too short",
+            body_html=None,
+            raw_payload_json={"id": "msg-2"},
+            sync_status="synced",
+            query_fingerprint="label:broker-reports",
+        )
+    )
+    raw_dir = config.paths.raw_dir / "gmail" / "msg-2" / "attachments" / "original"
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    bundle_path = raw_dir / "bundle.zip"
+    with zipfile.ZipFile(bundle_path, "w") as archive:
+        archive.writestr("inside/report.html", "<html><body><p>Revenue up 10%</p><p>Margins stable</p></body></html>")
+    manifest_path = raw_dir.parent / "manifest.json"
+    manifest_path.write_text(
+        '{"gmail_message_id":"msg-2","attachments":[{"attachment_id":"att-1","filename":"bundle.zip","mime_type":"application/zip","is_zip":true,"saved_path":"attachments/original/bundle.zip"}]}\n'
+    )
+    analysts_pipeline = ArasPipeline(
+        client=object(),
+        store=SqliteArasStore(config.paths.state_db),
+        config=config,
+        summarizer=FakeSummarizer(),
+    )
+    source_pipeline = GmailSourcePipeline(
+        config=config,
+        api=FakeGmailApi(),
+        store=gmail_store,
+        analysts_pipeline=analysts_pipeline,
+        account_name="reports-primary",
+        query="label:broker-reports",
+        body_rules=BodyCandidateRules(min_chars=200, require_structure=True),
+        zip_allow_extensions=(".pdf", ".txt", ".html"),
+        raw_root=config.paths.raw_dir / "gmail",
+    )
+
+    execution = source_pipeline.summarize_latest()
+
+    assert execution.summary.next_offset == "msg-2"
+    assert {path.name for path in execution.processed_files} == {
+        "report-msg-2-raw-text.txt",
+        "report-msg-2-summary-input.json",
+        "report-msg-2-summary.json",
+        "report-msg-2-summary.md",
+    }

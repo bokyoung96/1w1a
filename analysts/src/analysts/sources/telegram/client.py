@@ -9,7 +9,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from getpass import getpass
 from pathlib import Path
-from tempfile import mkdtemp
 from tempfile import TemporaryDirectory
 from typing import Any, Callable, TypeVar
 
@@ -195,7 +194,13 @@ class TelethonChannelClient:
 
     @contextmanager
     def _sync_client_context(self, *, session_path: Path | None = None):
-        with self._build_client(session_path=session_path) as client:
+        params = inspect.signature(self._build_client).parameters
+        client_context = (
+            self._build_client(session_path=session_path)
+            if "session_path" in params
+            else self._build_client()
+        )
+        with client_context as client:
             yield client
 
     @contextmanager
@@ -212,10 +217,11 @@ class TelethonChannelClient:
     @contextmanager
     def _isolated_session_path(self):
         source_session_path = self.config.paths.telethon_session_path
-        tmp_dir = Path(mkdtemp(dir=self.config.paths.state_dir))
-        isolated_session_path = tmp_dir / source_session_path.name
-        shutil.copy2(source_session_path, isolated_session_path)
-        yield isolated_session_path
+        with TemporaryDirectory(dir=self.config.paths.state_dir) as tmp_dir:
+            isolated_session_path = Path(tmp_dir) / source_session_path.name
+            if source_session_path.exists():
+                shutil.copy2(source_session_path, isolated_session_path)
+            yield isolated_session_path
 
     @staticmethod
     def _session_password_error():

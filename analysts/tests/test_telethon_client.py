@@ -213,11 +213,13 @@ def test_get_latest_message_id_uses_isolated_session_copy(tmp_path: Path, monkey
     config.paths.telethon_session_path.write_bytes(b'session-bytes')
     client = TelethonChannelClient(base_dir=tmp_path, config=config)
     seen_session_paths: list[Path] = []
+    seen_session_bytes: list[bytes] = []
 
     @contextmanager
     def fake_sync_client_context(*, session_path: Path | None = None):
         assert session_path is not None
         seen_session_paths.append(session_path)
+        seen_session_bytes.append(session_path.read_bytes())
         yield FakeReadClient(messages=[700])
 
     monkeypatch.setattr(client, "_sync_client_context", fake_sync_client_context)
@@ -228,7 +230,7 @@ def test_get_latest_message_id_uses_isolated_session_copy(tmp_path: Path, monkey
     assert result == 700
     assert seen_session_paths
     assert seen_session_paths[0] != config.paths.telethon_session_path
-    assert seen_session_paths[0].read_bytes() == b'session-bytes'
+    assert seen_session_bytes == [b'session-bytes']
 
 
 def test_iter_channel_messages_uses_isolated_session_copy(tmp_path: Path, monkeypatch) -> None:

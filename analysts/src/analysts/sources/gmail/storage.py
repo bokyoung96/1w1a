@@ -137,10 +137,6 @@ class GmailStore:
             rows = connection.execute(query, params).fetchall()
         return [self._row_to_message(row) for row in rows]
 
-    def get_latest_message(self, *, account_name: str | None = None) -> GmailMessageRecord | None:
-        messages = self.list_messages(account_name=account_name)
-        return messages[0] if messages else None
-
     def record_candidate(self, candidate: GmailCandidateDocument) -> None:
         with self._connect() as connection:
             connection.execute(
