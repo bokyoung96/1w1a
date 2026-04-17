@@ -8,7 +8,7 @@ from crypto.domain import Bar, ExecutionPlan, FundingRate, InstrumentId, Normali
 from .base import CCXTMarketDataClient
 
 
-@dataclass(slots=True)
+@dataclass
 class BinancePerpetualCCXTAdapter:
     client: CCXTMarketDataClient
     execution_plan: ExecutionPlan = field(default_factory=ExecutionPlan)

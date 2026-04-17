@@ -57,7 +57,7 @@ class PositionSide(str, Enum):
     FLAT = "flat"
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class ExecutionPlan:
     primary_timeframe: str = "15m"
     feature_timeframes: tuple[str, ...] = ("15m",)
@@ -71,7 +71,7 @@ class ExecutionPlan:
             timeframe_to_timedelta(timeframe)
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class InstrumentId:
     exchange_id: str
     base_asset: str
@@ -106,7 +106,7 @@ class InstrumentId:
         )
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class Bar:
     instrument: InstrumentId
     timeframe: str
@@ -143,7 +143,7 @@ class Bar:
         )
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class FundingRate:
     instrument: InstrumentId
     timestamp: datetime
@@ -174,7 +174,7 @@ class FundingRate:
         )
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class PositionSnapshot:
     instrument: InstrumentId
     quantity: float
@@ -194,7 +194,7 @@ class PositionSnapshot:
         return self.quantity * self.mark_price
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class NormalizationResult(Generic[RecordT]):
     raw_payload: tuple[Any, ...]
     records: tuple[RecordT, ...]

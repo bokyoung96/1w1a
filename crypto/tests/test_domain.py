@@ -3,7 +3,16 @@ from __future__ import annotations
 import unittest
 
 
-from crypto.domain import ExecutionPlan, InstrumentId, PositionSnapshot, PositionSide
+from crypto.domain import (
+    ExecutionPlan,
+    FillRecord,
+    InstrumentId,
+    OrderIntent,
+    OrderSide,
+    OrderType,
+    PositionSnapshot,
+    PositionSide,
+)
 
 
 class DomainModelTests(unittest.TestCase):
@@ -39,6 +48,33 @@ class DomainModelTests(unittest.TestCase):
         self.assertEqual(short_position.side, PositionSide.SHORT)
         self.assertAlmostEqual(short_position.notional_value, -7500.0)
         self.assertEqual(flat_position.side, PositionSide.FLAT)
+
+    def test_order_intent_requires_positive_quantity(self) -> None:
+        instrument = InstrumentId.from_exchange_symbol("binance_perpetual", "SOL/USDT:USDT")
+
+        with self.assertRaises(ValueError):
+            OrderIntent(
+                strategy_id="trend-breakout",
+                instrument=instrument,
+                side=OrderSide.BUY,
+                quantity=0.0,
+                order_type=OrderType.MARKET,
+            )
+
+    def test_fill_record_computes_gross_notional(self) -> None:
+        instrument = InstrumentId.from_exchange_symbol("binance_perpetual", "SOL/USDT:USDT")
+        fill = FillRecord(
+            fill_id="fill-1",
+            order_id="order-1",
+            instrument=instrument,
+            side=OrderSide.SELL,
+            quantity=3.0,
+            price=150.5,
+            fee=0.75,
+        )
+
+        self.assertAlmostEqual(fill.gross_notional, 451.5)
+        self.assertAlmostEqual(fill.net_notional, 450.75)
 
 
 if __name__ == "__main__":
