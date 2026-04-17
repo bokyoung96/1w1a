@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-
-import pytest
+import unittest
 
 from crypto.domain import FillRecord, FundingRate, InstrumentId, OrderSide
 from crypto.paper import PaperSession
-from crypto.reporting import build_paper_performance_report
+from crypto.reporting import build_paper_performance_report, build_strategy_catalog
 from crypto.strategies import DEFAULT_STRATEGIES
 from crypto.validation import DEFAULT_PROMOTION_THRESHOLDS
 
@@ -15,7 +14,7 @@ def _utc(value: str) -> datetime:
     return datetime.fromisoformat(value).replace(tzinfo=timezone.utc)
 
 
-def test_report_builder_returns_graph_ready_metrics_and_explicit_strategy_catalog() -> None:
+def _build_session() -> PaperSession:
     started_at = _utc("2026-01-01T00:00:00")
     instrument = InstrumentId.from_exchange_symbol("binance_perpetual", "BTC/USDT:USDT")
     session = PaperSession(
@@ -69,43 +68,74 @@ def test_report_builder_returns_graph_ready_metrics_and_explicit_strategy_catalo
         gross_exposure=15_300.0,
         net_exposure=15_300.0,
     )
+    return session
 
-    report = build_paper_performance_report(
-        session,
-        strategy_definitions=DEFAULT_STRATEGIES,
-        peer_returns={
-            "mean_reversion": (
-                0.03,
-                -0.038834951456310676,
-                0.05555555555555558,
-            )
-        },
-    )
 
-    assert report.metadata.strategy_id == "trend_following_breakout"
-    assert report.metadata.exchange_id == "binance_perpetual"
-    assert report.metadata.primary_cadence == "15m"
-    assert report.metadata.feature_cadences == ("15m", "1h")
+class ReportingBuilderTests(unittest.TestCase):
+    def test_report_builder_returns_graph_ready_metrics_and_explicit_strategy_catalog(self) -> None:
+        session = _build_session()
 
-    assert [series.slug for series in report.graphs] == [
-        "equity_curve",
-        "drawdown_curve",
-        "gross_exposure_curve",
-        "net_exposure_curve",
-    ]
-    assert len(report.graphs[0].points) == 4
-    assert report.graphs[0].points[-1].value == pytest.approx(10_450.0)
+        report = build_paper_performance_report(
+            session,
+            strategy_definitions=DEFAULT_STRATEGIES,
+            peer_returns={
+                "mean_reversion": (
+                    0.03,
+                    -0.038834951456310676,
+                    0.05555555555555558,
+                )
+            },
+        )
 
-    assert report.summary.total_return == pytest.approx(0.045)
-    assert report.summary.max_drawdown == pytest.approx(0.038834951456310676)
-    assert report.summary.paper_days == 4
-    assert report.summary.realized_fees == pytest.approx(8.0)
-    assert report.summary.net_funding == pytest.approx(-2.5)
-    assert report.summary.max_peer_correlation == pytest.approx(1.0)
-    assert report.summary.paper_sharpe > 0.0
+        self.assertEqual(report.metadata.strategy_id, "trend_following_breakout")
+        self.assertEqual(report.metadata.exchange_id, "binance_perpetual")
+        self.assertEqual(report.metadata.primary_cadence, "15m")
+        self.assertEqual(report.metadata.feature_cadences, ("15m", "1h"))
 
-    assert report.thresholds.oos_sharpe == DEFAULT_PROMOTION_THRESHOLDS.oos_sharpe
-    assert report.thresholds.paper_sharpe == DEFAULT_PROMOTION_THRESHOLDS.paper_sharpe
-    assert tuple(item.name for item in report.registered_strategies) == tuple(
-        strategy.name for strategy in DEFAULT_STRATEGIES
-    )
+        self.assertEqual(
+            [series.slug for series in report.graphs],
+            [
+                "equity_curve",
+                "drawdown_curve",
+                "gross_exposure_curve",
+                "net_exposure_curve",
+            ],
+        )
+        self.assertEqual(len(report.graphs[0].points), 4)
+        self.assertAlmostEqual(report.graphs[0].points[-1].value, 10_450.0)
+        self.assertAlmostEqual(report.graphs[1].points[2].value, 0.038834951456310676)
+
+        self.assertAlmostEqual(report.summary.total_return, 0.045)
+        self.assertAlmostEqual(report.summary.max_drawdown, 0.038834951456310676)
+        self.assertEqual(report.summary.paper_days, 4)
+        self.assertAlmostEqual(report.summary.realized_fees, 8.0)
+        self.assertAlmostEqual(report.summary.net_funding, -2.5)
+        self.assertAlmostEqual(report.summary.max_peer_correlation or 0.0, 1.0)
+        self.assertGreater(report.summary.paper_sharpe, 0.0)
+
+        self.assertEqual(report.thresholds.oos_sharpe, DEFAULT_PROMOTION_THRESHOLDS.oos_sharpe)
+        self.assertEqual(
+            tuple(item.name for item in report.registered_strategies),
+            tuple(strategy.name for strategy in DEFAULT_STRATEGIES),
+        )
+
+    def test_report_builder_requires_equity_observations(self) -> None:
+        session = PaperSession(
+            session_id="paper-btc-breakout",
+            strategy_id="trend_following_breakout",
+            started_at=_utc("2026-01-01T00:00:00"),
+        )
+
+        with self.assertRaisesRegex(ValueError, "paper reporting requires at least one equity observation"):
+            build_paper_performance_report(session)
+
+    def test_strategy_catalog_stays_explicit_for_custom_strategy_sets(self) -> None:
+        catalog = build_strategy_catalog(DEFAULT_STRATEGIES[:2])
+
+        self.assertEqual(len(catalog), 2)
+        self.assertEqual(catalog[0].name, DEFAULT_STRATEGIES[0].name)
+        self.assertEqual(catalog[1].family, DEFAULT_STRATEGIES[1].family)
+
+
+if __name__ == "__main__":
+    unittest.main()

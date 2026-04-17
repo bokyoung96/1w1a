@@ -106,7 +106,7 @@ class PaperSessionTests(unittest.TestCase):
         self.assertAlmostEqual(entry.cash_flow, 4496.0)
 
     def test_package_surface_keeps_paper_session_as_the_supported_entry_point(self) -> None:
-        self.assertIs(PaperSession.__module__, "crypto.paper.models")
+        self.assertEqual(PaperSession.__module__, "crypto.paper.models")
         self.assertEqual(PaperSession.__name__, "PaperSession")
 
 
