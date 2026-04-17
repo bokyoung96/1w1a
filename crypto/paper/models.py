@@ -1,95 +1,122 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 
-from crypto.domain import ExecutionPlan, InstrumentId, PositionSide, PositionSnapshot
+from crypto.domain import ExecutionPlan, FillRecord, FundingRate
 
 
-class LedgerEventType(str, Enum):
+class PaperLedgerEntryType(str, Enum):
     FILL = "fill"
     FUNDING = "funding"
-    MARK = "mark"
-
-
-@dataclass(frozen=True, slots=True)
-class PaperPosition:
-    instrument: InstrumentId
-    quantity: float = 0.0
-    average_entry_price: float = 0.0
-    mark_price: float = 0.0
-    realized_pnl: float = 0.0
-    funding_pnl: float = 0.0
-    fees_paid: float = 0.0
-
-    @property
-    def side(self) -> PositionSide:
-        if self.quantity > 0:
-            return PositionSide.LONG
-        if self.quantity < 0:
-            return PositionSide.SHORT
-        return PositionSide.FLAT
-
-    @property
-    def unrealized_pnl(self) -> float:
-        if self.quantity == 0:
-            return 0.0
-        return self.quantity * (self.mark_price - self.average_entry_price)
-
-    @property
-    def exposure_notional(self) -> float:
-        return self.quantity * self.mark_price
-
-    def to_snapshot(self) -> PositionSnapshot:
-        return PositionSnapshot(
-            instrument=self.instrument,
-            quantity=self.quantity,
-            entry_price=self.average_entry_price,
-            mark_price=self.mark_price,
-        )
+    EQUITY = "equity"
 
 
 @dataclass(frozen=True, slots=True)
 class PaperLedgerEntry:
+    entry_type: PaperLedgerEntryType
     timestamp: datetime
-    event_type: LedgerEventType
-    strategy_id: str
-    instrument: InstrumentId
-    quantity_delta: float
-    fill_price: float | None
-    funding_rate: float | None
-    position_quantity: float
-    average_entry_price: float
-    mark_price: float
-    realized_pnl: float
-    funding_pnl: float
-    fees_paid: float
-    unrealized_pnl: float
-    exposure_notional: float
-    equity: float
+    instrument_symbol: str | None = None
+    quantity: float | None = None
+    price: float | None = None
+    fee: float = 0.0
+    funding_rate: float | None = None
+    cash_flow: float = 0.0
+    equity: float | None = None
+    gross_exposure: float | None = None
+    net_exposure: float | None = None
 
 
-@dataclass(frozen=True, slots=True)
-class PaperSessionSnapshot:
+@dataclass(slots=True)
+class PaperSession:
+    session_id: str
     strategy_id: str
-    exchange_id: str
-    execution_plan: ExecutionPlan
     started_at: datetime
-    latest_timestamp: datetime | None
-    starting_equity: float
-    current_equity: float
-    realized_pnl: float
-    funding_pnl: float
-    fees_paid: float
-    exposure_notional: float
-    ledger_depth: int
-    open_positions: tuple[PositionSnapshot, ...]
+    exchange_id: str = "binance_perpetual"
+    primary_cadence: str = "15m"
+    feature_cadences: tuple[str, ...] = ("15m",)
+    _entries: list[PaperLedgerEntry] = field(default_factory=list, init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        ExecutionPlan(
+            primary_timeframe=self.primary_cadence,
+            feature_timeframes=self.feature_cadences,
+        )
 
     @property
-    def primary_cadence(self) -> str:
-        return self.execution_plan.primary_timeframe
+    def entries(self) -> tuple[PaperLedgerEntry, ...]:
+        return tuple(self._entries)
 
     @property
-    def feature_cadences(self) -> tuple[str, ...]:
-        return self.execution_plan.feature_timeframes
+    def equity_entries(self) -> tuple[PaperLedgerEntry, ...]:
+        return tuple(entry for entry in self._entries if entry.entry_type is PaperLedgerEntryType.EQUITY)
+
+    @property
+    def latest_equity(self) -> float | None:
+        if not self.equity_entries:
+            return None
+        return self.equity_entries[-1].equity
+
+    @property
+    def paper_days(self) -> int:
+        if not self.equity_entries:
+            return 0
+        first = self.equity_entries[0].timestamp.date()
+        last = self.equity_entries[-1].timestamp.date()
+        return (last - first).days + 1
+
+    @property
+    def realized_fees(self) -> float:
+        return sum(entry.fee for entry in self._entries if entry.entry_type is PaperLedgerEntryType.FILL)
+
+    @property
+    def net_funding(self) -> float:
+        return sum(
+            entry.cash_flow
+            for entry in self._entries
+            if entry.entry_type is PaperLedgerEntryType.FUNDING
+        )
+
+    def record_fill(self, fill: FillRecord, *, at: datetime) -> PaperLedgerEntry:
+        entry = PaperLedgerEntry(
+            entry_type=PaperLedgerEntryType.FILL,
+            timestamp=at,
+            instrument_symbol=fill.instrument.canonical_symbol,
+            quantity=fill.quantity,
+            price=fill.price,
+            fee=fill.fee,
+            cash_flow=-fill.net_notional,
+        )
+        self._entries.append(entry)
+        return entry
+
+    def record_funding(self, funding: FundingRate, *, cash_flow: float) -> PaperLedgerEntry:
+        entry = PaperLedgerEntry(
+            entry_type=PaperLedgerEntryType.FUNDING,
+            timestamp=funding.timestamp,
+            instrument_symbol=funding.instrument.canonical_symbol,
+            funding_rate=funding.funding_rate,
+            price=funding.mark_price,
+            cash_flow=cash_flow,
+        )
+        self._entries.append(entry)
+        return entry
+
+    def record_equity(
+        self,
+        *,
+        at: datetime,
+        equity: float,
+        gross_exposure: float,
+        net_exposure: float,
+    ) -> PaperLedgerEntry:
+        entry = PaperLedgerEntry(
+            entry_type=PaperLedgerEntryType.EQUITY,
+            timestamp=at,
+            equity=equity,
+            gross_exposure=gross_exposure,
+            net_exposure=net_exposure,
+        )
+        self._entries.append(entry)
+        return entry

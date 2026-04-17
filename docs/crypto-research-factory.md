@@ -64,6 +64,7 @@ Minimum expectations:
 - paper trading keeps a durable ledger for fills, fees, funding effects, exposure, and equity changes
 - reports make the approved promotion thresholds visible instead of burying them in ad hoc logs
 - paper performance summaries cover Sharpe, drawdown, duration, and cross-strategy correlation
+- report payloads stay graph-ready so dashboards or promotion reviews can render equity, drawdown, and exposure without rebuilding finance logic
 - the primary `15m` execution cadence is explicit in paper-session and report metadata
 - higher-frequency or lower-frequency inputs stay represented as feature inputs, not as a hidden execution-cadence change
 
@@ -71,19 +72,20 @@ Minimum expectations:
 
 Reviewed against the currently integrated `crypto/` scaffold on leader HEAD:
 
-- present now: `domain/`, `exchanges/`, `strategies/`, `promotion/`, and `validation/`
-- not present yet: `paper/` and `reporting/`
+- present now: `domain/`, `exchanges/`, `strategies/`, `promotion/`, `validation/`, `paper/`, and `reporting/`
 - verified defaults already encoded in code:
   - exchange id remains `binance_perpetual`
   - primary execution cadence remains `15m`
   - multi-frequency feature inputs remain allowed through strategy and execution-plan metadata
   - promotion thresholds remain aligned with the approved launch brief
+  - paper sessions keep ledger entries explicit instead of hiding them in exchange adapters
+  - reporting outputs carry graph-ready equity, drawdown, and exposure series
 
 Lane-3 interpretation for review:
 
-- the missing `paper/` and `reporting/` packages are acceptable as an incremental scaffold state
-- they should remain explicit follow-up deliverables rather than being hidden inside exchange, strategy, or promotion modules
-- until those packages land, promotion evidence is limited to validation artifacts rather than a full paper-trading ledger and reporting surface
+- paper and reporting remain explicit package boundaries rather than being hidden inside exchange, strategy, or promotion modules
+- strategy registration stays visible through an explicit reporting catalog view built from the registered crypto strategy definitions
+- promotion evidence can now combine threshold checks with paper-session metrics instead of relying only on validation artifacts
 
 ## Review checklist
 
@@ -107,7 +109,13 @@ When reviewing `crypto/` changes, reject implementations that:
 Focused checks used for the integrated scaffold review:
 
 ```bash
-uv run python -m unittest discover -s crypto/tests -v
+python -m unittest crypto.tests.test_domain crypto.tests.test_exchange_adapter -v
+uv run --with pandas --with pytest python -m pytest \
+  crypto/tests/test_validation.py \
+  crypto/tests/test_promotion.py \
+  crypto/tests/test_strategies.py \
+  crypto/tests/test_paper.py \
+  crypto/tests/test_reporting.py -q
 ```
 
 Notes:
