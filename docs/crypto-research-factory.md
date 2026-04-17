@@ -16,13 +16,20 @@ Current v1 constraints:
 
 ## Approved strategy families
 
-The first pass must preserve these five strategy families:
+The current explicit registry covers these ten approved strategy families:
 
 1. trend-following breakout
 2. mean reversion
 3. perp momentum / relative-strength rotation
 4. funding-rate carry / funding-aware filter
 5. volatility regime / breakout confirmation
+6. trend pullback continuation
+7. short-term reversal / exhaustion fade
+8. volume / participation imbalance
+9. basis / spread dislocation proxy
+10. market structure / support-resistance reaction
+
+Each registered family should keep a matching markdown brief under `crypto/strategies/docs/` so the research lane can review the family thesis without digging through code first.
 
 ## Promotion thresholds
 
