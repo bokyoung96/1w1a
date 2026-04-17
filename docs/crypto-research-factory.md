@@ -67,6 +67,24 @@ Minimum expectations:
 - the primary `15m` execution cadence is explicit in paper-session and report metadata
 - higher-frequency or lower-frequency inputs stay represented as feature inputs, not as a hidden execution-cadence change
 
+## Current integrated scaffold status
+
+Reviewed against the currently integrated `crypto/` scaffold on leader HEAD:
+
+- present now: `domain/`, `exchanges/`, `strategies/`, `promotion/`, and `validation/`
+- not present yet: `paper/` and `reporting/`
+- verified defaults already encoded in code:
+  - exchange id remains `binance_perpetual`
+  - primary execution cadence remains `15m`
+  - multi-frequency feature inputs remain allowed through strategy and execution-plan metadata
+  - promotion thresholds remain aligned with the approved launch brief
+
+Lane-3 interpretation for review:
+
+- the missing `paper/` and `reporting/` packages are acceptable as an incremental scaffold state
+- they should remain explicit follow-up deliverables rather than being hidden inside exchange, strategy, or promotion modules
+- until those packages land, promotion evidence is limited to validation artifacts rather than a full paper-trading ledger and reporting surface
+
 ## Review checklist
 
 When reviewing `crypto/` changes, reject implementations that:
@@ -83,3 +101,15 @@ When reviewing `crypto/` changes, reject implementations that:
 - Reuse proven reporting and snapshot ideas from `backtesting/reporting/` where helpful, but keep the `crypto/` package boundary intact.
 - Prefer a small, composable paper ledger plus explicit report models over a monolithic runtime object.
 - Keep repo documentation in sync with the shared launch brief if the approved defaults change later.
+
+## Review verification commands
+
+Focused checks used for the integrated scaffold review:
+
+```bash
+python -m unittest crypto.tests.test_domain crypto.tests.test_exchange_adapter -v
+uv run --with pandas --with pytest python -m pytest \
+  crypto/tests/test_validation.py \
+  crypto/tests/test_promotion.py \
+  crypto/tests/test_strategies.py -q
+```
