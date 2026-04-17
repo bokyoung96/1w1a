@@ -243,6 +243,20 @@ class ReportingBuilderTests(unittest.TestCase):
             tuple(item.strategy_name for item in report.factory_overview.selected_basket),
             ("trend_following_breakout", "mean_reversion"),
         )
+        self.assertGreater(report.factory_overview.selected_basket[0].target_weight, 0.0)
+        self.assertLess(report.factory_overview.selected_basket[1].target_weight, 0.0)
+        self.assertTrue(
+            all(
+                stage.target_weight > 0.0
+                for stage in report.factory_overview.selected_basket[0].execution_stages
+            )
+        )
+        self.assertTrue(
+            all(
+                stage.target_weight < 0.0
+                for stage in report.factory_overview.selected_basket[1].execution_stages
+            )
+        )
         self.assertEqual(len(report.factory_overview.instrument_allocations), 1)
         self.assertEqual(report.graphs[0].slug, "equity_curve")
 

@@ -114,30 +114,38 @@ def build_factory_overview(
     strategy_by_name = {
         strategy.name: strategy for strategy in strategy_definitions
     }
+    allocation_by_candidate_id = {
+        allocation.candidate_id: allocation
+        for allocation in allocation_plan.strategy_allocations
+    }
 
     selected_basket = tuple(
         SelectedStrategyReportEntry(
+            candidate_id=selected.scorecard.candidate.candidate_id,
             strategy_name=selected.scorecard.candidate.strategy_name,
             family=selected.scorecard.candidate.family,
-            instrument_symbol=allocation.instrument_symbol,
+            instrument_symbol=allocation_by_candidate_id[
+                selected.scorecard.candidate.candidate_id
+            ].instrument_symbol,
             primary_cadence=strategy_by_name[selected.scorecard.candidate.strategy_name].primary_cadence,
             feature_cadences=strategy_by_name[selected.scorecard.candidate.strategy_name].feature_cadences,
             total_score=selected.scorecard.total_score,
             max_pairwise_correlation=selected.max_pairwise_correlation,
-            target_weight=allocation.target_weight,
+            target_weight=allocation_by_candidate_id[
+                selected.scorecard.candidate.candidate_id
+            ].target_weight,
             execution_stages=tuple(
                 ExecutionStageReport(
                     stage=stage.stage,
                     fraction=stage.fraction,
                     target_weight=stage.target_weight,
                 )
-                for stage in allocation.execution_slices
+                for stage in allocation_by_candidate_id[
+                    selected.scorecard.candidate.candidate_id
+                ].execution_slices
             ),
         )
-        for selected, allocation in zip(
-            selection_result.selected,
-            allocation_plan.strategy_allocations,
-        )
+        for selected in selection_result.selected
     )
 
     return FactoryResearchOverview(

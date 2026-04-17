@@ -56,6 +56,7 @@ class ExecutionStageReport:
 
 @dataclass(frozen=True, slots=True)
 class SelectedStrategyReportEntry:
+    candidate_id: str
     strategy_name: str
     family: str
     instrument_symbol: str

@@ -23,6 +23,7 @@ class ExecutionSlice:
 
 @dataclass(frozen=True, slots=True)
 class StrategyAllocation:
+    candidate_id: str
     strategy_name: str
     family: str
     instrument_symbol: str
@@ -127,6 +128,7 @@ def build_portfolio_allocation(
             signed_target_weight = absolute_weight if strategy.signal_strength >= 0 else -absolute_weight
             strategy_allocations.append(
                 StrategyAllocation(
+                    candidate_id=strategy.scorecard.candidate.candidate_id,
                     strategy_name=strategy.scorecard.candidate.strategy_name,
                     family=family,
                     instrument_symbol=strategy.instrument_symbol,
