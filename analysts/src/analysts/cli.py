@@ -198,7 +198,7 @@ def configure_watch_logger(*, base_dir: Path) -> logging.Logger:
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)
-    log_path = build_config(base_dir).paths.state_dir / "watch-runner.log"
+    log_path = build_config(base_dir).paths.state_dir / "telegram.log"
     file_handler = logging.FileHandler(log_path, encoding="utf-8")
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)

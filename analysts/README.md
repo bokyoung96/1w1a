@@ -66,31 +66,41 @@ What the watcher does now:
 - downloads only **actual PDF report posts**
 - ignores generic message attachments that do not expose a real PDF filename or PDF mime type
 
-### 4a) Easier launcher from repo root
+### 4a) Main operator launcher
 ```bash
-cd /Users/bkchoi/Desktop/GitHub/1w1a
-.venv/bin/python analysts/run_watcher.py --until 2026-04-15T17:30:00+09:00
+cd analysts
+./run.sh telegram
 ```
 
-Default channels for the easy launcher:
-- `DOC_POOL`
-- `report_figure_by_offset`
+Telegram behavior:
+- reads the default Telegram channel from `config.local.json`
+- starts the realtime watcher
+- writes watcher logs to `analysts/data/state/telegram.log`
 
-Explicit multi-channel run:
+Gmail one-shot:
 ```bash
-cd /Users/bkchoi/Desktop/GitHub/1w1a
-.venv/bin/python analysts/run_watcher.py \
-  --channel DOC_POOL \
-  --channel report_figure_by_offset \
-  --until 2026-04-15T17:30:00+09:00
+cd analysts
+./run.sh gmail
 ```
 
-- deadline must be timezone-aware ISO-8601
+Gmail behavior:
+- syncs recent Gmail once
+- summarizes the latest Gmail report once
+- appends output to `analysts/data/state/gmail.log`
+
+Useful log commands:
+```bash
+cd analysts
+tail -f data/state/telegram.log
+tail -f data/state/gmail.log
+```
+
+- deadline must be timezone-aware ISO-8601 when you call `watch-until` directly
 - new unique PDF reports are downloaded once and summarized immediately
 - startup catch-up reduces the chance of missing posts that arrived before the live watch began
 - summarize failures retry immediately without stopping the watch loop
 - no new messages are accepted after the deadline; any report already accepted before cutoff is allowed to finish processing
-- progress logs stream to stdout and `analysts/data/state/watch-runner.log`
+- progress logs stream to stdout and `analysts/data/state/telegram.log`
 - heartbeat logs show liveness while the watcher is idle
 - new-report detection is event-driven through Telethon `NewMessage` subscriptions, not heartbeat polling
 
