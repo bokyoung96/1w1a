@@ -150,7 +150,6 @@ beforeEach(() => {
       sectorWeightSeries: {},
       drawdownEpisodes: {},
     },
-    cryptoFactory: null,
   });
 });
 

@@ -2,15 +2,6 @@ import type {
   BenchmarkOption,
   CategoryPoint,
   CategorySeries,
-  CryptoFactoryExecutionStage,
-  CryptoFactoryFamilyAllocation,
-  CryptoFactoryInstrumentAllocation,
-  CryptoFactoryPayload,
-  CryptoFactoryPerformance,
-  CryptoFactoryPerformanceSummary,
-  CryptoFactoryRegistryEntry,
-  CryptoFactorySelectedStrategy,
-  CryptoFactorySummary,
   DashboardContext,
   DashboardLaunch,
   DashboardMetric,
@@ -50,10 +41,6 @@ function asNumber(value: unknown) {
 
 function asString(value: unknown) {
   return typeof value === "string" ? value : "";
-}
-
-function asArray(value: unknown): unknown[] {
-  return Array.isArray(value) ? value : [];
 }
 
 function normalizeSessionBootstrap(value: unknown): SessionBootstrap {
@@ -301,133 +288,6 @@ function normalizeDrawdownEpisode(value: unknown): DrawdownEpisode {
   };
 }
 
-function normalizeCryptoFactoryExecutionStage(value: unknown): CryptoFactoryExecutionStage {
-  const candidate = asRecord(value);
-  return {
-    stage: asString(candidate.stage),
-    fraction: asNumber(candidate.fraction),
-    targetWeight: asNumber(candidate.target_weight ?? candidate.targetWeight),
-  };
-}
-
-function normalizeCryptoFactorySelectedStrategy(value: unknown): CryptoFactorySelectedStrategy {
-  const candidate = asRecord(value);
-  const featureCadences = asArray(candidate.feature_cadences ?? candidate.featureCadences);
-  const executionStages = asArray(candidate.execution_stages ?? candidate.executionStages);
-  return {
-    candidateId: asString(candidate.candidate_id ?? candidate.candidateId),
-    strategyName: asString(candidate.strategy_name ?? candidate.strategyName),
-    family: asString(candidate.family),
-    primaryCadence: asString(candidate.primary_cadence ?? candidate.primaryCadence),
-    featureCadences: featureCadences.filter((entry): entry is string => typeof entry === "string"),
-    totalScore: asNumber(candidate.total_score ?? candidate.totalScore),
-    maxPairwiseCorrelation: asNumber(
-      candidate.max_pairwise_correlation ?? candidate.maxPairwiseCorrelation,
-    ),
-    targetWeight: asNumber(candidate.target_weight ?? candidate.targetWeight),
-    documentationPath: asString(candidate.documentation_path ?? candidate.documentationPath),
-    rationaleExcerpt: asString(candidate.rationale_excerpt ?? candidate.rationaleExcerpt),
-    executionStages: executionStages.map(normalizeCryptoFactoryExecutionStage),
-  };
-}
-
-function normalizeCryptoFactoryFamilyAllocation(value: unknown): CryptoFactoryFamilyAllocation {
-  const candidate = asRecord(value);
-  return {
-    family: asString(candidate.family),
-    weight: asNumber(candidate.weight),
-    strategyCount: asNumber(candidate.strategy_count ?? candidate.strategyCount),
-  };
-}
-
-function normalizeCryptoFactoryInstrumentAllocation(value: unknown): CryptoFactoryInstrumentAllocation {
-  const candidate = asRecord(value);
-  return {
-    instrumentSymbol: asString(candidate.instrument_symbol ?? candidate.instrumentSymbol),
-    netTargetWeight: asNumber(candidate.net_target_weight ?? candidate.netTargetWeight),
-    grossTargetWeight: asNumber(candidate.gross_target_weight ?? candidate.grossTargetWeight),
-    contributorCount: asNumber(candidate.contributor_count ?? candidate.contributorCount),
-  };
-}
-
-function normalizeCryptoFactoryRegistryEntry(value: unknown): CryptoFactoryRegistryEntry {
-  const candidate = asRecord(value);
-  const featureCadences = asArray(candidate.feature_cadences ?? candidate.featureCadences);
-  return {
-    name: asString(candidate.name),
-    family: asString(candidate.family),
-    primaryCadence: asString(candidate.primary_cadence ?? candidate.primaryCadence),
-    featureCadences: featureCadences.filter((entry): entry is string => typeof entry === "string"),
-    candidateCount: asNumber(candidate.candidate_count ?? candidate.candidateCount),
-    selected: Boolean(candidate.selected),
-    topScore: asNumber(candidate.top_score ?? candidate.topScore),
-    documentationPath: asString(candidate.documentation_path ?? candidate.documentationPath),
-    rationaleExcerpt: asString(candidate.rationale_excerpt ?? candidate.rationaleExcerpt),
-  };
-}
-
-function normalizeCryptoFactorySummary(value: unknown): CryptoFactorySummary {
-  const candidate = asRecord(value);
-  return {
-    candidatePoolSize: asNumber(candidate.candidate_pool_size ?? candidate.candidatePoolSize),
-    selectedBasketSize: asNumber(candidate.selected_basket_size ?? candidate.selectedBasketSize),
-    registeredStrategyCount: asNumber(
-      candidate.registered_strategy_count ?? candidate.registeredStrategyCount,
-    ),
-    familyCap: asNumber(candidate.family_cap ?? candidate.familyCap),
-    triggerReason: asString(candidate.trigger_reason ?? candidate.triggerReason),
-  };
-}
-
-function normalizeCryptoFactoryPerformanceSummary(value: unknown): CryptoFactoryPerformanceSummary {
-  const candidate = asRecord(value);
-  return {
-    totalReturn: asNumber(candidate.total_return ?? candidate.totalReturn),
-    maxDrawdown: asNumber(candidate.max_drawdown ?? candidate.maxDrawdown),
-    paperSharpe: asNumber(candidate.paper_sharpe ?? candidate.paperSharpe),
-    paperDays: asNumber(candidate.paper_days ?? candidate.paperDays),
-    realizedFees: asNumber(candidate.realized_fees ?? candidate.realizedFees),
-    netFunding: asNumber(candidate.net_funding ?? candidate.netFunding),
-  };
-}
-
-function normalizeCryptoFactoryPerformance(value: unknown): CryptoFactoryPerformance {
-  const candidate = asRecord(value);
-  const equityCurve = asArray(candidate.equity_curve ?? candidate.equityCurve);
-  const drawdownCurve = asArray(candidate.drawdown_curve ?? candidate.drawdownCurve);
-  const grossExposureCurve = asArray(candidate.gross_exposure_curve ?? candidate.grossExposureCurve);
-  const netExposureCurve = asArray(candidate.net_exposure_curve ?? candidate.netExposureCurve);
-  return {
-    equityCurve: equityCurve.map(normalizePoint),
-    drawdownCurve: drawdownCurve.map(normalizePoint),
-    grossExposureCurve: grossExposureCurve.map(normalizePoint),
-    netExposureCurve: netExposureCurve.map(normalizePoint),
-  };
-}
-
-function normalizeCryptoFactoryPayload(value: unknown): CryptoFactoryPayload | null {
-  const candidate = asRecord(value);
-  const selectedBasket = asArray(candidate.selected_basket ?? candidate.selectedBasket);
-  const familyAllocations = asArray(candidate.family_allocations ?? candidate.familyAllocations);
-  const instrumentAllocations = asArray(candidate.instrument_allocations ?? candidate.instrumentAllocations);
-  const registry = asArray(candidate.registry);
-  if (Object.keys(candidate).length === 0) {
-    return null;
-  }
-
-  return {
-    summary: normalizeCryptoFactorySummary(candidate.summary),
-    performanceSummary: normalizeCryptoFactoryPerformanceSummary(
-      candidate.performance_summary ?? candidate.performanceSummary,
-    ),
-    performance: normalizeCryptoFactoryPerformance(candidate.performance),
-    selectedBasket: selectedBasket.map(normalizeCryptoFactorySelectedStrategy),
-    familyAllocations: familyAllocations.map(normalizeCryptoFactoryFamilyAllocation),
-    instrumentAllocations: instrumentAllocations.map(normalizeCryptoFactoryInstrumentAllocation),
-    registry: registry.map(normalizeCryptoFactoryRegistryEntry),
-  };
-}
-
 function normalizeRecordArray<T>(value: unknown, normalizeItem: (item: unknown) => T) {
   const candidate = asRecord(value);
 
@@ -526,7 +386,6 @@ function normalizeDashboardPayload(value: unknown): DashboardPayload {
         normalizeDrawdownEpisode,
       ),
     },
-    cryptoFactory: normalizeCryptoFactoryPayload(candidate.crypto_factory ?? candidate.cryptoFactory),
   };
 }
 

@@ -182,85 +182,6 @@ class DashboardResearchModel(DashboardBaseModel):
     drawdown_episodes: dict[str, list[DrawdownEpisodeModel]]
 
 
-class CryptoFactoryExecutionStageModel(DashboardBaseModel):
-    stage: str
-    fraction: float
-    target_weight: float
-
-
-class CryptoFactorySelectedStrategyModel(DashboardBaseModel):
-    candidate_id: str
-    strategy_name: str
-    family: str
-    primary_cadence: str
-    feature_cadences: list[str]
-    total_score: float
-    max_pairwise_correlation: float
-    target_weight: float
-    documentation_path: str
-    rationale_excerpt: str
-    execution_stages: list[CryptoFactoryExecutionStageModel]
-
-
-class CryptoFactoryFamilyAllocationModel(DashboardBaseModel):
-    family: str
-    weight: float
-    strategy_count: int
-
-
-class CryptoFactoryInstrumentAllocationModel(DashboardBaseModel):
-    instrument_symbol: str
-    net_target_weight: float
-    gross_target_weight: float
-    contributor_count: int
-
-
-class CryptoFactoryRegistryEntryModel(DashboardBaseModel):
-    name: str
-    family: str
-    primary_cadence: str
-    feature_cadences: list[str]
-    candidate_count: int
-    selected: bool
-    top_score: float
-    documentation_path: str
-    rationale_excerpt: str
-
-
-class CryptoFactorySummaryModel(DashboardBaseModel):
-    candidate_pool_size: int
-    selected_basket_size: int
-    registered_strategy_count: int
-    family_cap: int
-    trigger_reason: str
-
-
-class CryptoFactoryPerformanceSummaryModel(DashboardBaseModel):
-    total_return: float
-    max_drawdown: float
-    paper_sharpe: float
-    paper_days: int
-    realized_fees: float
-    net_funding: float
-
-
-class CryptoFactoryPerformanceModel(DashboardBaseModel):
-    equity_curve: list[ValuePointModel]
-    drawdown_curve: list[ValuePointModel]
-    gross_exposure_curve: list[ValuePointModel]
-    net_exposure_curve: list[ValuePointModel]
-
-
-class CryptoFactoryPayloadModel(DashboardBaseModel):
-    summary: CryptoFactorySummaryModel
-    performance_summary: CryptoFactoryPerformanceSummaryModel
-    performance: CryptoFactoryPerformanceModel
-    selected_basket: list[CryptoFactorySelectedStrategyModel]
-    family_allocations: list[CryptoFactoryFamilyAllocationModel]
-    instrument_allocations: list[CryptoFactoryInstrumentAllocationModel]
-    registry: list[CryptoFactoryRegistryEntryModel]
-
-
 class DashboardPayloadModel(DashboardBaseModel):
     mode: str
     selected_run_ids: list[str]
@@ -272,7 +193,6 @@ class DashboardPayloadModel(DashboardBaseModel):
     rolling: DashboardRollingModel
     exposure: DashboardExposureModel
     research: DashboardResearchModel
-    crypto_factory: CryptoFactoryPayloadModel | None = None
 
 
 class SessionBootstrapModel(DashboardBaseModel):

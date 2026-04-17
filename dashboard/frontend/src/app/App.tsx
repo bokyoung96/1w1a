@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 import { DiagnosticStrip } from "../components/DiagnosticStrip";
-import { CryptoFactoryPanel } from "../components/CryptoFactoryPanel";
 import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
 import { ExposureBand } from "../components/ExposureBand";
@@ -190,7 +189,6 @@ export function App() {
             <DiagnosticStrip dashboard={dashboard} focus={focus} onFocusChange={setFocus} />
             <ResearchWorkspace dashboard={dashboard} focus={focus} onFocusChange={setFocus} />
             <div className="detail-band">
-              {dashboard.cryptoFactory ? <CryptoFactoryPanel factory={dashboard.cryptoFactory} /> : null}
               <ExposureBand dashboard={dashboard} focus={focus} onFocusChange={setFocus} />
             </div>
           </div>

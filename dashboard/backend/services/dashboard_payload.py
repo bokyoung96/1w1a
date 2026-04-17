@@ -36,7 +36,6 @@ from dashboard.backend.serializers import (
     serialize_named_values,
     serialize_value_points,
 )
-from dashboard.backend.services.crypto_factory_preview import CryptoFactoryPreviewService
 from dashboard.backend.services.run_index import RunIndexService
 from dashboard.strategies import DEFAULT_LAUNCH_CONFIG, enabled_strategy_presets
 from root import ROOT
@@ -50,13 +49,11 @@ class DashboardPayloadService:
         run_index_service: RunIndexService | None = None,
         run_reader: RunReader | None = None,
         snapshot_factory: PerformanceSnapshotFactory | None = None,
-        crypto_factory_preview_service: CryptoFactoryPreviewService | None = None,
     ) -> None:
         self.runs_root = runs_root or (ROOT.results_path / "backtests")
         self.run_index_service = run_index_service or RunIndexService(self.runs_root)
         self.run_reader = run_reader or RunReader()
         self.snapshot_factory = snapshot_factory
-        self.crypto_factory_preview_service = crypto_factory_preview_service or CryptoFactoryPreviewService()
         self.benchmark = BenchmarkConfig.default_kospi200()
 
     def build(self, run_ids: list[str]) -> DashboardPayloadModel:
@@ -99,7 +96,6 @@ class DashboardPayloadService:
                 },
             ),
             research=self._serialize_research(snapshots),
-            crypto_factory=self.crypto_factory_preview_service.build(),
         )
 
     @staticmethod

@@ -164,36 +164,6 @@ def test_dashboard_payload_includes_launch_metadata(tmp_path: Path) -> None:
     }
 
 
-def test_dashboard_payload_includes_crypto_factory_preview(tmp_path: Path) -> None:
-    _write_saved_run(
-        tmp_path,
-        "alpha_20260405_100000",
-        name="Alpha Strategy",
-        final_equity=110.0,
-        avg_turnover=0.03,
-        weights=[[0.6, 0.4, 0.0], [0.55, 0.45, 0.0]],
-    )
-
-    client = TestClient(app)
-    app.dependency_overrides[get_dashboard_payload_service] = lambda: _build_payload_service(tmp_path)
-
-    response = client.get("/api/dashboard", params=[("run_ids", "alpha_20260405_100000")])
-
-    app.dependency_overrides.clear()
-    assert response.status_code == 200
-    payload = response.json()
-    crypto_factory = payload["cryptoFactory"]
-    assert crypto_factory["summary"]["candidatePoolSize"] == 40
-    assert crypto_factory["summary"]["selectedBasketSize"] == 10
-    assert crypto_factory["summary"]["familyCap"] == 3
-    assert crypto_factory["summary"]["triggerReason"] == "hybrid_event_rebalance"
-    assert len(crypto_factory["selectedBasket"]) == 10
-    assert len(crypto_factory["registry"]) == 10
-    assert crypto_factory["performanceSummary"]["paperDays"] == 30
-    assert len(crypto_factory["performance"]["equityCurve"]) == 30
-    assert crypto_factory["selectedBasket"][0]["documentationPath"].startswith("crypto/strategies/docs/")
-
-
 def test_dashboard_payload_launch_benchmark_uses_shared_dashboard_default(tmp_path: Path) -> None:
     _write_saved_run(
         tmp_path,
