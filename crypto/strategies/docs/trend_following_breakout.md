@@ -1,10 +1,16 @@
-# Trend-Following Breakout
+# Trend Following Breakout
 
 ## What it is
-A continuation strategy that enters when price escapes a well-defined consolidation or range.
+
+This family buys strength when a perpetual-futures market escapes a well-defined range or reclaims a prior high with expanding participation.
 
 ## How it works
-It combines 15-minute breakouts with 1-hour confirmation so the entry follows expanding direction instead of noise. The strategy prefers clean range expansion, avoids fading strength, and holds while the breakout structure remains intact.
+
+- define a recent range, volatility envelope, or swing-high reference
+- wait for price to break through that level on the primary execution cadence
+- require confirmation from higher-timeframe trend or follow-through volume
+- invalidate quickly if price falls back into the broken range
 
 ## Economic rationale
-Crypto perpetual markets often trend in bursts when positioning, liquidations, and momentum traders align. Breakouts can persist because short-horizon participants are forced to chase the move.
+
+Breakouts work when new information, positioning pressure, or under-owned trends force market participants to reprice in one direction. Crypto perps can move quickly once range sellers or buyers are overrun, so capturing the expansion phase can offer convex upside relative to the initial risk.

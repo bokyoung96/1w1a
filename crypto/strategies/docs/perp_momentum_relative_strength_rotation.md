@@ -1,10 +1,16 @@
-# Perp Momentum / Relative-Strength Rotation
+# Perp Momentum Relative Strength Rotation
 
 ## What it is
-A cross-market momentum family that rotates into contracts showing the strongest recent trend persistence.
+
+This family ranks perpetual contracts by cross-sectional momentum and rotates capital toward the strongest markets while avoiding or de-emphasizing relative laggards.
 
 ## How it works
-It ranks instruments on 15-minute, 1-hour, and 4-hour strength, then prefers names with consistent directional leadership across horizons. The strategy seeks sustained participation instead of one-bar spikes.
+
+- compute momentum and trend persistence across a basket of perp markets
+- compare each market to peers instead of using only standalone direction
+- prefer leaders that keep outperforming after costs and volatility adjustment
+- rebalance when leadership weakens or stronger alternatives emerge
 
 ## Economic rationale
-Relative strength can persist in crypto because capital, narratives, and leverage cluster around winning contracts. Rotation strategies exploit the slow unwind of that crowding.
+
+Momentum tends to cluster because capital, narratives, and derivatives positioning flow into the same markets for extended periods. Relative-strength rotation aims to stay aligned with those persistent leadership pockets instead of treating every instrument as equally attractive.

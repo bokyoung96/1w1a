@@ -1,10 +1,16 @@
-# Volume / Participation Imbalance
+# Volume Participation Imbalance
 
 ## What it is
-A flow-sensitive family that looks for imbalance between price movement and underlying participation.
+
+This family looks for directional edges when turnover, participation, or aggressor flow becomes unusually unbalanced relative to the recent baseline.
 
 ## How it works
-It combines 5-minute participation spikes with 15-minute price response and 1-hour context. The signal strengthens when volume expansion confirms a directional move or when weak participation exposes a fragile breakout.
+
+- track abnormal volume, taker activity, or participation concentration
+- compare current participation to the recent distribution for the same market
+- align entries with the side that is attracting authentic incremental participation
+- exit when the imbalance normalizes or fails to produce expected price follow-through
 
 ## Economic rationale
-Volume is a proxy for commitment. In crypto, directional moves with broad participation tend to persist longer, while thin moves are more vulnerable to reversal once liquidity normalizes.
+
+Price moves backed by real participation are usually more durable than moves caused by drift alone. In perpetual futures, sudden changes in volume and aggressor dominance can reveal informed flow, forced repositioning, or broad market attention before those effects are fully reflected in trend statistics.

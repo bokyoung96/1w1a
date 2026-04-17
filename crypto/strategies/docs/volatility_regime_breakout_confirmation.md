@@ -1,10 +1,16 @@
-# Volatility Regime / Breakout Confirmation
+# Volatility Regime Breakout Confirmation
 
 ## What it is
-A breakout filter that activates only when volatility conditions support expansion rather than chop.
+
+This family trades directional breakouts only when the volatility regime supports expansion, helping separate real range escapes from low-energy noise.
 
 ## How it works
-It tracks 15-minute and 1-hour volatility state, then allows breakout entries when range compression transitions into expanding realized movement. Low-quality breakouts in dull regimes are filtered out.
+
+- estimate whether realized or implied volatility is compressing or expanding
+- pair directional triggers with volatility-regime filters
+- allow breakout entries when volatility transitions from compression to expansion
+- stand down when volatility is too dead or too chaotic for clean trend capture
 
 ## Economic rationale
-Breakout systems work better when volatility is transitioning from compression to expansion. In crypto, regime shifts often coincide with news, liquidations, or sudden participation surges.
+
+Breakouts are more likely to persist when volatility shifts from quiet accumulation into active repricing. In crypto, volatility regime changes often accompany narrative catalysts, liquidation cascades, and renewed participation, so combining direction with volatility context can improve selectivity.

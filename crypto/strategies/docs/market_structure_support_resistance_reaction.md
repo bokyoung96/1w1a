@@ -1,10 +1,16 @@
-# Market Structure / Support-Resistance Reaction
+# Market Structure Support Resistance Reaction
 
 ## What it is
-A price-action family that reacts to clean responses around visible support, resistance, and swing structure.
+
+This family trades the market's reaction around visible structure levels such as prior highs, prior lows, breakdown points, and reclaimed support or resistance.
 
 ## How it works
-It maps 1-hour structure, times entries on 15-minute reactions, and uses 5-minute behavior to distinguish acceptance from rejection at key levels. The strategy favors fast confirmation over predictive guessing.
+
+- map the levels the market has repeatedly respected or failed around
+- watch for clean rejection, breakout, breakdown, or retest behavior at those levels
+- enter only when the reaction confirms who controls the level after the test
+- define risk tightly around the violated or defended structure boundary
 
 ## Economic rationale
-Many crypto participants anchor to obvious structural levels. That self-reinforcing behavior creates repeatable reactions when liquidity clusters around prior highs, lows, and failed break zones.
+
+Support and resistance matter because many participants anchor to the same obvious levels. That shared attention concentrates stops, breakout orders, and profit-taking around key structure. When the market reacts decisively at those zones, the resulting order-flow imbalance can create attractive tactical trades.

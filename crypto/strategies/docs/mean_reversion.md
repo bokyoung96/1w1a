@@ -1,10 +1,16 @@
 # Mean Reversion
 
 ## What it is
-A counter-trend strategy that looks for stretched intraday moves to snap back toward a local fair value.
+
+This family fades short-horizon dislocations when price stretches too far from a local fair-value anchor such as a moving average, VWAP proxy, or recent balance area.
 
 ## How it works
-It measures distance from a short-horizon reference on the 15-minute bar and only acts when the move is unusually extended relative to recent behavior. Entries are biased toward retracements after exhaustion rather than fighting steady trends.
+
+- measure distance from a short- to medium-term equilibrium estimate
+- look for an overextended move without confirming higher-timeframe trend expansion
+- enter against the stretch once momentum decelerates or liquidity refills
+- take profits into the snapback instead of waiting for a full regime reversal
 
 ## Economic rationale
-Perpetual markets overshoot when leveraged traders crowd one side of the tape. When the impulse runs out, inventory rebalancing and profit-taking can pull price back toward equilibrium.
+
+Many crypto moves overshoot because leverage, liquidations, and thin books exaggerate short-term imbalance. When the move is not backed by a genuine regime change, passive liquidity and profit-taking can pull price back toward equilibrium, creating repeatable reversion opportunities.

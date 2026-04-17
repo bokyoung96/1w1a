@@ -1,10 +1,16 @@
-# Basis / Spread Dislocation Proxy
+# Basis Spread Dislocation Proxy
 
 ## What it is
-A relative-value family that reacts to unusual dislocations between perp pricing and broader carry or spread context.
+
+This family trades dislocations signaled by futures basis, perp-premium behavior, or related spread proxies that suggest temporary mispricing or stressed positioning.
 
 ## How it works
-It pairs 15-minute price behavior with 1-hour structure and 8-hour carry proxies to identify moments when basis-like conditions look stretched. Entries are designed for normalization after dislocation rather than outright trend chasing.
+
+- monitor basis, perp premium, or proxy spreads against their recent norms
+- detect unusually rich or cheap conditions that imply a positioning imbalance
+- combine the dislocation signal with price action and carry awareness
+- exit as the spread normalizes or the proxy signal loses explanatory power
 
 ## Economic rationale
-When perp pricing becomes disconnected from broader carry expectations, arbitrage and hedging flows can pull the spread back toward equilibrium. Capturing that normalization can diversify pure directional strategies.
+
+Spread dislocations often appear when leverage demand becomes one-sided or when hedging flows overwhelm natural counterparties. Those episodes can create attractive normalization opportunities, especially when the dislocation is too large to be explained by a durable change in fundamentals alone.

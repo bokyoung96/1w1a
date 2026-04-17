@@ -1,10 +1,16 @@
 # Trend Pullback Continuation
 
 ## What it is
-A trend-following family that buys or sells pullbacks inside an already established move instead of waiting for fresh highs or lows.
+
+This family enters an established trend after a controlled retracement instead of chasing the initial impulse.
 
 ## How it works
-It anchors to the 1-hour trend, uses 15-minute structure for entry timing, and waits for shallow retracements that hold the prevailing directional bias. The setup is invalidated when the pullback becomes a true trend break.
+
+- identify a clear higher-timeframe uptrend or downtrend
+- wait for price to pull back into support, resistance, or a trend-aligned value zone
+- require the pullback to stabilize before rejoining the dominant direction
+- define risk against the failed pullback level instead of the distant trend origin
 
 ## Economic rationale
-Strong crypto trends rarely travel in straight lines. Pullback entries can capture the same directional regime with better risk-adjusted entry levels than late breakout chasing.
+
+Strong trends rarely move in a straight line. Pullbacks let liquidity refill and late profit-taking reset positioning before continuation. Entering on retracement can improve entry efficiency, reduce adverse excursion, and still preserve exposure to the broader trend regime.

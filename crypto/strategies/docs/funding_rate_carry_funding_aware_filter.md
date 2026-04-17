@@ -1,10 +1,16 @@
-# Funding-Rate Carry / Funding-Aware Filter
+# Funding Rate Carry Funding Aware Filter
 
 ## What it is
-A strategy family that harvests carry or filters directional trades using funding-rate conditions.
+
+This family harvests funding-driven carry or uses funding as a positioning filter so the strategy can favor crowded or uncrowded perp setups more intelligently.
 
 ## How it works
-It blends 15-minute price action with 1-hour structure and 8-hour funding information. Signals are strongest when directional setup and carry regime agree, and weakest when funding implies crowded positioning against the trade.
+
+- monitor funding-rate extremes and their persistence through time
+- combine funding with price trend, basis proxies, or crowding context
+- enter when the carry opportunity or funding filter aligns with risk controls
+- avoid naive carry trades when funding is extreme for good structural reasons
 
 ## Economic rationale
-Funding transfers are a direct expression of leverage imbalance in perpetual futures. Using funding as a carry source or risk filter can improve trade selection when positioning gets one-sided.
+
+Perpetual funding transfers expose where leveraged demand is concentrated. Persistent positive or negative funding can create carry, but it also reveals crowding risk. Strategies that explicitly model that information can capture compensation when positioning is one-sided without blindly stepping in front of strong directional flows.

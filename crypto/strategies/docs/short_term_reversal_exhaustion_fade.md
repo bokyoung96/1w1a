@@ -1,10 +1,16 @@
-# Short-Term Reversal / Exhaustion Fade
+# Short Term Reversal Exhaustion Fade
 
 ## What it is
-A tactical reversal family that fades short-lived climactic moves after local exhaustion signals appear.
+
+This family fades short-lived price extremes after one-way moves show signs of exhaustion, especially around liquidation spikes or panic chasing.
 
 ## How it works
-It uses 5-minute and 15-minute acceleration, wick behavior, and failed follow-through against the 1-hour backdrop. Trades only trigger after evidence that the impulsive move is stalling rather than strengthening.
+
+- detect fast directional extensions, spread widening, or abnormal candle ranges
+- confirm exhaustion through momentum slowdown, rejection wicks, or failed continuation
+- enter for a tactical reversal back toward the nearest balance zone
+- keep holding periods short because the edge is in the unwind, not in a new macro trend
 
 ## Economic rationale
-Perpetual markets frequently overshoot when late traders pile into the final part of a move. Once the forced buying or selling exhausts itself, price often mean reverts sharply over the next few bars.
+
+Crypto markets frequently overshoot when leverage and thin liquidity interact. Once the urgent buyer or seller is exhausted, price can mean-revert sharply as market makers step back in and trapped late entrants are forced to exit. The strategy aims to monetize that unwind.
