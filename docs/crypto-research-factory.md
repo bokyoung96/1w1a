@@ -109,13 +109,7 @@ When reviewing `crypto/` changes, reject implementations that:
 Focused checks used for the integrated scaffold review:
 
 ```bash
-python -m unittest crypto.tests.test_domain crypto.tests.test_exchange_adapter -v
-uv run --with pandas --with pytest python -m pytest \
-  crypto/tests/test_validation.py \
-  crypto/tests/test_promotion.py \
-  crypto/tests/test_strategies.py \
-  crypto/tests/test_paper.py \
-  crypto/tests/test_reporting.py -q
+uv run python -m unittest discover -s crypto/tests -v
 ```
 
 Notes:
