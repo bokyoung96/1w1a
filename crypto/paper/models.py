@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 
-from crypto.domain import ExecutionPlan, FillRecord, FundingRate
+from crypto.domain import ExecutionPlan, FillRecord, FundingRate, OrderSide
 
 
 class PaperLedgerEntryType(str, Enum):
@@ -79,6 +79,7 @@ class PaperSession:
         )
 
     def record_fill(self, fill: FillRecord, *, at: datetime) -> PaperLedgerEntry:
+        cash_flow = fill.net_notional if fill.side is OrderSide.SELL else -fill.net_notional
         entry = PaperLedgerEntry(
             entry_type=PaperLedgerEntryType.FILL,
             timestamp=at,
@@ -86,7 +87,7 @@ class PaperSession:
             quantity=fill.quantity,
             price=fill.price,
             fee=fill.fee,
-            cash_flow=-fill.net_notional,
+            cash_flow=cash_flow,
         )
         self._entries.append(entry)
         return entry
