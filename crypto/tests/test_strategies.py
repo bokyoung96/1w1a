@@ -60,11 +60,11 @@ class StrategyRegistryTests(unittest.TestCase):
             f"missing strategy docs directory: {STRATEGY_DOCS_ROOT}",
         )
 
-        for family in EXPECTED_FAMILIES:
-            doc_path = STRATEGY_DOCS_ROOT / f"{family_doc_slug(family)}.md"
+        for strategy in DEFAULT_STRATEGIES:
+            self.assertEqual(strategy.documentation_path, docs_dir / f"{strategy.name}.md")
             self.assertTrue(
-                doc_path.is_file(),
-                f"missing doc for family {family!r}: {doc_path}",
+                strategy.documentation_path.exists(),
+                f"missing strategy doc for {strategy.name}",
             )
 
             content = doc_path.read_text(encoding="utf-8").lower()
