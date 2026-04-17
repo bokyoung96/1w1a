@@ -8,6 +8,7 @@ from analysts.sources.gmail.storage import GmailStore
 from analysts.sources.gmail.models import GmailMessageRecord
 from analysts.sources.gmail.pipeline import GmailSourcePipeline
 from analysts.sources.gmail.sync import GmailPollingSync
+from analysts.sources.gmail.web_capture import WebSnapshot
 from analysts.storage import SqliteArasStore
 
 
@@ -55,6 +56,20 @@ class FakeSummarizer:
             cited_pages=[1],
             follow_up_questions=[f"{lane} question"],
         )
+
+
+class FakeWebCapturer:
+    def __init__(self, root: Path) -> None:
+        self.root = root
+
+    def capture(self, *, message_id: str, url: str, index: int) -> WebSnapshot:
+        target = self.root / message_id / "web"
+        target.mkdir(parents=True, exist_ok=True)
+        html_path = target / f"page-{index}.html"
+        text_path = target / f"page-{index}.txt"
+        html_path.write_text(f"<html><body>{url}</body></html>")
+        text_path.write_text(f"Captured {url}")
+        return WebSnapshot(url=url, html_path=html_path, text_path=text_path, screenshot_path=None)
 
 
 def test_polling_sync_records_new_messages(tmp_path) -> None:
@@ -512,3 +527,56 @@ def test_gmail_source_pipeline_uses_latest_zip_html_candidate(tmp_path: Path) ->
         "report-msg-2-summary.json",
         "report-msg-2-summary.md",
     }
+
+
+def test_gmail_source_pipeline_uses_web_candidate_when_body_is_too_short(tmp_path: Path) -> None:
+    config = build_config(tmp_path)
+    gmail_store = GmailStore(tmp_path / "gmail.sqlite3")
+    gmail_store.record_message(
+        GmailMessageRecord(
+            gmail_message_id="msg-2",
+            gmail_thread_id="thread-2",
+            history_id="201",
+            account_name="reports-primary",
+            subject="Latest web wrap",
+            sender="broker@example.com",
+            internal_date="2026-04-17T06:00:00Z",
+            label_ids=("Label_Reports",),
+            snippet="Top line",
+            body_plain="Read here: https://example.com/report",
+            body_html=None,
+            raw_payload_json={"id": "msg-2"},
+            sync_status="synced",
+            query_fingerprint="label:broker-reports",
+        )
+    )
+    analysts_pipeline = ArasPipeline(
+        client=object(),
+        store=SqliteArasStore(config.paths.state_db),
+        config=config,
+        summarizer=FakeSummarizer(),
+    )
+    source_pipeline = GmailSourcePipeline(
+        config=config,
+        api=FakeGmailApi(),
+        store=gmail_store,
+        analysts_pipeline=analysts_pipeline,
+        account_name="reports-primary",
+        query="label:broker-reports",
+        body_rules=BodyCandidateRules(min_chars=200, require_structure=True),
+        zip_allow_extensions=(".pdf", ".txt", ".html"),
+        raw_root=config.paths.gmail_raw_dir,
+        web_capturer=FakeWebCapturer(config.paths.gmail_raw_dir),
+    )
+
+    execution = source_pipeline.summarize_latest()
+
+    assert execution.summary.next_offset == "msg-2"
+    assert {path.name for path in execution.processed_files} == {
+        "report-msg-2-raw-text.txt",
+        "report-msg-2-summary-input.json",
+        "report-msg-2-summary.json",
+        "report-msg-2-summary.md",
+    }
+    assert (config.paths.gmail_raw_dir / "msg-2" / "web" / "page-1.html").exists()
+    assert (config.paths.gmail_raw_dir / "msg-2" / "web" / "page-1.txt").exists()

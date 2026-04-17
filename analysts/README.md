@@ -129,6 +129,7 @@ Storage layout for Gmail:
 - `data/raw/gmail/<gmail-message-id>/body.txt` and `body.html` store extracted plain-text and HTML body artifacts when present.
 - `data/raw/gmail/<gmail-message-id>/attachments/manifest.json` records attachment metadata for that message container.
 - `data/raw/gmail/<gmail-message-id>/attachments/original/` stores original Gmail attachments such as PDF/TXT/HTML/ZIP payloads.
+- `data/raw/gmail/<gmail-message-id>/web/` stores Playwright-captured page HTML/text/screenshot artifacts when a Gmail message is handled through the web-link lane.
 - `data/processed/gmail/` holds Gmail-only staged candidate material, such as promoted body-text files and allowlisted ZIP entries.
 - `data/processed/report-*.{txt,json,md}` remains the shared analyst artifact surface for both Telegram and Gmail summarization outputs.
 
@@ -139,6 +140,7 @@ Storage layout for Telegram:
 Raw-vs-processed organization notes:
 - raw Gmail storage is **message-centric** so one email can keep its body, payload metadata, and attachment manifest together
 - raw Telegram storage is **document-centric** because the Telegram source remains a direct PDF feed
+- Playwright is used only for the Gmail web-link lane; install browser binaries with `../.venv/bin/python -m playwright install chromium` when setting up a new local environment.
 - processed Gmail staging remains **document-centric** so downstream summaries look like the Telegram-style artifact flow
 - the Gmail API payload also remains in SQLite via `raw_payload_json` on each stored message record for queryable metadata
 - the top-level analyst summaries still point back to the staged source path through `raw_pdf_path`, even when the source is a Gmail body/text candidate rather than a Telegram PDF

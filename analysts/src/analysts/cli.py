@@ -17,6 +17,7 @@ from .raw_reports import RawReportCatalog
 from .sources.gmail.client import GmailApiClient
 from .sources.gmail.pipeline import GmailSourcePipeline
 from .sources.gmail.storage import GmailStore
+from .sources.gmail.web_capture import PlaywrightWebCapturer
 from .sources.telegram.client import auth_login as telegram_auth_login
 from .sources.telegram.fetcher import TelegramFetcher
 from .sources.telegram.watcher import AsyncWatchResult, WatchUntilRunner
@@ -122,6 +123,7 @@ def build_gmail_source_pipeline(*, base_dir: Path) -> GmailSourcePipeline:
         body_rules=config.gmail.body_candidate_rules,
         zip_allow_extensions=config.gmail.zip_allow_extensions,
         raw_root=config.paths.gmail_raw_dir,
+        web_capturer=PlaywrightWebCapturer(output_root=config.paths.gmail_raw_dir),
     )
 
 
