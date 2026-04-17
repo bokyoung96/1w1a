@@ -493,6 +493,85 @@ function createDashboard(mode: "single" | "multi", selectedRunIds: string[]): Da
         ],
       },
     },
+    cryptoFactory: {
+      summary: {
+        candidatePoolSize: 40,
+        selectedBasketSize: 10,
+        registeredStrategyCount: 10,
+        familyCap: 3,
+        triggerReason: "hybrid_event_rebalance",
+      },
+      performanceSummary: {
+        totalReturn: 0.18,
+        maxDrawdown: 0.07,
+        paperSharpe: 1.42,
+        paperDays: 30,
+        realizedFees: 0,
+        netFunding: 0,
+      },
+      performance: {
+        equityCurve: [
+          { date: "2025-01-01", value: 100000 },
+          { date: "2025-01-02", value: 101200 },
+        ],
+        drawdownCurve: [
+          { date: "2025-01-01", value: 0 },
+          { date: "2025-01-02", value: 0.01 },
+        ],
+        grossExposureCurve: [
+          { date: "2025-01-01", value: 1 },
+          { date: "2025-01-02", value: 0.95 },
+        ],
+        netExposureCurve: [
+          { date: "2025-01-01", value: 0.2 },
+          { date: "2025-01-02", value: 0.15 },
+        ],
+      },
+      selectedBasket: [
+        {
+          candidateId: "trend_following_breakout:seed=1",
+          strategyName: "trend_following_breakout",
+          family: "trend-following breakout",
+          primaryCadence: "15m",
+          featureCadences: ["15m", "1h"],
+          totalScore: 1.1,
+          maxPairwiseCorrelation: 0.28,
+          targetWeight: 0.16,
+          documentationPath: "crypto/strategies/docs/trend_following_breakout.md",
+          rationaleExcerpt: "Breakouts work when price reprices forcefully.",
+          executionStages: [
+            { stage: "stage_1", fraction: 0.5, targetWeight: 0.08 },
+            { stage: "stage_2", fraction: 0.3, targetWeight: 0.048 },
+            { stage: "stage_3", fraction: 0.2, targetWeight: 0.032 },
+          ],
+        },
+      ],
+      familyAllocations: [
+        { family: "trend-following breakout", weight: 0.22, strategyCount: 2 },
+        { family: "mean reversion", weight: 0.18, strategyCount: 1 },
+      ],
+      instrumentAllocations: [
+        {
+          instrumentSymbol: "BTC/USDT:USDT",
+          netTargetWeight: 0.14,
+          grossTargetWeight: 1,
+          contributorCount: 10,
+        },
+      ],
+      registry: [
+        {
+          name: "trend_following_breakout",
+          family: "trend-following breakout",
+          primaryCadence: "15m",
+          featureCadences: ["15m", "1h"],
+          candidateCount: 4,
+          selected: true,
+          topScore: 1.1,
+          documentationPath: "crypto/strategies/docs/trend_following_breakout.md",
+          rationaleExcerpt: "Breakouts work when price reprices forcefully.",
+        },
+      ],
+    },
   };
 }
 
@@ -1049,6 +1128,18 @@ describe("App", () => {
         expect.objectContaining({ name: "S&P 500 benchmark" }),
       ],
     });
+  });
+
+  it("renders the crypto factory panel with basket and registry details", async () => {
+    fetchRuns.mockResolvedValue(RUNS);
+    fetchDashboard.mockResolvedValue(createDashboard("multi", ["momentum_run", "value_run"]));
+
+    render(<App />);
+
+    expect(await screen.findByText("AI strategy basket, orthogonality, and allocation")).toBeInTheDocument();
+    expect(screen.getAllByText("trend_following_breakout").length).toBeGreaterThan(0);
+    expect(screen.getByText("hybrid_event_rebalance")).toBeInTheDocument();
+    expect(screen.getAllByText("selected").length).toBeGreaterThan(0);
   });
 
   it("deduplicates bootstrap-selected ids before requesting the dashboard", async () => {

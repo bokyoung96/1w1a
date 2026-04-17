@@ -180,4 +180,84 @@ export type DashboardPayload = {
     sectorWeightSeries: Record<string, CategorySeries[]>;
     drawdownEpisodes: Record<string, DrawdownEpisode[]>;
   };
+  cryptoFactory: CryptoFactoryPayload | null;
+};
+
+export type CryptoFactoryExecutionStage = {
+  stage: string;
+  fraction: number;
+  targetWeight: number;
+};
+
+export type CryptoFactorySelectedStrategy = {
+  candidateId: string;
+  strategyName: string;
+  family: string;
+  primaryCadence: string;
+  featureCadences: string[];
+  totalScore: number;
+  maxPairwiseCorrelation: number;
+  targetWeight: number;
+  documentationPath: string;
+  rationaleExcerpt: string;
+  executionStages: CryptoFactoryExecutionStage[];
+};
+
+export type CryptoFactoryFamilyAllocation = {
+  family: string;
+  weight: number;
+  strategyCount: number;
+};
+
+export type CryptoFactoryInstrumentAllocation = {
+  instrumentSymbol: string;
+  netTargetWeight: number;
+  grossTargetWeight: number;
+  contributorCount: number;
+};
+
+export type CryptoFactoryRegistryEntry = {
+  name: string;
+  family: string;
+  primaryCadence: string;
+  featureCadences: string[];
+  candidateCount: number;
+  selected: boolean;
+  topScore: number;
+  documentationPath: string;
+  rationaleExcerpt: string;
+};
+
+export type CryptoFactorySummary = {
+  candidatePoolSize: number;
+  selectedBasketSize: number;
+  registeredStrategyCount: number;
+  familyCap: number;
+  triggerReason: string;
+};
+
+export type CryptoFactoryPerformanceSummary = {
+  totalReturn: number;
+  maxDrawdown: number;
+  paperSharpe: number;
+  paperDays: number;
+  realizedFees: number;
+  netFunding: number;
+};
+
+export type CryptoFactoryPerformance = {
+  equityCurve: SeriesPoint[];
+  drawdownCurve: SeriesPoint[];
+  grossExposureCurve: SeriesPoint[];
+  netExposureCurve: SeriesPoint[];
+};
+
+export type CryptoFactoryPayload = {
+  summary: CryptoFactorySummary;
+  performanceSummary: CryptoFactoryPerformanceSummary;
+  performance: CryptoFactoryPerformance;
+  selectedBasket: CryptoFactorySelectedStrategy[];
+  familyAllocations: CryptoFactoryFamilyAllocation[];
+  instrumentAllocations: CryptoFactoryInstrumentAllocation[];
+  registry: CryptoFactoryRegistryEntry[];
 };

@@ -737,6 +737,63 @@ textarea {
   background: rgba(247, 240, 231, 0.04);
 }
 
+.crypto-factory-grid {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.crypto-factory-table-head,
+.crypto-factory-table-row {
+  grid-template-columns: minmax(0, 2.2fr) repeat(3, minmax(72px, .8fr));
+}
+
+.crypto-factory-table-row p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: .82rem;
+}
+
+.crypto-registry-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.crypto-registry-card {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(247, 240, 231, 0.04);
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.crypto-registry-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.crypto-registry-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.crypto-registry-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  color: var(--muted);
+  font-size: .82rem;
+}
+
+.top-rail-pill.is-selected {
+  border-color: var(--line-strong);
+  color: var(--text);
+  background: var(--accent-soft);
+}
+
 @media (max-width: 900px) {
   .workspace-strip-grid,
   .workspace-strip-grid--wide,
