@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
 import unittest
+from datetime import datetime, timedelta, timezone
 
 from crypto.domain import FillRecord, FundingRate, InstrumentId, OrderSide
 from crypto.paper import PaperLedgerEntryType, PaperSession
+import crypto.paper as paper_module
 
 
 def _utc(value: str) -> datetime:
@@ -105,9 +106,16 @@ class PaperSessionTests(unittest.TestCase):
 
         self.assertAlmostEqual(entry.cash_flow, 4496.0)
 
-    def test_package_surface_keeps_paper_session_as_the_supported_entry_point(self) -> None:
-        self.assertEqual(PaperSession.__module__, "crypto.paper.models")
-        self.assertEqual(PaperSession.__name__, "PaperSession")
+    def test_public_api_keeps_one_exported_paper_session_model(self) -> None:
+        self.assertEqual(
+            paper_module.__all__,
+            (
+                "PaperLedgerEntry",
+                "PaperLedgerEntryType",
+                "PaperSession",
+            ),
+        )
+        self.assertFalse(hasattr(paper_module, "PaperTradingSession"))
 
 
 if __name__ == "__main__":

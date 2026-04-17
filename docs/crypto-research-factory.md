@@ -84,6 +84,7 @@ Reviewed against the currently integrated `crypto/` scaffold on leader HEAD:
 Lane-3 interpretation for review:
 
 - paper and reporting remain explicit package boundaries rather than being hidden inside exchange, strategy, or promotion modules
+- the public paper API exposes one exported session model (`crypto.paper.PaperSession`) so reporting and promotion evidence have a single ledger source of truth
 - strategy registration stays visible through an explicit reporting catalog view built from the registered crypto strategy definitions
 - promotion evidence can now combine threshold checks with paper-session metrics instead of relying only on validation artifacts
 
@@ -109,10 +110,12 @@ When reviewing `crypto/` changes, reject implementations that:
 Focused checks used for the integrated scaffold review:
 
 ```bash
+uv run python -m unittest crypto.tests.test_paper crypto.tests.test_reporting -v
 uv run python -m unittest discover -s crypto/tests -v
 ```
 
 Notes:
 
 - Run the crypto suite through `uv run` so the lane uses the repo's Python 3.11 toolchain instead of whichever system Python happens to be active in a shell.
+- Keep paper/reporting coverage in `unittest`-discoverable `TestCase` classes so the documented verification command actually exercises the graph/reporting lane.
 - The crypto tests intentionally stay on `unittest` so the baseline scaffold can be verified without an extra `pytest` dependency during team execution.
