@@ -1,114 +1,154 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 import unittest
 
-from crypto.factory import StrategyCandidate, build_candidate_pool
-from crypto.strategies import DEFAULT_STRATEGIES
+from crypto.factory import (
+    DEFAULT_CANDIDATE_PROFILES,
+    DEFAULT_CANDIDATE_POOL_SIZE,
+    MAX_CANDIDATE_POOL_SIZE,
+    MIN_CANDIDATE_POOL_SIZE,
+    CandidateParameterRange,
+    CandidateProfile,
+    FactoryCandidate,
+    build_fixed_grid_candidates,
+    expand_candidates,
+    generate_candidate_pool,
+    normalize_target_candidate_count,
+)
 
 
-class CandidateFactoryTests(unittest.TestCase):
-    def test_build_candidate_pool_hits_requested_target_and_covers_each_registered_strategy(self) -> None:
-        candidates = build_candidate_pool(
-            strategy_definitions=DEFAULT_STRATEGIES,
-            target_size=36,
-            random_seed=7,
+@dataclass(frozen=True)
+class _StrategyStub:
+    name: str
+    family: str
+    primary_cadence: str = "15m"
+    feature_cadences: tuple[str, ...] = ("15m",)
+
+
+class FactoryCandidateGenerationTests(unittest.TestCase):
+    def test_build_fixed_grid_candidates_emits_an_ordered_cross_product(self) -> None:
+        profile = CandidateProfile(
+            strategy=_StrategyStub(name="test_breakout", family="test family"),
+            parameters=(
+                CandidateParameterRange(
+                    name="lookback_bars",
+                    seed_values=(20, 40, 60),
+                    min_value=10,
+                    max_value=80,
+                    expansion_step=10,
+                    integer=True,
+                ),
+                CandidateParameterRange(
+                    name="breakout_buffer_bps",
+                    seed_values=(5.0, 10.0),
+                    min_value=2.5,
+                    max_value=20.0,
+                    expansion_step=2.5,
+                ),
+            ),
         )
 
-        self.assertEqual(len(candidates), 36)
-        self.assertTrue(30 <= len(candidates) <= 50)
-        self.assertTrue(all(isinstance(candidate, StrategyCandidate) for candidate in candidates))
+        candidates = build_fixed_grid_candidates(profile)
 
-        expected_strategy_names = {strategy.name for strategy in DEFAULT_STRATEGIES}
+        self.assertEqual(len(candidates), 6)
+        self.assertTrue(all(isinstance(candidate, FactoryCandidate) for candidate in candidates))
         self.assertEqual(
-            {candidate.strategy_name for candidate in candidates},
-            expected_strategy_names,
+            [candidate.params for candidate in candidates],
+            [
+                {"lookback_bars": 20, "breakout_buffer_bps": 5.0},
+                {"lookback_bars": 20, "breakout_buffer_bps": 10.0},
+                {"lookback_bars": 40, "breakout_buffer_bps": 5.0},
+                {"lookback_bars": 40, "breakout_buffer_bps": 10.0},
+                {"lookback_bars": 60, "breakout_buffer_bps": 5.0},
+                {"lookback_bars": 60, "breakout_buffer_bps": 10.0},
+            ],
+        )
+        self.assertTrue(all(candidate.generation_stage == "fixed_grid" for candidate in candidates))
+        self.assertEqual(
+            candidates[0].candidate_id,
+            "test_breakout:breakout_buffer_bps=5:lookback_bars=20",
         )
         self.assertEqual(
-            {candidate.family for candidate in candidates},
-            {strategy.family for strategy in DEFAULT_STRATEGIES},
+            candidates[-1].candidate_id,
+            "test_breakout:breakout_buffer_bps=10:lookback_bars=60",
         )
 
-        signatures = [self._signature(candidate) for candidate in candidates]
-        self.assertEqual(len(signatures), len(set(signatures)))
+    def test_expand_candidates_is_deterministic_and_respects_bounds(self) -> None:
+        profile = CandidateProfile(
+            strategy=_StrategyStub(name="test_breakout", family="test family"),
+            parameters=(
+                CandidateParameterRange(
+                    name="lookback_bars",
+                    seed_values=(20, 40, 60),
+                    min_value=10,
+                    max_value=80,
+                    expansion_step=10,
+                    integer=True,
+                ),
+                CandidateParameterRange(
+                    name="breakout_buffer_bps",
+                    seed_values=(5.0,),
+                    min_value=2.5,
+                    max_value=20.0,
+                    expansion_step=2.5,
+                ),
+            ),
+            promising_seed_indices=(1,),
+        )
+        seeds = build_fixed_grid_candidates(profile)
 
-        for candidate in candidates:
-            self.assertIn(candidate.origin, {"grid", "adaptive_random"})
-            self.assertTrue(candidate.parameters)
-            for parameter_name, parameter_value in candidate.parameters.items():
-                self.assertIsInstance(parameter_name, str)
-                self.assertIsInstance(parameter_value, (int, float))
-
-    def test_candidate_pool_is_seed_deterministic_while_random_expansion_changes_with_seed(self) -> None:
-        first = build_candidate_pool(
-            strategy_definitions=DEFAULT_STRATEGIES,
-            target_size=36,
+        expanded_once = expand_candidates(
+            profile=profile,
+            seed_candidates=seeds,
+            target_count=5,
             random_seed=11,
         )
-        second = build_candidate_pool(
-            strategy_definitions=DEFAULT_STRATEGIES,
-            target_size=36,
+        expanded_again = expand_candidates(
+            profile=profile,
+            seed_candidates=seeds,
+            target_count=5,
             random_seed=11,
         )
-        different_seed = build_candidate_pool(
-            strategy_definitions=DEFAULT_STRATEGIES,
-            target_size=36,
-            random_seed=19,
-        )
 
+        self.assertEqual(expanded_once, expanded_again)
+        self.assertEqual(len(expanded_once), 5)
+        self.assertEqual(expanded_once[:3], seeds)
+        self.assertTrue(all(candidate.candidate_id for candidate in expanded_once))
+        self.assertTrue(
+            all(candidate.generation_stage == "adaptive_random" for candidate in expanded_once[3:])
+        )
+        self.assertTrue(
+            all(candidate.parent_candidate_id == seeds[1].candidate_id for candidate in expanded_once[3:])
+        )
+        for candidate in expanded_once[3:]:
+            self.assertGreaterEqual(candidate.params["lookback_bars"], 10)
+            self.assertLessEqual(candidate.params["lookback_bars"], 80)
+            self.assertGreaterEqual(candidate.params["breakout_buffer_bps"], 2.5)
+            self.assertLessEqual(candidate.params["breakout_buffer_bps"], 20.0)
+
+    def test_generate_candidate_pool_clamps_pool_size_and_covers_registered_strategies(self) -> None:
+        self.assertEqual(normalize_target_candidate_count(12), MIN_CANDIDATE_POOL_SIZE)
+        self.assertEqual(normalize_target_candidate_count(99), MAX_CANDIDATE_POOL_SIZE)
+        self.assertTrue(MIN_CANDIDATE_POOL_SIZE <= DEFAULT_CANDIDATE_POOL_SIZE <= MAX_CANDIDATE_POOL_SIZE)
+
+        minimum_pool = generate_candidate_pool(target_count=12, random_seed=7)
+        default_pool = generate_candidate_pool(target_count=DEFAULT_CANDIDATE_POOL_SIZE, random_seed=7)
+        maximum_pool = generate_candidate_pool(target_count=99, random_seed=7)
+
+        self.assertEqual(len(minimum_pool), MIN_CANDIDATE_POOL_SIZE)
+        self.assertEqual(len(default_pool), DEFAULT_CANDIDATE_POOL_SIZE)
+        self.assertEqual(len(maximum_pool), MAX_CANDIDATE_POOL_SIZE)
+        self.assertEqual(len({candidate.candidate_id for candidate in maximum_pool}), len(maximum_pool))
         self.assertEqual(
-            [self._signature(candidate) for candidate in first],
-            [self._signature(candidate) for candidate in second],
+            {candidate.strategy_name for candidate in minimum_pool},
+            {profile.strategy.name for profile in DEFAULT_CANDIDATE_PROFILES},
         )
+        self.assertTrue(any(candidate.generation_stage == "fixed_grid" for candidate in minimum_pool))
+        self.assertTrue(any(candidate.generation_stage == "adaptive_random" for candidate in maximum_pool))
 
-        grid_first = {
-            self._signature(candidate)
-            for candidate in first
-            if candidate.origin == "grid"
-        }
-        grid_different_seed = {
-            self._signature(candidate)
-            for candidate in different_seed
-            if candidate.origin == "grid"
-        }
-        adaptive_first = {
-            self._signature(candidate)
-            for candidate in first
-            if candidate.origin == "adaptive_random"
-        }
-        adaptive_different_seed = {
-            self._signature(candidate)
-            for candidate in different_seed
-            if candidate.origin == "adaptive_random"
-        }
-
-        self.assertTrue(grid_first)
-        self.assertTrue(adaptive_first)
-        self.assertEqual(grid_first, grid_different_seed)
-        self.assertNotEqual(adaptive_first, adaptive_different_seed)
-
-    def test_candidate_pool_validates_target_size_bounds(self) -> None:
-        with self.assertRaisesRegex(ValueError, "target_size"):
-            build_candidate_pool(
-                strategy_definitions=DEFAULT_STRATEGIES,
-                target_size=29,
-                random_seed=7,
-            )
-
-        with self.assertRaisesRegex(ValueError, "target_size"):
-            build_candidate_pool(
-                strategy_definitions=DEFAULT_STRATEGIES,
-                target_size=51,
-                random_seed=7,
-            )
-
-    @staticmethod
-    def _signature(candidate: StrategyCandidate) -> tuple[str, str, str, tuple[tuple[str, float], ...]]:
-        return (
-            candidate.strategy_name,
-            candidate.family,
-            candidate.origin,
-            tuple(sorted((name, float(value)) for name, value in candidate.parameters.items())),
-        )
+        deterministic_again = generate_candidate_pool(target_count=99, random_seed=7)
+        self.assertEqual(maximum_pool, deterministic_again)
 
 
 if __name__ == "__main__":
