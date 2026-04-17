@@ -4,8 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, Request
 
-from dashboard.backend.schemas import CryptoFactoryPayloadModel, DashboardPayloadModel, SessionBootstrapModel
-from dashboard.backend.services.crypto_factory_preview import CryptoFactoryPreviewService
+from dashboard.backend.schemas import DashboardPayloadModel, SessionBootstrapModel
 from dashboard.backend.services.dashboard_payload import DashboardPayloadService
 from dashboard.backend.services.run_index import RunIndexService
 
@@ -18,10 +17,6 @@ def get_run_index_service() -> RunIndexService:
 
 def get_dashboard_payload_service() -> DashboardPayloadService:
     return DashboardPayloadService()
-
-
-def get_crypto_factory_preview_service() -> CryptoFactoryPreviewService:
-    return CryptoFactoryPreviewService()
 
 
 @router.get("/runs")
@@ -43,10 +38,3 @@ def get_dashboard(
 ) -> dict[str, object]:
     canonical_run_ids = list(dict.fromkeys(run_ids))
     return service.build(canonical_run_ids).model_dump(by_alias=True)
-
-
-@router.get("/crypto-factory", response_model=CryptoFactoryPayloadModel)
-def get_crypto_factory_preview(
-    service: CryptoFactoryPreviewService = Depends(get_crypto_factory_preview_service),
-) -> dict[str, object]:
-    return service.build().model_dump(by_alias=True)
