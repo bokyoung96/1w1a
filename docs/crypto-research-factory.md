@@ -107,9 +107,10 @@ When reviewing `crypto/` changes, reject implementations that:
 Focused checks used for the integrated scaffold review:
 
 ```bash
-python -m unittest crypto.tests.test_domain crypto.tests.test_exchange_adapter -v
-uv run --with pandas --with pytest python -m pytest \
-  crypto/tests/test_validation.py \
-  crypto/tests/test_promotion.py \
-  crypto/tests/test_strategies.py -q
+uv run python -m unittest discover -s crypto/tests -v
 ```
+
+Notes:
+
+- Run the crypto suite through `uv run` so the lane uses the repo's Python 3.11 toolchain instead of whichever system Python happens to be active in a shell.
+- The crypto tests intentionally stay on `unittest` so the baseline scaffold can be verified without an extra `pytest` dependency during team execution.
