@@ -44,7 +44,7 @@ def test_pairwise_overlap_diagnostics_are_deterministic_for_the_strategy_cohort(
     returns = pd.DataFrame(
         {
             "trend-following breakout": [0.01, 0.02, 0.03, 0.04, 0.05],
-            "mean reversion": [-0.01, -0.02, -0.01, 0.00, 0.01],
+            "mean reversion": [0.05, 0.04, 0.03, 0.02, 0.01],
             "perp momentum / relative-strength rotation": [0.011, 0.021, 0.031, 0.039, 0.049],
         },
         index=pd.date_range("2026-01-01", periods=5, freq="D", tz="UTC"),
