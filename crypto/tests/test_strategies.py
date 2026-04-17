@@ -58,7 +58,7 @@ def test_multi_frequency_alignment_reindexes_features_to_primary_15m_cadence_wit
         index=primary_index,
     )
     expected_micro = pd.DataFrame(
-        {"BTCUSDT": [10.0, 20.0, 30.0, 40.0]},
+        {"BTCUSDT": [10.0, 20.0, 30.0, 50.0]},
         index=primary_index,
     )
 
