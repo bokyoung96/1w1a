@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
 
+from . import dirs
+
 
 @dataclass(frozen=True)
 class WebSnapshot:
@@ -18,13 +20,13 @@ class PlaywrightWebCapturer:
         self.output_root = Path(output_root)
         self.output_root.mkdir(parents=True, exist_ok=True)
 
-    def capture(self, *, message_id: str, url: str, index: int) -> WebSnapshot:
+    def capture(self, *, message_id: str, title: str, url: str, index: int) -> WebSnapshot:
         try:
             from playwright.sync_api import sync_playwright
         except ModuleNotFoundError as exc:  # pragma: no cover - depends on local env
             raise RuntimeError("Playwright is not installed. Install playwright and browser binaries first.") from exc
 
-        target_dir = self.output_root / message_id / "web"
+        target_dir = dirs.ensure(self.output_root, message_id=message_id, title=title) / "web"
         target_dir.mkdir(parents=True, exist_ok=True)
         html_path = target_dir / f"page-{index}.html"
         text_path = target_dir / f"page-{index}.txt"

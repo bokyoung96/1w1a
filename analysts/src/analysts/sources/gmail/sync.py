@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from . import dirs
 from .models import GmailAttachmentRecord, GmailMessageRecord
 from .storage import GmailStore
 
@@ -64,7 +65,7 @@ class GmailPollingSync:
         )
 
     def _write_raw_container(self, *, record: GmailMessageRecord) -> None:
-        container = self.raw_root / record.gmail_message_id
+        container = dirs.ensure(self.raw_root, message_id=record.gmail_message_id, title=record.subject)
         attachments_dir = container / "attachments"
         originals_dir = attachments_dir / "original"
         attachments_dir.mkdir(parents=True, exist_ok=True)
