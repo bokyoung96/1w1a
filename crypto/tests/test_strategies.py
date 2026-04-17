@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+import re
 import unittest
 from pathlib import Path
 
@@ -26,6 +28,14 @@ EXPECTED_FAMILIES = (
     "market structure / support-resistance reaction",
 )
 
+STRATEGY_DOCS_ROOT = (
+    Path(__file__).resolve().parents[2] / "crypto" / "strategies" / "docs"
+)
+
+
+def family_doc_slug(family: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", family.lower()).strip("-")
+
 
 class StrategyRegistryTests(unittest.TestCase):
     def test_registry_lists_the_approved_initial_strategy_families(self) -> None:
@@ -34,20 +44,34 @@ class StrategyRegistryTests(unittest.TestCase):
             tuple(strategy.family for strategy in DEFAULT_STRATEGIES),
             EXPECTED_FAMILIES,
         )
+        self.assertEqual(len(DEFAULT_STRATEGIES), len(EXPECTED_FAMILIES))
+        self.assertEqual(
+            len({strategy.name for strategy in DEFAULT_STRATEGIES}),
+            len(DEFAULT_STRATEGIES),
+        )
         self.assertEqual(
             {strategy.primary_cadence for strategy in DEFAULT_STRATEGIES},
             {"15m"},
         )
 
-    def test_each_registered_strategy_has_a_matching_strategy_doc(self) -> None:
-        docs_dir = Path(__file__).resolve().parent.parent / "strategies" / "docs"
-        self.assertEqual(len(DEFAULT_STRATEGIES), len(EXPECTED_FAMILIES))
+    def test_each_strategy_family_has_a_matching_markdown_doc(self) -> None:
+        self.assertTrue(
+            STRATEGY_DOCS_ROOT.is_dir(),
+            f"missing strategy docs directory: {STRATEGY_DOCS_ROOT}",
+        )
 
-        for strategy in DEFAULT_STRATEGIES:
+        for family in EXPECTED_FAMILIES:
+            doc_path = STRATEGY_DOCS_ROOT / f"{family_doc_slug(family)}.md"
             self.assertTrue(
-                (docs_dir / f"{strategy.name}.md").exists(),
-                f"missing strategy doc for {strategy.name}",
+                doc_path.is_file(),
+                f"missing doc for family {family!r}: {doc_path}",
             )
+
+            content = doc_path.read_text(encoding="utf-8").lower()
+            self.assertIn(family.lower(), content)
+            self.assertIn("what it is", content)
+            self.assertIn("how it works", content)
+            self.assertIn("economic rationale", content)
 
     def test_multi_frequency_alignment_reindexes_features_to_primary_15m_cadence_without_lookahead(
         self,
