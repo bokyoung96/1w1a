@@ -84,6 +84,85 @@ This keeps Task 2 aligned with the approved factory order:
 
 `fixed-grid coverage -> bounded adaptive/random expansion -> downstream scoring/selection`
 
+## Task 3: strategy scoring contract
+
+Task 3 adds the first explicit scorecard layer under:
+
+- `crypto/factory/scoring.py`
+
+Approved Task-3 scoring shape:
+
+1. **Total score**
+   - total score = post-cost performance + robustness - explicit turnover penalty
+   - keep post-cost performance visible as its own field instead of hiding it inside a black-box ranker
+2. **Robustness breakdown**
+   - robustness = out-of-sample stability + parameter sensitivity stability + regime stability
+   - keep each component reviewable and testable on its own
+3. **Transaction-cost treatment**
+   - use post-cost returns as the base performance input
+   - also apply an explicit turnover penalty so mid-frequency candidates do not look artificially attractive
+
+Task-3 non-goals:
+
+- do not add orthogonality filtering in the scoring module
+- do not add allocator behavior in the scoring module
+- do not hide score explanations behind opaque weights or undocumented heuristics
+
+Review expectations:
+
+- scorecards should preserve candidate identity, family, cadence, and parameter provenance
+- reviewers should be able to see cost drag, turnover penalty, robustness components, and final total score separately
+
+## Task 4: orthogonality filtering + family cap
+
+Task 4 adds the first basket-construction filter under:
+
+- `crypto/factory/selection.py`
+
+Approved Task-4 filtering rules:
+
+1. use pairwise return correlation as the first orthogonality measure
+2. prefer family diversity when scores are otherwise close
+3. enforce a hard family cap of `3`
+4. select a top `10` basket from a `30-50` candidate pool
+
+The v1 selection pass should stay greedy, explicit, and reviewable. It is better to explain why a candidate was skipped than to add a more complex optimizer too early.
+
+## Task 5: all-in-one allocator
+
+Task 5 adds the portfolio-construction surface under:
+
+- `crypto/factory/allocation.py`
+
+Approved Task-5 allocation rules:
+
+1. allocate by family first and strategy second
+2. support event-driven recompute triggers
+3. keep staged execution metadata explicit for split entries/exits
+4. collapse the selected basket into one portfolio-level position plan
+
+The allocator should remain metadata-first in v1: it produces a transparent target-weight plan, not a hidden execution engine.
+
+## Task 6: reporting integration
+
+Task 6 extends the reporting lane so promotion reviews can see the research basket and allocator outputs without reconstructing them elsewhere.
+
+Reporting additions should keep visible:
+
+- candidate pool size
+- selected basket entries
+- family-level weights
+- instrument-level aggregate targets
+- graph-ready aggregate performance series
+
+## Task 7: documentation + cleanup
+
+Task 7 closes the first strategy-factory slice by:
+
+- documenting the candidate -> score -> selection -> allocation flow
+- keeping the package boundary explicit instead of creating another parallel crypto stack
+- running focused crypto verification and then the full crypto suite
+
 ## Promotion thresholds
 
 Promotion and report outputs should use the approved research thresholds:
@@ -107,6 +186,7 @@ crypto/
   validation/   # research validation and offline evaluation helpers
   paper/        # paper ledger, portfolio state, and paper-session persistence
   reporting/    # research summaries, paper-trading reports, and promotion output
+  factory/      # candidate generation, scoring, orthogonality filtering, and allocation
 ```
 
 The paper and reporting lanes should remain separate from:

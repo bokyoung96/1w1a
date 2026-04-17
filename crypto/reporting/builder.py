@@ -5,13 +5,19 @@ from statistics import mean
 from typing import Iterable, Mapping, Sequence
 
 from crypto.domain import timeframe_to_timedelta
+from crypto.factory import PortfolioAllocationPlan, SelectionResult
 from crypto.paper import PaperSession
 from crypto.reporting.models import (
+    ExecutionStageReport,
+    FactoryResearchOverview,
+    FamilyAllocationReportEntry,
     GraphPoint,
     GraphSeries,
+    InstrumentAllocationReportEntry,
     PaperPerformanceReport,
     PerformanceSummary,
     ReportMetadata,
+    SelectedStrategyReportEntry,
     StrategyCatalogEntry,
 )
 from crypto.strategies import DEFAULT_STRATEGIES, StrategyDefinition
@@ -38,6 +44,7 @@ def build_paper_performance_report(
     strategy_definitions: Iterable[StrategyDefinition] = DEFAULT_STRATEGIES,
     thresholds: PromotionThresholds = DEFAULT_PROMOTION_THRESHOLDS,
     peer_returns: Mapping[str, Sequence[float]] | None = None,
+    factory_overview: FactoryResearchOverview | None = None,
 ) -> PaperPerformanceReport:
     if not session.equity_entries:
         raise ValueError("paper reporting requires at least one equity observation")
@@ -93,6 +100,67 @@ def build_paper_performance_report(
         ),
         thresholds=thresholds,
         registered_strategies=build_strategy_catalog(strategy_definitions),
+        factory_overview=factory_overview,
+    )
+
+
+def build_factory_overview(
+    selection_result: SelectionResult,
+    allocation_plan: PortfolioAllocationPlan,
+    *,
+    candidate_pool_size: int,
+    strategy_definitions: Iterable[StrategyDefinition] = DEFAULT_STRATEGIES,
+) -> FactoryResearchOverview:
+    strategy_by_name = {
+        strategy.name: strategy for strategy in strategy_definitions
+    }
+
+    selected_basket = tuple(
+        SelectedStrategyReportEntry(
+            strategy_name=selected.scorecard.candidate.strategy_name,
+            family=selected.scorecard.candidate.family,
+            instrument_symbol=allocation.instrument_symbol,
+            primary_cadence=strategy_by_name[selected.scorecard.candidate.strategy_name].primary_cadence,
+            feature_cadences=strategy_by_name[selected.scorecard.candidate.strategy_name].feature_cadences,
+            total_score=selected.scorecard.total_score,
+            max_pairwise_correlation=selected.max_pairwise_correlation,
+            target_weight=allocation.target_weight,
+            execution_stages=tuple(
+                ExecutionStageReport(
+                    stage=stage.stage,
+                    fraction=stage.fraction,
+                    target_weight=stage.target_weight,
+                )
+                for stage in allocation.execution_slices
+            ),
+        )
+        for selected, allocation in zip(
+            selection_result.selected,
+            allocation_plan.strategy_allocations,
+        )
+    )
+
+    return FactoryResearchOverview(
+        candidate_pool_size=candidate_pool_size,
+        trigger_reason=allocation_plan.trigger.reason,
+        selected_basket=selected_basket,
+        family_allocations=tuple(
+            FamilyAllocationReportEntry(
+                family=allocation.family,
+                weight=allocation.weight,
+                strategy_count=allocation.strategy_count,
+            )
+            for allocation in allocation_plan.family_allocations
+        ),
+        instrument_allocations=tuple(
+            InstrumentAllocationReportEntry(
+                instrument_symbol=allocation.instrument_symbol,
+                net_target_weight=allocation.net_target_weight,
+                gross_target_weight=allocation.gross_target_weight,
+                contributor_count=allocation.contributor_count,
+            )
+            for allocation in allocation_plan.instrument_allocations
+        ),
     )
 
 

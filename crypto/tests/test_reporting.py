@@ -3,9 +3,24 @@ from __future__ import annotations
 import unittest
 from datetime import datetime, timedelta, timezone
 
+from crypto.factory import (
+    CandidateEvaluation,
+    CandidatePerformanceMetrics,
+    CandidateRobustnessMetrics,
+    SelectionCandidate,
+    SelectionPolicy,
+    build_allocation_trigger,
+    build_portfolio_allocation,
+    rank_candidates,
+    select_orthogonal_candidates,
+)
 from crypto.domain import FillRecord, FundingRate, InstrumentId, OrderSide
 from crypto.paper import PaperSession
-from crypto.reporting import build_paper_performance_report, build_strategy_catalog
+from crypto.reporting import (
+    build_factory_overview,
+    build_paper_performance_report,
+    build_strategy_catalog,
+)
 from crypto.strategies import DEFAULT_STRATEGIES
 from crypto.validation import DEFAULT_PROMOTION_THRESHOLDS
 
@@ -129,6 +144,121 @@ class ReportingBuilderTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "equity observation"):
             build_paper_performance_report(session)
+
+    def test_report_builder_can_attach_factory_selection_and_allocation_outputs(self) -> None:
+        scored = rank_candidates(
+            (
+                CandidateEvaluation(
+                    candidate=_factory_candidate(
+                        strategy_name="trend_following_breakout",
+                        family="trend-following breakout",
+                    ),
+                    performance=CandidatePerformanceMetrics(
+                        gross_return=0.20,
+                        post_cost_return=0.16,
+                        turnover=0.30,
+                    ),
+                    robustness=CandidateRobustnessMetrics(
+                        oos_stability=0.85,
+                        parameter_stability=0.75,
+                        regime_stability=0.70,
+                    ),
+                ),
+                CandidateEvaluation(
+                    candidate=_factory_candidate(
+                        strategy_name="mean_reversion",
+                        family="mean reversion",
+                    ),
+                    performance=CandidatePerformanceMetrics(
+                        gross_return=0.18,
+                        post_cost_return=0.15,
+                        turnover=0.25,
+                    ),
+                    robustness=CandidateRobustnessMetrics(
+                        oos_stability=0.80,
+                        parameter_stability=0.70,
+                        regime_stability=0.75,
+                    ),
+                ),
+            )
+        )
+        selection = select_orthogonal_candidates(
+            (
+                SelectionCandidate(
+                    scorecard=scored[0],
+                    returns=(0.01, 0.02, 0.03, 0.01),
+                    signal_strength=1.0,
+                    instrument_symbol="BTC/USDT:USDT",
+                ),
+                SelectionCandidate(
+                    scorecard=scored[1],
+                    returns=(-0.02, 0.03, -0.01, 0.02),
+                    signal_strength=-1.0,
+                    instrument_symbol="BTC/USDT:USDT",
+                ),
+            ),
+            policy=SelectionPolicy(max_selected=10, max_pairwise_correlation=0.70, max_per_family=3),
+        )
+        allocation = build_portfolio_allocation(
+            selection.selected,
+            trigger=build_allocation_trigger("volatility_breakout"),
+        )
+        overview = build_factory_overview(
+            selection,
+            allocation,
+            candidate_pool_size=40,
+            strategy_definitions=DEFAULT_STRATEGIES,
+        )
+
+        session = PaperSession(
+            session_id="paper-btc-basket",
+            strategy_id="crypto_factory_basket",
+            started_at=_utc("2026-01-01T00:00:00"),
+            feature_cadences=("15m", "1h"),
+        )
+        session.record_equity(
+            at=_utc("2026-01-01T00:15:00"),
+            equity=10_000.0,
+            gross_exposure=12_000.0,
+            net_exposure=4_000.0,
+        )
+        session.record_equity(
+            at=_utc("2026-01-02T00:15:00"),
+            equity=10_150.0,
+            gross_exposure=12_500.0,
+            net_exposure=3_500.0,
+        )
+
+        report = build_paper_performance_report(
+            session,
+            strategy_definitions=DEFAULT_STRATEGIES,
+            factory_overview=overview,
+        )
+
+        assert report.factory_overview is not None
+        self.assertEqual(report.factory_overview.candidate_pool_size, 40)
+        self.assertEqual(report.factory_overview.trigger_reason, "volatility_breakout")
+        self.assertEqual(len(report.factory_overview.selected_basket), 2)
+        self.assertEqual(
+            tuple(item.strategy_name for item in report.factory_overview.selected_basket),
+            ("trend_following_breakout", "mean_reversion"),
+        )
+        self.assertEqual(len(report.factory_overview.instrument_allocations), 1)
+        self.assertEqual(report.graphs[0].slug, "equity_curve")
+
+
+def _factory_candidate(*, strategy_name: str, family: str):
+    from crypto.factory import FactoryCandidate
+
+    return FactoryCandidate(
+        candidate_id=f"{strategy_name}:seed=1",
+        strategy_name=strategy_name,
+        family=family,
+        primary_cadence="15m",
+        feature_cadences=("15m", "1h"),
+        params={"seed": 1},
+        generation_stage="fixed_grid",
+    )
 
 
 if __name__ == "__main__":
