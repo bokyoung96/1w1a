@@ -1,0 +1,85 @@
+# Crypto Research Factory
+
+This document promotes the approved OMX launch brief into repo-local documentation so the implementation, test, and review lanes have one stable reference inside the codebase.
+
+## Scope
+
+The `crypto/` package is a separate research lane for perpetual-futures research. It is intentionally distinct from the existing stock-oriented `backtesting/` package.
+
+Current v1 constraints:
+
+- default exchange: `binance_perpetual`
+- primary execution cadence: `15m`
+- multi-frequency feature and data inputs are allowed for alpha capture
+- no real-money execution logic
+- keep diffs small, explicit, and reversible
+
+## Approved strategy families
+
+The first pass must preserve these five strategy families:
+
+1. trend-following breakout
+2. mean reversion
+3. perp momentum / relative-strength rotation
+4. funding-rate carry / funding-aware filter
+5. volatility regime / breakout confirmation
+
+## Promotion thresholds
+
+Promotion and report outputs should use the approved research thresholds:
+
+- out-of-sample Sharpe > `0.75`
+- paper-trading Sharpe > `0.5`
+- max drawdown < `15%`
+- minimum paper window `30` days
+- pairwise correlation threshold < `0.70`
+
+## Package boundaries
+
+Lane ownership should stay explicit in the package layout:
+
+```text
+crypto/
+  domain/       # core market, contract, position, and run configuration models
+  exchanges/    # exchange adapters and exchange-specific metadata
+  strategies/   # alpha families and composition logic
+  promotion/    # promotion rules and threshold evaluation
+  validation/   # research validation and offline evaluation helpers
+  paper/        # paper ledger, portfolio state, and paper-session persistence
+  reporting/    # research summaries, paper-trading reports, and promotion output
+```
+
+The paper and reporting lanes should remain separate from:
+
+- strategy definition logic
+- exchange adapter details
+- any live execution or order-routing behavior
+
+## Lane 3 expectations: paper ledger and reporting
+
+The paper and reporting surfaces are the operational record for the crypto research lane.
+
+Minimum expectations:
+
+- paper trading keeps a durable ledger for fills, fees, funding effects, exposure, and equity changes
+- reports make the approved promotion thresholds visible instead of burying them in ad hoc logs
+- paper performance summaries cover Sharpe, drawdown, duration, and cross-strategy correlation
+- the primary `15m` execution cadence is explicit in paper-session and report metadata
+- higher-frequency or lower-frequency inputs stay represented as feature inputs, not as a hidden execution-cadence change
+
+## Review checklist
+
+When reviewing `crypto/` changes, reject implementations that:
+
+- mix crypto research code into the existing daily stock backtesting package
+- add real-money execution, broker wiring, or order-routing behavior
+- hide the default `binance_perpetual` venue behind ambiguous config
+- silently change the primary execution cadence away from `15m`
+- collapse lane boundaries by putting paper/reporting logic into strategy or exchange modules
+- omit promotion-threshold reporting from paper-trading outputs
+
+## Notes for future implementation
+
+- Reuse proven reporting and snapshot ideas from `backtesting/reporting/` where helpful, but keep the `crypto/` package boundary intact.
+- Prefer a small, composable paper ledger plus explicit report models over a monolithic runtime object.
+- Keep repo documentation in sync with the shared launch brief if the approved defaults change later.
