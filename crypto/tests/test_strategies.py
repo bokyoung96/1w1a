@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
 
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -18,6 +19,11 @@ EXPECTED_FAMILIES = (
     "perp momentum / relative-strength rotation",
     "funding-rate carry / funding-aware filter",
     "volatility regime / breakout confirmation",
+    "trend pullback continuation",
+    "short-term reversal / exhaustion fade",
+    "volume / participation imbalance",
+    "basis / spread dislocation proxy",
+    "market structure / support-resistance reaction",
 )
 
 
@@ -33,6 +39,15 @@ class StrategyRegistryTests(unittest.TestCase):
             {"15m"},
         )
 
+    def test_each_registered_strategy_has_a_matching_strategy_doc(self) -> None:
+        docs_dir = Path(__file__).resolve().parent.parent / "strategies" / "docs"
+        self.assertEqual(len(DEFAULT_STRATEGIES), len(EXPECTED_FAMILIES))
+
+        for strategy in DEFAULT_STRATEGIES:
+            self.assertTrue(
+                (docs_dir / f"{strategy.name}.md").exists(),
+                f"missing strategy doc for {strategy.name}",
+            )
 
     def test_multi_frequency_alignment_reindexes_features_to_primary_15m_cadence_without_lookahead(
         self,
