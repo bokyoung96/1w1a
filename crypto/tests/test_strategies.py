@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-import re
 import unittest
 
 import pandas as pd
@@ -27,18 +26,31 @@ EXPECTED_FAMILIES = (
     "market structure / support-resistance reaction",
 )
 
+EXPECTED_STRATEGY_NAMES = (
+    "trend_following_breakout",
+    "mean_reversion",
+    "perp_momentum_relative_strength_rotation",
+    "funding_rate_carry_funding_aware_filter",
+    "volatility_regime_breakout_confirmation",
+    "trend_pullback_continuation",
+    "short_term_reversal_exhaustion_fade",
+    "volume_participation_imbalance",
+    "basis_spread_dislocation_proxy",
+    "market_structure_support_resistance_reaction",
+)
+
 STRATEGY_DOCS_ROOT = (
     Path(__file__).resolve().parents[2] / "crypto" / "strategies" / "docs"
 )
 
 
-def family_doc_slug(family: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", family.lower()).strip("-")
-
-
 class StrategyRegistryTests(unittest.TestCase):
     def test_registry_lists_the_approved_initial_strategy_families(self) -> None:
         self.assertEqual(list_strategy_families(), EXPECTED_FAMILIES)
+        self.assertEqual(
+            tuple(strategy.name for strategy in DEFAULT_STRATEGIES),
+            EXPECTED_STRATEGY_NAMES,
+        )
         self.assertEqual(
             tuple(strategy.family for strategy in DEFAULT_STRATEGIES),
             EXPECTED_FAMILIES,
@@ -59,15 +71,20 @@ class StrategyRegistryTests(unittest.TestCase):
             f"missing strategy docs directory: {STRATEGY_DOCS_ROOT}",
         )
 
-        for family in EXPECTED_FAMILIES:
-            doc_path = STRATEGY_DOCS_ROOT / f"{family_doc_slug(family)}.md"
+        self.assertEqual(
+            len(list(STRATEGY_DOCS_ROOT.glob("*.md"))),
+            len(EXPECTED_STRATEGY_NAMES),
+        )
+
+        for strategy in DEFAULT_STRATEGIES:
+            doc_path = STRATEGY_DOCS_ROOT / f"{strategy.name}.md"
             self.assertTrue(
                 doc_path.is_file(),
-                f"missing doc for family {family!r}: {doc_path}",
+                f"missing doc for strategy {strategy.name!r}: {doc_path}",
             )
 
             content = doc_path.read_text(encoding="utf-8").lower()
-            self.assertIn(family.lower(), content)
+            self.assertIn(strategy.family.lower(), content)
             self.assertIn("what it is", content)
             self.assertIn("how it works", content)
             self.assertIn("economic rationale", content)
