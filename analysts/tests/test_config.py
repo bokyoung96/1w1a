@@ -59,3 +59,11 @@ def test_build_config_loads_inline_gmail_client_secret_json(tmp_path: Path) -> N
     assert config.gmail.client_secret_path is None
     assert config.gmail.client_secret_json is not None
     assert config.gmail.client_secret_json["installed"]["project_id"] == "demo-project"
+
+
+def test_build_config_creates_source_specific_raw_dirs(tmp_path: Path) -> None:
+    config = build_config(tmp_path)
+
+    assert config.paths.raw_dir == tmp_path / "data" / "raw"
+    assert config.paths.telegram_raw_dir == tmp_path / "data" / "raw" / "telegram"
+    assert config.paths.gmail_raw_dir == tmp_path / "data" / "raw" / "gmail"

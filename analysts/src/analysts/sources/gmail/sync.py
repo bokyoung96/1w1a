@@ -104,7 +104,7 @@ def build_message_record(*, account_name: str, query: str, payload: dict[str, An
         header.get("name", "").lower(): header.get("value")
         for header in (payload.get("payload", {}).get("headers") or [])
     }
-    body_plain = _extract_body_text(payload.get("payload", {}))
+    body_plain, body_html = _extract_message_bodies(payload.get("payload", {}))
     return GmailMessageRecord(
         gmail_message_id=str(payload["id"]),
         gmail_thread_id=str(payload["threadId"]),
@@ -116,7 +116,7 @@ def build_message_record(*, account_name: str, query: str, payload: dict[str, An
         label_ids=tuple(str(item) for item in payload.get("labelIds", [])),
         snippet=str(payload.get("snippet") or ""),
         body_plain=body_plain,
-        body_html=None,
+        body_html=body_html,
         raw_payload_json=payload,
         sync_status="synced",
         query_fingerprint=query,
@@ -163,3 +163,29 @@ def _extract_body_text(message_part: dict[str, Any]) -> str | None:
         if child_text:
             return child_text
     return None
+
+
+def _extract_message_bodies(message_part: dict[str, Any]) -> tuple[str | None, str | None]:
+    plain_parts: list[str] = []
+    html_parts: list[str] = []
+
+    def walk(part: dict[str, Any]) -> None:
+        mime_type = str(part.get("mimeType") or "")
+        filename = str(part.get("filename") or "")
+        body = part.get("body") or {}
+        if not filename and not body.get("attachmentId"):
+            text = _extract_body_text(part)
+            if text:
+                if mime_type == "text/plain":
+                    plain_parts.append(text)
+                elif mime_type == "text/html":
+                    html_parts.append(text)
+        for child in part.get("parts") or []:
+            walk(child)
+
+    walk(message_part)
+    plain = "\n\n".join(part.strip() for part in plain_parts if part.strip()) or None
+    html = "\n\n".join(part.strip() for part in html_parts if part.strip()) or None
+    if plain is None and html is None:
+        plain = _extract_body_text(message_part)
+    return plain, html

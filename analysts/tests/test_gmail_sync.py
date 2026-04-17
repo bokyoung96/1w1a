@@ -123,6 +123,55 @@ def test_polling_sync_persists_original_attachment_files(tmp_path) -> None:
     assert '"saved_path":' in manifest
 
 
+def test_polling_sync_persists_plain_and_html_bodies(tmp_path) -> None:
+    class MultipartApi(FakeGmailApi):
+        def get_message(self, *, message_id: str) -> dict:
+            return {
+                "id": "msg-1",
+                "threadId": "thread-1",
+                "historyId": "200",
+                "labelIds": ["Label_Reports"],
+                "snippet": "Morning wrap",
+                "internalDate": "1713247200000",
+                "payload": {
+                    "mimeType": "multipart/alternative",
+                    "headers": [
+                        {"name": "From", "value": "broker@example.com"},
+                        {"name": "Subject", "value": "Morning wrap"},
+                    ],
+                    "parts": [
+                        {
+                            "mimeType": "text/plain",
+                            "body": {"data": "U3RydWN0dXJlZCByZXBvcnQgYm9keQ"},
+                        },
+                        {
+                            "mimeType": "text/html",
+                            "body": {"data": "PGh0bWw-PGJvZHk-PHA-UmV2ZW51ZSB1cCAxMCU8L3A-PC9ib2R5PjwvaHRtbD4"},
+                        },
+                    ],
+                },
+            }
+
+    store = GmailStore(tmp_path / "gmail.sqlite3")
+    sync = GmailPollingSync(
+        api=MultipartApi(),
+        store=store,
+        account_name="reports-primary",
+        query="label:broker-reports",
+        raw_root=tmp_path / "raw" / "gmail",
+    )
+
+    result = sync.sync_once(limit=10)
+
+    assert result.fetched == 1
+    message = store.get_message("msg-1")
+    assert message.body_plain == "Structured report body"
+    assert "Revenue up 10%" in (message.body_html or "")
+    container = tmp_path / "raw" / "gmail" / "msg-1"
+    assert (container / "body.txt").read_text() == "Structured report body"
+    assert "Revenue up 10%" in (container / "body.html").read_text()
+
+
 def test_gmail_source_pipeline_summarizes_latest_body_candidate(tmp_path: Path) -> None:
     config = build_config(tmp_path)
     gmail_store = GmailStore(tmp_path / "gmail.sqlite3")

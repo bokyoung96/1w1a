@@ -121,7 +121,7 @@ def build_gmail_source_pipeline(*, base_dir: Path) -> GmailSourcePipeline:
         query=config.gmail.query,
         body_rules=config.gmail.body_candidate_rules,
         zip_allow_extensions=config.gmail.zip_allow_extensions,
-        raw_root=config.paths.raw_dir / "gmail",
+        raw_root=config.paths.gmail_raw_dir,
     )
 
 
@@ -364,7 +364,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         pipeline = build_default_pipeline(base_dir=base_dir)
         reports = [report for report in pipeline.store.list_reports() if report.channel == args.channel]
         if not reports:
-            reports = RawReportCatalog(raw_dir=pipeline.config.paths.raw_dir, channel=args.channel).recent_reports(args.limit)
+            reports = RawReportCatalog(raw_dir=pipeline.config.paths.telegram_raw_dir, channel=args.channel).recent_reports(args.limit)
         else:
             reports = reports[-args.limit:]
         total_processed = 0

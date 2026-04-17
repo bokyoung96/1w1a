@@ -50,6 +50,8 @@ class ArasPipeline:
     def summarize_latest(self, *, channel: str) -> PipelineExecution:
         report = self.store.get_latest_report(channel)
         if report is None:
+            report = RawReportCatalog(raw_dir=self.config.paths.telegram_raw_dir, channel=channel).latest_report()
+        if report is None:
             report = RawReportCatalog(raw_dir=self.config.paths.raw_dir, channel=channel).latest_report()
         if report is None:
             raise RuntimeError(f"No stored or raw report found for channel {channel}")
@@ -133,7 +135,9 @@ class ArasPipeline:
             trimmed_resolved = self.config.paths.base_dir / trimmed
             if trimmed_resolved.exists():
                 return replace(report, pdf_path=trimmed_resolved)
-        fallback_matches = sorted(self.config.paths.raw_dir.glob(f"{report.message_id}-*"))
+        fallback_matches = sorted(self.config.paths.telegram_raw_dir.glob(f"{report.message_id}-*"))
+        if not fallback_matches:
+            fallback_matches = sorted(self.config.paths.raw_dir.glob(f"{report.message_id}-*"))
         if fallback_matches:
             return replace(report, pdf_path=fallback_matches[-1])
         return replace(report, pdf_path=resolved)

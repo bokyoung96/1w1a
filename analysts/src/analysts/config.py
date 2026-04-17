@@ -13,6 +13,8 @@ class ArasPaths:
     base_dir: Path
     data_dir: Path
     raw_dir: Path
+    telegram_raw_dir: Path
+    gmail_raw_dir: Path
     processed_dir: Path
     wiki_dir: Path
     signals_dir: Path
@@ -117,6 +119,8 @@ class ArasConfig:
                 "base_dir": str(self.paths.base_dir),
                 "data_dir": str(self.paths.data_dir),
                 "raw_dir": str(self.paths.raw_dir),
+                "telegram_raw_dir": str(self.paths.telegram_raw_dir),
+                "gmail_raw_dir": str(self.paths.gmail_raw_dir),
                 "processed_dir": str(self.paths.processed_dir),
                 "wiki_dir": str(self.paths.wiki_dir),
                 "signals_dir": str(self.paths.signals_dir),
@@ -149,6 +153,8 @@ def build_config(base_dir: Path) -> ArasConfig:
         base_dir=base_dir,
         data_dir=data_dir,
         raw_dir=data_dir / "raw",
+        telegram_raw_dir=data_dir / "raw" / "telegram",
+        gmail_raw_dir=data_dir / "raw" / "gmail",
         processed_dir=data_dir / "processed",
         wiki_dir=data_dir / "wiki",
         signals_dir=data_dir / "signals",
@@ -160,6 +166,8 @@ def build_config(base_dir: Path) -> ArasConfig:
     for directory in (
         paths.data_dir,
         paths.raw_dir,
+        paths.telegram_raw_dir,
+        paths.gmail_raw_dir,
         paths.processed_dir,
         paths.wiki_dir,
         paths.signals_dir,

@@ -87,6 +87,7 @@ def test_downloads_only_unseen_pdf_messages_and_advances_next_offset(tmp_path: P
     saved_path = result.downloaded[0].pdf_path
     assert saved_path.exists()
     assert saved_path.read_bytes() == b'PDF bytes for file-001'
+    assert saved_path.parent == config.paths.telegram_raw_dir
 
 
 

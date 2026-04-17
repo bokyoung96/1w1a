@@ -304,7 +304,7 @@ class TelegramFetcher:
 
     def _write_pdf(self, *, update_id: int, file_unique_id: str, file_name: str | None, payload: bytes) -> Path:
         safe_name = (file_name or "report.pdf").replace("/", "-")
-        target = self.config.paths.raw_dir / f"{update_id}-{file_unique_id}-{safe_name}"
+        target = self.config.paths.telegram_raw_dir / f"{update_id}-{file_unique_id}-{safe_name}"
         target.write_bytes(payload)
         return target
 
