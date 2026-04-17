@@ -560,3 +560,16 @@ export async function fetchDashboard(runIds: string[]): Promise<DashboardPayload
 
   return normalizeDashboardPayload(await response.json());
 }
+
+export async function fetchCryptoFactory(): Promise<CryptoFactoryPayload> {
+  const response = await fetch(`${API_ROOT}/crypto-factory`);
+  if (!response.ok) {
+    throw new Error(`Failed to load crypto factory: ${response.status}`);
+  }
+
+  const payload = normalizeCryptoFactoryPayload(await response.json());
+  if (!payload) {
+    throw new Error("Failed to load crypto factory: empty payload");
+  }
+  return payload;
+}

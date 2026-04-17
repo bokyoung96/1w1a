@@ -9,8 +9,8 @@ import { PerformanceStrip } from "../components/PerformanceStrip";
 import { ResearchWorkspace } from "../components/ResearchWorkspace";
 import { RunSelector } from "../components/RunSelector";
 import { TopRail } from "../components/TopRail";
-import { fetchDashboard, fetchRuns, fetchSession } from "../lib/api";
-import type { DashboardPayload, ResearchFocus, RunOption, SessionBootstrap } from "../lib/types";
+import { fetchCryptoFactory, fetchDashboard, fetchRuns, fetchSession } from "../lib/api";
+import type { CryptoFactoryPayload, DashboardPayload, ResearchFocus, RunOption, SessionBootstrap } from "../lib/types";
 
 function uniqueRunOptions(runs: RunOption[]) {
   const seen = new Set<string>();
@@ -89,6 +89,7 @@ export function App() {
   const [runs, setRuns] = useState<RunOption[]>([]);
   const [selectedRunIds, setSelectedRunIds] = useState<string[]>([]);
   const [dashboard, setDashboard] = useState<DashboardPayload | null>(null);
+  const [cryptoFactory, setCryptoFactory] = useState<CryptoFactoryPayload | null>(null);
   const [focus, setFocus] = useState<ResearchFocus>({ kind: "all-selected" });
   const [runsLoading, setRunsLoading] = useState(true);
   const [runsError, setRunsError] = useState<string | null>(null);
@@ -123,6 +124,28 @@ export function App() {
         }
 
         setRunsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    void fetchCryptoFactory()
+      .then((payload) => {
+        if (!isMounted) {
+          return;
+        }
+        setCryptoFactory(payload);
+      })
+      .catch(() => {
+        if (!isMounted) {
+          return;
+        }
+        setCryptoFactory(null);
       });
 
     return () => {
@@ -190,9 +213,14 @@ export function App() {
             <DiagnosticStrip dashboard={dashboard} focus={focus} onFocusChange={setFocus} />
             <ResearchWorkspace dashboard={dashboard} focus={focus} onFocusChange={setFocus} />
             <div className="detail-band">
-              {dashboard.cryptoFactory ? <CryptoFactoryPanel factory={dashboard.cryptoFactory} /> : null}
+              {cryptoFactory ? <CryptoFactoryPanel factory={cryptoFactory} /> : null}
               <ExposureBand dashboard={dashboard} focus={focus} onFocusChange={setFocus} />
             </div>
+          </div>
+        ) : null}
+        {!dashboard && cryptoFactory ? (
+          <div className="detail-band">
+            <CryptoFactoryPanel factory={cryptoFactory} />
           </div>
         ) : null}
       </main>

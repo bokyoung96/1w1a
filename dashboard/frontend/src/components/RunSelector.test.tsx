@@ -2,16 +2,18 @@ import { cleanup, render, screen, waitFor, within } from "@testing-library/react
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi, afterEach as afterEachHook } from "vitest";
 
-const { fetchRuns, fetchDashboard, fetchSession } = vi.hoisted(() => ({
+const { fetchRuns, fetchDashboard, fetchSession, fetchCryptoFactory } = vi.hoisted(() => ({
   fetchRuns: vi.fn(),
   fetchDashboard: vi.fn(),
   fetchSession: vi.fn(),
+  fetchCryptoFactory: vi.fn(),
 }));
 
 vi.mock("../lib/api", () => ({
   fetchRuns,
   fetchDashboard,
   fetchSession,
+  fetchCryptoFactory,
 }));
 
 vi.mock("echarts-for-react", () => ({
@@ -22,6 +24,34 @@ beforeEach(() => {
   fetchRuns.mockReset();
   fetchDashboard.mockReset();
   fetchSession.mockReset();
+  fetchCryptoFactory.mockReset();
+  fetchCryptoFactory.mockResolvedValue({
+    summary: {
+      candidatePoolSize: 40,
+      selectedBasketSize: 10,
+      registeredStrategyCount: 10,
+      familyCap: 3,
+      triggerReason: "hybrid_event_rebalance",
+    },
+    performanceSummary: {
+      totalReturn: 0.18,
+      maxDrawdown: 0.07,
+      paperSharpe: 1.42,
+      paperDays: 30,
+      realizedFees: 0,
+      netFunding: 0,
+    },
+    performance: {
+      equityCurve: [],
+      drawdownCurve: [],
+      grossExposureCurve: [],
+      netExposureCurve: [],
+    },
+    selectedBasket: [],
+    familyAllocations: [],
+    instrumentAllocations: [],
+    registry: [],
+  });
   fetchSession.mockResolvedValue({ defaultSelectedRunIds: ["momentum_run", "momentum_run"] });
   fetchRuns.mockResolvedValue([
     {
