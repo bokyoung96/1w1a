@@ -216,7 +216,16 @@ def run_watch_until(
     resolved_channels = normalize_channels(([channel] if channel is not None else []) + (channels or []))
     logger = configure_watch_logger(base_dir=base_dir)
     logger.info("watch_cli_invoked channels=%s base_dir=%s until=%s", ",".join(resolved_channels), base_dir, until)
+    logger.info("watch_catchup_started channels=%s", ",".join(resolved_channels))
     catchup = _run_watch_catchup(base_dir=base_dir, channels=resolved_channels, logger=logger)
+    logger.info(
+        "watch_catchup_finished channels=%s downloaded=%s duplicates=%s ignored=%s summarized=%s",
+        ",".join(resolved_channels),
+        catchup.downloaded,
+        catchup.duplicates,
+        catchup.ignored,
+        catchup.summarized,
+    )
     runner = build_watch_runner(base_dir=base_dir)
     runner.logger = logger
     deadline = parse_watch_deadline(until)

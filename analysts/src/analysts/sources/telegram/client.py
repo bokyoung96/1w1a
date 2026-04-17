@@ -108,7 +108,8 @@ class TelethonChannelClient:
         try:
             asyncio.get_running_loop()
         except RuntimeError:
-            return self._download_document_via_refetch_sync(message=message)
+            with self._isolated_session_path() as isolated_session_path:
+                return self._download_document_via_refetch_sync(message=message, session_path=isolated_session_path)
         return self._download_document_via_refetch_in_thread(message=message)
 
     def _download_document_via_refetch_sync(self, *, message: dict[str, Any], session_path: Path | None = None) -> bytes:

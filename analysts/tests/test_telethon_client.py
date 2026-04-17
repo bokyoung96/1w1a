@@ -193,6 +193,55 @@ def test_download_document_refetches_inside_running_event_loop(tmp_path: Path, m
     assert result == b"PDF bytes via refetch"
 
 
+def test_download_document_refetches_with_isolated_session_without_running_loop(tmp_path: Path, monkeypatch) -> None:
+    (tmp_path / 'config.local.json').write_text(
+        json.dumps(
+            {
+                'telegram': {
+                    'mode': 'telethon',
+                    'api_id': 123456,
+                    'api_hash': 'super-secret-hash',
+                    'phone_number': '+821012345678',
+                    'channel': 'DOC_POOL',
+                    'session_name': 'doc-pool',
+                    'pdf_only': True,
+                }
+            }
+        )
+    )
+    config = build_config(tmp_path)
+    client = TelethonChannelClient(base_dir=tmp_path, config=config)
+    payload = {
+        "message_id": 506,
+        "chat": {"title": "DOC_POOL"},
+        "document": {
+            "file_name": "fresh.pdf",
+        },
+        "_message": FakeDisconnectedMessage(),
+    }
+    seen: list[Path] = []
+
+    @contextmanager
+    def fake_isolated_session_path():
+        path = tmp_path / "isolated.session"
+        path.write_bytes(b"session")
+        seen.append(path)
+        yield path
+
+    def fake_refetch_sync(*, message: dict, session_path: Path | None = None) -> bytes:
+        assert message == payload
+        assert session_path == seen[0]
+        return b"PDF bytes via isolated refetch"
+
+    monkeypatch.setattr(client, "_isolated_session_path", fake_isolated_session_path)
+    monkeypatch.setattr(client, "_download_document_via_refetch_sync", fake_refetch_sync)
+
+    result = client.download_document(payload)
+
+    assert result == b"PDF bytes via isolated refetch"
+    assert seen
+
+
 def test_get_latest_message_id_uses_isolated_session_copy(tmp_path: Path, monkeypatch) -> None:
     (tmp_path / 'config.local.json').write_text(
         json.dumps(

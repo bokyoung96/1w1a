@@ -48,7 +48,8 @@ run_telegram() {
   exec env PYTHONPATH=src "$PYTHON_BIN" -m analysts.cli watch-until \
     --base-dir . \
     --channel "$name" \
-    --until "$TELEGRAM_UNTIL"
+    --until "$TELEGRAM_UNTIL" \
+    2>>"$TELEGRAM_LOG"
 }
 
 run_gmail() {
@@ -62,7 +63,7 @@ run_gmail() {
     PYTHONPATH=src "$PYTHON_BIN" -m analysts.cli gmail-summarize-latest --base-dir .
     echo
     echo "==== gmail run finished $(date '+%Y-%m-%d %H:%M:%S %z') ===="
-  } | tee -a "$GMAIL_LOG"
+  } 2>&1 | tee -a "$GMAIL_LOG"
 }
 
 cd "$ROOT"

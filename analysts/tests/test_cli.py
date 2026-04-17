@@ -222,6 +222,11 @@ def test_watch_until_command_accepts_multiple_channels(
 def test_run_watch_until_catches_up_backlog_before_subscribing(tmp_path: Path, monkeypatch, capsys) -> None:
     catchup_calls: list[str] = []
     watched: list[tuple[str, str]] = []
+    logged: list[tuple[str, tuple[object, ...]]] = []
+
+    class FakeLogger:
+        def info(self, message: str, *args) -> None:
+            logged.append((message, args))
 
     class FakePipeline:
         def run_once(self, *, channel: str):
@@ -241,6 +246,7 @@ def test_run_watch_until_catches_up_backlog_before_subscribing(tmp_path: Path, m
 
     monkeypatch.setattr('analysts.cli.build_default_pipeline', lambda *, base_dir, fixtures_path=None: FakePipeline())
     monkeypatch.setattr('analysts.cli.build_watch_runner', lambda *, base_dir: FakeRunner())
+    monkeypatch.setattr('analysts.cli.configure_watch_logger', lambda *, base_dir: FakeLogger())
 
     exit_code = run_watch_until(
         base_dir=tmp_path,
@@ -256,6 +262,8 @@ def test_run_watch_until_catches_up_backlog_before_subscribing(tmp_path: Path, m
     assert 'duplicates=8' in output
     assert 'ignored=10' in output
     assert 'summarized=10' in output
+    assert ('watch_catchup_started channels=%s', ('DOC_POOL',)) in logged
+    assert ('watch_catchup_finished channels=%s downloaded=%s duplicates=%s ignored=%s summarized=%s', ('DOC_POOL', 1, 2, 3, 2)) in logged
 
 
 def test_runner_entry_uses_doc_pool_default_and_supplied_base_dir(tmp_path: Path, monkeypatch) -> None:
